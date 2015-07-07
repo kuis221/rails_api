@@ -21,6 +21,8 @@ class Role < ActiveRecord::Base
   belongs_to :company
   scoped_to_company
 
+  has_paper_trail
+
   has_many :company_users
   has_many :permissions, inverse_of: :role
   validates :name, presence: true

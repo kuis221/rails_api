@@ -97,6 +97,9 @@ $.extend($.fn, {
 	},
 	// http://docs.jquery.com/Plugins/Validation/valid
 	valid: function() {
+		if (this.length == 0) {
+			return false;
+		}
 		if ( $(this[0]).is("form")) {
 			return this.validate().form();
 		} else {

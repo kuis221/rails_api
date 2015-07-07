@@ -16,6 +16,9 @@
 class ActivityType < ActiveRecord::Base
   # Created_by_id and updated_by_id fields
   track_who_does_it
+
+  has_paper_trail
+
   belongs_to :company
   scoped_to_company
   has_many :form_fields, -> { order 'form_fields.ordering ASC' }, as: :fieldable

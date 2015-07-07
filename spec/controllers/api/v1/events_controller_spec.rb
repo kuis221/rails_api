@@ -52,6 +52,29 @@ describe Api::V1::EventsController, type: :controller do
 
       expect(result['results'].count).to eq(3)
     end
+
+    it 'return a list of events from notification link' do
+      company_user = user.company_users.first
+      event1 = create(:event, company: company, campaign: campaign, place: place)
+      event2 = create(:event, company: company, campaign: campaign, place: place)
+      event1.users << company_user
+      event2.users << company_user
+      Sunspot.commit
+
+      expect do
+        get :index, campaign: [campaign.id], place: [place.id], new_at: 123456, format: :json
+      end.to change(Notification, :count).by(-2)
+      expect(response).to be_success
+      result = JSON.parse(response.body)
+
+      expect(result['results'].count).to eq(2)
+      expect(result['total']).to eq(2)
+      expect(result['page']).to eq(1)
+      expect(result['filters']).to eq([
+        { 'label' => campaign.name, 'name' => "campaign:#{campaign.id}", 'expandible' => false },
+        { 'label' => place.name, 'name' => "place:#{place.id}", 'expandible' => false }])
+      expect(result['results'].first.keys).to match_array(%w(id start_date start_time end_date end_time status phases event_status campaign place))
+    end
   end
 
   describe "GET 'requiring_attention'", search: true do

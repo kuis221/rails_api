@@ -20,6 +20,8 @@ class Report < ActiveRecord::Base
   # Created_by_id and updated_by_id fields
   track_who_does_it
 
+  has_paper_trail
+
   VALUES = 'values'.freeze
 
   scoped_to_company

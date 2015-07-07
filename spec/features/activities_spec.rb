@@ -333,7 +333,6 @@ feature 'Activities management' do
         expect(page).to have_content('is not a valid file')
 
         attach_file 'file', 'spec/fixtures/photo.jpg'
-        expect(page).to have_content('Uploading...')
         expect(page).to have_no_content('is not a valid file')
         wait_for_ajax(30) # For the image to upload to S3
         expect(page).to_not have_content('DRAG & DROP')
@@ -402,7 +401,6 @@ feature 'Activities management' do
 
         expect(page).to have_content('DRAG & DROP')
         attach_file 'file', 'spec/fixtures/file.pdf'
-        expect(page).to have_content('Uploading...')
         expect(page).to have_no_content('is not a valid file')
         wait_for_ajax(30) # For the file to upload to S3
         expect(page).to_not have_content('DRAG & DROP')

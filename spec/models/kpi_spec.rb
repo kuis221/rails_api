@@ -289,8 +289,9 @@ describe Kpi, type: :model do
         end.to change(described_class, :count).by(-1)
       end.to change(FormFieldResult, :count).by(-1)
 
+      kpi = described_class.where(id: [kpi1.id, kpi2.id]).first # Get the remaining kpi
       event = Event.find(event.id)
-      expect(event.result_for_kpi(kpi1).value.values).to eq(%w(10 90))
+      expect(event.result_for_kpi(kpi).value.values).to eq(%w(10 90))
 
       expect(event.results.count).to eq(1)
     end
@@ -429,12 +430,13 @@ describe Kpi, type: :model do
       end.to_not change(FormFieldResult, :count)
 
       event1 = Event.find(event1.id) # Load a fresh copy of the event
-      expect(event1.result_for_kpi(kpi1).value.keys).to match_array([seg11.id.to_s, seg12.id.to_s])
-      expect(event1.result_for_kpi(kpi1).value.values).to eq(%w(33 67))
+      kpi  = described_class.where(id: [kpi1.id, kpi2.id]).first # In this case, any kpi can be kept
+      expect(event1.result_for_kpi(kpi).value.keys).to match_array([seg11.id.to_s, seg12.id.to_s])
+      expect(event1.result_for_kpi(kpi).value.values).to eq(%w(33 67))
 
       event2 = Event.find(event2.id) # Load a fresh copy of the event
-      expect(event2.result_for_kpi(kpi1).value.keys).to match_array([seg11.id.to_s, seg12.id.to_s])
-      expect(event2.result_for_kpi(kpi1).value.values).to eq(%w(44 56))
+      expect(event2.result_for_kpi(kpi).value.keys).to match_array([seg11.id.to_s, seg12.id.to_s])
+      expect(event2.result_for_kpi(kpi).value.values).to eq(%w(44 56))
     end
 
     it 'should allow custom kpis with a global kpi' do

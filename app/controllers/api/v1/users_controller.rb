@@ -5,8 +5,9 @@ class Api::V1::UsersController < Api::V1::FilteredController
                      if: proc { |c| c.request.format == 'application/json' }
 
   skip_authorization_check only: [:new_password, :index, :companies, :permissions, :notifications, :show]
+  skip_authorize_resource only: [:index]
 
-  skip_load_and_authorize_resource only: [:show]
+  skip_load_and_authorize_resource only: [:show, :index]
 
   defaults resource_class: CompanyUser
 
@@ -355,17 +356,15 @@ class Api::V1::UsersController < Api::V1::FilteredController
   EOS
   def notifications
     if current_user.present?
-      notifications = notifications_for_company_user(current_company_user).map { |n| n.delete(:url); n.delete(:unread); n }
+      notifications = notifications_for_company_user(current_company_user).map do |n|
+        n.delete(:url)
+        n.delete(:unread)
+        n
+      end
 
-      companies = current_user.companies_active_role.map { |c| { name: c.name, id: c.id } }
       respond_to do |format|
         format.json do
-          render status: 200,
-                 json: notifications
-        end
-        format.xml do
-          render status: 200,
-                 xml: notifications.to_xml(root: 'notifications')
+          render status: 200, json: notifications
         end
       end
     else
@@ -592,4 +591,5 @@ class Api::V1::UsersController < Api::V1::FilteredController
 
     permissions
   end
+
 end

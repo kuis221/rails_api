@@ -66,9 +66,10 @@ feature 'Brand Ambassadors Documents', js: true do
         visit brand_ambassadors_root_path
 
         within drag_n_drop_zone do
+          expect(page).to have_content('DRAG & DROP')
           attach_file 'file', 'spec/fixtures/file.pdf'
-          expect(page).to have_content('Uploading document')
           wait_for_ajax(30) # For the file to upload to S3
+          expect(page).to_not have_content('DRAG & DROP')
         end
 
         document = BrandAmbassadors::Document.last
@@ -208,7 +209,6 @@ feature 'Brand Ambassadors Documents', js: true do
         within drag_n_drop_zone do
           expect(page).to have_content 'DRAG & DROP'
           attach_file 'file', 'spec/fixtures/file.pdf'
-          expect(page).to have_content('Uploading document')
           wait_for_ajax(30) # For the file to upload to S3
         end
         ensure_modal_was_closed
@@ -251,7 +251,6 @@ feature 'Brand Ambassadors Documents', js: true do
         within drag_n_drop_zone do
           expect(page).to have_content 'DRAG & DROP'
           attach_file 'file', 'spec/fixtures/file.pdf'
-          expect(page).to have_content('Uploading document')
           wait_for_ajax(30) # For the file to upload to S3
         end
 
@@ -280,7 +279,6 @@ feature 'Brand Ambassadors Documents', js: true do
 
         within drag_n_drop_zone do
           attach_file 'file', 'spec/fixtures/file.pdf'
-          expect(page).to have_content('Uploading document')
           wait_for_ajax(30) # For the file to upload to S3
         end
         ensure_modal_was_closed

@@ -6,13 +6,15 @@ module Results
       exporter = FormFieldDataExporter.new(current_company_user, search_params, resource_class)
       CSV.generate do |csv|
         csv << ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE',
-                'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP', 'ACTIVE STATE'] +
+                'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP', 'ACTIVE STATE', 'CREATED AT',
+                'CREATED BY', 'LAST MODIFIED', 'MODIFIED BY'] +
                exporter.custom_fields_to_export_headers
         each_collection_item do |activity|
           csv << [
             activity.campaign_name, activity.company_user_full_name, activity.date, activity.activity_type_name,
             exporter.area_for_activity(activity), activity.place_td_linx_code, activity.place_name, activity.place_address,
-            activity.place_city, activity.place_state, activity.place_zipcode, activity.status] +
+            activity.place_city, activity.place_state, activity.place_zipcode, activity.status, activity.created_at,
+            activity.created_by, activity.last_modified, activity.modified_by] +
             exporter.custom_fields_to_export_values(activity)
         end
       end

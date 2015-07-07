@@ -46,33 +46,11 @@ namespace :brandscopic do
 
   desc 'Merge venues from a CSV file sent through the STDIN'
   task merge_venues: :environment do
-    CSV($stdin, row_sep: "\n", col_sep: ',') do |csv|
-      csv.each do |venue1, venue2, venue3, name, route, city, state, zip, td_linx_code|
-        next if venue1.blank?
-        venues = Venue.where(id: [venue1, venue2, venue3]).where(merged_with_place_id: nil)
-        if [venue1, venue2, venue3].compact.count > venues.count
-          puts "NOT ALL VENUES WHERE FOUND #{[venue1, venue2, venue3].compact}"
-          next
-        end
-        raise "TWO OR MORE VENUES ARE SHARING THE SAME PLACE ID #{[venue1, venue2, venue3]}" if venues.map(&:place_id).uniq.count < venues.count
-        if venues.count > 1
-          puts "Merging #{venues.first.name} with #{venues[1, 2].map(&:name).join(' and ')} keeping the name: #{name}"
-          place = venues.first.place
-          place.name = name.strip
-          place.route = route.gsub(/^[0-9]+\w/, '').strip
-          place.street_number = route.gsub(/^([0-9]+).*$/, '\1').strip
-          place.zipcode = zip.strip
-          place.city = city.strip
-          place.state = state.strip
-          place.state = Country.new(place.country).states[state.upcase.strip]['name']  if state.strip =~ /^[A-Z]{2}$/i
-          place.td_linx_code = td_linx_code.strip unless td_linx_code.blank?
-          place.save
-          place.merge(venues[1].place)
-          place.merge(venues[2].place) if venues.count > 2
-        else
-          p "Only one venue was found for for #{[venue1, venue2, venue3]}"
-        end
-      end
+    merger = Brandscopic::Utils::VenueMerger.new($stdin)
+    if merger.validate
+      merger.run!
+    else
+      puts merger.errors.map { |e| "[Line ##{e[:line]}] #{e[:error]}" }.join("\n")
     end
   end
 

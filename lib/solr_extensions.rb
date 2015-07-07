@@ -26,7 +26,7 @@ module Sunspot
         end
       end
 
-      def with_area(areas, campaigns=nil)
+      def with_area(areas, campaigns = nil)
         field = nil
         sq = subquery do
           if field?(:area_id)
@@ -117,16 +117,24 @@ module Sunspot
       end
 
       def with_place(places)
-        any_of do
-          if field?(:place_id)
-            with :place_id, places
-          elsif field?(:place_ids)
-            with :place_ids, places
+        sq = subquery do
+          any_of do
+            if field?(:place_id)
+              with :place_id, places
+            elsif field?(:place_ids)
+              with :place_ids, places
+            end
+            if field?(:location)
+              locations = Place.where(is_location: true, id: places).pluck('DISTINCT location_id')
+              with :location, locations if locations.any?
+            end
           end
-          if field?(:location)
-            locations = Place.where(is_location: true, id: places).pluck('DISTINCT location_id')
-            with :location, locations if locations.any?
-          end
+        end
+        if join_field?(:place_id) && join_field?(:location)
+          # TODO build the join dynamically based on field setup
+          add_custom_query "{!join from=id_is to=event_id_i}#{sq.join(' ')}"
+        else
+          add_custom_query sq
         end
       end
 

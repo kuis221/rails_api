@@ -25,8 +25,10 @@
 class Contact < ActiveRecord::Base
   # Created_by_id and updated_by_id fields
   track_who_does_it
-  
+
   scoped_to_company
+
+  has_paper_trail
 
   has_many :contact_events, dependent: :destroy, as: :contactable
 
@@ -40,7 +42,7 @@ class Contact < ActiveRecord::Base
 
   validates_format_of :email, with: /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/, allow_blank: true, if: :email_changed?
   scope :accessible_by_user, ->(user) { in_company(user.company_id) }
-  
+
   before_validation do
     self.country ||= 'US'
   end

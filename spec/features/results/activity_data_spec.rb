@@ -88,13 +88,21 @@ feature 'Results Activity Data Page', js: true, search: true  do
       campaign.activity_types << activity_type2
       # make sure activities are created before
       create(:activity, activity_type: activity_type, activitable: venue, campaign: campaign,
-                        company_user: company_user, activity_date: '2013-02-04')
+                        company_user: company_user, activity_date: '2013-02-04',
+                        created_at: DateTime.parse("2015-07-01 02:11 -07:00"),
+                        updated_at: DateTime.parse("2015-07-03 02:11 -07:00"))
       create(:activity, activity_type: activity_type2, activitable: venue, campaign: campaign,
-                        company_user: another_user.company_users.first, activity_date: '2013-03-16')
+                        company_user: another_user.company_users.first, activity_date: '2013-03-16',
+                        created_at: DateTime.parse("2015-07-01 02:11 -07:00"),
+                        updated_at: DateTime.parse("2015-07-03 02:11 -07:00"))
       create(:activity, activity_type: activity_type, activitable: event, campaign: campaign,
-                        company_user: another_user.company_users.first, activity_date: '2013-09-04')
+                        company_user: another_user.company_users.first, activity_date: '2013-09-04',
+                        created_at: DateTime.parse("2015-07-01 02:11 -07:00"),
+                        updated_at: DateTime.parse("2015-07-03 02:11 -07:00"))
       create(:activity, activity_type: activity_type, activitable: inactive_event, campaign: campaign,
-                        company_user: another_user.company_users.first, activity_date: '2013-03-28')
+                        company_user: another_user.company_users.first, activity_date: '2013-03-28',
+                        created_at: DateTime.parse("2015-07-01 02:11 -07:00"),
+                        updated_at: DateTime.parse("2015-07-03 02:11 -07:00"))
 
       Sunspot.commit
     end
@@ -114,18 +122,22 @@ feature 'Results Activity Data Page', js: true, search: true  do
 
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS',
-         'CITY', 'STATE', 'ZIP', 'ACTIVE STATE'],
+         'CITY', 'STATE', 'ZIP', 'ACTIVE STATE', "CREATED AT", "CREATED BY", "LAST MODIFIED", "MODIFIED BY"],
         [campaign.name, 'Test User', '2013-02-04', 'My Activity Type', '', nil, 'My Place',
-         'My Place, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active'],
+         'My Place, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active',
+         "2015-07-01 02:11", "Test User", "2015-07-03 02:11", "Test User"],
         [campaign.name, 'Juanito Bazooka', '2013-03-16', 'Second Activity Type', '', nil,
-         'My Place', 'My Place, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active'],
+         'My Place', 'My Place, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active',
+         "2015-07-01 02:11", "Test User", "2015-07-03 02:11", "Test User"],
         [campaign.name, 'Juanito Bazooka', '2013-09-04', 'My Activity Type', '', nil,
-         'My Place', 'My Place, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active']
+         'My Place', 'My Place, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active',
+         "2015-07-01 02:11", "Test User", "2015-07-03 02:11", "Test User"]
       ])
 
       expect(ListExport.last).to_not have_rows([
         [campaign.name, 'Juanito Bazooka', '2013-03-28', 'My Activity Type', '', nil, 'The Place',
-         'The Place, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active']
+         'The Place, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active',
+         "2015-07-01 02:11", "Test User", "2015-07-03 02:11", "Test User"]
       ])
     end
 

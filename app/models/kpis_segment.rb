@@ -14,6 +14,8 @@ class KpisSegment < ActiveRecord::Base
   belongs_to :kpi
   has_many :goals, dependent: :destroy
 
+  has_paper_trail
+
   accepts_nested_attributes_for :goals
 
   before_destroy :check_results_for_segment
