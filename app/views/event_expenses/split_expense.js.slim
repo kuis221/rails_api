@@ -1,4 +1,5 @@
 |
   bootbox.classes('modal-large spliteventexpense_modal');
   resource_modal.modal('hide');
-  var splitExpenseDialog = bootbox.dialog($('#{escape_javascript(render "split_expense")}'), [],{'onEscape': false, animate: (!$.fx.off), header: 'Split Expense'})
+  $('.spliteventexpense_modal').remove();
+  var splitExpenseDialog = bootbox.dialog($('#{escape_javascript(render "split_expense")}'), [],{'onEscape': false, animate: (!$.fx.off), header: 'Split Expense'});
