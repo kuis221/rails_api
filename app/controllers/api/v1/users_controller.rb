@@ -547,6 +547,7 @@ class Api::V1::UsersController < Api::V1::FilteredController
     permissions.push 'events_create_comments' if can?(:create_comment, Event)
     permissions.push 'events_edit_comments' if can?(:edit_comment, Event)
     permissions.push 'events_deactivate_comments' if can?(:deactivate_comment, Event)
+    permissions.push 'events_create_activities' if can?(:create, Activity)
     if jbb_feature_enabled?
       permissions.push 'events_invites' if can?(:index_invites, Event)
       permissions.push 'events_create_invites' if can?(:create_invite, Event)
