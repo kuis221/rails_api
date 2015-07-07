@@ -341,7 +341,7 @@ describe Results::EventDataController, type: :controller do
          nil, nil, '2.00', '0', nil, '9876.0'],
         [campaign2.name, nil, nil, nil, '', nil, nil, nil, 'Active', 'Approved', '', '',
          "http://test.host/events/#{event2.id}", '2013-01-24 10:00', '2013-01-24 12:00',
-         nil, nil, '2.00', '0', '7654.0', nil]
+         nil, nil, '2.00', '0', nil, '7654.0']
       ])
     end
 
