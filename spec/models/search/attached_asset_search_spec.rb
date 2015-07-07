@@ -48,12 +48,28 @@ describe AttachedAsset, type: :model, search: true do
     expect(search(company_id: company.id, campaign: [campaign.id, campaign2.id]))
       .to match_array([asset, asset2])
 
-    # Search for a specific Attached Asset's place
+    # Search for a specific Attached Asset's place location
     expect(search(company_id: company.id, location: [place.location_id]))
       .to match_array([asset])
     expect(search(company_id: company.id, location: [place2.location_id]))
       .to match_array([asset2])
     expect(search(company_id: company.id, location: [place.location_id, place2.location_id]))
+      .to match_array([asset, asset2])
+
+    # Search for a specific Attached Asset's place
+    expect(search(company_id: company.id, place: [place.id]))
+      .to match_array([asset])
+    expect(search(company_id: company.id, place: [place2.id]))
+      .to match_array([asset2])
+    expect(search(company_id: company.id, place: [place.id, place2.id]))
+      .to match_array([asset, asset2])
+
+    # Search for a specific Attached Asset's venue
+    expect(search(company_id: company.id, venue: [venue.id]))
+      .to match_array([asset])
+    expect(search(company_id: company.id, venue: [venue2.id]))
+      .to match_array([asset2])
+    expect(search(company_id: company.id, venue: [venue.id, venue2.id]))
       .to match_array([asset, asset2])
 
     # Search for a specific tags
