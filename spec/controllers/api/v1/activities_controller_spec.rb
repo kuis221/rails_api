@@ -12,8 +12,6 @@ RSpec.describe Api::V1::ActivitiesController, type: :controller do
 
   before { set_api_authentication_headers user, company }
 
-
-
   describe "PUT 'update'" do
     let(:another_user) { create(:company_user, user: create(:user), company_id: company.id) }
     let(:another_campaign) { create(:campaign, company: company) }
@@ -34,25 +32,69 @@ RSpec.describe Api::V1::ActivitiesController, type: :controller do
     end
   end
 
-
   describe "GET 'new'", search: true do
-    it 'returns only the user/date if no fields have been aded to the activity type' do
+    it 'returns only the user/date if no fields have been added to the activity type' do
       get :new, activity_type_id: activity_type.id, format: :json
       expect(json['data'].count).to eql 1
       expect(json['data'].first).to include(
         'name' => 'User/Date', 'value' => nil,
-        'type' => 'FormField::UserDate', 'settings' => nil,
-        'ordering' => 1, 'required' => nil, 'kpi_id' => nil)
+        'type' => 'FormField::UserDate', 'ordering' => 1, 'required' => nil)
     end
 
     it 'returns the fields have been aded to the activity type' do
       create(:form_field_text, fieldable: activity_type, ordering: 2)
-      create(:form_field_number, fieldable: activity_type, ordering: 3)
-      get :new, activity_type_id: activity_type.id, format: :json
-      expect(json['data'].count).to eql 3
+      create(:form_field_attachment, fieldable: activity_type, ordering: 3)
+      create(:form_field_checkbox, fieldable: activity_type, ordering: 4,
+                                   options: [
+                                     create(:form_field_option, name: 'Checkbox A'),
+                                     create(:form_field_option, name: 'Checkbox B'),
+                                     create(:form_field_option, name: 'Checkbox C')
+                                   ])
+      create(:form_field_brand, fieldable: activity_type, ordering: 5)
+      create(:form_field_currency, fieldable: activity_type, ordering: 6)
+      create(:form_field_date, fieldable: activity_type, ordering: 7)
+      create(:form_field_dropdown, fieldable: activity_type, ordering: 8,
+                                   options: [
+                                     create(:form_field_option, name: 'Option A'),
+                                     create(:form_field_option, name: 'Option B'),
+                                     create(:form_field_option, name: 'Option C')
+                                   ])
+      create(:form_field_likert_scale, fieldable: activity_type, ordering: 9,
+                                       options: [
+                                         create(:form_field_option, name: 'Option 1'),
+                                         create(:form_field_option, name: 'Option 2'),
+                                         create(:form_field_option, name: 'Option 3')
+                                       ],
+                                       statements: [
+                                         create(:form_field_option, name: 'Statement A'),
+                                         create(:form_field_option, name: 'Statement B'),
+                                         create(:form_field_option, name: 'Statement C')
+                                       ])
+      create(:form_field_marque, fieldable: activity_type, ordering: 10)
+      create(:form_field_number, fieldable: activity_type, ordering: 11)
+      create(:form_field_percentage, fieldable: activity_type, ordering: 12)
+      create(:form_field_photo, fieldable: activity_type, ordering: 13)
+      create(:form_field_place, fieldable: activity_type, ordering: 14)
 
+      create(:form_field_radio, fieldable: activity_type, ordering: 15,
+                                options: [
+                                  create(:form_field_option, name: 'Option A'),
+                                  create(:form_field_option, name: 'Option B'),
+                                  create(:form_field_option, name: 'Option C')
+                                ])
+      create(:form_field_section, fieldable: activity_type, ordering: 16)
+      create(:form_field_summation, fieldable: activity_type, ordering: 17)
+      create(:form_field_text_area, fieldable: activity_type, ordering: 18)
+      create(:form_field_time, fieldable: activity_type, ordering: 19)
+
+      get :new, activity_type_id: activity_type.id, format: :json
+      expect(json['data'].count).to eql 19
       expect(json['data'].map { |at|  at['type'] }).to eql [
-        'FormField::UserDate', 'FormField::Text', 'FormField::Number']
+        'FormField::UserDate', 'FormField::Text', 'FormField::Attachment', 'FormField::Checkbox',
+        'FormField::Brand', 'FormField::Currency', 'FormField::Date', 'FormField::Dropdown',
+        'FormField::LikertScale', 'FormField::Marque', 'FormField::Number', 'FormField::Percentage',
+        'FormField::Photo', 'FormField::Place', 'FormField::Radio', 'FormField::Section',
+        'FormField::Summation', 'FormField::TextArea', 'FormField::Time']
     end
   end
 
@@ -60,7 +102,7 @@ RSpec.describe Api::V1::ActivitiesController, type: :controller do
     let(:activity) { create(:activity, activity_type: activity_type, company_user: company_user, activitable: event) }
     before { event.campaign.activity_types << activity_type }
 
-    it 'retruns the activity info' do
+    it 'returns the activity info' do
       get :show, id: activity.id, format: :json
       expect(json['id']).to eql activity.id
       expect(json['company_user']['id']).to eql activity.company_user_id
@@ -72,17 +114,67 @@ RSpec.describe Api::V1::ActivitiesController, type: :controller do
       expect(json['data'].count).to eql 1
       expect(json['data'].first).to include(
         'name' => 'User/Date', 'value' => [],
-        'type' => 'FormField::UserDate', 'settings' => nil,
-        'ordering' => 1, 'required' => nil, 'kpi_id' => nil)
+        'type' => 'FormField::UserDate', 'ordering' => 1, 'required' => nil)
     end
 
-    it 'returns the fields have been aded to the activity type' do
-      create(:form_field_text, fieldable: activity_type, ordering: 2)
-      create(:form_field_number, fieldable: activity_type, ordering: 3)
+    it 'returns the fields have been aded to the activity type', :show_in_doc do
+      field = create(:form_field_text, fieldable: activity_type, ordering: 2)
+      activity.results_for([field]).first.value = 'lorem ipsum dolor sit amet'
+      create(:form_field_attachment, fieldable: activity_type, ordering: 3)
+      field = create(:form_field_checkbox, fieldable: activity_type, ordering: 4,
+                                           options: [
+                                             opt1 = create(:form_field_option, name: 'Checkbox A'),
+                                             opt2 = create(:form_field_option, name: 'Checkbox B'),
+                                             create(:form_field_option, name: 'Checkbox C')
+                                           ])
+      activity.results_for([field]).first.value = [opt1.id, opt2.id]
+      create(:form_field_brand, fieldable: activity_type, ordering: 5)
+      create(:form_field_currency, fieldable: activity_type, ordering: 6)
+      create(:form_field_date, fieldable: activity_type, ordering: 7)
+      create(:form_field_dropdown, fieldable: activity_type, ordering: 8,
+                                   options: [
+                                     create(:form_field_option, name: 'Option A'),
+                                     create(:form_field_option, name: 'Option B'),
+                                     create(:form_field_option, name: 'Option C')
+                                   ])
+      create(:form_field_likert_scale, fieldable: activity_type, ordering: 9,
+                                       options: [
+                                         create(:form_field_option, name: 'Option 1'),
+                                         create(:form_field_option, name: 'Option 2'),
+                                         create(:form_field_option, name: 'Option 3')
+                                       ],
+                                       statements: [
+                                         create(:form_field_option, name: 'Statement A'),
+                                         create(:form_field_option, name: 'Statement B'),
+                                         create(:form_field_option, name: 'Statement C')
+                                       ])
+      create(:form_field_marque, fieldable: activity_type, ordering: 10)
+      create(:form_field_number, fieldable: activity_type, ordering: 11)
+      create(:form_field_percentage, fieldable: activity_type, ordering: 12)
+      create(:form_field_photo, fieldable: activity_type, ordering: 13)
+      place = create(:place, name: 'Parales', formatted_address: 'Parales, Curridabat')
+      field = create(:form_field_place, fieldable: activity_type, ordering: 14)
+      activity.results_for([field]).first.value = place.id
+
+      create(:form_field_radio, fieldable: activity_type, ordering: 15,
+                                options: [
+                                  create(:form_field_option, name: 'Option A'),
+                                  create(:form_field_option, name: 'Option B'),
+                                  create(:form_field_option, name: 'Option C')
+                                ])
+      create(:form_field_section, fieldable: activity_type, ordering: 16)
+      create(:form_field_summation, fieldable: activity_type, ordering: 17)
+      create(:form_field_text_area, fieldable: activity_type, ordering: 18)
+      create(:form_field_time, fieldable: activity_type, ordering: 19)
+      activity.save
       get :show, id: activity.id, format: :json
-      expect(json['data'].count).to eql 3
+      expect(json['data'].count).to eql 19
       expect(json['data'].map { |at|  at['type'] }).to eql [
-        'FormField::UserDate', 'FormField::Text', 'FormField::Number']
+        'FormField::UserDate', 'FormField::Text', 'FormField::Attachment', 'FormField::Checkbox',
+        'FormField::Brand', 'FormField::Currency', 'FormField::Date', 'FormField::Dropdown',
+        'FormField::LikertScale', 'FormField::Marque', 'FormField::Number', 'FormField::Percentage',
+        'FormField::Photo', 'FormField::Place', 'FormField::Radio', 'FormField::Section',
+        'FormField::Summation', 'FormField::TextArea', 'FormField::Time']
     end
   end
 end

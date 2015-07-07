@@ -48,6 +48,17 @@ class FormField::Percentage < FormField
     true
   end
 
+  def format_json(result)
+    super.merge!(
+      segments: (options_for_input.map do|s|
+                  { id: s[1],
+                    text: s[0],
+                    value: result.present? && result.value.present? ? result.value[s[1].to_s].to_i : nil,
+                    goal: (kpi_id.present? && resource.kpi_goals.key?(kpi_id) ? resource.kpi_goals[kpi_id][s[1]] : nil) }
+                end)
+    )
+  end
+
   def format_html(result)
     if result.value
       options.map do |option|
