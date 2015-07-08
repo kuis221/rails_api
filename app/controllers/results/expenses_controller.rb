@@ -10,13 +10,13 @@ class Results::ExpensesController < FilteredController
     exporter = EventExpensesExporter.new(current_company_user, search_params)
     CSV.generate do |csv|
       csv << [
-        'CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS',
-        'EVENT START DATE', 'EVENT END DATE'].concat(
+        'CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS', 'EVENT START DATE', 'EVENT END DATE',
+        'CREATED AT', 'CREATED BY', 'LAST MODIFIED', 'MODIFIED BY'].concat(
           exporter.expenses_columns)
       each_collection_item do |event|
         csv << [
-          event.campaign_name, event.place_name,
-          event.place_address, event.start_date, event.end_date
+          event.campaign_name, event.place_name, event.place_address, event.start_date, event.end_date,
+          event.created_at, event.created_by, event.last_modified, event.modified_by
         ].concat(exporter.event_expenses(event))
       end
     end

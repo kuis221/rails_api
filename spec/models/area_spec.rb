@@ -114,7 +114,7 @@ describe Area, type: :model do
       expect(area.reload.common_denominators).to eq(['North America', 'United States', 'California'])
     end
 
-    it 'should ignore natural features' do
+    it 'should ignore natural features without a city' do
       area.places << [
         create(:city, name: 'Los Angeles', state: 'California', country: 'US'),
         create(:place, city: 'Los Angeles', state: 'California', country: 'US'),

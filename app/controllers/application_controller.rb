@@ -94,4 +94,8 @@ class ApplicationController < ActionController::Base
       format.html { render 'access_denied' }
     end
   end
+
+  def info_for_paper_trail
+    { ip: request.remote_ip, user_agent: request.user_agent }
+  end
 end

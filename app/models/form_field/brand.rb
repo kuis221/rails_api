@@ -44,6 +44,17 @@ class FormField::Brand < FormField
     ::Brand.where(id: result.value).pluck(:name).join(', ')
   end
 
+  def format_json(result)
+    super.merge(
+      value: result ? result.value.to_i : nil,
+      segments: options_for_field(result).map do |s|
+        { id: s.id,
+          text: s.name,
+          value: result ? result.value.to_i.eql?(s.id) : false }
+      end
+    )
+  end
+
   def store_value(value)
     if value.is_a?(Array)
       value.join(',')

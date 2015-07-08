@@ -9,11 +9,10 @@ class CombinedSearch
 
   # Performs the search and returns the results
   def results
-    results = solr_search
+    results = solr_search.compact
     google_place_ids = google_place_ids_from_places(results.map { |p| p[:id] })
     google_results = filter_duplicated google_search, google_place_ids
-    google_results.each_with_index { |_, i|  results[i] ||= nil  }
-    sort_results (results + google_results).flatten.compact.slice(0, 10)
+    sort_results(results + google_results).flatten.compact.slice(0, 10)
   end
 
   def sort_results(rows)
@@ -27,14 +26,15 @@ class CombinedSearch
   end
 
   def add_distance_to_results(rows, location)
-    lat, lon = params[:location].split(',')
+    lat, lon = location.split(',')
     rows.each do |r|
+      next if r.nil?
       r[:location][:distance] =
         if r[:location] && r[:location][:latitude]
           Geocoder::Calculations.distance_between(
             [r[:location][:latitude], r[:location][:longitude]], [lat, lon])
         else
-          99999
+          99_999
         end
     end
   end
@@ -68,7 +68,7 @@ class CombinedSearch
       name = p['formatted_address'].match(/\A#{Regexp.escape(p['name'])}/i) ? nil : p['name']
       label = [name, p['formatted_address'].to_s].compact.join(', ')
       { value: label, label: label, id: "#{p['reference']}||#{p['place_id']}",
-       location: result_location(p), valid: valid_place_for_user?(p) }
+        location: result_location(p), valid: valid_place_for_user?(p) }
     end
   rescue OpenURI::HTTPError => e
     Rails.logger.info "failed to load results from Google: #{e.message}"

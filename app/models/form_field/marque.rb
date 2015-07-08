@@ -47,6 +47,17 @@ class FormField::Marque < FormField::Dropdown
     format_html result
   end
 
+  def format_json(result)
+    super.merge(
+      value: result ? result.value.to_i : nil,
+      segments: options_for_field(result).map do |s|
+        { id: s[1],
+          text: s[0],
+          value: result ? result.value.to_i.eql?(s[1]) : false }
+      end
+    )
+  end
+
   def options_for_field(result)
     return [] if result.nil?
     @marques ||= [].tap do |b|

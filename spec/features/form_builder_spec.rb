@@ -242,7 +242,8 @@ RSpec.shared_examples 'a fieldable element' do
       within('.field-option:nth-child(2)') { click_js_link 'Remove this option' }
     end
 
-    confirm_prompt 'Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone'
+    confirm_prompt 'Removing this option will remove all the entered data/answers associated with it. '\
+                   'Are you sure you want to do this? This cannot be undone'
 
     within form_field_settings_for 'My Radio Field' do
       expect(page).to have_no_content('Second Option')
@@ -315,7 +316,8 @@ RSpec.shared_examples 'a fieldable element' do
       within('.field-option:nth-child(2)') { click_js_link 'Add option after this' }
       within('.field-option:nth-child(2)') { click_js_link 'Remove this option' }
     end
-    confirm_prompt 'Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone'
+    confirm_prompt 'Removing this option will remove all the entered data/answers associated with it. '\
+                   'Are you sure you want to do this? This cannot be undone'
     within form_field_settings_for 'My Checkbox Field' do
       expect(page).to have_no_content('Second Option')
     end
@@ -387,7 +389,8 @@ RSpec.shared_examples 'a fieldable element' do
       within('.field-option:nth-child(2)') { click_js_link 'Remove this option' }
     end
 
-    confirm_prompt 'Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone'
+    confirm_prompt 'Removing this option will remove all the entered data/answers associated with it. '\
+                   'Are you sure you want to do this? This cannot be undone'
 
     within form_field_settings_for 'My Dropdown Field' do
       expect(page).to have_no_content('Second Option')
@@ -674,12 +677,12 @@ RSpec.shared_examples 'a fieldable element' do
       within('.field-option:nth-child(2)') { click_js_link 'Add option after this' }
       within('.field-option:nth-child(2)') { click_js_link 'Remove this option' }
     end
-    confirm_prompt 'Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone'
+    confirm_prompt 'Removing this option will remove all the entered data/answers associated with it.'\
+                   ' Are you sure you want to do this? This cannot be undone'
 
     within form_field_settings_for 'My Percent Field' do
       expect(page).to have_no_content('Second Option')
       within('.field-option:nth-child(3)') { click_js_link 'Remove this option' }
-
     end
 
     confirm_prompt 'Are you sure you want to remove this option?'
@@ -745,7 +748,8 @@ RSpec.shared_examples 'a fieldable element' do
       within('.field-option:nth-child(2)') { click_js_link 'Remove this option' }
     end
 
-    confirm_prompt 'Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone'
+    confirm_prompt 'Removing this option will remove all the entered data/answers associated with it. '
+                   'Are you sure you want to do this? This cannot be undone'
 
     within form_field_settings_for 'My Summation Field' do
       expect(page).to have_no_content('Second Option')
@@ -775,7 +779,8 @@ RSpec.shared_examples 'a fieldable element' do
     likert_scale_field.drag_to form_builder
 
     expect(form_builder).to have_form_field('Likert scale',
-                                            with_options: ['Strongly Disagree', 'Disagree', 'Agree', 'Strongly Agree']
+                                            with_options: ['Strongly Disagree', 'Disagree',
+                                                           'Agree', 'Strongly Agree']
       )
 
     within form_field_settings_for 'Likert scale' do
@@ -812,14 +817,17 @@ RSpec.shared_examples 'a fieldable element' do
     field = FormField.last
     expect(field.name).to eql 'My Likert scale Field'
     expect(field.type).to eql 'FormField::LikertScale'
-    expect(field.options.order('ordering ASC').map(&:name)).to eql ['First Option', 'Second Option', 'Disagree', 'Agree', 'Strongly Agree']
+    expect(field.options.order('ordering ASC').map(&:name)).to eql [
+      'First Option', 'Second Option', 'Disagree', 'Agree', 'Strongly Agree']
     expect(field.options.map(&:ordering)).to eql [0, 1, 2, 3, 4]
-    expect(field.statements.map(&:name)).to eql ['First Statement', 'Second Statement', 'Statement 2', 'Statement 3']
+    expect(field.statements.map(&:name)).to eql ['First Statement', 'Second Statement',
+                                                 'Statement 2', 'Statement 3']
     expect(field.statements.map(&:ordering)).to eql [0, 1, 2, 3]
 
     # Remove fields
     expect(form_builder).to have_form_field('My Likert scale Field',
-                                            with_options: ['First Option', 'Second Option', 'Disagree', 'Agree', 'Strongly Agree']
+                                            with_options: ['First Option', 'Second Option', 'Disagree',
+                                                           'Agree', 'Strongly Agree']
     )
 
     within form_field_settings_for 'My Likert scale Field' do
@@ -828,7 +836,8 @@ RSpec.shared_examples 'a fieldable element' do
       within('.field-options[data-type="option"] .field-option:nth-child(4)') { click_js_link 'Remove this option' }
     end
 
-    confirm_prompt 'Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone'
+    confirm_prompt 'Removing this option will remove all the entered data/answers associated with it. '
+                   'Are you sure you want to do this? This cannot be undone'
 
     within form_field_settings_for 'My Likert scale Field' do
       within('.field-options[data-type="option"]') { expect(page).to have_no_content('Second Option') }
@@ -848,7 +857,8 @@ RSpec.shared_examples 'a fieldable element' do
       within('.field-options[data-type="statement"] .field-option:nth-child(2)') { click_js_link 'Add option after this' }
       within('.field-options[data-type="statement"] .field-option:nth-child(4)') { click_js_link 'Remove this option' }
     end
-    confirm_prompt 'Removing this statement will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone'
+    confirm_prompt 'Removing this statement will remove all the entered data/answers associated with it. '
+                   'Are you sure you want to do this? This cannot be undone'
     within form_field_settings_for 'My Likert scale Field' do
       within('.field-options[data-type="statement"]') { expect(page).to have_no_content('Second Option') }
     end
@@ -913,7 +923,8 @@ RSpec.shared_examples 'a fieldable element' do
       click_js_link 'Remove'
     end
 
-    confirm_prompt 'Removing this field will remove all the entered data/answers associated with it. Are you sure you want to do this?'
+    confirm_prompt 'Removing this field will remove all the entered data/answers associated with it. '\
+                   'Are you sure you want to do this?'
 
     expect(form_builder).to_not have_form_field('Single line text')
 
@@ -938,8 +949,8 @@ RSpec.shared_examples 'a fieldable element that accept kpis' do
     Kpi.create_global_kpis
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
-    find('.fields-wrapper .accordion-toggle', text: 'KPIs').click
-    find('.fields-wrapper .accordion-toggle', text: 'Fields').click # Hide fields
+    toggle_collapsible 'KPIs'
+    toggle_collapsible 'Fields' # Hide fields
 
     # Wait for accordeon effect to complete
     within('.fields-wrapper') do
@@ -1004,7 +1015,8 @@ RSpec.shared_examples 'a fieldable element that accept kpis' do
       click_js_link 'Remove'
     end
 
-    confirm_prompt 'Removing this field will remove all the entered data/answers associated with it. Are you sure you want to do this?'
+    confirm_prompt 'Removing this field will remove all the entered data/answers associated with it. '\
+                   'Are you sure you want to do this?'
 
     # Make sure the KPI is again available in the KPIs list
     within('.fields-wrapper') do
@@ -1016,8 +1028,8 @@ RSpec.shared_examples 'a fieldable element that accept kpis' do
     kpi.save
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
-    find('.fields-wrapper .accordion-toggle', text: 'KPIs').click
-    find('.fields-wrapper .accordion-toggle', text: 'Fields').click # Hide fields
+    toggle_collapsible 'KPIs'
+    toggle_collapsible 'Fields' # Hide fields
 
     # Wait for accordeon effect to complate
     within('.fields-wrapper') do
@@ -1063,7 +1075,8 @@ RSpec.shared_examples 'a fieldable element that accept kpis' do
       click_js_link 'Remove'
     end
 
-    confirm_prompt 'Removing this field will remove all the entered data/answers associated with it. Are you sure you want to do this?'
+    confirm_prompt 'Removing this field will remove all the entered data/answers associated with it. '\
+                   'Are you sure you want to do this?'
 
     # Make sure the KPI is again available in the KPIs list
     within('.fields-wrapper') do
@@ -1073,17 +1086,17 @@ RSpec.shared_examples 'a fieldable element that accept kpis' do
 
   scenario "disable KPI's segments in form builder" do
     kpi =  create(:kpi, name: 'My Custom KPI',
-        description: 'my custom kpi description',
-        kpi_type: 'count', capture_mechanism: 'dropdown', company: fieldable.company,
-        kpis_segments: [
-          segment1 = create(:kpis_segment, text: 'Option1'),
-          segment2 = create(:kpis_segment, text: 'Option2')])
+                        description: 'my custom kpi description',
+                        kpi_type: 'count', capture_mechanism: 'dropdown', company: fieldable.company,
+                        kpis_segments: [
+                          segment1 = create(:kpis_segment, text: 'Option1'),
+                          segment2 = create(:kpis_segment, text: 'Option2')])
 
     visit fieldable_path
 
     expect(page).to have_selector('h2', text: fieldable.name)
-    find('.fields-wrapper .accordion-toggle', text: 'KPIs').click
-    find('.fields-wrapper .accordion-toggle', text: 'Fields').click # Hide fields
+    toggle_collapsible 'KPIs'
+    toggle_collapsible 'Fields' # Hide fields
 
     # Wait for accordeon effect to complate
     within('.fields-wrapper') do
@@ -1137,8 +1150,8 @@ RSpec.shared_examples 'a fieldable element that accept modules' do
 
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
-    find('.fields-wrapper .accordion-toggle', text: 'Modules').click
-    find('.fields-wrapper .accordion-toggle', text: 'Fields').click # Hide fields
+    toggle_collapsible 'Modules'
+    toggle_collapsible 'Fields' # Hide fields
 
     # Wait for accordeon effect to complate
     within('.fields-wrapper') do
@@ -1175,15 +1188,16 @@ RSpec.shared_examples 'a fieldable element that accept modules' do
       click_js_link 'Remove'
     end
 
-    confirm_prompt 'Removing this module will remove all the entered data associated with it. Are you sure you want to do this?'
+    confirm_prompt 'Removing this module will remove all the entered data associated with it. '
+                   'Are you sure you want to do this?'
 
     expect(find('.form-wrapper')).to have_no_selector('.form-section.module[data-type=Photos]')
     click_js_button 'Save'
     wait_for_ajax
 
     # open the Modules fields list
-    find('.fields-wrapper .accordion-toggle', text: 'Modules').click
-    find('.fields-wrapper .accordion-toggle', text: 'Fields').click # Hide fields
+    toggle_collapsible 'Modules'
+    toggle_collapsible 'Fields' # Hide fields
 
     # Wait for accordeon effect to complete
     within('.fields-wrapper') do
@@ -1204,8 +1218,8 @@ RSpec.shared_examples 'a fieldable element that accept modules' do
   scenario 'add and configure an Attendance module' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
-    find('.fields-wrapper .accordion-toggle', text: 'Modules').click
-    find('.fields-wrapper .accordion-toggle', text: 'Fields').click # Hide fields
+    toggle_collapsible 'Modules'
+    toggle_collapsible 'Fields' # Hide fields
 
     # Wait for accordeon effect to complate
     within('.fields-wrapper') do
@@ -1272,8 +1286,8 @@ feature 'Campaign Form Builder', js: true do
       visit campaign_path(campaign)
 
       # The kpi is in the list of KPIs in the sidebar
-      find('.fields-wrapper .accordion-toggle', text: 'KPIs').click
-      find('.fields-wrapper .accordion-toggle', text: 'Fields').click # Hide fields
+      toggle_collapsible 'KPIs'
+      toggle_collapsible 'Fields' # Hide fields
 
       within('.fields-wrapper') do
         expect(page).to have_no_content('Dropdown')  # Wait for accordeon effect to complete
@@ -1303,8 +1317,8 @@ feature 'Campaign Form Builder', js: true do
       # reload page and test the field is still there...
       visit campaign_path(campaign)
       expect(form_builder).to have_form_field 'My Custom KPI'
-      find('.fields-wrapper .accordion-toggle', text: 'KPIs').click
-      find('.fields-wrapper .accordion-toggle', text: 'Fields').click # Hide fields
+      toggle_collapsible 'KPIs'
+      toggle_collapsible 'Fields' # Hide fields
 
       within('.fields-wrapper') do
         expect(page).to have_no_content('Dropdown')  # Wait for accordeon effect to complete
@@ -1329,10 +1343,47 @@ feature 'Campaign Form Builder', js: true do
       expect(form_builder).to_not have_form_field 'My Custom KPI'
 
       # The KPI should be again available in the KPIs list
-      find('.fields-wrapper .accordion-toggle', text: 'KPIs').click
+      toggle_collapsible 'KPIs'
       within('.fields-wrapper') do
         expect(page).to have_content('My Custom KPI')
       end
+    end
+  end
+end
+
+RSpec.shared_examples 'a fieldable element that accepts Place fields' do
+  scenario 'user can add Place fields to form' do
+    visit fieldable_path
+    expect(page).to have_selector('h2', text: fieldable.name)
+    place_field.drag_to form_builder
+
+    expect(form_builder).to have_form_field('Place')
+
+    within form_field_settings_for 'Place' do
+      fill_in 'Field label', with: 'My Place Field'
+
+      unicheck('Required')
+    end
+
+    expect(form_builder).to have_form_field('My Place Field')
+
+    # Close the field settings form
+    form_builder.trigger 'click'
+    expect(page).to have_no_selector('.field-attributes-panel')
+
+    # Save the form
+    expect do
+      click_js_button 'Save'
+      wait_for_ajax
+    end.to change(FormField, :count).by(1)
+    field = FormField.last
+    expect(field.name).to eql 'My Place Field'
+    expect(field.required).to be_truthy
+    expect(field.type).to eql 'FormField::Place'
+
+    within form_field_settings_for 'My Place Field' do
+      expect(find_field('Field label').value).to eql 'My Place Field'
+      expect(find_field('Required')['checked']).to be_truthy
     end
   end
 end
@@ -1345,7 +1396,12 @@ feature 'Activity Types', js: true do
   before { sign_in user }
 
   it_behaves_like 'a fieldable element' do
-    let (:fieldable) { create(:activity_type, name: 'Drink Menu', company: company) }
+    let(:fieldable) { create(:activity_type, name: 'Drink Menu', company: company) }
+    let(:fieldable_path) { activity_type_path(fieldable) }
+  end
+
+  it_behaves_like 'a fieldable element that accepts Place fields' do
+    let(:fieldable) { create(:activity_type, name: 'Drink Menu', company: company) }
     let(:fieldable_path) { activity_type_path(fieldable) }
   end
 end
@@ -1392,6 +1448,10 @@ end
 
 def brand_field
   find('.fields-wrapper .field', text: 'Brand')
+end
+
+def place_field
+  find('.fields-wrapper .field', text: 'Place')
 end
 
 def marque_field
@@ -1457,4 +1517,8 @@ def form_section(section_name)
   end
   fail "Section #{section_name} not found" if field.nil?
   field
+end
+
+def toggle_collapsible(name)
+  find('.fields-wrapper .accordion-toggle', text: name).trigger('click')
 end

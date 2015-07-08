@@ -25,7 +25,6 @@ feature 'Photos', js: true do
 
         within '#event-photos' do
           attach_file 'file', 'spec/fixtures/photo.jpg'
-          expect(page).to have_content('Uploading...')
           expect(page).to have_content('photo.jpg')
           wait_for_ajax(30) # For the image to upload to S3
         end
@@ -40,7 +39,7 @@ feature 'Photos', js: true do
     end
 
     scenario 'A user can deactivate a photo' do
-      photo = create(:photo, attachable: event)
+      create(:photo, attachable: event)
       visit event_path(event)
 
       # Check that the image appears on the page

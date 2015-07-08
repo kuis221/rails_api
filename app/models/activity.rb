@@ -12,13 +12,23 @@
 #  activity_date    :datetime
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
+#  created_by_id    :integer
+#  updated_by_id    :integer
 #
 
 class Activity < ActiveRecord::Base
+  track_who_does_it
+
   belongs_to :activity_type
   belongs_to :activitable, polymorphic: true
   belongs_to :company_user
   belongs_to :campaign
+  belongs_to :created_by, class_name: 'User'
+  belongs_to :updated_by, class_name: 'User'
+
+  track_who_does_it
+
+  has_paper_trail
 
   has_many :results, class_name: 'FormFieldResult', inverse_of: :resultable, as: :resultable
 
