@@ -41,7 +41,7 @@ RSpec.describe Api::V1::ActivitiesController, type: :controller do
         'type' => 'FormField::UserDate', 'ordering' => 1, 'required' => nil)
     end
 
-    it 'returns the fields have been aded to the activity type' do
+    it 'returns the fields have been aded to the activity type', show_in_doc: true do
       create(:form_field_text, fieldable: activity_type, ordering: 2)
       create(:form_field_attachment, fieldable: activity_type, ordering: 3)
       create(:form_field_checkbox, fieldable: activity_type, ordering: 4,
