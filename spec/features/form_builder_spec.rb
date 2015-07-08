@@ -1351,6 +1351,43 @@ feature 'Campaign Form Builder', js: true do
   end
 end
 
+RSpec.shared_examples 'a fieldable element that accepts Place fields' do
+  scenario 'user can add Place fields to form' do
+    visit fieldable_path
+    expect(page).to have_selector('h2', text: fieldable.name)
+    place_field.drag_to form_builder
+
+    expect(form_builder).to have_form_field('Place')
+
+    within form_field_settings_for 'Place' do
+      fill_in 'Field label', with: 'My Place Field'
+
+      unicheck('Required')
+    end
+
+    expect(form_builder).to have_form_field('My Place Field')
+
+    # Close the field settings form
+    form_builder.trigger 'click'
+    expect(page).to have_no_selector('.field-attributes-panel')
+
+    # Save the form
+    expect do
+      click_js_button 'Save'
+      wait_for_ajax
+    end.to change(FormField, :count).by(1)
+    field = FormField.last
+    expect(field.name).to eql 'My Place Field'
+    expect(field.required).to be_truthy
+    expect(field.type).to eql 'FormField::Place'
+
+    within form_field_settings_for 'My Place Field' do
+      expect(find_field('Field label').value).to eql 'My Place Field'
+      expect(find_field('Required')['checked']).to be_truthy
+    end
+  end
+end
+
 feature 'Activity Types', js: true do
   let(:user) { create(:user, company_id: create(:company).id, role_id: create(:role).id) }
 
@@ -1359,6 +1396,11 @@ feature 'Activity Types', js: true do
   before { sign_in user }
 
   it_behaves_like 'a fieldable element' do
+    let(:fieldable) { create(:activity_type, name: 'Drink Menu', company: company) }
+    let(:fieldable_path) { activity_type_path(fieldable) }
+  end
+
+  it_behaves_like 'a fieldable element that accepts Place fields' do
     let(:fieldable) { create(:activity_type, name: 'Drink Menu', company: company) }
     let(:fieldable_path) { activity_type_path(fieldable) }
   end
@@ -1406,6 +1448,10 @@ end
 
 def brand_field
   find('.fields-wrapper .field', text: 'Brand')
+end
+
+def place_field
+  find('.fields-wrapper .field', text: 'Place')
 end
 
 def marque_field

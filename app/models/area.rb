@@ -174,6 +174,7 @@ class Area < ActiveRecord::Base
   def update_common_denominators
     denominators = []
     list_places = places.all.to_a.select { |p| !p.types.nil? && p.is_location? }
+    list_places.reject! { |p| p.types && p.types.include?('natural_feature') && p.city.nil? }
     continents = list_places.map(&:continent_name)
     if continents.compact.size == list_places.size && continents.uniq.size == 1
       denominators.push continents.first

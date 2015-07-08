@@ -16,7 +16,7 @@
           i.icon-arrow-down-small
         ul#download-status-btn.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
           li
-            a.xlsx-download-link href="#" role="menuitem" data-url="#{new_results_data_extract_path(format: :csv)}"
+            a.xlsx-download-link href="#" role="menuitem" data-url="#{results_data_extract_path(resource, format: :csv)}"
               | Download as CSV
   .data-extract-box
     table#extract-table.data-extract-table

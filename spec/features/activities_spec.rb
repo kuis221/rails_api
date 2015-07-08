@@ -103,6 +103,23 @@ feature 'Activities management' do
     end
 
     scenario 'allows the user to add an activity to an Event, see it displayed in the Activities list and then deactivate it' do
+      expect_any_instance_of(CombinedSearch).to receive(:open).and_return(double(read: { results:
+        [
+          { reference: 'xxxxx', place_id: '1111', name: 'Walt Disney World Dolphin',
+            formatted_address: '1500 Epcot Resorts Blvd, Lake Buena Vista, Florida, United States' }
+        ]
+      }.to_json))
+      expect_any_instance_of(GooglePlaces::Client).to receive(:spot).with('xxxxx').and_return(double(
+        name: 'Walt Disney World Dolphin', formatted_address: '1500 Epcot Resorts Blvd',
+        lat: '1.1111', lng: '2.2222', types: ['establishment'], reference: 'xxxxx', id: '1111',
+        address_components: [
+          { 'types' => ['country'], 'short_name' => 'US' },
+          { 'types' => ['administrative_area_level_1'], 'short_name' => 'FL', 'long_name' => 'Florida' },
+          { 'types' => ['locality'], 'long_name' => 'Lake Buena Vista' },
+          { 'types' => ['route'], 'long_name' => '1500 Epcot Resorts Blvd' }
+        ]
+      ))
+
       create(:user, company: company, first_name: 'Juanito', last_name: 'Bazooka')
       brand1 = create(:brand, name: 'Brand #1', company: company)
       brand2 = create(:brand, name: 'Brand #2', company: company)
@@ -119,6 +136,7 @@ feature 'Activities management' do
       dropdown_field = create(:form_field, name: 'Form Field #2', type: 'FormField::Dropdown', fieldable: activity_type, ordering: 4)
       create(:form_field_option, name: 'Dropdown option #1', form_field: dropdown_field, ordering: 1)
       create(:form_field_option, name: 'Dropdown option #2', form_field: dropdown_field, ordering: 2)
+      create(:form_field, name: 'Place Field', type: 'FormField::Place', fieldable: activity_type, ordering: 5)
 
       campaign.activity_types << activity_type
 
@@ -132,7 +150,6 @@ feature 'Activities management' do
         choose('Activity Type #1')
         click_js_button 'Create'
       end
-      ensure_modal_was_closed
 
       within('.survey-header') do
         expect(page).to have_content 'Activity Type #1'
@@ -145,11 +162,29 @@ feature 'Activities management' do
       select_from_chosen('Dropdown option #2', from: 'Form Field #2')
       select_from_chosen('Juanito Bazooka', from: 'User')
       fill_in 'Date', with: '05/16/2013'
+      select_from_autocomplete 'Search for a place', 'Walt Disney World Dolphin'
+
       click_button 'Submit'
 
       expect(page).to have_content('Thank You!')
       click_link 'Finish'
       expect(page).to have_content 'Nice work. One Activity Type #1 activity has been added.'
+
+      within resource_item do
+        expect(page).to have_content('Juanito Bazooka')
+        expect(page).to have_content('THU May 16')
+        expect(page).to have_content('Activity Type #1')
+        click_js_link('Activity Details')
+      end
+
+      # Test the activity details page
+      expect(page).to have_selector('.details-main-title', text: 'Activity Type #1')
+      expect(page).to have_content('Juanito Bazooka')
+      expect(page).to have_content('THU May 16')
+      expect(page).to have_content('Activity Type #1')
+      expect(page).to have_content('Walt Disney World Dolphin, 1500 Epcot Resorts Blvd')
+
+      visit event_path(event)
 
       within resource_item do
         expect(page).to have_content('Juanito Bazooka')

@@ -11,8 +11,11 @@ $.widget 'brandscopic.placesAutocomplete', {
 			source: ( request, response ) =>
 				@xhr.abort() if @xhr
 				@xhr = $.ajax
-					url: "#{@url}?location=#{@location}"
-					data: request
+					url: @url
+					data:
+						term: request.term
+						location: @location
+						'check-valid': @element.data('check-valid')
 					dataType: 'json'
 					success: ( data ) -> response data
 					error: () -> response []

@@ -33,6 +33,12 @@ FactoryGirl.define do
     ordering 1
   end
 
+  factory :form_field_date, class: FormField::Date do
+    sequence(:name) { |n| "Form Field Date #{n}" }
+    type 'FormField::Date'
+    ordering 1
+  end
+
   factory :form_field_number, class: FormField::Number do
     sequence(:name) { |n| "Form Field Number #{n}" }
     type 'FormField::Number'
@@ -60,6 +66,12 @@ FactoryGirl.define do
   factory :form_field_checkbox, class: FormField::Checkbox do
     sequence(:name) { |n| "Form Field Checkbox #{n}" }
     type 'FormField::Checkbox'
+    ordering 1
+  end
+
+  factory :form_field_currency, class: FormField::Currency do
+    sequence(:name) { |n| "Form Field Currency #{n}" }
+    type 'FormField::Currency'
     ordering 1
   end
 
@@ -102,6 +114,12 @@ FactoryGirl.define do
   factory :form_field_attachment, class: FormField::Attachment do
     sequence(:name) { |n| "Attachment #{n}" }
     type 'FormField::Attachment'
+    ordering 1
+  end
+
+  factory :form_field_place, class: FormField::Place do
+    sequence(:name) { |n| "Place #{n}" }
+    type 'FormField::Place'
     ordering 1
   end
 

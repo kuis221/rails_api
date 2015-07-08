@@ -170,6 +170,7 @@ jQuery ->
 			beforeLoad: () ->
 				this.title = $(this.element).attr('caption')
 		}
+		$('.places-autocomplete').placesAutocomplete();
 
 		$(".btn-group .btn .checked input:radio").each (i, btn) ->
 			$(btn).closest('.btn').addClass('active')

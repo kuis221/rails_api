@@ -55,8 +55,7 @@ $.widget 'branscopic.splitExpenseForm', {
 				selectOtherMonths: true,
 				dateFormat: "mm/dd/yy",
 				onClose: (selectedDate) -> $(this).valid()
-			row.find('select.category-chosen').chosen()
-			row.find('select.brand-chosen').chosen()
+			row.find('.chosen-enabled').chosen()
 			row.find('input.amount-currency').val('0.00')
 			#row.find('.remove-expense').append @element.find('.add_nested_fields')
 			@element.validate()
