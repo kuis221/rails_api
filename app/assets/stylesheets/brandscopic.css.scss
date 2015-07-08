@@ -457,6 +457,7 @@ body.events.show{
       font-size: 14px;
       .total-ammount{
         float: right;
+        padding: 5px 0;
         &:before{
           content: "TOTAL:";
           color: $brand;
