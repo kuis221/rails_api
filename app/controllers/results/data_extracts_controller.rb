@@ -64,7 +64,7 @@ class Results::DataExtractsController < InheritedResources::Base
   end
 
   def export_file_name
-    "#{params[:data_extract][:source].pluralize}-export-#{Time.now.strftime('%Y%m%d%H%M%S')}"
+    "#{resource.source.pluralize}-export-#{Time.now.strftime('%Y%m%d%H%M%S')}"
   end
 
   # TODO: perhaps we should use a PG cursor here to speed up the export.
