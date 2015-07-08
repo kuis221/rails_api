@@ -43,6 +43,7 @@ $.widget 'nmk.attachmentUploadZone', {
 
 			change: (e, data) ->
 				$(".attachment-uploading-view .file-name", form).text data.files[0].name
+
 				return
 
 			progress: (e, data) ->
@@ -69,7 +70,7 @@ $.widget 'nmk.attachmentUploadZone', {
 				isImage = data.files[0] and data.files[0].type.indexOf('image/') is 0
 				if fieldType or isImage
 					docExtension = data.files[0].name.substr(data.files[0].name.lastIndexOf('.') + 1)
-					form.find("input[type=hidden].direct_upload_url").val $(data.result).find("Location").text()
+					form.find("input[type=hidden].direct_upload_url").val($(data.result).find("Location").text()).trigger('change')
 					form.removeClass("uploading")
 					if isImage
 						form.find('.attachment-uploading-view, .attachment-select-file-view').hide().end().find('.attachment-attached-view').show()
@@ -93,7 +94,7 @@ $.widget 'nmk.attachmentUploadZone', {
 					form.find('div[id="panel-' + fieldId + '"]').hide()
 					$('.attachment-uploading-view').find('.progress .bar').css width: '0%'
 				else
-					form.find("input[type=hidden].direct_upload_url").val $(data.result).find("Location").text()
+					form.find("input[type=hidden].direct_upload_url").val($(data.result).find("Location").text()).trigger('change')
 					form.removeClass("uploading").find(".attachment-uploading-view, .attachment-select-file-view").hide().end().find(".attachment-attached-view").show().find(".file-name").text data.files[0].name
 				return
 
@@ -135,6 +136,7 @@ $.widget 'nmk.attachmentUploadZone', {
 			if fieldType == 'photo'
 				form.find('div[id="view-' + fieldId + '"]').find('#image-attached').attr 'src', ''
 				form.find('div[id="view-' + fieldId + '"]').find('.download-attachment').hide()
+			form.find("input[type=hidden].direct_upload_url").val('').trigger('change')
 
 			form.find('div[id="panel-' + fieldId + '"]').show()
 			false

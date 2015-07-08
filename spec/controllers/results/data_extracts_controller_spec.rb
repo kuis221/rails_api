@@ -7,7 +7,7 @@ RSpec.describe Results::DataExtractsController, :type => :controller do
     @company_user = @user.current_company_user
   end
 
-  let(:data_extract) { create(:data_extract) }
+  let(:data_extract) { create(:data_extract_event_data) }
 
   describe "GET 'new'" do
     it 'returns http success' do
@@ -27,6 +27,50 @@ RSpec.describe Results::DataExtractsController, :type => :controller do
       expect(response).to be_success
       expect(response).to render_template('new')
       expect(response).to render_template('_form_configure')
+    end
+
+    it 'queues the job for export the report' do
+      expect do
+        xhr :get, :new, data_extract: { source: 'event_data' }, format: :csv
+      end.to change(ListExport, :count).by(1)
+      export = ListExport.last
+      expect(ListExportWorker).to have_queued(export.id)
+    end
+  end
+
+  describe "GET 'show'" do
+    it 'returns http success' do
+      xhr :get, 'show', id: data_extract.id
+      expect(response).to be_success
+      expect(response).to render_template('show')
+    end
+
+    it 'queues the job for export the report' do
+      expect do
+        xhr :get, :show, id: data_extract.id, format: :csv
+      end.to change(ListExport, :count).by(1)
+      export = ListExport.last
+      expect(ListExportWorker).to have_queued(export.id)
+    end
+  end
+
+  describe "GET 'list_export'", search: true do
+    before do
+      Kpi.create_global_kpis
+    end
+
+    let(:campaign) { create(:campaign, company: company, name: 'Test Campaign FY01') }
+
+    it 'should return an empty csv with the correct headers' do
+      data_extract.update_attributes(columns: %w(campaign_name end_date end_time))
+      expect { xhr :get, 'show', id: data_extract.id, format: :csv }.to change(ListExport, :count).by(1)
+      export = ListExport.last
+      expect(ListExportWorker).to have_queued(export.id)
+      ResqueSpec.perform_all(:export)
+
+      expect(export.reload).to have_rows([
+        ['Campaign', 'End Date', 'End Time']
+      ])
     end
   end
 
