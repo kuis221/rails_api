@@ -420,17 +420,31 @@ body.events.show{
 	}
 	table#expenses-list {
 		border: 1px solid $silver;
+    font-size: 12px;
 		margin-top: 20px;
-		td.actions {
-			width: 60px;
-		}
-		td.receipt-preview {
-			width: 30px;
-		}
+  	td{
+      padding: 4px 8px;
+      &.actions {
+			  width: 60px;
+		  }
+      &.receipt-preview{
+        position: relative;
+      }
+    }
+    th{
+      padding: 6px 8px;
+    }
+    td, th{
+      &:first-child{
+        padding-left: 16px;
+      }
+      &:nth-child(6){
+        text-align: right;
+      }
+    }
 		.button_to_edit {
 			margin-right: 10px;
 		}
-
 		.button_to {
 			display: none;
 		}
@@ -439,19 +453,25 @@ body.events.show{
 				display: inline-block;
 			}
 		}
+    .total-expenses{
+      font-size: 14px;
+      .total-ammount{
+        float: right;
+        &:before{
+          content: "TOTAL:";
+          color: $brand;
+          font-weight: bold;
+          margin-right: 6px;
+        }
+      }
+    }
 		.icon-receipt {
-			font-size: 26px;
-			position: relative;
-			top: 7px;
-			color: $brand;
-			&:before{
-				top: -4px;
-			}
-			img {
-				display: none;
-			}
+      color: $brand;
+			font-size: 19px;
+			position: absolute;
+			top: 6px;
+      right: -10px;
 		}
-
 	}
 }
 
