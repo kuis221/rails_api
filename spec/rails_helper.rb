@@ -3,8 +3,11 @@
 ENV['RAILS_ENV'] ||= 'test'
 require 'spec_helper'
 require 'simplecov'
-SimpleCov.start 'rails' do
-  add_filter 'lib/legacy'
+
+unless ENV['CI']
+  SimpleCov.start 'rails' do
+    add_filter 'lib/legacy'
+  end
 end
 
 require File.expand_path('../../config/environment', __FILE__)
