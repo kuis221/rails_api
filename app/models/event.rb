@@ -260,7 +260,7 @@ class Event < ActiveRecord::Base
   delegate :form_fields, to: :campaign, allow_nil: true
   delegate :name, :state, :city, :zipcode, :neighborhood, :street_number, :route, :latitude,
            :state_name, :longitude, :formatted_address, :name_with_location, :td_linx_code,
-           :street,
+           :street, :country,
            to: :place, prefix: true, allow_nil: true
 
   delegate :impressions, :interactions, :samples, :spent, :gender_female, :gender_male,

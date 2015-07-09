@@ -16,9 +16,7 @@ describe Results::CommentsController, type: :controller do
 
   describe "GET 'index'" do
     it 'queue the job for export the list' do
-      expect do
-        xhr :get, :index, format: :xls
-      end.to change(ListExport, :count).by(1)
+      expect { xhr :get, :index, format: :csv }.to change(ListExport, :count).by 1
       export = ListExport.last
       expect(ListExportWorker).to have_queued(export.id)
     end
@@ -29,6 +27,51 @@ describe Results::CommentsController, type: :controller do
       get 'items'
       expect(response).to be_success
       expect(response).to render_template('items')
+    end
+  end
+
+  describe "GET 'list_export'", search: true do
+    let(:campaign) { create(:campaign, company: @company, name: 'Test Campaign FY01') }
+
+    let(:headers) do
+      ["CAMPAIGN NAME", "VENUE NAME", "ADDRESS", "COUNTRY", "EVENT START DATE", "EVENT END DATE", "COMMENT"]
+    end
+
+    let(:export) { ListExport.last }
+
+    context 'no comments in the database' do
+      before { xhr(:get, 'index', format: :csv) }
+
+      it 'should return an empty CSV with the correct headers' do
+        ResqueSpec.perform_all(:export)
+        expect(export.reload).to have_rows([headers])
+      end
+    end
+
+    context 'one comment in the database' do
+      let(:rows) {
+         ["Test Campaign FY01", nil, "", nil, "2019-01-23 10:00", "2019-01-23 12:00", "MyText"]
+      }
+
+      let!(:event) {
+        create(:approved_event, company: @company, campaign: campaign,
+               start_date: '01/23/2019', end_date: '01/23/2019',
+               start_time: '10:00 am', end_time: '12:00 pm',
+               event_expenses: [
+                   build(:event_expense, category: 'Entertainment', amount: 99.99)
+               ])
+      }
+      let!(:comment) { create :comment, commentable: event }
+
+      before { event.users << @company_user }
+      before { Sunspot.commit }
+
+      before { xhr(:get, 'index', format: :csv) }
+
+      it 'should include the comment data results' do
+        ResqueSpec.perform_all(:export)
+        expect(export.reload).to have_rows([headers, rows])
+      end
     end
   end
 end
