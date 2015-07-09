@@ -209,7 +209,7 @@ describe Api::V1::UsersController, type: :controller do
       permissions = JSON.parse(response.body)
       expect(permissions).to match_array(%w(
         events events_add_contacts events_add_team_members events_contacts events_create
-        events_create_documents events_approve events_reject events_submit
+        events_create_activities events_create_documents events_approve events_reject events_submit
         events_view_unsubmitted_data events_view_submitted_data events_view_approved_data
         events_view_rejected_data events_edit_approved_data events_edit_rejected_data
         events_edit_submitted_data events_edit_unsubmitted_data events_create_expenses
