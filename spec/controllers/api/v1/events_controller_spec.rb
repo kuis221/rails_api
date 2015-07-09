@@ -112,7 +112,7 @@ describe Api::V1::EventsController, type: :controller do
       expect(response).to be_success
       expect(json.keys).to eq(%w(
         id start_date start_time end_date end_time status description phases event_status
-        have_data actions tasks_late_count tasks_due_today_count place campaign))
+        rejected_info have_data actions tasks_late_count tasks_due_today_count place campaign))
       expect(json['place']['state']).to eq('NY')
       expect(json['place'].keys).to eq(%w(
         id venue_id state name latitude longitude formatted_address
