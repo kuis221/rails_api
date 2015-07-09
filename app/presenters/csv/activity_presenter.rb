@@ -8,6 +8,10 @@ module Csv
       h.strip_tags(h.event_place_address(@model, false, ', ', ', '))
     end
 
+    def country
+      @model.place_country
+    end
+
     def place_td_linx_code
       "=\"#{@model.place_td_linx_code}\"" unless @model.place_td_linx_code.blank?
     end
