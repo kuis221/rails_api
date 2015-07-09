@@ -12,7 +12,7 @@ module DataExtractEventsBase
                    place_name: 'places.name',
                    place_state: 'places.state',
                    place_zipcode: 'places.zipcode',
-                   event_team_members: 'array_to_string(array_agg(event_team_members.names ORDER BY event_team_members.names), \', \')',
+                   event_team_members: 'array_to_string(ARRAY(SELECT unnest(event_team_members.names) ORDER BY 1), \', \')',
                    event_status: 'initcap(events.aasm_state)',
                    status: 'CASE WHEN events.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END'
   end
