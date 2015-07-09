@@ -354,7 +354,7 @@ describe FormFieldDataExporter, type: :model do
         event2.result_for_kpi(kpi2).value = '7654'
         event2.save
 
-        expect(subject.custom_fields_to_export_headers).to eq(['ANOTHER KPI', 'A CUSTOM KPI'])
+        expect(subject.custom_fields_to_export_headers).to eq(['A CUSTOM KPI', 'ANOTHER KPI'])
 
         expect(subject.custom_fields_to_export_values(event)).to eq([9876, nil])
         expect(subject.custom_fields_to_export_values(event2)).to eq([nil, 7654])
@@ -401,7 +401,7 @@ describe FormFieldDataExporter, type: :model do
         event2.result_for_kpi(kpi2).value = '4444'
         event2.save
 
-        expect(subject.custom_fields_to_export_headers).to eq(['ANOTHER KPI', 'A CUSTOM KPI'])
+        expect(subject.custom_fields_to_export_headers).to eq(['A CUSTOM KPI', 'ANOTHER KPI'])
 
         expect(subject.custom_fields_to_export_values(event)).to eq([1111, 2222])
         expect(subject.custom_fields_to_export_values(event2)).to eq([3333, 4444])
