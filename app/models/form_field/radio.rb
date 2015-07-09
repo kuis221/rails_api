@@ -46,6 +46,17 @@ class FormField::Radio < FormField
     end
   end
 
+  def format_json(result)
+    super.merge(
+      value: result ? result.value || [] : nil,
+      segments: options_for_input.map do |s|
+        { id: s[1],
+          text: s[0],
+          value: result ? result.value.to_i.eql?(s[1]) : false }
+      end
+    )
+  end
+
   def validate_result(result)
     super
     unless result.errors.get(:value) || result.value.nil? || result.value == ''

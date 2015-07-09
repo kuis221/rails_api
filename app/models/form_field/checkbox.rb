@@ -40,12 +40,22 @@ class FormField::Checkbox < FormField
   end
 
   def format_csv(result)
-    unless result.value.nil? || result.value.empty?
-      selected = result.value.map(&:to_i)
-      options_for_input.select { |r| selected.include?(r[1].to_i) }.map do |v|
-        v[0]
-      end.join(',')
-    end
+    return if result.value.nil? || result.value.empty?
+    selected = result.value.map(&:to_i)
+    options_for_input.select { |r| selected.include?(r[1].to_i) }.map do |v|
+      v[0]
+    end.join(',')
+  end
+
+  def format_json(result)
+    super.merge!(
+      value: result ? result.value || [] : nil,
+      segments: options_for_input.map do |s|
+                  { id: s[1],
+                    text: s[0],
+                    value: result ? result.value.include?(s[1]) : false }
+                end
+    )
   end
 
   def is_hashed_value?

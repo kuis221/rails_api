@@ -27,8 +27,13 @@ FactoryGirl.define do
     company nil
     active false
     sharing 'MyString'
-    name 'MyString'
+    sequence(:name) { |n| "Data Extract #{n}" }
     description 'MyText'
     columns []
+
+    factory :data_extract_event_data, class: DataExtract::EventData do
+      sequence(:name) { |n| "Event Data Extract #{n}" }
+      type 'DataExtract::EventData'
+    end
   end
 end

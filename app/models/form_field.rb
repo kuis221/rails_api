@@ -122,6 +122,21 @@ class FormField < ActiveRecord::Base
     result.value
   end
 
+  def format_json(result)
+    value = result ? string_to_value(result.value) : nil
+    base = {
+      field_id: id,
+      name: name,
+      type: type,
+      value: value,
+      ordering: ordering,
+      required: required
+    }
+    base[:settings] = settings if settings.present?
+    base[:kpi_id] = kpi_id if kpi.present?
+    base
+  end
+
   def format_chart_data(result)
     return unless is_optionable?
     if result.present?
@@ -153,7 +168,7 @@ class FormField < ActiveRecord::Base
   end
 
   def trendeable?
-    TRENDING_FIELDS_TYPES.include?(self.type)
+    TRENDING_FIELDS_TYPES.include?(type)
   end
 
   def type_name

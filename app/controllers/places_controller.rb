@@ -23,9 +23,11 @@ class PlacesController < FilteredController
 
   def search
     location = params[:location] || location_from_request
-    results = Place.combined_search company_id: current_company.id,
-      q: params[:term], location: params[:location], search_address: true,
-      current_company_user: current_company_user
+    ignore_permissions = params[:check_valid] == 'false'
+    options = { company_id: current_company.id,
+                q: params[:term], location: location, search_address: true }
+    options.merge!(current_company_user: current_company_user) unless ignore_permissions
+    results = Place.combined_search options
     render json: results
   end
 

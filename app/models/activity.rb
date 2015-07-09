@@ -193,11 +193,11 @@ class Activity < ActiveRecord::Base
         end
 
         any_of do
-           all_of do
-             with :activitable_type, 'Event'
-             with :events_active, true
-           end
-           with :activitable_type, 'Venue'
+          all_of do
+            with :activitable_type, 'Event'
+            with :events_active, true
+          end
+          with :activitable_type, 'Venue'
         end
 
         order_by(params[:sorting] || :activity_date, params[:sorting_dir] || :asc)

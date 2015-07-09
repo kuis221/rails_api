@@ -1438,6 +1438,37 @@ TimeField = FormField.extend {
 		]
 }
 
+PlaceField = FormField.extend {
+	type: 'Place',
+
+	init: (form, attributes) ->
+		@form = form
+		@attributes = $.extend({
+			name: 'Place',
+			id: null,
+			required: false,
+			type: 'FormField::Place',
+			settings: {}
+		}, attributes)
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		[
+			$('<label class="control-label">').text(@attributes.name),
+			$('<div class="controls">').append($('<input type="text" readonly="readonly">'))
+		]
+
+	attributesForm: () ->
+		[
+			$('<h4>').text('Place'),
+			@labelField(),
+			@requiredField()
+		]
+}
+
 Module =  FormField.extend {
 	getSaveAttributes: () ->
 		{field_type: 'module', name: @fieldType().toLowerCase(), settings: @attributes.settings }

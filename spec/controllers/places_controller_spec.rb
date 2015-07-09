@@ -1,15 +1,14 @@
 require 'rails_helper'
 
 describe PlacesController, type: :controller do
-  before(:each) do
-    @user = sign_in_as_user
-    @company = @user.companies.first
-  end
-
-  let(:campaign) { create(:campaign, company: @company) }
-  let(:company_user) { create(:company_user, company: @company) }
-  let(:area) { create(:area, company: @company) }
+  let(:user) { sign_in_as_user }
+  let(:company) { user.companies.first }
+  let(:campaign) { create(:campaign, company: company) }
+  let(:company_user) { create(:company_user, company: company) }
+  let(:area) { create(:area, company: company) }
   let(:place) { create(:place) }
+
+  before { user }
 
   describe "POST 'create'" do
     it 'returns http success' do
@@ -21,7 +20,9 @@ describe PlacesController, type: :controller do
     it 'should create a new place that is no found in google places' do
       expect_any_instance_of(Place).to receive(:fetch_place_data).and_return(true)
       expect_any_instance_of(GooglePlaces::Client).to receive(:spots).and_return([])
-      expect_any_instance_of(described_class).to receive(:open).and_return(double(read: ActiveSupport::JSON.encode('results' => [{ 'geometry' => { 'location' => { 'lat' => '1.2322', lng: '-3.23455' } } }])))
+      expect_any_instance_of(described_class).to receive(:open)
+        .and_return(double(read: ActiveSupport::JSON.encode('results' => [
+          { 'geometry' => { 'location' => { 'lat' => '1.2322', lng: '-3.23455' } } }])))
       expect do
         xhr :post, 'create', area_id: area.to_param, add_new_place: true, place: {
           name: "Guille's place", street_number: '123 st', route: 'xyz 321',
@@ -50,8 +51,11 @@ describe PlacesController, type: :controller do
           name: 'APIs place name', lat: '1.111', lng: '2.222', formatted_address: 'api fmt address', types: ['bar'],
           address_components: nil
         ))
-        expect_any_instance_of(GooglePlaces::Client).to receive(:spots).and_return([double(place_id: '123', name: "Guille's place", reference: 'XYZ')])
-        expect_any_instance_of(described_class).to receive(:open).and_return(double(read: ActiveSupport::JSON.encode('results' => [{ 'geometry' => { 'location' => { 'lat' => '1.2322', lng: '-3.23455' } } }])))
+        expect_any_instance_of(GooglePlaces::Client).to receive(:spots)
+          .and_return([double(place_id: '123', name: "Guille's place", reference: 'XYZ')])
+        expect_any_instance_of(described_class).to receive(:open)
+          .and_return(double(read: ActiveSupport::JSON.encode('results' => [
+            { 'geometry' => { 'location' => { 'lat' => '1.2322', lng: '-3.23455' } } }])))
         expect do
           xhr :post, 'create', area_id: area.id, add_new_place: true, place: {
             name: "Guille's place", street_number: '123 st',
@@ -88,8 +92,7 @@ describe PlacesController, type: :controller do
             { 'types' => ['route'], 'short_name' => 'xyz 321', 'long_name' => 'xyz 321' }
           ]
         ))
-        # GooglePlaces::Client.any_instance.should_receive(:spots).and_return([double(id: '123', reference: 'XYZ')])
-        # PlacesController.any_instance.should_receive(:open).and_return(double(read: ActiveSupport::JSON.encode({'results' => [{'geometry' => { 'location' => {'lat' => '1.2322', lng: '-3.23455'}}}]})))
+
         expect do
           xhr :post, 'create', campaign_id: campaign.id, place: { reference: 'XXXXXXXXXXX||YYYYYYYYYY' }, format: :js
         end.to change(Place, :count).by(1)
@@ -165,7 +168,9 @@ describe PlacesController, type: :controller do
 
     it 'validates the address' do
       expect do
-        xhr :post, 'create', area_id: area.to_param, add_new_place: true, place: { name: "Guille's place", street_number: '123 st', route: 'QWERTY 321', city: 'YYYYYYYYYY', state: 'XXXXXXXXXXX', zipcode: '12345', country: 'CR' }, format: :js
+        xhr :post, 'create', area_id: area.to_param, add_new_place: true, place: {
+          name: "Guille's place", street_number: '123 st', route: 'QWERTY 321',
+          city: 'YYYYYYYYYY', state: 'XXXXXXXXXXX', zipcode: '12345', country: 'CR' }, format: :js
       end.to_not change(Place, :count)
       expect(assigns(:place).errors[:base]).to include("The entered address doesn't seems to be valid")
       expect(response).to render_template('_new_place_form')
@@ -173,7 +178,8 @@ describe PlacesController, type: :controller do
 
     it 'should render the form for new place if the place was not selected from the autocomplete for an area' do
       expect do
-        xhr :post, 'create', area_id: area.to_param, place: { reference: '' }, reference_display_name: 'blah blah blah', format: :js
+        xhr :post, 'create', area_id: area.to_param, place: { reference: '' },
+                             reference_display_name: 'blah blah blah', format: :js
       end.to_not change(Place, :count)
       expect(response).to be_success
       expect(response).to render_template('places/_new_place_form')
@@ -182,7 +188,8 @@ describe PlacesController, type: :controller do
 
     it 'should render the form for new place if the place was not selected from the autocomplete for a campaign' do
       expect do
-        xhr :post, 'create', campaign_id: campaign.to_param, place: { reference: '' }, reference_display_name: 'blah blah blah', format: :js
+        xhr :post, 'create', campaign_id: campaign.to_param, place: { reference: '' },
+                             reference_display_name: 'blah blah blah', format: :js
       end.to_not change(Place, :count)
       expect(response).to be_success
       expect(response).to render_template('places/_new_place_form')
@@ -191,7 +198,8 @@ describe PlacesController, type: :controller do
 
     it 'should render the form for new place if the place was not selected from the autocomplete for a company user' do
       expect do
-        xhr :post, 'create', company_user_id: company_user.to_param, place: { reference: '' }, reference_display_name: 'blah blah blah', format: :js
+        xhr :post, 'create', company_user_id: company_user.to_param, place: { reference: '' },
+                             reference_display_name: 'blah blah blah', format: :js
       end.to_not change(Place, :count)
       expect(response).to be_success
       expect(response).to render_template('places/_new_place_form')
@@ -252,5 +260,4 @@ describe PlacesController, type: :controller do
       end.to_not change(Area, :count)
     end
   end
-
 end

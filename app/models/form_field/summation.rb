@@ -46,15 +46,25 @@ class FormField::Summation < FormField
   end
 
   def format_html(result)
-    if result.value
-      total = 0
-      (options.map do |option|
-        total += (result.value[option.id.to_s].to_i || 0)
-        "<span>#{result.value[option.id.to_s] || 0}</span> #{option.name}"
-      end.join('<br /> ') +
-      "<br/><span>#{total}</span> TOTAL"
-      ).html_safe
-    end
+    return unless result.value
+    total = 0
+    (options.map do |option|
+      total += (result.value[option.id.to_s].to_i || 0)
+      "<span>#{result.value[option.id.to_s] || 0}</span> #{option.name}"
+    end.join('<br /> ') +
+    "<br/><span>#{total}</span> TOTAL"
+    ).html_safe
+  end
+
+  def format_json(result)
+    super.merge(
+      value: result ? result.value.map { |s| s[1].to_f }.reduce(0, :+) : nil,
+      segments: options_for_input(result).map do |s|
+        { id: s[1],
+          text: s[0],
+          value: result ? result.value[s[1].to_s] : nil }
+      end
+    )
   end
 
   def min_options_allowed

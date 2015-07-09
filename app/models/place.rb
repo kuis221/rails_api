@@ -502,9 +502,11 @@ class Place < ActiveRecord::Base
     self.location = locations.last
     self.is_location = (
       types.present? &&
-      (types & %w(
+      (((types & %w(
         sublocality political locality administrative_area_level_1 administrative_area_level_2
-        administrative_area_level_3 country)).count > 0)
+        administrative_area_level_3 country)).count > 0) ||
+       (types.include?('natural_feature') && city.present?))
+    )
     true
   end
 

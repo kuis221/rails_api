@@ -340,12 +340,12 @@ describe Campaign, type: :model do
   describe 'place_allowed_for_event?' do
     let(:campaign) { create(:campaign) }
 
-    it "should return true if the campaing doesn't have areas or places assigned" do
+    it "returns true if the campaing doesn't have areas or places assigned" do
       place = create(:place)
       expect(campaign.place_allowed_for_event?(place)).to be_truthy
     end
 
-    it 'should return true if the place have been assigned to the campaign directly' do
+    it 'returns true if the place have been assigned to the campaign directly' do
       place = create(:place)
       other_place = create(:place)
       campaign.places << other_place
@@ -357,7 +357,7 @@ describe Campaign, type: :model do
       expect(campaign.reload.place_allowed_for_event?(place)).to be_truthy
     end
 
-    it 'should return true if the place is part of any of the campaigns' do
+    it 'returns true if the place is part of any of the campaigns' do
       area = create(:area)
       place = create(:place, country: 'CR')
       other_place = create(:place, country: 'US')
@@ -371,7 +371,7 @@ describe Campaign, type: :model do
       expect(campaign.reload.place_allowed_for_event?(place)).to be_truthy
     end
 
-    it 'should return true if the place is part of any city of an area associated to the campaign' do
+    it 'returns true if the place is part of any city of an area associated to the campaign' do
       area =  create(:area)
       city =  create(:place, types: ['locality'], city: 'San Francisco', state: 'California', country: 'US')
       place = create(:place, types: ['establishment'], city: 'San Francisco', state: 'California', country: 'US')
@@ -384,11 +384,11 @@ describe Campaign, type: :model do
       # Assign San Francisco to the area
       area.places << city
 
-      # Because the campaing cache the locations, load a new object with the same campaign ID
+      # Because the campaing caches the locations, load a new object with the same campaign ID
       expect(Campaign.find(campaign.id).place_allowed_for_event?(place)).to be_truthy
     end
 
-    it 'should work with places that are not yet saved' do
+    it 'works with places that are not yet saved' do
       area =  create(:area)
       city =  create(:place, types: ['locality'], city: 'San Francisco', state: 'California', country: 'US')
       place = build(:place, types: ['establishment'], city: 'San Francisco', state: 'California', country: 'US')
@@ -397,8 +397,19 @@ describe Campaign, type: :model do
       # Assign San Francisco to the area
       area.places << city
 
-      # Because the campaing cache the locations, load a new object with the same campaign ID
       expect(campaign.place_allowed_for_event?(place)).to be_truthy
+    end
+
+    it 'recognizes natural features as locations' do
+      area = create(:area, company: company)
+      natural_feature = create(:natural_feature, name: 'Little Torch Key', country: 'US',
+                                                 state:  'Florida', city: 'Little Torch Key')
+      place = create(:place, city: 'Little Torch Key', state: 'Florida')
+      campaign.areas << area
+      expect(campaign.place_allowed_for_event?(place)).to be_falsey
+      area.places << natural_feature
+      # Because the campaing caches the locations, load a new object with the same campaign ID
+      expect(Campaign.find(campaign.id).place_allowed_for_event?(place)).to be_truthy
     end
   end
 
