@@ -744,7 +744,31 @@ class Event < ActiveRecord::Base
     localize_date(:end_at)
   end
 
+  def custom_created_at
+    first_event_expense.present? ? first_event_expense.created_at : created_at
+  end
+
+  def custom_created_by
+    first_event_expense.present? ? first_event_expense.created_by : created_by
+  end
+
+  def custom_updated_at
+    last_event_expense.present? ? last_event_expense.updated_at : updated_at
+  end
+
+  def custom_updated_by
+    last_event_expense.present? ? last_event_expense.updated_by : updated_by
+  end
+
   private
+
+  def first_event_expense
+    @first_event_expense ||= event_expenses.order_by_id_asc.first
+  end
+
+  def last_event_expense
+    @last_event_expense ||= event_expenses.order_by_id_asc.last
+  end
 
   def valid_campaign?
     return unless campaign_id.present? && (new_record? || campaign_id_changed?)
