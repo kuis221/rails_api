@@ -48,18 +48,18 @@ describe Results::ExpensesController, type: :controller do
     end
 
     it 'should return an empty xls with the correct headers' do
-      create(:approved_event, campaign: campaign, created_at: created_at, updated_at: updated_at,
+      create(:approved_event, campaign: campaign,
               start_date: '08/21/2013', end_date: '08/21/2013',
               start_time: '8:00pm', end_time: '11:00pm', place: create(:place, name: 'Place 1'),
               submitted_at: submitted_at, approved_at: approved_at,
               event_expenses: [
-                build(:event_expense, category: 'Entertainment', amount: 10)])
+                build(:event_expense, category: 'Entertainment', amount: 10, created_at: created_at, updated_at: updated_at)])
 
-      create(:approved_event, campaign: campaign, created_at: created_at, updated_at: updated_at,
+      create(:approved_event, campaign: campaign,
               start_date: '08/25/2013', end_date: '08/25/2013',
               start_time: '9:00am', end_time: '10:00am', place: create(:place, name: 'Place 2'),
               event_expenses: [
-                build(:event_expense, category: 'Uncategorized', amount: 20)])
+                build(:event_expense, category: 'Uncategorized', amount: 20, created_at: created_at, updated_at: updated_at)])
 
       Sunspot.commit
       expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
