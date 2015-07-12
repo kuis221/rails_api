@@ -38,22 +38,6 @@ class ApplicationController < ActionController::Base
     current_company.campaigns.order('name')
   end
 
-  def current_company
-    @current_company ||= begin
-      current_company_id = session[:current_company_id]
-      company = nil
-      if user_signed_in?
-        if current_company_id
-          company = current_user.companies.find_by(id: current_company_id)
-        else
-          company = current_user.current_company
-        end
-        company ||= current_user.companies.first
-      end
-      company
-    end
-  end
-
   # Overwriting the sign_out redirect path method
   def after_sign_out_path_for(_)
     new_user_session_path
