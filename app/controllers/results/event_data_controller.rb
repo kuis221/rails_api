@@ -34,6 +34,7 @@ class Results::EventDataController < FilteredController
       totals['promo_hours'] = collection_search.stat_response['stats_fields']['promo_hours_es']['sum'] rescue 0
       totals['impressions'] = collection_search.stat_response['stats_fields']['impressions_es']['sum'] rescue 0
       totals['interactions'] = collection_search.stat_response['stats_fields']['interactions_es']['sum'] rescue 0
+      totals['photos'] = collection_search.stat_response['stats_fields']['photos_es']['sum'] rescue 0
       totals['samples'] = collection_search.stat_response['stats_fields']['samples_es']['sum'] rescue 0
       totals['spent'] = collection_search.stat_response['stats_fields']['spent_es']['sum'] rescue 0
       totals['gender_female'] = collection_search.stat_response['stats_fields']['gender_female_es']['mean'] rescue 0
