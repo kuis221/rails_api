@@ -34,7 +34,8 @@ describe Results::CommentsController, type: :controller do
     let(:campaign) { create(:campaign, company: @company, name: 'Test Campaign FY01') }
 
     let(:headers) do
-      ["CAMPAIGN NAME", "VENUE NAME", "ADDRESS", "COUNTRY", "EVENT START DATE", "EVENT END DATE", "COMMENT"]
+      ["CAMPAIGN NAME", "VENUE NAME", "ADDRESS", "COUNTRY", "EVENT START DATE", "EVENT END DATE",
+       'CREATED AT', 'CREATED BY', 'LAST MODIFIED', 'MODIFIED BY', 'COMMENT']
     end
 
     let(:export) { ListExport.last }
@@ -50,15 +51,16 @@ describe Results::CommentsController, type: :controller do
 
     context 'one comment in the database' do
       let(:rows) {
-         ["Test Campaign FY01", nil, "", nil, "2019-01-23 10:00", "2019-01-23 12:00", "MyText"]
+         ["Test Campaign FY01", nil, "", nil, "2019-01-23 10:00", "2019-01-23 12:00",
+          "2015-07-13 01:03", "Test User", "2015-07-13 01:03", "Test User", "MyText"]
       }
 
       let!(:event) {
         create(:approved_event, company: @company, campaign: campaign,
-               start_date: '01/23/2019', end_date: '01/23/2019',
-               start_time: '10:00 am', end_time: '12:00 pm',
+               start_date: '01/23/2019', end_date: '01/23/2019', start_time: '10:00 am', end_time: '12:00 pm',
                event_expenses: [
-                   build(:event_expense, category: 'Entertainment', amount: 99.99)
+                   build(:event_expense, category: 'Entertainment', amount: 99.99,
+                         created_at: DateTime.parse('2015-07-13 01:03 -07:00'), updated_at: DateTime.parse('2015-07-13 01:03 -07:00'))
                ])
       }
       let!(:comment) { create :comment, commentable: event }
