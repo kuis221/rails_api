@@ -495,7 +495,7 @@ ActiveRecord::Schema.define(version: 20150713113309) do
     t.decimal  "spent",                     precision: 10, scale: 2, default: 0.0
     t.datetime "created_at",                                                       null: false
     t.datetime "updated_at",                                                       null: false
-    t.integer  "photos",                                             default: 0
+    t.integer  "photos_count",                                       default: 0
   end
 
   add_index "event_data", ["event_id"], :name => "index_event_data_on_event_id"

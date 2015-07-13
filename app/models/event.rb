@@ -334,7 +334,9 @@ class Event < ActiveRecord::Base
     double :promo_hours, stored: true
     double :impressions, stored: true
     double :interactions, stored: true
-    double :photos, stored: true
+    double :photos_count do
+      photos.count
+    end
     double :samples, stored: true
     double :spent, stored: true
     double :gender_female, stored: true
@@ -608,7 +610,7 @@ class Event < ActiveRecord::Base
             stat(:promo_hours, type: 'sum')
             stat(:impressions, type: 'sum')
             stat(:interactions, type: 'sum')
-            stat(:photos, type: 'sum')
+            stat(:photos_count, type: 'sum')
             stat(:samples, type: 'sum')
             stat(:spent, type: 'sum')
             stat(:gender_female, type: 'mean')
