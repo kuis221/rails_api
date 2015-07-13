@@ -39,6 +39,7 @@ describe EventData, type: :model do
       event.event_data.update_data
       expect(event.event_data.impressions).to eq(0)
       expect(event.event_data.interactions).to eq(0)
+      expect(event.event_data.photos).to eq(0)
       expect(event.event_data.samples).to eq(0)
 
       expect(event.event_data.spent).to eq(0)
@@ -88,10 +89,14 @@ describe EventData, type: :model do
 
       event.event_expenses.create(category: 'test expense', amount: 345, expense_date: '01/01/2014')
 
+      create :attached_asset, asset_type: 'photo', attachable: event
+      create :attached_asset, asset_type: 'photo', attachable: event
+
       # Call the method manually
       event.event_data.update_data
       expect(event.event_data.impressions).to eq(101)
       expect(event.event_data.interactions).to eq(102)
+      expect(event.event_data.photos).to eq(2)
       expect(event.event_data.samples).to eq(103)
 
       expect(event.event_data.spent).to eq(345)

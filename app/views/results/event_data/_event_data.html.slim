@@ -16,6 +16,9 @@
         span.event-data-column.interactions-box
           - if event.event_data.interactions.present?
             = number_with_delimiter(event.event_data.interactions)
+        span.event-data-column.photos-box
+          - if event.event_data.photos.present?
+            = number_with_delimiter(event.event_data.photos)
         span.event-data-column.samples-box
           - if event.event_data.samples.present?
             = number_with_delimiter(event.event_data.samples)
