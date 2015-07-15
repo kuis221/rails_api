@@ -12,8 +12,9 @@ class Results::CommentsController < FilteredController
               'CREATED AT', 'CREATED BY', 'LAST MODIFIED', 'MODIFIED BY', 'COMMENT']
       each_collection_item do |event|
         event.comments.each do |comment|
+          comment = Csv::CommentPresenter.new(comment, nil)
           csv << [event.campaign_name, event.place_name, event.place_address, event.place_country, event.start_date,
-                  event.end_date, event.created_at, event.created_by, event.last_modified, event.modified_by, comment.content]
+                  event.end_date, comment.created_at, comment.created_by, comment.last_modified, comment.modified_by, comment.content]
         end
       end
     end

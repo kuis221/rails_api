@@ -50,20 +50,19 @@ describe Results::CommentsController, type: :controller do
     end
 
     context 'one comment in the database' do
+      let(:created_at) { DateTime.parse('2015-07-13 01:03 -07:00') }
+      let(:updated_at) { DateTime.parse('2015-07-13 02:03 -07:00') }
+
       let(:rows) {
          ["Test Campaign FY01", nil, "", nil, "2019-01-23 10:00", "2019-01-23 12:00",
-          "2015-07-13 01:03", "Test User", "2015-07-13 01:03", "Test User", "MyText"]
+          "2015-07-13 01:03", "Test User", "2015-07-13 02:03", "Test User", "MyText"]
       }
 
       let!(:event) {
         create(:approved_event, company: @company, campaign: campaign,
-               start_date: '01/23/2019', end_date: '01/23/2019', start_time: '10:00 am', end_time: '12:00 pm',
-               event_expenses: [
-                   build(:event_expense, category: 'Entertainment', amount: 99.99,
-                         created_at: DateTime.parse('2015-07-13 01:03 -07:00'), updated_at: DateTime.parse('2015-07-13 01:03 -07:00'))
-               ])
+               start_date: '01/23/2019', end_date: '01/23/2019', start_time: '10:00 am', end_time: '12:00 pm')
       }
-      let!(:comment) { create :comment, commentable: event }
+      let!(:comment) { create :comment, commentable: event, created_at: created_at, updated_at: updated_at }
 
       before { event.users << @company_user }
       before { Sunspot.commit }
