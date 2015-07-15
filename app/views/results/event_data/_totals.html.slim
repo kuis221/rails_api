@@ -16,9 +16,9 @@
     .big-number
       = number_with_precision(data_totals['interactions'], precision: 0, separator: '.', delimiter: ',')
     = 'INTERACTIONS'
-  span.event-data-column.photos-count-box
+  span.event-data-column.active-photos-count-box
     .big-number
-      = number_with_precision(data_totals['photos_count'], precision: 0, separator: '.', delimiter: ',')
+      = number_with_precision(data_totals['active_photos_count'], precision: 0, separator: '.', delimiter: ',')
     = 'PHOTOS'
   span.event-data-column.samples-box
     .big-number

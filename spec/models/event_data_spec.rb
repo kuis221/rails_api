@@ -39,7 +39,6 @@ describe EventData, type: :model do
       event.event_data.update_data
       expect(event.event_data.impressions).to eq(0)
       expect(event.event_data.interactions).to eq(0)
-      expect(event.event_data.photos_count).to eq(0)
       expect(event.event_data.samples).to eq(0)
 
       expect(event.event_data.spent).to eq(0)
@@ -96,7 +95,6 @@ describe EventData, type: :model do
       event.event_data.update_data
       expect(event.event_data.impressions).to eq(101)
       expect(event.event_data.interactions).to eq(102)
-      expect(event.event_data.photos_count).to eq(2)
       expect(event.event_data.samples).to eq(103)
 
       expect(event.event_data.spent).to eq(345)
