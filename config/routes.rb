@@ -260,6 +260,9 @@ Brandscopic::Application.routes.draw do
     get :staff_report, to: 'staff_report#index'
     post :staff_report, to: 'staff_report#report'
 
+    get :campaign_summary_report, to: 'campaign_summary_report#index'
+    post :campaign_summary_report, to: 'campaign_summary_report#report'
+
     get '/', to: 'analysis#index'
   end
 
