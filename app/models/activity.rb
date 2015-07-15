@@ -17,6 +17,7 @@
 #
 
 class Activity < ActiveRecord::Base
+  include Fieldable
   track_who_does_it
 
   belongs_to :activity_type
@@ -30,8 +31,6 @@ class Activity < ActiveRecord::Base
 
   has_paper_trail
 
-  has_many :results, class_name: 'FormFieldResult', inverse_of: :resultable, as: :resultable
-
   validates :activity_type_id, numericality: true, presence: true,
     inclusion: { in: :valid_activity_type_ids }
 
@@ -42,13 +41,6 @@ class Activity < ActiveRecord::Base
   validates :activity_date, presence: true
 
   scope :active, -> { where(active: true) }
-
-  scope :with_results_for, ->(fields) {
-    select('DISTINCT activities.*').
-    joins(:results).
-    where(form_field_results: { form_field_id: fields }).
-    where('form_field_results.value is not NULL AND form_field_results.value !=\'\'')
-  }
 
   scope :accessible_by_user, ->(user) { in_company(user.company) }
 
@@ -61,8 +53,6 @@ class Activity < ActiveRecord::Base
   delegate :full_name, to: :company_user, allow_nil: true, prefix: true
   delegate :name, :description, to: :activity_type, allow_nil: true, prefix: true
   delegate :form_fields, to: :activity_type
-
-  accepts_nested_attributes_for :results, allow_destroy: true
 
   before_validation :delegate_campaign_id_from_event
 
@@ -97,22 +87,6 @@ class Activity < ActiveRecord::Base
 
   def deactivate!
     update_attribute :active, false
-  end
-
-  def form_field_results
-    activity_type.form_fields.map do |field|
-      result = results.find { |r| r.form_field_id == field.id } || results.build(form_field_id: field.id)
-      result.form_field = field
-      result
-    end
-  end
-
-  def results_for(fields)
-    fields.map do |field|
-      result = results.select { |r| r.form_field_id == field.id }.first || results.build(form_field_id: field.id)
-      result.form_field = field
-      result
-    end
   end
 
   def photos
