@@ -25,6 +25,11 @@
           = permission_checkbox(f, :access, Symbol, subject: 'trends_report')
 
       .span12
+        .span2 Campaign Summary
+        .span1
+          = permission_checkbox(f, :campaign_summary_report, Campaign)
+
+      .span12
         .span2.title.separate
           h5 Goals vs. Actual
 
