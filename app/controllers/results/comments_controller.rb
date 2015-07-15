@@ -8,10 +8,13 @@ class Results::CommentsController < FilteredController
 
   def collection_to_csv
     CSV.generate do |csv|
-      csv << ['CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'EVENT START DATE', 'EVENT END DATE', 'COMMENT']
+      csv << ['CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'EVENT START DATE', 'EVENT END DATE',
+              'CREATED AT', 'CREATED BY', 'LAST MODIFIED', 'MODIFIED BY', 'COMMENT']
       each_collection_item do |event|
         event.comments.each do |comment|
-          csv << [event.campaign_name, event.place_name, event.place_address, event.place_country, event.start_date, event.end_date, comment.content]
+          comment = Csv::CommentPresenter.new(comment, nil)
+          csv << [event.campaign_name, event.place_name, event.place_address, event.place_country, event.start_date,
+                  event.end_date, comment.created_at, comment.created_by, comment.last_modified, comment.modified_by, comment.content]
         end
       end
     end
