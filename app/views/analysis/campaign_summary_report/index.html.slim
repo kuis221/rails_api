@@ -1,0 +1,41 @@
+tab-content.details-bar
+  .info-bar
+    .back-arrow
+      a.close-details href="#{return_path || collection_path}" title="Close Event"
+        i.icon-angle-left
+    .details-bar-status
+      nav
+        ul.switch-list.unstyled.view-indicator
+          li
+            a href="#{return_path || collection_path}"
+              span You are viewing Campaign overview page. Click to close.
+  #list-view.tab-pane.active
+    .details_box.tool-box.first
+      h5.results-title CAMPAIGN OVERVIEW
+      #list-tools
+        = simple_form_for :report, url: analysis_campaign_summary_report_path, remote: true do |f|
+          = f.input :campaign_id, collection: campaigns_list_for_dropdown, selected: params[:campaign_id], include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Select a campaign" } }
+
+        .export-xls.pull-right
+          .dropdown.btn-download
+            a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+              i.icon-download
+              i.icon-arrow-down-small
+            ul#download-status-btn.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+              li
+                a href="#" role="menuitem" data-url="#{analysis_event_status_path(format: :xls)}"
+                  | Download as XLS
+              li
+                a href="#" role="menuitem" data-url="#{analysis_event_status_path(format: :pdf)}"
+                  | Download as PDF
+
+    #report-container
+      .details_box
+        .content
+          .blank-state
+            .blank-state-arrow
+              img src="#{asset_path('blank-states-arrow.png')}"
+            h5.text-center = I18n.translate(:'blank_states.campaign_summary.empty.line1')
+            p.text-center = I18n.translate(:'blank_states.campaign_summary.empty.line2')
+            .blank-state-icon
+              img src="#{asset_path('blank-gva.png')}"
