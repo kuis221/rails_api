@@ -24,6 +24,7 @@
 #  rejected_at    :datetime
 #  submitted_at   :datetime
 #  approved_at    :datetime
+#  active_photos_count   :integer          default(0)
 #
 
 class Event < ActiveRecord::Base
@@ -334,9 +335,7 @@ class Event < ActiveRecord::Base
     double :promo_hours, stored: true
     double :impressions, stored: true
     double :interactions, stored: true
-    double :photos_count do
-      photos.count
-    end
+    double :active_photos_count, stored: true
     double :samples, stored: true
     double :spent, stored: true
     double :gender_female, stored: true
@@ -610,7 +609,7 @@ class Event < ActiveRecord::Base
             stat(:promo_hours, type: 'sum')
             stat(:impressions, type: 'sum')
             stat(:interactions, type: 'sum')
-            stat(:photos_count, type: 'sum')
+            stat(:active_photos_count, type: 'sum')
             stat(:samples, type: 'sum')
             stat(:spent, type: 'sum')
             stat(:gender_female, type: 'mean')
@@ -762,6 +761,10 @@ class Event < ActiveRecord::Base
 
   def custom_updated_by
     last_event_expense.present? ? last_event_expense.updated_by : updated_by
+  end
+
+  def update_active_photos_count
+    update_column :active_photos_count, photos.active.count
   end
 
   private

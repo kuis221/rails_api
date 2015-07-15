@@ -71,6 +71,8 @@ class AttachedAsset < ActiveRecord::Base
   before_validation :set_upload_attributes
 
   after_commit :queue_processing
+  after_save    :update_active_photos_count, if: -> { self.attachable.is_a?(Event) && self.photo? }
+  after_destroy :update_active_photos_count, if: -> { self.attachable.is_a?(Event) && self.photo? }
   after_update :rename_existing_file, if: :processed?
   before_post_process :post_process_required?
 
@@ -81,9 +83,9 @@ class AttachedAsset < ActiveRecord::Base
                                 format: { with: DIRECT_UPLOAD_URL_FORMAT }
   validates :direct_upload_url, presence: true, unless: :file_file_name
 
-  validate :max_event_photos, on: :create, if: proc { |a| a.attachable.is_a?(Event) && a.asset_type == 'photo'}
+  validate :max_event_photos, on: :create, if: proc { |a| a.attachable.is_a?(Event) && a.photo? }
 
-  delegate :company_id, to: :attachable
+  delegate :company_id, :update_active_photos_count, to: :attachable
 
   searchable if: proc { |asset| asset.attachable_type == 'Event' }  do
     string :status
@@ -225,6 +227,10 @@ class AttachedAsset < ActiveRecord::Base
     direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
     file.s3_bucket.objects[direct_upload_url_data[:path]].delete if save
     processed!
+  end
+
+  def photo?
+    asset_type == 'photo'
   end
 
   protected

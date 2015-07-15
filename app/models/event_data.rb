@@ -39,7 +39,7 @@ class EventData < ActiveRecord::Base
   def update_data
     e = Event.find(event_id)
     self.spent = e.event_expenses.sum(:amount)
-    self.photos_count = e.photos.count
+    self.photos_count = e.active_photos_count
 
     return if Kpi.impressions.nil?
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150713113309) do
+ActiveRecord::Schema.define(version: 20150715111029) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -527,11 +527,11 @@ ActiveRecord::Schema.define(version: 20150713113309) do
     t.string   "aasm_state"
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
-    t.datetime "created_at",                                            null: false
-    t.datetime "updated_at",                                            null: false
-    t.boolean  "active",                                 default: true
+    t.datetime "created_at",                                                 null: false
+    t.datetime "updated_at",                                                 null: false
+    t.boolean  "active",                                      default: true
     t.integer  "place_id"
-    t.decimal  "promo_hours",    precision: 6, scale: 2, default: 0.0
+    t.decimal  "promo_hours",         precision: 6, scale: 2, default: 0.0
     t.text     "reject_reason"
     t.string   "timezone"
     t.datetime "local_start_at"
@@ -541,6 +541,7 @@ ActiveRecord::Schema.define(version: 20150713113309) do
     t.datetime "rejected_at"
     t.datetime "submitted_at"
     t.datetime "approved_at"
+    t.integer  "active_photos_count",                         default: 0
   end
 
   add_index "events", ["aasm_state"], :name => "index_events_on_aasm_state"
