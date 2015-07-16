@@ -1552,14 +1552,14 @@ describe Event, type: :model do
     end
   end
 
-  describe '#custom_created_at' do
+  describe '#first_event_expense_created_at' do
     let!(:event) { create :approved_event, created_at: Time.parse("01/01/2010 08:00") }
 
     context 'when event has no expense' do
       before { expect(event.event_expenses.count).to eq 0 }
 
       it 'should return event created_at time' do
-        expect(event.custom_created_at).to eql(event.created_at)
+        expect(event.first_event_expense_created_at).to eql(event.created_at)
       end
     end
 
@@ -1570,12 +1570,12 @@ describe Event, type: :model do
       before { expect(event.event_expenses.count).to eq 2 }
 
       it 'should return last event expense created_at time' do
-        expect(event.custom_created_at).to eql(event_expense1.created_at)
+        expect(event.first_event_expense_created_at).to eql(event_expense1.created_at)
       end
     end
   end
 
-  describe '#custom_created_by' do
+  describe '#first_event_expense_created_by' do
     let!(:user1) { create :user }
     let!(:event) { create :approved_event, created_at: Time.parse("01/01/2010 08:00"), created_by: user1 }
 
@@ -1583,7 +1583,7 @@ describe Event, type: :model do
       before { expect(event.event_expenses.count).to eq 0 }
 
       it 'should return event created_by' do
-        expect(event.custom_created_by.id).to eq user1.id
+        expect(event.first_event_expense_created_by.id).to eq user1.id
       end
     end
 
@@ -1595,19 +1595,19 @@ describe Event, type: :model do
       before { expect(event.event_expenses.count).to eq 2 }
 
       it 'should return last event expense created_by' do
-        expect(event.custom_created_by.id).to eq user2.id
+        expect(event.first_event_expense_created_by.id).to eq user2.id
       end
     end
   end
 
-  describe '#custom_updated_at' do
+  describe '#last_event_expense_updated_at' do
     let!(:event) { create :approved_event, updated_at: Time.parse("01/01/2010 08:00") }
 
     context 'when event has no expense' do
       before { expect(event.event_expenses.count).to eq 0 }
 
       it 'should return event updated_at time' do
-        expect(event.custom_updated_at).to eql(event.updated_at)
+        expect(event.last_event_expense_updated_at).to eql(event.updated_at)
       end
     end
 
@@ -1618,12 +1618,12 @@ describe Event, type: :model do
       before { expect(event.event_expenses.count).to eq 2 }
 
       it 'should return last event expense updated_at time' do
-        expect(event.custom_updated_at).to eql(event_expense2.updated_at)
+        expect(event.last_event_expense_updated_at).to eql(event_expense2.updated_at)
       end
     end
   end
 
-  describe '#custom_updated_by' do
+  describe '#last_event_expense_updated_by' do
     let!(:user1) { create :user }
     let!(:event) { create :approved_event, updated_at: Time.parse("01/01/2010 08:00"), updated_by: user1 }
 
@@ -1631,7 +1631,7 @@ describe Event, type: :model do
       before { expect(event.event_expenses.count).to eq 0 }
 
       it 'should return event updated_by' do
-        expect(event.custom_updated_by.id).to eq user1.id
+        expect(event.last_event_expense_updated_by.id).to eq user1.id
       end
     end
 
@@ -1643,7 +1643,7 @@ describe Event, type: :model do
       before { expect(event.event_expenses.count).to eq 2 }
 
       it 'should return last event expense updated_by' do
-        expect(event.custom_updated_by.id).to eq user2.id
+        expect(event.last_event_expense_updated_by.id).to eq user2.id
       end
     end
   end

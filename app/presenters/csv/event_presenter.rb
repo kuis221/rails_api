@@ -29,21 +29,41 @@ module Csv
     end
 
     def created_at
-      datetime @model.custom_created_at if @model.custom_created_at.present?
+      datetime @model.created_at if @model.created_at.present?
     end
 
     def created_by
-      if (created_by = @model.custom_created_by).present?
+      if (created_by = @model.created_by).present?
         created_by.full_name
       end
     end
 
     def last_modified
-      datetime @model.custom_updated_at if @model.custom_updated_at.present?
+      datetime @model.updated_at if @model.updated_at.present?
     end
 
     def modified_by
-      if (updated_by = @model.custom_updated_by).present?
+      if (updated_by = @model.updated_by).present?
+        updated_by.full_name
+      end
+    end
+
+    def first_event_expense_created_at
+      datetime @model.first_event_expense_created_at if @model.first_event_expense_created_at.present?
+    end
+
+    def first_event_expense_created_by
+      if (created_by = @model.first_event_expense_created_by).present?
+        created_by.full_name
+      end
+    end
+
+    def last_event_expense_updated_at
+      datetime @model.last_event_expense_updated_at if @model.last_event_expense_updated_at.present?
+    end
+
+    def last_event_expense_updated_by
+      if (updated_by = @model.last_event_expense_updated_by).present?
         updated_by.full_name
       end
     end
