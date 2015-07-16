@@ -88,6 +88,9 @@ describe EventData, type: :model do
 
       event.event_expenses.create(category: 'test expense', amount: 345, expense_date: '01/01/2014')
 
+      create :attached_asset, asset_type: 'photo', attachable: event
+      create :attached_asset, asset_type: 'photo', attachable: event
+
       # Call the method manually
       event.event_data.update_data
       expect(event.event_data.impressions).to eq(101)
