@@ -30,6 +30,7 @@ class DataExtract::EventExpense < DataExtract
                  merchant: 'event_expenses.merchant',
                  description: 'event_expenses.description',
                  campaign_name: 'campaigns.name',
+                 brand_name: 'brands.name',
                  end_date: proc { "to_char(events.#{date_field_prefix}end_at, 'MM/DD/YYYY')" },
                  end_time: proc { "to_char(events.#{date_field_prefix}end_at, 'HH12:MI AM')" },
                  start_date: proc { "to_char(events.#{date_field_prefix}start_at, 'MM/DD/YYYY')" },
@@ -47,6 +48,9 @@ class DataExtract::EventExpense < DataExtract
     s = super.joins(:event_expenses)
     if columns.include?('created_by') || filters.present? && filters['user'].present?
       s = s.joins('LEFT JOIN users ON event_expenses.created_by_id=users.id')
+    end
+    if columns.include?('brand_name')
+      s = s.joins('LEFT JOIN brands ON brands.id=event_expenses.brand_id')
     end
     s
   end
