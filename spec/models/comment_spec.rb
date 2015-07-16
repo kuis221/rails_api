@@ -64,5 +64,20 @@ describe Comment, type: :model do
         expect(comment.save).to be_truthy
       end
     end
+
+    describe 'for_task?' do
+      let(:task) { create(:task) }
+      let(:event) { create(:event) }
+
+      it 'returns true if comment is for a task' do
+        comment = create :comment, commentable: task
+        expect(comment.for_task?).to be_truthy
+      end
+
+      it 'returns true if comment is for a event' do
+        comment = create :comment, commentable: event
+        expect(comment.for_task?).to be_falsey
+      end
+    end
   end
 end
