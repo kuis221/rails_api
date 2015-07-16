@@ -84,7 +84,7 @@ describe Api::V1::CommentsController, type: :controller do
       end.to change(Comment, :count).by(1)
       expect(response).to be_success
       expect(json['content']).to eq('The very new comment')
-      expect(json['created_by']['id']).to eql company_user.id
+      expect(json['created_by']['id']).to eql user.id
     end
 
     it 'creates a new comment for an existing task' do
@@ -93,7 +93,7 @@ describe Api::V1::CommentsController, type: :controller do
       end.to change(Comment, :count).by(1)
       expect(response).to be_success
       expect(json['content']).to eq('The very new comment')
-      expect(json['created_by']['id']).to eql company_user.id
+      expect(json['created_by']['id']).to eql user.id
     end
   end
 
