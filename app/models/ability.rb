@@ -382,6 +382,12 @@ class Ability
         can?(:show, event)
       end
 
+      can :show, Task do |task|
+        (task.event.present? && can(:show, task.event)) ||
+        (task.company_user_id == company_user.id) ||
+        (task.event.present? && user.role.has_permission?(:index_team, Team) && task.event.user_in_team?(company_user))
+      end
+
       can :invites, Event do |event|
         user.role.has_permission?(:index_invites, Event) &&
         company_user.accessible_campaign_ids.include?(event.campaign_id) &&
@@ -407,7 +413,8 @@ class Ability
 
       can :create, Task do |task|
         (user.role.has_permission?(:create_task, Event) && can?(:show, task.event)) ||
-        user.role.has_permission?(:create_my, Task) || user.role.has_permission?(:create_team, Task)
+        (user.role.has_permission?(:create_my, Task) && task.company_user_id == company_user.id)  ||
+        user.role.has_permission?(:create_team, Task)
       end
 
       # Documents permissions

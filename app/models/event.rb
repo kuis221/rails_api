@@ -24,6 +24,7 @@
 #  rejected_at    :datetime
 #  submitted_at   :datetime
 #  approved_at    :datetime
+#  active_photos_count   :integer          default(0)
 #
 
 class Event < ActiveRecord::Base
@@ -32,6 +33,10 @@ class Event < ActiveRecord::Base
   # Defines the method do_search
   include SolrSearchable
   include EventBaseSolrSearchable
+
+  has_many :form_fields, through: :campaign, autosave: false
+
+  include Fieldable
 
   track_who_does_it
 
@@ -53,12 +58,6 @@ class Event < ActiveRecord::Base
            class_name: 'AttachedAsset', dependent: :destroy, as: :attachable, inverse_of: :attachable
   has_many :teamings, as: :teamable, dependent: :destroy, inverse_of: :teamable
   has_many :teams, through: :teamings, after_remove: :after_remove_member
-  has_many :results, as: :resultable, dependent: :destroy,
-                     class_name: 'FormFieldResult', inverse_of: :resultable do
-    def active
-      where(form_field_id: proxy_association.owner.campaign.form_field_ids)
-    end
-  end
   has_many :event_expenses, -> { order('category ASC') }, dependent: :destroy, inverse_of: :event, autosave: true
   has_many :activities, -> { order('activity_date ASC') }, as: :activitable, dependent: :destroy do
     def active
@@ -84,7 +83,6 @@ class Event < ActiveRecord::Base
 
   accepts_nested_attributes_for :event_expenses, allow_destroy: true
   accepts_nested_attributes_for :surveys
-  accepts_nested_attributes_for :results
   accepts_nested_attributes_for :photos
   accepts_nested_attributes_for :comments, reject_if: proc { |attributes| attributes['content'].blank? }
 
@@ -257,7 +255,6 @@ class Event < ActiveRecord::Base
   after_commit :create_notifications
 
   delegate :name, to: :campaign, prefix: true, allow_nil: true
-  delegate :form_fields, to: :campaign, allow_nil: true
   delegate :name, :state, :city, :zipcode, :neighborhood, :street_number, :route, :latitude,
            :state_name, :longitude, :formatted_address, :name_with_location, :td_linx_code,
            :street, :country,
@@ -334,6 +331,7 @@ class Event < ActiveRecord::Base
     double :promo_hours, stored: true
     double :impressions, stored: true
     double :interactions, stored: true
+    double :active_photos_count, stored: true
     double :samples, stored: true
     double :spent, stored: true
     double :gender_female, stored: true
@@ -351,14 +349,6 @@ class Event < ActiveRecord::Base
 
   def deactivate!
     update_attribute :active, false
-  end
-
-  def form_field_results
-    campaign.form_fields.map do |field|
-      result = results.find { |r| r.form_field_id == field.id } || results.build(form_field_id: field.id)
-      result.form_field = field
-      result
-    end
   end
 
   def place_reference=(value)
@@ -454,27 +444,6 @@ class Event < ActiveRecord::Base
     users.uniq
   end
 
-  def results_for(fields)
-    # The results are mapped by field or kpi_id to make it find them in case
-    # the form field was deleted and readded to the form
-    fields.map do |field|
-      result = results.find { |r| r.form_field_id == field.id } || results.build(form_field_id: field.id)
-      result.form_field = field # Assign it so it won't be reloaded if requested.
-      result
-    end
-  end
-
-  def result_for_kpi(kpi)
-    field = campaign.form_fields.find { |f| f.kpi_id == kpi.id }
-    return unless field.present?
-    field.kpi = kpi # Assign it so it won't be reloaded if requested.
-    results_for([field]).first
-  end
-
-  def results_for_kpis(kpis)
-    kpis.map { |kpi| result_for_kpi(kpi) }.flatten.compact
-  end
-
   def locations_for_index
     place.location_ids if place.present?
   end
@@ -554,7 +523,9 @@ class Event < ActiveRecord::Base
   end
 
   def valid_results?
-    errors.add :base, I18n.translate('invalid_submit_messages.per') unless results_for(campaign.form_fields).all?(&:valid?)
+    unless results_for(campaign.form_fields).all?(&:valid?)
+      errors.add :base, I18n.translate('invalid_submit_messages.per')
+    end
     errors.empty?
   end
 
@@ -607,6 +578,7 @@ class Event < ActiveRecord::Base
             stat(:promo_hours, type: 'sum')
             stat(:impressions, type: 'sum')
             stat(:interactions, type: 'sum')
+            stat(:active_photos_count, type: 'sum')
             stat(:samples, type: 'sum')
             stat(:spent, type: 'sum')
             stat(:gender_female, type: 'mean')
@@ -758,6 +730,10 @@ class Event < ActiveRecord::Base
 
   def last_event_expense_updated_by
     last_event_expense.present? ? last_event_expense.updated_by : updated_by
+  end
+
+  def update_active_photos_count
+    update_column :active_photos_count, photos.active.count
   end
 
   private

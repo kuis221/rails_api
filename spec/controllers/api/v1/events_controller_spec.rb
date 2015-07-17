@@ -298,7 +298,7 @@ describe Api::V1::EventsController, type: :controller do
       }, format: :json
       expect(response.code).to eql '422'
       errors = JSON.parse(response.body)
-      expect(errors).to eql("results.value" => ["is invalid"])
+      expect(errors).to eql('results.value' => ['is invalid'])
     end
   end
 
@@ -314,7 +314,7 @@ describe Api::V1::EventsController, type: :controller do
     end
 
     it 'should not allow to submit the event if the event data is not valid' do
-      create(:form_field_number, fieldable: campaign, kpi: create(:kpi, company_id: 1), required: true)
+      create(:form_field_number, fieldable: campaign, required: true)
       expect do
         put 'submit', id: event.to_param, format: :json
         expect(response.response_code).to eq(422)
@@ -370,20 +370,19 @@ describe Api::V1::EventsController, type: :controller do
       groups = JSON.parse(response.body)
       expect(response).to be_success
       expect(groups.first['fields'].first).to include(
-          'id' => result.id,
-          'name' => '# of cats',
-          'type' => 'FormField::Number',
-          'value' => 321
-        )
+        'id' => result.id,
+        'name' => '# of cats',
+        'type' => 'FormField::Number',
+        'value' => 321
+      )
       expect(groups.first['fields'].first.keys).to_not include('segments')
     end
 
     it 'should return the segments for count fields' do
       kpi = create(:kpi, name: 'Are you tall?', kpi_type: 'count', description: 'some description to show',
-          kpis_segments: [
-            create(:kpis_segment, text: 'Yes'), create(:kpis_segment, text: 'No')
-          ]
-      )
+                         kpis_segments: [
+                           create(:kpis_segment, text: 'Yes'), create(:kpis_segment, text: 'No')
+                         ])
       campaign.add_kpi kpi
       segments = kpi.kpis_segments
       result = event.result_for_kpi(kpi)

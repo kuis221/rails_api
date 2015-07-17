@@ -1647,4 +1647,14 @@ describe Event, type: :model do
       end
     end
   end
+
+  describe '#update_active_photos_count' do
+    let!(:event) { create :approved_event, active_photos_count: 0}
+
+    before { allow(event).to receive_message_chain(:photos, :active, :count).and_return 10 }
+
+    it 'should update number of active photos' do
+      expect { event.update_active_photos_count }.to change { event.active_photos_count }.from(0).to 10
+    end
+  end
 end

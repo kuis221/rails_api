@@ -38,11 +38,11 @@ describe TasksController, type: :controller do
 
     it 'should render the form_dialog template if errors' do
       expect do
-        xhr :post, 'create', event_id: event.to_param, format: :js
+        xhr :post, 'create', task: { title: '' }, event_id: event.to_param, format: :js
       end.not_to change(Task, :count)
       expect(response).to render_template(:create)
       expect(response).to render_template('_form_dialog')
-      assigns(:event).errors.count > 0
+      expect(assigns(:task).errors.count).to be > 0
     end
 
     it 'should assign the correct event id' do
