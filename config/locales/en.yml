@@ -1059,6 +1059,8 @@ en:
       name: "Name"
       description: "Description"
       created_at: "Created At"
+      approved_at: "Approved At"
+      submitted_at: "Submitted At"
       venues_types: "Types"
       street: "Venue Street"
       city: "City"
@@ -1127,6 +1129,8 @@ en:
         event_status: "The status of the event (ex., approved, due, late)"
         created_by: "The person who created the event"
         created_at: "The date the event was created"
+        approved_at: "The date the event was approved"
+        submitted_at: "The date the event was submitted"
         status: "The active state of the event"
       event_data:
         campaign_name: "The assigned campaign of the event"
