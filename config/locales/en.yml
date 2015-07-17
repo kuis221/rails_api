@@ -1059,6 +1059,8 @@ en:
       name: "Name"
       description: "Description"
       created_at: "Created At"
+      approved_at: "Approved At"
+      submitted_at: "Submitted At"
       venues_types: "Types"
       street: "Venue Street"
       city: "City"
