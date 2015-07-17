@@ -18,8 +18,10 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
       Column ss:Width="200"
       Column ss:Width="150"
       Column ss:Width="100"
+      Column ss:Width="100"
+      Column ss:Width="100"
       Column ss:Width="150"
-      Column ss:Width="150"
+      Column ss:Width="100"
       Row ss:StyleID="s1"
         Cell
           Data ss:Type="String" VENUE NAME
@@ -31,6 +33,8 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
           Data ss:Type="String" CITY
         Cell
           Data ss:Type="String" STATE
+        Cell
+          Data ss:Type="String" SCORE
         Cell
           Data ss:Type="String" EVENTS COUNT
         Cell
@@ -54,6 +58,8 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
             Data ss:Type="String"= venue.city
           Cell
             Data ss:Type="String"= venue.state
+          Cell
+            Data ss:Type="Number"= venue.score
           Cell
             Data ss:Type="Number"= venue.events_count
           Cell
