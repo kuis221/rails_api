@@ -26,8 +26,9 @@ module Html
         results_for_number(form_field)
       when 'Summation'
         results_for_summation(form_field)
-      when 'Percentage'
-        results_for_percentage(form_field)
+      when 'Percentage', 'Checkbox', 'Radio'
+        results_for_percentage_chart(form_field)
+      end
     end
 
     def results_for_number(form_field)
@@ -55,7 +56,7 @@ module Html
       totals
     end
 
-    def results_for_percentage(form_field)
+    def results_for_percentage_chart(form_field)
       totals = form_field.options_for_input.inject({}) do |memo, (_, id)|
         memo[id] = 0
         memo
@@ -63,9 +64,13 @@ module Html
 
       events.active.each do |event|
         result = event.results_for([form_field]).first
-        if result.hash_value.present?
+        if result.hash_value.present? || result.value.present?
           form_field.options_for_input.each do |_, id|
-            totals[id] += result.hash_value[id.to_s].to_f if result.hash_value[id.to_s].present?
+            if form_field.type_name == 'Radio'
+              totals[result.value.to_i] += 1 if id == result.value.to_i
+            else
+              totals[id] += result.hash_value[id.to_s].to_f if result.hash_value[id.to_s].present?
+            end
           end
         end
       end
