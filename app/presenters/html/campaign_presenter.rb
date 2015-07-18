@@ -18,5 +18,40 @@ module Html
         the_date
       end
     end
+
+    def results_for(form_field)
+      return nil if form_field.blank?
+      case form_field.type_name
+      when 'Number'
+        results_for_number(form_field)
+      when 'Summation'
+        results_for_summation(form_field)
+      end
+    end
+
+    def results_for_number(form_field)
+      total = 0
+      events.active.each do |event|
+        result = event.results_for([form_field]).first
+        total += result.try(:value).to_f
+      end
+      total
+    end
+
+    def results_for_summation(form_field)
+      totals = form_field.options.ids.inject({}) do |memo, values|
+        memo[values] = 0
+        memo
+      end
+      events.active.each do |event|
+        result = event.results_for([form_field]).first
+        if result.hash_value.present?
+          form_field.options.ids.each do |key|
+            totals[key] += result.hash_value[key.to_s].to_f if result.hash_value[key.to_s].present?
+          end
+        end
+      end
+      totals
+    end
   end
 end

@@ -1,2 +1,5 @@
-#analysis-campaign.details_box.content
-  = render 'black_state'
+#analysis-campaign.details_box.content.form-results-box
+  - if @campaign.form_fields.any?
+    = render partial: 'form_fields_campaign', locals: { form_fields: @campaign.form_fields }
+  - else
+    = render 'blank_state'
