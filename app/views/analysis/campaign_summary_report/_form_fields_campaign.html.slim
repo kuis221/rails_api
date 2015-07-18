@@ -1,5 +1,6 @@
 - partial_field_types = ['FormField::Section', 'FormField::Summation']
 - total_field_types = ['FormField::Number']
+- partial_porcentage_chart = ['FormField::Percentage']
 - if form_fields.any?
   - presenter = present(@campaign)
   - form_fields.each do |form_field|
@@ -8,6 +9,9 @@
     - if partial_field_types.include?(form_field.type)
       div.form-result.pdf-keeptogether class="result_#{partial_name}"
         = render partial: 'form_field_'+partial_name, locals: {form_field: form_field, result: result}
+    - elsif partial_porcentage_chart.include?(form_field.type)
+      div.form-result.pdf-keeptogether class="result_#{partial_name}"
+        = render partial: 'porcentage_chart', locals: {form_field: form_field, result: result}
     - elsif total_field_types.include?(form_field.type)
       div.form-result.pdf-keeptogether class="result_#{partial_name}"
         span.form-result-label = form_field.name

@@ -26,7 +26,8 @@ module Html
         results_for_number(form_field)
       when 'Summation'
         results_for_summation(form_field)
-      end
+      when 'Percentage'
+        results_for_percentage(form_field)
     end
 
     def results_for_number(form_field)
@@ -52,6 +53,26 @@ module Html
         end
       end
       totals
+    end
+
+    def results_for_percentage(form_field)
+      totals = form_field.options_for_input.inject({}) do |memo, (_, id)|
+        memo[id] = 0
+        memo
+      end
+
+      events.active.each do |event|
+        result = event.results_for([form_field]).first
+        if result.hash_value.present?
+          form_field.options_for_input.each do |_, id|
+            totals[id] += result.hash_value[id.to_s].to_f if result.hash_value[id.to_s].present?
+          end
+        end
+      end
+
+      values = totals.reject{ |k, v| v.nil? || v == '' || v.to_f == 0.0 }
+      options_map = Hash[form_field.options_for_input.map{|o| [o[1], o[0]] }]
+      values.map{ |k, v| [options_map[k], v] }
     end
   end
 end
