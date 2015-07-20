@@ -1,0 +1,16 @@
+span.form-result-label= form_field.name
+- if result.any?
+  - totals = presenter.gender_total(result)
+  #gender-graph.chart-area
+    .male
+      .percent
+        span = totals[:male]
+        span.percent-sign = '%'
+      .gender = 'Male'
+    .female
+      .percent
+        
+        span = totals[:female]
+        span.percent-sign = '%'
+      .gender = 'Female'
+          
