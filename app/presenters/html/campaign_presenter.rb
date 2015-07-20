@@ -22,12 +22,14 @@ module Html
     def results_for(form_field)
       return nil if form_field.blank?
       case form_field.type_name
-      when 'Number'
+      when 'Number', 'Currency'
         results_for_number(form_field)
       when 'Summation'
         results_for_summation(form_field)
       when 'Percentage', 'Checkbox', 'Radio'
         results_for_percentage_chart(form_field)
+      when 'LikertScale'
+        results_for_likert_scale(form_field)
       end
     end
 
@@ -37,14 +39,12 @@ module Html
         result = event.results_for([form_field]).first
         total += result.try(:value).to_f
       end
-      total
+      "#{'$' if form_field.type_name == 'Currency'}#{total}"
     end
 
     def results_for_summation(form_field)
-      totals = form_field.options.ids.inject({}) do |memo, values|
-        memo[values] = 0
-        memo
-      end
+      totals = initialize_totals(form_field)
+
       events.active.each do |event|
         result = event.results_for([form_field]).first
         if result.hash_value.present?
@@ -57,10 +57,7 @@ module Html
     end
 
     def results_for_percentage_chart(form_field)
-      totals = form_field.options_for_input.inject({}) do |memo, (_, id)|
-        memo[id] = 0
-        memo
-      end
+      totals = initialize_totals(form_field)
 
       events.active.each do |event|
         result = event.results_for([form_field]).first
@@ -78,6 +75,44 @@ module Html
       values = totals.reject{ |k, v| v.nil? || v == '' || v.to_f == 0.0 }
       options_map = Hash[form_field.options_for_input.map{|o| [o[1], o[0]] }]
       values.map{ |k, v| [options_map[k], v] }
+    end
+
+    def results_for_likert_scale(form_field)
+      totals = form_field.statements.inject({}) do |memo, (statement)|
+        memo[statement.id] = {
+          name: statement.name,
+          totals: form_field.options.inject({}) do |m, (option)|
+              m[option.id] = { name: option.name, total: 0 }
+              m
+          end
+        }
+        memo
+      end
+
+      events.active.each do |event|
+        result = event.results_for([form_field]).first
+        if result.hash_value.present?
+          result.hash_value.map do |(key, value)|
+            totals[key.to_i][:totals][value.to_i][:total] += 1
+          end
+        end
+      end
+
+      totals.map do |(key, statement)|
+        [key, statement[:name], totals_likert_scale(statement[:totals])]
+      end
+    end
+
+    def totals_likert_scale(totals)
+      values = totals.reject{ |_, v| v[:total].nil? || v[:total] == '' || v[:total].to_f == 0.0 }
+      values.map{ |_, v| [v[:name], v[:total]] }
+    end
+
+    def initialize_totals(form_field)
+      form_field.options_for_input.inject({}) do |memo, (_, id)|
+        memo[id] = 0
+        memo
+      end
     end
   end
 end
