@@ -4,9 +4,12 @@
 - if form_fields.any?
   - presenter = present(@campaign)
   - form_fields.each do |form_field|
-    - result = presenter.results_for(form_field)
     - partial_name = ['gender', 'age'].include?(form_field.name.downcase) ? form_field.name.downcase : form_field.type_name.underscore
-    - if partial_field_types.include?(form_field.type) || partial_name == 'gender'
+    - if partial_name == 'age'
+      - result = presenter.result_for_age(form_field)
+    - else
+      - result = presenter.results_for(form_field)
+    - if partial_field_types.include?(form_field.type) || partial_name == 'gender' || partial_name == 'age'
       div.form-result.pdf-keeptogether class="result_#{partial_name}"
         = render partial: 'form_field_'+partial_name, locals: { form_field: form_field, result: result, presenter: presenter }
     - elsif partial_porcentage_chart.include?(form_field.type)
