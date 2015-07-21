@@ -26,7 +26,7 @@ module Html
         results_for_number(form_field)
       when 'Summation'
         results_for_summation(form_field)
-      when 'Percentage', 'Checkbox', 'Radio'
+      when 'Percentage', 'Checkbox', 'Radio', 'Dropdown'
         results_for_percentage_chart(form_field)
       when 'LikertScale'
         results_for_likert_scale(form_field)
@@ -58,12 +58,11 @@ module Html
 
     def results_for_percentage_chart(form_field)
       totals = initialize_totals(form_field)
-
       events.active.each do |event|
         result = event.results_for([form_field]).first
         if result.hash_value.present? || result.value.present?
           form_field.options_for_input.each do |_, id|
-            if form_field.type_name == 'Radio'
+            if form_field.type_name == 'Radio' || form_field.type_name == 'Dropdown'
               totals[result.value.to_i] += 1 if id == result.value.to_i
             else
               totals[id] += result.hash_value[id.to_s].to_f if result.hash_value[id.to_s].present?
@@ -71,7 +70,6 @@ module Html
           end
         end
       end
-
       values = totals.reject{ |k, v| v.nil? || v == '' || v.to_f == 0.0 }
       options_map = Hash[form_field.options_for_input.map{|o| [o[1], o[0]] }]
       values.map{ |k, v| [options_map[k], v] }
