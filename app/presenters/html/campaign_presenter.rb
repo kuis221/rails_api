@@ -30,6 +30,8 @@ module Html
         results_for_percentage_chart(form_field)
       when 'LikertScale'
         results_for_likert_scale(form_field)
+      when 'Brand'
+        results_for_brand(form_field)
       end
     end
 
@@ -62,7 +64,7 @@ module Html
         result = event.results_for([form_field]).first
         if result.hash_value.present? || result.value.present?
           form_field.options_for_input.each do |_, id|
-            if form_field.type_name == 'Radio' || form_field.type_name == 'Dropdown'
+            if form_field.type_name == 'Radio' || form_field.type_name == 'Dropdown' || form_field.type_name == 'Brand'
               totals[result.value.to_i] += 1 if id == result.value.to_i
             else
               totals[id] += result.hash_value[id.to_s].to_f if result.hash_value[id.to_s].present?
@@ -153,6 +155,23 @@ module Html
         memo[options_map[key]] = percent_of(value, total).round(2)
         memo
       end
+    end
+
+    def results_for_brand(form_field)
+      r = events.first.results_for([form_field]).first
+      totals = form_field.options_for_field(r).inject({}) do |memo, (value)|
+        memo[value.id] = { name: value.name, total: 0 }
+        memo
+      end
+
+      events.active.each do |event|
+        result = event.results_for([form_field]).first
+        if result.value.present?
+          totals[result.value.to_i][:total] += 1
+        end
+      end
+      values = totals.reject{ |k, v| v[:total].nil? || v[:total] == '' || v[:total].to_f == 0.0 }
+      values.map{ |k, v| [v[:name], v[:total]] }
     end
   end
 end
