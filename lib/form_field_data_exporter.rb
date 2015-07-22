@@ -167,7 +167,8 @@ class FormFieldDataExporter < BaseExporter
      custom_fields_to_export.each do |_, field|
        segments =
          if SEGMENTED_FIELD_TYPES.include?(field.type)
-           s = field.options_for_input.map{ |option| ["#{field.id}_#{option[1]}", "#{field.name}: #{option[0]}"] }
+           s = field.options_for_input.sort { |left, right| left[1] <=> right[1] }
+           s.map! { |option| ["#{field.id}_#{option[1]}", "#{field.name}: #{option[0]}"] }
            s.push(["#{field.id}__TOTAL", "#{field.name}: TOTAL"]) if field.type == SUMMATION_TYPE
            s
          else
