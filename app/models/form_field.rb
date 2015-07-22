@@ -279,6 +279,9 @@ class FormField < ActiveRecord::Base
     end.html_safe
   end
 
+  def grouped_results(campaign, scope)
+    form_field_results.for_event_campaign(campaign).merge(scope)
+  end
 
   protected
 

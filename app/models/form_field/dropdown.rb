@@ -65,4 +65,8 @@ class FormField::Dropdown < FormField
       end
     )
   end
+
+  def grouped_results(campaign, scope)
+    form_field_results.for_event_campaign(campaign).merge(scope).group(:value).count
+  end
 end
