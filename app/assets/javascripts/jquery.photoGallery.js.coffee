@@ -276,11 +276,11 @@ $.widget 'nmk.photoGallery', {
 				@_updateSizes()
 			$(document).on 'keyup.gallery', (e) =>
 				if e.which is 39
-					$('.carousel').carousel('next');
+					$('.carousel.small').carousel('next');
 					e.preventDefault();
 					false
 				else if e.which is 37
-					$('.carousel').carousel('prev');
+					$('.carousel.small').carousel('prev');
 					e.preventDefault();
 					false
 				else if e.which is 27

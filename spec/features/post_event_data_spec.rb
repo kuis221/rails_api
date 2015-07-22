@@ -46,7 +46,21 @@ feature 'Post Event Data' do
       create(:marque, name: 'Marque #2 for Cacique', brand: brand)
       campaign.brands << brand
 
+      venue = create(:venue,
+                     company: company,
+                     place: create(:place,
+                                   name: 'Bar Los Profesionales', street_number: '198',
+                                   route: '3rd Ave', city: 'San José'))
+      Sunspot.commit
+      company_user.places << venue.place
+
       # Create some custom fields of different types
+      create(:form_field,
+             name: 'Custom Place',
+             type: 'FormField::Place',
+             fieldable: campaign,
+             required: false)
+
       create(:form_field,
              name: 'Custom Single Text',
              type: 'FormField::Text',
@@ -148,6 +162,8 @@ feature 'Post Event Data' do
              required: false)
 
       visit event_path(event)
+
+      select_from_autocomplete 'Search for a place', 'Bar Los Profesionales'
 
       fill_in '< 12', with: '10'
       fill_in '12 – 17', with: '11'

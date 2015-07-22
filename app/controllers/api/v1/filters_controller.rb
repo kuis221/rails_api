@@ -3,7 +3,7 @@ class Api::V1::FiltersController < Api::V1::ApiController
   skip_load_and_authorize_resource only: [:show]
 
   api :GET, '/api/v1/filters/:id', 'Get a the available filters for a given section'
-  param :id, ['events', 'venues', 'visits'], required: true, desc: 'The section to obtain the filters for'
+  param :id, ['events', 'venues', 'visits', 'teams_tasks', 'user_tasks'], required: true, desc: 'The section to obtain the filters for'
   description <<-EOS
     The API returns the filters on the following format:
       {
