@@ -2,7 +2,7 @@
   h5.module-title EXPENSES
   - if resource.event_expenses.any?
     = button_to 'Record Expense', new_event_event_expense_path(resource), method: :get, remote: true, class: 'btn btn-primary', data: { disable_with: 'Please wait...' } if can?(:create_expense, resource)
-    
+
     table#expenses-list.expenses-gallery.table
       thead
         th Category
@@ -11,15 +11,15 @@
         th Merchant
         th Description
         th Amount
-        th 
-        th 
+        th
+        th
       tbody
         = render resource.event_expenses
         tr.total-expenses.text-large
-          td.text-large colspan=5
-            .text-right TOTAL:
-          td.text-large colspan=3
-            b= number_to_currency(resource.event_expenses.map(&:amount).compact.sum, precision: 2)
+          td colspan=6
+            b.total-ammount= number_to_currency(resource.event_expenses.map(&:amount).compact.sum, precision: 2)
+          td.text-large colspan=2
+
 
     javascript:
       $(".expenses-gallery").photoGallery({showSidebar: false});

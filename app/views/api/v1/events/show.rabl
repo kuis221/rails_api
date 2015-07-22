@@ -20,6 +20,13 @@ node :event_status do |event|
   end
 end
 
+node :rejected_info do |event|
+  data = {}
+  data[:rejected_at] = time_ago_in_words(event.rejected_at || event.updated_at)
+  data[:rejected_reason] = event.reject_reason
+  data
+end
+
 node :have_data do |event|
   event.event_data?
 end

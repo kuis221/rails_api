@@ -81,7 +81,6 @@ class EventsController < FilteredController
   end
 
   def results
-
   end
 
   def reject

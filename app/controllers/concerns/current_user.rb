@@ -7,7 +7,11 @@ module CurrentUser
     around_filter :scope_current_user
     after_filter :update_user_last_activity
     helper_method :current_company, :current_company_user, :current_real_company_user,
-                  :behave_as_user
+                  :behave_as_user, :current_real_user
+  end
+
+  def current_company
+    @current_company ||= current_company_user.company if user_signed_in?
   end
 
   def company_users
@@ -15,7 +19,12 @@ module CurrentUser
   end
 
   def current_company_user
-    current_user.current_company_user
+    @current_company_user ||=
+      if behave_as_user.present?
+        current_user.company_users.find_by!(company: current_real_company_user.company_id)
+      else
+        current_user.current_company_user || current_user.company_users.first
+      end
   end
 
   def scope_current_user
@@ -32,7 +41,7 @@ module CurrentUser
     return unless user_signed_in? && request.format.html? && current_real_company_user.present?
     current_real_company_user.update_column :last_activity_at, DateTime.now
   end
-  
+
   def current_user
     @_current_user ||=  (behave_as_user || current_real_user)
   end
@@ -46,7 +55,10 @@ module CurrentUser
   end
 
   def behave_as_user
-    @behave_as_user ||= User.find(session[:behave_as_user_id]) if session[:behave_as_user_id] && current_real_user.present? && current_real_company_user.is_admin?
+    return unless session[:behave_as_user_id] && current_real_user.present? && current_real_company_user.is_admin?
+    @behave_as_user ||= User.find(session[:behave_as_user_id])
+    @behave_as_user.current_company = current_real_user.current_company
+    @behave_as_user
   end
 
   def set_new_relic_custom_params

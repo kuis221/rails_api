@@ -1551,4 +1551,110 @@ describe Event, type: :model do
       end
     end
   end
+
+  describe '#first_event_expense_created_at' do
+    let!(:event) { create :approved_event, created_at: Time.parse("01/01/2010 08:00") }
+
+    context 'when event has no expense' do
+      before { expect(event.event_expenses.count).to eq 0 }
+
+      it 'should return event created_at time' do
+        expect(event.first_event_expense_created_at).to eql(event.created_at)
+      end
+    end
+
+    context 'when event has at least one expense' do
+      let!(:event_expense1) { create :event_expense, event: event, created_at: Time.parse("01/01/2010 10:00") }
+      let!(:event_expense2) { create :event_expense, event: event, created_at: Time.parse("02/01/2010 10:00") }
+
+      before { expect(event.event_expenses.count).to eq 2 }
+
+      it 'should return last event expense created_at time' do
+        expect(event.first_event_expense_created_at).to eql(event_expense1.created_at)
+      end
+    end
+  end
+
+  describe '#first_event_expense_created_by' do
+    let!(:user1) { create :user }
+    let!(:event) { create :approved_event, created_at: Time.parse("01/01/2010 08:00"), created_by: user1 }
+
+    context 'when event has no expense' do
+      before { expect(event.event_expenses.count).to eq 0 }
+
+      it 'should return event created_by' do
+        expect(event.first_event_expense_created_by.id).to eq user1.id
+      end
+    end
+
+    context 'when event has at least one expense' do
+      let!(:user2) { create :user }
+      let!(:event_expense1) { create :event_expense, event: event, created_at: Time.parse("01/01/2010 10:00"), created_by: user2  }
+      let!(:event_expense2) { create :event_expense, event: event, created_at: Time.parse("02/01/2010 10:00")}
+
+      before { expect(event.event_expenses.count).to eq 2 }
+
+      it 'should return last event expense created_by' do
+        expect(event.first_event_expense_created_by.id).to eq user2.id
+      end
+    end
+  end
+
+  describe '#last_event_expense_updated_at' do
+    let!(:event) { create :approved_event, updated_at: Time.parse("01/01/2010 08:00") }
+
+    context 'when event has no expense' do
+      before { expect(event.event_expenses.count).to eq 0 }
+
+      it 'should return event updated_at time' do
+        expect(event.last_event_expense_updated_at).to eql(event.updated_at)
+      end
+    end
+
+    context 'when event has at least one expense' do
+      let!(:event_expense1) { create :event_expense, event: event, updated_at: Time.parse("01/01/2010 10:00") }
+      let!(:event_expense2) { create :event_expense, event: event, updated_at: Time.parse("02/01/2010 10:00") }
+
+      before { expect(event.event_expenses.count).to eq 2 }
+
+      it 'should return last event expense updated_at time' do
+        expect(event.last_event_expense_updated_at).to eql(event_expense2.updated_at)
+      end
+    end
+  end
+
+  describe '#last_event_expense_updated_by' do
+    let!(:user1) { create :user }
+    let!(:event) { create :approved_event, updated_at: Time.parse("01/01/2010 08:00"), updated_by: user1 }
+
+    context 'when event has no expense' do
+      before { expect(event.event_expenses.count).to eq 0 }
+
+      it 'should return event updated_by' do
+        expect(event.last_event_expense_updated_by.id).to eq user1.id
+      end
+    end
+
+    context 'when event has at least one expense' do
+      let!(:user2) { create :user }
+      let!(:event_expense1) { create :event_expense, event: event, updated_at: Time.parse("01/01/2010 10:00") }
+      let!(:event_expense2) { create :event_expense, event: event, updated_at: Time.parse("02/01/2010 10:00"), updated_by: user2 }
+
+      before { expect(event.event_expenses.count).to eq 2 }
+
+      it 'should return last event expense updated_by' do
+        expect(event.last_event_expense_updated_by.id).to eq user2.id
+      end
+    end
+  end
+
+  describe '#update_active_photos_count' do
+    let!(:event) { create :approved_event, active_photos_count: 0}
+
+    before { allow(event).to receive_message_chain(:photos, :active, :count).and_return 10 }
+
+    it 'should update number of active photos' do
+      expect { event.update_active_photos_count }.to change { event.active_photos_count }.from(0).to 10
+    end
+  end
 end

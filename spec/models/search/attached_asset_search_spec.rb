@@ -8,10 +8,12 @@ describe AttachedAsset, type: :model, search: true do
     brand2 = create(:brand)
     campaign = create(:campaign, company: company, brand_ids: [brand.id])
     campaign2 = create(:campaign, company: company, brand_ids: [brand.id, brand2.id])
-    place = create(:place, name: 'Island Creek Oyster Bar', city: 'Boston', lonlat: 'POINT(-71.094994 42.348774)')
-    place2 = create(:place, name: 'Bar None', city: 'San Francisco', lonlat: 'POINT(-122.431913 37.79764)')
+    place = create(:place, name: 'Island Creek Oyster Bar', city: 'Boston', state: 'Massachusetts', lonlat: 'POINT(-71.094994 42.348774)')
+    place2 = create(:place, name: 'Bar None', city: 'San Francisco', state: 'California', lonlat: 'POINT(-122.431913 37.79764)')
     venue = create(:venue, place: place, company_id: company.id)
     venue2 = create(:venue, place: place2, company_id: company.id)
+    san_francisco = create(:city, name: 'San Francisco', state: 'California')
+    venue_city = create(:venue, place: san_francisco, company_id: company.id)
     event = create(:event, campaign: campaign, place: place, start_date: '02/22/2013', end_date: '02/23/2013')
     event2 = create(:event, campaign: campaign2, place: place2, start_date: '03/22/2013', end_date: '03/22/2013')
     asset = create(:attached_asset, asset_type: 'photo', attachable: event, rating: 1)
@@ -63,6 +65,8 @@ describe AttachedAsset, type: :model, search: true do
       .to match_array([asset2])
     expect(search(company_id: company.id, place: [place.id, place2.id]))
       .to match_array([asset, asset2])
+    expect(search(company_id: company.id, place: [san_francisco.id]))
+      .to match_array([asset2])
 
     # Search for a specific Attached Asset's venue
     expect(search(company_id: company.id, venue: [venue.id]))
@@ -71,6 +75,8 @@ describe AttachedAsset, type: :model, search: true do
       .to match_array([asset2])
     expect(search(company_id: company.id, venue: [venue.id, venue2.id]))
       .to match_array([asset, asset2])
+    expect(search(company_id: company.id, venue: [venue_city.id]))
+      .to match_array([asset2])
 
     # Search for a specific tags
     expect(search(company_id: company.id, tag: [tag.id]))

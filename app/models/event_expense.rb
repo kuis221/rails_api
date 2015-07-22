@@ -21,6 +21,8 @@
 class EventExpense < ActiveRecord::Base
   belongs_to :event
   belongs_to :brand
+  belongs_to :created_by, class_name: 'User'
+  belongs_to :updated_by, class_name: 'User'
 
   track_who_does_it
 
@@ -48,6 +50,8 @@ class EventExpense < ActiveRecord::Base
                                 reject_if: proc { |attributes| attributes['direct_upload_url'].blank? && attributes['_destroy'].blank? }
 
   scope :for_user_accessible_events, ->(company_user) { joins('INNER JOIN events ec ON ec.id=event_id AND ec.id in (' + Event.select('events.id').where(company_id: company_user.company_id).accessible_by_user(company_user).to_sql + ')') }
+
+  scope :order_by_id_asc, -> { order('id ASC') }
 
   after_initialize do
     if event.present? && event.start_at.present? && new_record?

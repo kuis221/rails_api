@@ -9,19 +9,17 @@ describe Api::V1::TasksController, type: :controller do
   before { set_api_authentication_headers user, company }
 
   describe "GET 'index'", search: true do
-    it 'return a list of tasks for a event' do
+    it 'return a list of tasks for a event', :show_in_doc do
       create_list(:task, 2, event: event)
       create_list(:task, 2, event: create(:event, company: company))
       Sunspot.commit
 
       get :index, event_id: event.id, format: :json
       expect(response).to be_success
-      result = JSON.parse(response.body)
-
-      expect(result['results'].count).to eql 2
-      expect(result['total']).to eql 2
-      expect(result['page']).to eql 1
-      expect(result['results'].first.keys).to match_array(%w(active completed due_at id status title user))
+      expect(json['results'].count).to eql 2
+      expect(json['total']).to eql 2
+      expect(json['page']).to eql 1
+      expect(json['results'].first.keys).to match_array(%w(active completed due_at id event_id status title user))
     end
 
     it 'should filter by state' do
@@ -32,12 +30,11 @@ describe Api::V1::TasksController, type: :controller do
 
       get :index, event_id: event.id, status: ['Active'], format: :json
       expect(response).to be_success
-      result = JSON.parse(response.body)
 
-      expect(result['results'].count).to eql 1
-      expect(result['total']).to eql 1
-      expect(result['page']).to eql 1
-      expect(result['results'].first['id']).to eq active_task.id
+      expect(json['results'].count).to eql 1
+      expect(json['total']).to eql 1
+      expect(json['page']).to eql 1
+      expect(json['results'].first['id']).to eq active_task.id
     end
 
     it 'return a list of tasks for the user' do
@@ -48,13 +45,12 @@ describe Api::V1::TasksController, type: :controller do
 
       get :index, scope: 'user', format: :json
       expect(response).to be_success
-      result = JSON.parse(response.body)
 
-      expect(result['results'].count).to eql 2
-      expect(result['total']).to eql 2
-      expect(result['page']).to eql 1
-      expect(result['results'].map { |r| r['id'] }).to match_array(tasks.map(&:id))
-      expect(result['results'].first.keys).to match_array(%w(active completed due_at id status title user))
+      expect(json['results'].count).to eql 2
+      expect(json['total']).to eql 2
+      expect(json['page']).to eql 1
+      expect(json['results'].map { |r| r['id'] }).to match_array(tasks.map(&:id))
+      expect(json['results'].first.keys).to match_array(%w(active completed due_at id event_id status title user))
     end
 
     it "return a list of tasks for the user's team" do
@@ -68,47 +64,102 @@ describe Api::V1::TasksController, type: :controller do
 
       get :index, scope: 'teams', format: :json
       expect(response).to be_success
-      result = JSON.parse(response.body)
 
-      expect(result['results'].count).to eql 2
-      expect(result['total']).to eql 2
-      expect(result['page']).to eql 1
-      expect(result['results'].map { |r| r['id'] }).to match_array(tasks.map(&:id))
-      expect(result['results'].first.keys).to match_array(%w(active completed due_at id status title user))
+      expect(json['results'].count).to eql 2
+      expect(json['total']).to eql 2
+      expect(json['page']).to eql 1
+      expect(json['results'].map { |r| r['id'] }).to match_array(tasks.map(&:id))
+      expect(json['results'].first.keys).to match_array(%w(active completed due_at id event_id status title user))
     end
   end
 
-  describe "GET 'comments'" do
-    it 'returns the list of comments for the task' do
-      event = create(:event, company: company, campaign: create(:campaign, company: company))
-      task = create(:task, event: event)
-      comment1 = create(:comment, content: 'Comment #1', commentable: task, created_at: Time.zone.local(2013, 8, 22, 11, 59))
-      comment2 = create(:comment, content: 'Comment #2', commentable: task, created_at: Time.zone.local(2013, 8, 23, 9, 15))
-      event.save
-      Sunspot.commit
-
-      get 'comments', id: task.to_param, format: :json
+  describe "POST 'create'" do
+    it 'creates the task linked to a event' do
+      expect do
+        post 'create', event_id: event.to_param, format: :json,
+                       task: {
+                         title: 'Some test task', due_at: '05/12/2020',
+                         active: false, company_user_id: company_user.to_param }
+      end.to change(Task, :count).by(1)
       expect(response).to be_success
-      result = JSON.parse(response.body)
-      expect(result.count).to eq(2)
-      expect(result).to eq([{
-                             'id' => comment1.id,
-                             'content' => 'Comment #1',
-                             'created_at' => '2013-08-22T11:59:00.000-07:00',
-                             'created_by' => {
-                               'id' => comment1.created_by_id,
-                               'full_name' => comment1.user.full_name
-                             }
-                           },
-                            {
-                              'id' => comment2.id,
-                              'content' => 'Comment #2',
-                              'created_at' => '2013-08-23T09:15:00.000-07:00',
-                              'created_by' => {
-                                'id' => comment2.created_by_id,
-                                'full_name' => comment2.user.full_name
-                              }
-                            }])
+      expect(json['title']).to eql 'Some test task'
+      expect(json['event_id']).to eql event.id
+      expect(json['user']['id']).to eql company_user.id
+      expect(json['due_at']).to eql '05/12/2020'
+      expect(json['status']).to eql %w(Inactive Assigned Incomplete)
+    end
+
+    it 'creates the task linked assigned to a user but not to a event' do
+      expect do
+        post 'create', format: :json,
+                       task: {
+                         title: 'Some test task', due_at: '05/12/2020',
+                         active: false, company_user_id: company_user.to_param }
+      end.to change(Task, :count).by(1)
+      expect(response).to be_success
+      expect(json['title']).to eql 'Some test task'
+      expect(json['due_at']).to eql '05/12/2020'
+      expect(json['status']).to eql %w(Inactive Assigned Incomplete)
+      expect(json['user']['id']).to eql company_user.id
+      expect(json['event_id']).to be_nil
+    end
+
+    it 'should return errors' do
+      expect do
+        post 'create', event_id: event.to_param, format: :json
+        expect(response.code).to eql '400'
+      end.not_to change(Task, :count)
+      expect(json['success']).to be_falsey
+      expect(json['info']).to eql 'Missing parameter task'
+    end
+
+    it 'should assign the user to the task and send a SMS to the assigned user' do
+      Timecop.freeze do
+        with_resque do
+          company_user = create(:company_user,
+                                company_id: company.id,
+                                notifications_settings: %w(new_task_assignment_sms new_task_assignment_email),
+                                user_attributes: { phone_number_verified: true })
+          message = "You have a new task http://localhost:5100/tasks/mine?new_at=#{Time.now.to_i}"
+          expect(UserMailer).to receive(:notification).with(company_user.id, 'New Task Assignment', message).and_return(double(deliver: true))
+          expect do
+            post 'create', event_id: event.to_param, format: :json,
+                           task: { title: 'Some test task', due_at: '05/23/2020',
+                                   company_user_id: company_user.to_param }
+          end.to change(Task, :count).by(1)
+          expect(assigns(:task).company_user_id).to eq(company_user.id)
+          open_last_text_message_for user.phone_number
+          expect(current_text_message).to have_body message
+        end
+      end
+    end
+  end
+
+  describe "GET 'show'" do
+    let!(:task) { create(:task, event: event, company_user: company_user) }
+
+    it 'returns the task details', :show_in_doc do
+      get :show, id: task.id, format: :json
+      expect(response).to be_success
+      expect(json['title']).to eql task.title
+    end
+  end
+
+  describe "PUT 'update'" do
+    let!(:task) { create(:task) }
+
+    it 'updates the task linked to a event', :show_in_doc do
+      expect do
+        post 'update', id: task.to_param, format: :json,
+                       task: {
+                         title: 'My new title', due_at: '05/12/2020',
+                         active: false, company_user_id: company_user.to_param }
+      end.to_not change(Task, :count)
+      expect(response).to be_success
+      expect(json['title']).to eql 'My new title'
+      expect(json['user']['id']).to eql company_user.id
+      expect(json['due_at']).to eql '05/12/2020'
+      expect(json['status']).to eql %w(Inactive Assigned Incomplete)
     end
   end
 end

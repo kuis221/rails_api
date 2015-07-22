@@ -93,6 +93,11 @@ module EventsHelper
     )
   end
 
+  def module_range_val(event, module_name, range_name)
+    return nil unless event.campaign.range_module_settings?(module_name)
+    event.campaign.module_setting(module_name, range_name).to_i
+  end
+
   def describe_today_event_alert(resource)
     description = 'Your event is scheduled for today. '
     alert_parts = []

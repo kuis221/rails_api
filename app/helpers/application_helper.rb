@@ -323,9 +323,8 @@ module ApplicationHelper
 
   def user_company_dropdown(user)
     companies = user.companies_active_role
-
-    if companies.size == 1
-      link_to companies.first.name, root_path, class: 'current-company-title'
+    if companies.size == 1 || user.id != current_real_user.id
+      link_to current_company.name, root_path, class: 'current-company-title'
     else
       content_tag(:div, class: 'header-menu dropdown header-menu') do
         link_to((current_company.name + ' ' + content_tag(:b, '', class: 'caret')).html_safe, root_path, class: 'dropdown-toggle current-company-title', 'data-toggle' => 'dropdown') +

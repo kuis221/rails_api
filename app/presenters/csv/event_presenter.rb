@@ -48,12 +48,36 @@ module Csv
       end
     end
 
+    def first_event_expense_created_at
+      datetime @model.first_event_expense_created_at if @model.first_event_expense_created_at.present?
+    end
+
+    def first_event_expense_created_by
+      if (created_by = @model.first_event_expense_created_by).present?
+        created_by.full_name
+      end
+    end
+
+    def last_event_expense_updated_at
+      datetime @model.last_event_expense_updated_at if @model.last_event_expense_updated_at.present?
+    end
+
+    def last_event_expense_updated_by
+      if (updated_by = @model.last_event_expense_updated_by).present?
+        updated_by.full_name
+      end
+    end
+
     def promo_hours
       number_with_precision(@model.promo_hours, precision: 2)
     end
 
     def place_address
       h.strip_tags(h.event_place_address(@model, false, ', ', ', '))
+    end
+
+    def country
+      @model.place_country
     end
 
     def place_td_linx_code

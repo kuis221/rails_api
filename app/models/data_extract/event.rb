@@ -31,10 +31,12 @@ class DataExtract::Event < DataExtract
                  place_name: 'places.name',
                  place_state: 'places.state',
                  place_zipcode: 'places.zipcode',
-                 event_team_members: 'array_to_string(event_team_members.names, \', \')',
+                 event_team_members: 'array_to_string(ARRAY(SELECT unnest(event_team_members.names) ORDER BY 1), \', \')',
                  event_status: 'initcap(events.aasm_state)',
                  created_by: '(SELECT trim(us.first_name || \' \' || us.last_name) FROM users as us WHERE events.created_by_id=us.id)',
                  created_at: proc { "to_char(events.created_at, 'MM/DD/YYYY')" },
+                 approved_at: proc { "to_char(events.approved_at, 'MM/DD/YYYY')" },
+                 submitted_at: proc { "to_char(events.submitted_at, 'MM/DD/YYYY')" },
                  status: 'CASE WHEN events.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END'
 
   def sort_by_column(col)

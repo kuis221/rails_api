@@ -17,6 +17,10 @@ Brandscopic::Application.routes.draw do
     get :items, on: :collection, format: :html
   end
 
+  concern :commentable do
+    resources :comments, only: [:index, :create, :update, :destroy]
+  end
+
   concern :api_attachable do
     get :form, on: :collection
   end
@@ -44,15 +48,14 @@ Brandscopic::Application.routes.draw do
 
         resources :filters, only: [:show]
 
-        resources :events, only: [:index, :show, :create, :update] do
+        resources :events, only: [:index, :show, :create, :update], concerns: [:commentable] do
           get :status_facets, on: :collection
           get :requiring_attention, on: :collection
           post :filter, to: 'events#index', on: :collection
           resources :photos, only: [:index, :create, :update], concerns: [:api_attachable]
           resources :documents, only: [:index, :create, :update], concerns: [:api_attachable]
           resources :event_expenses, only: [:index, :create, :destroy, :update], concerns: [:api_attachable]
-          resources :tasks, only: [:index]
-          resources :comments, only: [:index, :create, :update, :destroy]
+          resources :tasks, only: [:index, :create]
           resources :surveys,  only: [:index, :create, :update, :show] do
             get :brands, on: :collection
           end
@@ -74,6 +77,7 @@ Brandscopic::Application.routes.draw do
             post :contacts, to: 'events#add_contact'
             delete :contacts, to: 'events#delete_contact'
             get :assignable_contacts
+            get :details_counters
           end
         end
 
@@ -124,10 +128,7 @@ Brandscopic::Application.routes.draw do
 
         resources :contacts, only: [:index, :create, :update, :show]
 
-        resources :tasks, only: [] do
-          member do
-            get :comments
-          end
+        resources :tasks, only: [:update, :create, :show], concerns: [:commentable] do
           collection do
             get :mine, to: :index, defaults: { scope: 'user' }, constraints: { scope: 'user' }
             get :team, to: :index, defaults: { scope: 'teams' }, constraints: { scope: 'teams' }

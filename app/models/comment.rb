@@ -19,6 +19,8 @@ class Comment < ActiveRecord::Base
 
   belongs_to :commentable, polymorphic: true
   belongs_to :user, foreign_key: 'created_by_id'
+  belongs_to :created_by, class_name: 'User'
+  belongs_to :updated_by, class_name: 'User'
 
   delegate :full_name, to: :user, prefix: true, allow_nil: true
 
@@ -47,6 +49,11 @@ class Comment < ActiveRecord::Base
 
   after_save :send_notifications
 
+  def for_task?
+    p commentable.inspect
+    commentable.is_a?(Task)
+  end
+
   private
 
   def reindex_event
@@ -70,7 +77,7 @@ class Comment < ActiveRecord::Base
                                                                                                 anchor: "comments-#{commentable_id}"))
         UserMailer.notification(commentable.company_user.id, I18n.translate('notification_types.new_comment'), email_message).deliver
       end
-    else # Case when Task has not an assigned user, send messages to all event's team
+    elsif commentable.event.present? # Case when Task has not an assigned user, send messages to all event's team
       sms_message = I18n.translate('notifications_sms.new_team_comment',
                                    url: Rails.application.routes.url_helpers.mine_tasks_url(task: [commentable_id],
                                                                                             anchor: "comments-#{commentable_id}"))
