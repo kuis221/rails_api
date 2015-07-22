@@ -29,6 +29,9 @@ class Api::V1::TasksController < Api::V1::FilteredController
   param :event_id, :number, required: false, desc: 'Event ID, required when getting the list of tasks for a event'
   param :status, Array, desc: 'A list of photo status to filter the results. Options: Active, Inactive'
   param :task_status, Array, desc: 'A list of photo status to filter the results. Options: Late, Complete, Incomplete, Assigned, Unassigned'
+  param :campaign, Array, desc: 'A list of campaign ids to filter the results'
+  param :user, Array, desc: 'A list of user ids to filter the results'
+  param :team, Array, desc: 'A list of team ids to filter the results'
   param :page, :number, desc: 'The number of the page, Default: 1'
   def index
     authorize_index!
@@ -59,7 +62,6 @@ class Api::V1::TasksController < Api::V1::FilteredController
     end
   end
 
-
   api :GET, '/api/v1/tasks/:id', 'Get a task\'s details'
   param :id, :number, required: true, desc: 'Task ID'
   def show
@@ -74,7 +76,7 @@ class Api::V1::TasksController < Api::V1::FilteredController
   end
 
   def permitted_search_params
-    params.permit(:event_id, { status: [] }, task_status: [])
+    params.permit(:event_id, status: [], task_status: [], campaign: [], user: [], team: [])
   end
 
   def search_params

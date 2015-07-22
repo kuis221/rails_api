@@ -32,6 +32,7 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
       param :description, String, required: false, desc: 'Event expense description'
       param :receipt_attributes, Hash do
         param :direct_upload_url, String, desc: "The receipt URL. This should be a valid Amazon S3's URL."
+        param :_destroy, ['1'], desc: "Indicates that the receipt should be removed from the expense"
       end
     end
   end
@@ -158,7 +159,9 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
   def permitted_params
     params.permit(event_expense: [
       :amount, :category, :amount, :brand_id, :expense_date, :reimbursable,
-      :billable, :merchant, :description, { receipt_attributes: [:direct_upload_url] }])[:event_expense]
+      :billable, :merchant, :description, { receipt_attributes: [:direct_upload_url, :id, :_destroy] }])[:event_expense].tap do |p|
+      p[:receipt_attributes][:id] = resource.receipt.id if p[:receipt_attributes].present? && p[:receipt_attributes][:_destroy].present?
+    end
   end
 
   def skip_default_validation

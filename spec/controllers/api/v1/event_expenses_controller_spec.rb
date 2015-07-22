@@ -109,6 +109,20 @@ describe Api::V1::EventExpensesController, type: :controller do
       expect(expense.category).to eq('Transportation')
       expect(expense.expense_date.to_s(:slashes)).to eq('01/02/2014')
     end
+
+    it 'dettach the receipt from the expense' do
+      receipt = create(:attached_asset, attachable: expense)
+      expect(expense.receipt).to eql receipt
+      expect do
+        put :update, event_id: event.to_param, id: expense.id, event_expense: {
+          receipt_attributes: { _destroy: '1' }
+        }, format: :json
+      end.to change(AttachedAsset, :count).by(-1)
+
+      expect(response).to be_success
+      expense.reload
+      expect(expense.receipt).to be_nil
+    end
   end
 
   describe "GET 'form'" do
