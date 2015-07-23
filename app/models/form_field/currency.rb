@@ -65,4 +65,10 @@ class FormField::Currency < FormField
   def is_numeric?
     true
   end
+
+  def grouped_results(campaign, event_scope)
+    result = form_field_results.for_event_campaign(campaign).merge(event_scope).pluck('value')
+    total = result.compact.inject{ |sum,x| sum.to_f + x.to_f } || 0
+    "$#{total}"
+  end
 end

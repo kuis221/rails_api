@@ -63,6 +63,22 @@ class FormField::LikertScale < FormField
     )
   end
 
+  def grouped_results(campaign, event_scope)
+    result = form_field_results.for_event_campaign(campaign).pluck('hash_value').select { |h| h unless h.blank? }
+    return [] if result.blank?
+
+    totals = initialize_totals_likert_scale
+
+    result.each do |value|
+      value.map do |(k, v)|
+        totals[k.to_i][:totals][v.to_i][:total] += 1
+      end
+    end
+    totals.map do |(key, statement)|
+      [key, statement[:name], totals_likert_scale(statement[:totals])]
+    end
+  end
+
   protected
 
   def valid_hash_keys
@@ -72,5 +88,23 @@ class FormField::LikertScale < FormField
   def is_valid_value_for_key?(_key, value)
     @_option_ids = options.pluck('id')
     value_is_numeric?(value) && @_option_ids.include?(value.to_i)
+  end
+
+  def initialize_totals_likert_scale
+    statements.inject({}) do |memo, (statement)|
+      memo[statement.id] = {
+        name: statement.name,
+        totals: options.inject({}) do |m, (option)|
+            m[option.id] = { name: option.name, total: 0 }
+            m
+        end
+      }
+      memo
+    end
+  end
+
+  def totals_likert_scale(totals)
+    values = totals.reject{ |_, v| v[:total].nil? || v[:total] == '' || v[:total].to_f == 0.0 }
+    values.map{ |_, v| [v[:name], v[:total]] }
   end
 end

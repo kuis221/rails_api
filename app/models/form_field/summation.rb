@@ -15,7 +15,7 @@
 #  kpi_id         :integer
 #
 
-class FormField::Summation < FormField
+class FormField::Summation < FormField::Hashed
   MIN_OPTIONS_ALLOWED = 2
   def field_options(result)
     {
@@ -69,5 +69,12 @@ class FormField::Summation < FormField
 
   def min_options_allowed
     MIN_OPTIONS_ALLOWED
+  end
+
+  def grouped_results(campaign, event_scope)
+    result = form_field_results.for_event_campaign(campaign).merge(event_scope)
+                                .pluck('hash_value')
+                                .select { |h| h unless h.blank? }
+    results_for_hash_values(result)
   end
 end

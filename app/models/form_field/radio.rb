@@ -15,7 +15,7 @@
 #  kpi_id         :integer
 #
 
-class FormField::Radio < FormField
+class FormField::Radio < FormField::Hashed
   def field_options(result)
     {
       as: :radio_buttons,
@@ -66,7 +66,8 @@ class FormField::Radio < FormField
     end
   end
 
-  def grouped_results(campaign, scope)
-    form_field_results.for_event_campaign(campaign).merge(scope).group(:value).count
+  def grouped_results(campaign, event_scope)
+    result = form_field_results.for_event_campaign(campaign).merge(event_scope).group(:value).count
+    results_for_percentage_chart_for_value(result)
   end
 end
