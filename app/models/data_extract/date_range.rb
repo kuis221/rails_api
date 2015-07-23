@@ -20,10 +20,12 @@
 #
 
 class DataExtract::DateRange < DataExtract
-  define_columns name: 'name', 
+  define_columns name: 'name',
                  description: 'description',
-                 created_by: 'trim(users.first_name || \' \' || users.last_name)',
                  created_at: proc { "to_char(date_ranges.created_at, 'MM/DD/YYYY')" },
+                 created_by: '(SELECT trim(us.first_name || \' \' || us.last_name) FROM users as us WHERE date_ranges.created_by_id=us.id)',
+                 modified_at: proc { "to_char(date_ranges.updated_at, 'MM/DD/YYYY')" },
+                 modified_by: '(SELECT trim(us.first_name || \' \' || us.last_name) FROM users as us WHERE date_ranges.updated_by_id=us.id)',
                  active_state: 'CASE WHEN date_ranges.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END'
 
   def add_joins_to_scope(s)

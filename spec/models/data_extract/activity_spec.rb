@@ -42,8 +42,9 @@ RSpec.describe DataExtract::Activity, type: :model do
         ['event_start_time', 'Event Start Time'], ['event_end_date', 'Event End Date'],
         ['event_end_time', 'Event End Time'], ['place_street', 'Venue Street'],
         ['place_city', 'Venue City'], ['place_name', 'Venue Name'], ['place_state', 'Venue State'],
-        ['place_zipcode', 'Venue ZIP Code'],
-        ['event_status', 'Event Status'], ['status', 'Active State']])
+        ['place_zipcode', 'Venue ZIP Code'], ['event_status', 'Event Status'], ['status', 'Active State'],
+        ['created_at', 'Created At'], ['created_by', 'Created By'], ['modified_at', 'Modified At'],
+        ['modified_by', 'Modified By']])
     end
 
     it 'returns the activity form fields' do
@@ -55,9 +56,9 @@ RSpec.describe DataExtract::Activity, type: :model do
         ['event_start_time', 'Event Start Time'], ['event_end_date', 'Event End Date'],
         ['event_end_time', 'Event End Time'], ['place_street', 'Venue Street'],
         ['place_city', 'Venue City'], ['place_name', 'Venue Name'], ['place_state', 'Venue State'],
-        ['place_zipcode', 'Venue ZIP Code'],
-        ['event_status', 'Event Status'], ['status', 'Active State'],
-        ["ff_#{field.id}", 'My Numeric Field']])
+        ['place_zipcode', 'Venue ZIP Code'], ['event_status', 'Event Status'], ['status', 'Active State'],
+        ['created_at', 'Created At'], ['created_by', 'Created By'], ['modified_at', 'Modified At'],
+        ['modified_by', 'Modified By'], ["ff_#{field.id}", 'My Numeric Field']])
     end
 
     it 'returns percentage segments as separte columns' do
