@@ -223,13 +223,17 @@ jQuery ->
 				$('#progress-error-' + $(element).data('segment-field-id')).removeClass('success').addClass('error')
 				$('#progress-error-' + $(element).data('segment-field-id')).closest('.form_field_percentage').find('.control-group-label').find('.ok-message').remove()
 		errorPlacement: (error, element) ->
-			label = element.closest(".control-group").find("label.control-label[for=\"#{element.attr('id')}\"]")
-			label = element.closest(".control-group").find("label.control-label") if label.length is 0
-			if element.is('input[type=file]')
-				label = element.closest('.attachment-select-file-view')
-			label.addClass('with_message')
-			if label.length > 0
-				error.insertAfter label
+			if element[0].value == '' && element.closest(".control-group").find("span.help-inline").length > 0
+				$.noop
+			else
+				label = element.closest(".control-group").find("label.control-label[for=\"#{element.attr('id')}\"]")
+				label = element.closest(".control-group").find("label.control-label") if label.length is 0
+				if element.is('input[type=file]')
+					label = element.closest('.attachment-select-file-view')
+				label.addClass('with_message')
+				if label.length
+					element.closest(".control-group").find("span.help-inline").remove()
+					error.insertAfter label
 		focusInvalid: false,
 		invalidHandler: (form, validator) ->
 			return unless validator.numberOfInvalids()

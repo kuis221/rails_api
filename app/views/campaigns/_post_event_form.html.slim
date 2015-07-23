@@ -91,6 +91,10 @@
               br
               | Marque
 
+            .field data-type="Place"
+              span.icon-venue
+              br
+              | Place
 
         - if can?(:activate_kpis, resource)
           .accordion-group
@@ -126,7 +130,7 @@
               i.icon-chat
               | Comments
             - if jbb_feature_enabled?
-              .field.module data-type="Attendance" 
+              .field.module data-type="Attendance"
                 i.icon-attendance
                 | Attendance
 
