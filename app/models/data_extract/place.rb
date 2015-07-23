@@ -21,11 +21,12 @@
 
 class DataExtract::Place < DataExtract
   define_columns name: 'name',
-                 venues_types: 'array_to_string(types, \', \')',
+                 venues_types: "initcap(replace(array_to_string(types, \', \'), '_', ' '))",
                  street: 'trim(street_number || \' \' || route)',
                  city: 'city',
                  state_name: 'state',
                  country_name: 'country',
+                 score: 'score',
                  zipcode: 'zipcode',
                  td_linx_code: 'td_linx_code',
                  created_by: 'trim(users.first_name || \' \' || users.last_name)',
