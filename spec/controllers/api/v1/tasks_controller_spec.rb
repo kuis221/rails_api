@@ -74,18 +74,19 @@ describe Api::V1::TasksController, type: :controller do
   end
 
   describe "POST 'create'" do
-    it 'creates the task linked to a event' do
+    it 'creates the task linked to a event', :show_in_doc do
       expect do
         post 'create', event_id: event.to_param, format: :json,
                        task: {
                          title: 'Some test task', due_at: '05/12/2020',
-                         active: false, company_user_id: company_user.to_param }
+                         active: 'false', company_user_id: company_user.to_param }
       end.to change(Task, :count).by(1)
       expect(response).to be_success
       expect(json['title']).to eql 'Some test task'
       expect(json['event_id']).to eql event.id
       expect(json['user']['id']).to eql company_user.id
       expect(json['due_at']).to eql '05/12/2020'
+      expect(json['active']).to be_falsey
       expect(json['status']).to eql %w(Inactive Assigned Incomplete)
     end
 
