@@ -72,4 +72,21 @@ describe Brand, type: :model do
       expect(Marque.all.map(&:name)).to match_array(['Marque 1', 'Marque 2', 'Marque 3'])
     end
   end
+
+  describe '.accessible_by_user' do
+    let!(:company_user) { create :company_user }
+
+    let!(:brand1) { create :brand, active: true }
+    let!(:brand2) { create :brand, active: true }
+    let!(:brand3) { create :brand, active: true }
+
+    before { create :membership, company_user: company_user, memberable: brand1 }
+    before { create :membership, company_user: company_user, memberable: brand3 }
+
+    let(:collection) { Brand.accessible_by_user(company_user).all }
+
+    it "should return only the specific user's brands" do
+      expect(collection).to match_array [brand1, brand3]
+    end
+  end
 end

@@ -200,11 +200,17 @@ feature 'BrandPortfolios', js: true, search: true do
 
   feature 'custom filters', search: true, js: true do
     it_behaves_like 'a list that allow saving custom filters' do
+      let!(:brand1) { create(:brand, name: 'Brand 1', company: company) }
+      let!(:brand2) { create(:brand, name: 'Brand 2', company: company) }
+
+      let!(:campaign) { create(:campaign, company: company) }
+
       before do
-        campaign = create(:campaign, company: company)
-        campaign.brands << create(:brand, name: 'Brand 1', company: company)
-        campaign.brands << create(:brand, name: 'Brand 2', company: company)
+        campaign.brands << brand1
+        campaign.brands << brand2
         company_user.campaigns << campaign
+        create :membership, company_user: company_user, memberable: brand1
+        create :membership, company_user: company_user, memberable: brand2
       end
 
       let(:list_url) { brand_portfolios_path }

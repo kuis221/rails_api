@@ -17,6 +17,6 @@
 FactoryGirl.define do
   factory :membership do
     company_user nil
-    member nil
+    memberable nil
   end
 end

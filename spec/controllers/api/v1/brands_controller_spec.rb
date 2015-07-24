@@ -2,14 +2,17 @@ require 'rails_helper'
 
 describe Api::V1::BrandsController, type: :controller do
   let(:user) { sign_in_as_user }
-  let(:company) { user.company_users.first.company }
+  let(:company_user) { user.company_users.first }
+  let(:company) { company_user.company }
 
   before { set_api_authentication_headers user, company }
 
   describe '#index' do
     it 'returns a list of brands' do
       brand1 = create(:brand, name: 'Cacique', company_id: company.to_param)
+      create :membership, company_user: company_user, memberable: brand1
       brand2 = create(:brand, name: 'Nikolai', company_id: company.to_param)
+      create :membership, company_user: company_user, memberable: brand2
 
       get 'index', format: :json
       expect(response).to be_success
@@ -23,7 +26,9 @@ describe Api::V1::BrandsController, type: :controller do
       campaign = create(:campaign, company: company)
       campaign2 = create(:campaign, company: company) 
       brand1 = create(:brand, name: 'Cacique', company_id: company.to_param)
+      create :membership, company_user: company_user, memberable: brand1
       brand2 = create(:brand, name: 'Imperial', company_id: company.to_param)
+      create :membership, company_user: company_user, memberable: brand2
       campaign2.brands << create(:brand, name: 'Pilsen', company_id: company.to_param)
       campaign.brands << brand1
       campaign.brands << brand2
@@ -41,6 +46,7 @@ describe Api::V1::BrandsController, type: :controller do
   describe '#marques' do
     it 'returns a list of marques' do
       brand = create(:brand, name: 'Cacique', company_id: company.to_param)
+      create :membership, company_user: company_user, memberable: brand
       marque1 = create(:marque, name: 'Marque #1 for Cacique', brand: brand)
       marque2 = create(:marque, name: 'Marque #2 for Cacique', brand: brand)
 
