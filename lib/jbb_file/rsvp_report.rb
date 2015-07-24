@@ -105,15 +105,15 @@ module JbbFile
       date_str_with_market_name = "#{date_str}-#{row[:market]}"
       return @events[date_str_with_market_name] unless @events[date_str_with_market_name].nil?
 
-      if campaign.areas.where('lower(name) = ?', row[:market].strip).exists?
-        event_scope = campaign.events.where('events.local_start_at::date=?', date_str).active
-        if event_scope.count > 1
-          self.multiple_events += 1
-          return
-        end
-        @events[date_str_with_market_name] ||= event_scope.first
+      areas = campaign.areas.where('lower(name) = ?', row[:market].strip).all
+      event_scope = campaign.events.in_campaign_areas(campaign, areas).where('events.local_start_at::date = ?', date_str).active
+
+      if event_scope.count > 1
+        self.multiple_events += 1
+        return
       end
 
+      @events[date_str_with_market_name] ||= event_scope.first
       @events[date_str_with_market_name] ||= create_event(campaign, date, row[:market])
       @events[date_str_with_market_name]
     end
