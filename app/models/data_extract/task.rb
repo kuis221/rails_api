@@ -28,8 +28,10 @@ class DataExtract::Task < DataExtract
                                 THEN ', Late' ELSE '' END || '' || CASE WHEN (tasks.due_at is not null AND
                                   tasks.due_at = '#{Date.today.to_s(:db)}') THEN ', Due' ELSE '' END",
                  due_at: proc { "to_char(tasks.due_at, 'MM/DD/YYYY')" },
-                 created_by: 'trim(users.first_name || \' \' || users.last_name)',
                  created_at: proc { "to_char(tasks.created_at, 'MM/DD/YYYY')" },
+                 created_by: '(SELECT trim(us.first_name || \' \' || us.last_name) FROM users as us WHERE tasks.created_by_id=us.id)',
+                 modified_at: proc { "to_char(tasks.updated_at, 'MM/DD/YYYY')" },
+                 modified_by: '(SELECT trim(us.first_name || \' \' || us.last_name) FROM users as us WHERE tasks.updated_by_id=us.id)',
                  assigned_to: 'trim(cu.first_name || \' \' || cu.last_name)',
                  comment1: '(SELECT content FROM comments WHERE commentable_type = \'Task\' AND commentable_id=tasks.id ORDER BY created_at LIMIT 1 OFFSET 0) AS column1',
                  comment2: '(SELECT content FROM comments WHERE commentable_type = \'Task\' AND commentable_id=tasks.id ORDER BY created_at LIMIT 1 OFFSET 1) AS column2',

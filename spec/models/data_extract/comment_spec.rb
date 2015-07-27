@@ -26,11 +26,12 @@ RSpec.describe DataExtract::Comment, type: :model do
     let(:subject) { described_class }
 
     it 'returns the correct columns' do
-      expect(subject.exportable_columns).to eql(
-        [%w(comment Comment), %w(campaign_name Campaign), ['start_date', 'Start Date'], ['start_time', 'Start Time'],
-         ['end_date', 'End Date'], ['end_time', 'End Time'], ['event_status', 'Event Status'],
-         ['street', 'Venue Street'], ['place_city', 'Venue City'], ['place_name', 'Venue Name'],
-         ['place_state', 'Venue State'], ['place_zipcode', 'Venue ZIP Code'], ['created_by', 'Created By'], ['created_at', 'Created At']])
+      expect(subject.exportable_columns).to eql([
+        %w(comment Comment), %w(campaign_name Campaign), ['start_date', 'Start Date'], ['start_time', 'Start Time'],
+        ['end_date', 'End Date'], ['end_time', 'End Time'], ['event_status', 'Event Status'],
+        ['street', 'Venue Street'], ['place_city', 'Venue City'], ['place_name', 'Venue Name'],
+        ['place_state', 'Venue State'], ['place_zipcode', 'Venue ZIP Code'], ['created_at', 'Created At'],
+        ['created_by', 'Created By'], ['modified_at', 'Modified At'], ['modified_by', 'Modified By']])
     end
   end
 

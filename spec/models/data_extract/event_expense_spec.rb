@@ -27,13 +27,14 @@ RSpec.describe DataExtract::EventExpense, type: :model do
 
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql([
-        %w(category Category), %w(amount Amount), ['expense_date', 'Date'],
-        ['reimbursable', 'Reimbursable'], ['billable', 'Billable'], ['merchant', 'Merchant'],
-        ['description', 'Description'], %w(campaign_name Campaign), %w(brand_name Brand),  ['end_date', 'End Date'],
+        %w(category Category), %w(amount Amount), %w(expense_date Date),
+        %w(reimbursable Reimbursable), %w(billable Billable), %w(merchant Merchant),
+        %w(description Description), %w(campaign_name Campaign), %w(brand_name Brand),  ['end_date', 'End Date'],
         ['end_time', 'End Time'], ['start_date', 'Start Date'], ['start_time', 'Start Time'],
         ['event_status', 'Event Status'], ['place_street', 'Venue Street'], ['place_city', 'Venue City'],
         ['place_name', 'Venue Name'], ['place_state', 'Venue State'], ['place_zipcode', 'Venue ZIP Code'],
-        ['created_by', 'Created By'], ['created_at', 'Created At']])
+        ['created_at', 'Created At'], ['created_by', 'Created By'], ['modified_at', 'Modified At'],
+        ['modified_by', 'Modified By']])
     end
   end
 

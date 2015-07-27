@@ -31,8 +31,9 @@ RSpec.describe DataExtract::Event, type: :model do
         ['start_date', 'Start Date'], ['start_time', 'Start Time'], ['place_street', 'Venue Street'],
         ['place_city', 'Venue City'], ['place_name', 'Venue Name'], ['place_state', 'Venue State'],
         ['place_zipcode', 'Venue ZIP Code'], ['event_team_members', 'Event Team'], ['event_status', 'Event Status'],
-        ['created_by', 'Created By'], ['created_at', 'Created At'], ['approved_at', 'Approved At'],
-        ['submitted_at', 'Submitted At'], ['status', 'Active State']])
+        ['created_at', 'Created At'], ['created_by', 'Created By'], ['modified_at', 'Modified At'],
+        ['modified_by', 'Modified By'], ['approved_at', 'Approved At'], ['submitted_at', 'Submitted At'],
+        ['status', 'Active State']])
     end
   end
 
