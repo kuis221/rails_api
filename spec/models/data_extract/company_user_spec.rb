@@ -28,7 +28,8 @@ RSpec.describe DataExtract::CompanyUser, type: :model do
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql(
         [:first_name, :last_name, :teams_name, :email, :phone_number, :role_name,
-         :street_address, :country, :city, :state, :zip_code, :time_zone, :created_at, :active_state])
+         :street_address, :country, :city, :state, :zip_code, :time_zone, :created_at,
+         :created_by, :modified_at, :modified_by, :active_state])
     end
   end
 

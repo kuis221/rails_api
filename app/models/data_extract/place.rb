@@ -29,8 +29,10 @@ class DataExtract::Place < DataExtract
                  score: 'score',
                  zipcode: 'zipcode',
                  td_linx_code: 'td_linx_code',
-                 created_by: 'trim(users.first_name || \' \' || users.last_name)',
-                 created_at: proc { "to_char(venues.created_at, 'MM/DD/YYYY')" }
+                 created_at: proc { "to_char(venues.created_at, 'MM/DD/YYYY')" },
+                 created_by: '(SELECT trim(us.first_name || \' \' || us.last_name) FROM users as us WHERE venues.created_by_id=us.id)',
+                 modified_at: proc { "to_char(venues.updated_at, 'MM/DD/YYYY')" },
+                 modified_by: '(SELECT trim(us.first_name || \' \' || us.last_name) FROM users as us WHERE venues.updated_by_id=us.id)'
 
   def add_joins_to_scope(s)
     if columns.include?('created_by') || filters.present? && filters['user'].present?

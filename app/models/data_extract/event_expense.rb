@@ -41,8 +41,10 @@ class DataExtract::EventExpense < DataExtract
                  place_name: 'places.name',
                  place_state: 'places.state',
                  place_zipcode: 'places.zipcode',
-                 created_by: 'trim(users.first_name || \' \' || users.last_name)',
-                 created_at: proc { "to_char(event_expenses.created_at, 'MM/DD/YYYY')" }
+                 created_at: proc { "to_char(event_expenses.created_at, 'MM/DD/YYYY')" },
+                 created_by: '(SELECT trim(us.first_name || \' \' || us.last_name) FROM users as us WHERE event_expenses.created_by_id=us.id)',
+                 modified_at: proc { "to_char(event_expenses.updated_at, 'MM/DD/YYYY')" },
+                 modified_by: '(SELECT trim(us.first_name || \' \' || us.last_name) FROM users as us WHERE event_expenses.updated_by_id=us.id)'
 
   def add_joins_to_scope(s)
     s = super.joins(:event_expenses)

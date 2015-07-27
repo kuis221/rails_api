@@ -30,7 +30,8 @@ RSpec.describe DataExtract::Contact, type: :model do
         [['first_name', 'First Name'], ['last_name', 'Last Name'], %w(title Title), %w(email Email),
          ['phone_number', 'Phone Number'], %w(street1 Address), ['street2', 'Address 2'],
          %w(country Country), %w(state State), %w(city City), ['zip_code', 'ZIP code'],
-         ['created_by', 'Created By'], ['created_at', 'Created At']])
+         ['created_at', 'Created At'], ['created_by', 'Created By'], ['modified_at', 'Modified At'],
+         ['modified_by', 'Modified By']])
     end
   end
 

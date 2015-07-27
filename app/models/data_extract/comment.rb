@@ -34,8 +34,10 @@ class DataExtract::Comment < DataExtract
                  place_name: 'places.name',
                  place_state: 'places.state',
                  place_zipcode: 'places.zipcode',
-                 created_by: 'trim(users.first_name || \' \' || users.last_name)',
-                 created_at: proc { "to_char(comments.created_at, 'MM/DD/YYYY')" }
+                 created_at: proc { "to_char(comments.created_at, 'MM/DD/YYYY')" },
+                 created_by: '(SELECT trim(us.first_name || \' \' || us.last_name) FROM users as us WHERE comments.created_by_id=us.id)',
+                 modified_at: proc { "to_char(comments.updated_at, 'MM/DD/YYYY')" },
+                 modified_by: '(SELECT trim(us.first_name || \' \' || us.last_name) FROM users as us WHERE comments.updated_by_id=us.id)'
 
   def add_joins_to_scope(s)
     s = super.joins(:comments)

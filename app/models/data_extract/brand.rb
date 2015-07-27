@@ -20,11 +20,13 @@
 #
 
 class DataExtract::Brand < DataExtract
-  define_columns name: 'brands.name', 
+  define_columns name: 'brands.name',
                  marques_list: 'array_to_string(ARRAY(SELECT marques.name FROM marques
                               WHERE brands.id=marques.brand_id ORDER BY marques.name),\', \') AS marques_list',
-                 created_by: 'trim(users.first_name || \' \' || users.last_name)',
                  created_at: proc { "to_char(brands.created_at, 'MM/DD/YYYY')" },
+                 created_by: '(SELECT trim(us.first_name || \' \' || us.last_name) FROM users as us WHERE brands.created_by_id=us.id)',
+                 modified_at: proc { "to_char(brands.updated_at, 'MM/DD/YYYY')" },
+                 modified_by: '(SELECT trim(us.first_name || \' \' || us.last_name) FROM users as us WHERE brands.updated_by_id=us.id)',
                  active_state: 'CASE WHEN brands.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END'
 
   def add_joins_to_scope(s)
