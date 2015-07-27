@@ -27,6 +27,8 @@ class Api::V1::TasksController < Api::V1::FilteredController
   api :GET, '/api/v1/tasks/team', "Get a list of taks for the user's teams"
   api :GET, '/api/v1/tasks/mine', 'Get a list of taks for the user'
   param :event_id, :number, required: false, desc: 'Event ID, required when getting the list of tasks for a event'
+  param :start_date, %r{\A\d{1,2}/\d{1,2}/\d{4}\z}, desc: 'A date to filter the task list. When provided a start_date without an +end_date+, the result will only include events that happen on this day. The date should be in the format MM/DD/YYYY.'
+  param :end_date, %r{\A\d{1,2}/\d{1,2}/\d{4}\z}, desc: 'A date to filter the task list. This should be provided together with the +start_date+ param and when provided will filter the list with those events that are between that range. The date should be in the format MM/DD/YYYY.'
   param :status, Array, desc: 'A list of photo status to filter the results. Options: Active, Inactive'
   param :task_status, Array, desc: 'A list of photo status to filter the results. Options: Late, Complete, Incomplete, Assigned, Unassigned'
   param :campaign, Array, desc: 'A list of campaign ids to filter the results'
@@ -76,7 +78,9 @@ class Api::V1::TasksController < Api::V1::FilteredController
   end
 
   def permitted_search_params
-    params.permit(:event_id, status: [], task_status: [], campaign: [], user: [], team: [])
+    params.permit(:event_id,
+      start_date: [], end_date: [], status: [], task_status: [],
+      campaign: [], user: [], team: [])
   end
 
   def search_params
