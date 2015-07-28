@@ -22,8 +22,10 @@
 class DataExtract::Area < DataExtract
   define_columns name: 'name',
                  description: 'description',
-                 created_by: 'users.first_name || \' \' || users.last_name',
                  created_at: proc { "to_char(areas.created_at, 'MM/DD/YYYY')" },
+                 created_by: '(SELECT trim(us.first_name || \' \' || us.last_name) FROM users as us WHERE areas.created_by_id=us.id)',
+                 modified_at: proc { "to_char(areas.updated_at, 'MM/DD/YYYY')" },
+                 modified_by: '(SELECT trim(us.first_name || \' \' || us.last_name) FROM users as us WHERE areas.updated_by_id=us.id)',
                  active_state: 'CASE WHEN areas.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END'
 
   def add_joins_to_scope(s)

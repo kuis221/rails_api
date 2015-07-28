@@ -28,9 +28,10 @@ RSpec.describe DataExtract::Task, type: :model do
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql([
         %w(title Title), %w(task_statuses Statuses), ['due_at', 'Due At'],
-        ['created_by', 'Created By'], ['created_at', 'Created At'], ['assigned_to', 'Assigned To'],
-        ['comment1', 'Comment 1'], ['comment2', 'Comment 2'], ['comment3', 'Comment 3'],
-        ['comment4', 'Comment 4'], ['comment5', 'Comment 5'], ['active_state', 'Active State']])
+        ['created_at', 'Created At'], ['created_by', 'Created By'], ['modified_at', 'Modified At'],
+        ['modified_by', 'Modified By'], ['assigned_to', 'Assigned To'], ['comment1', 'Comment 1'],
+        ['comment2', 'Comment 2'], ['comment3', 'Comment 3'], ['comment4', 'Comment 4'],
+        ['comment5', 'Comment 5'], ['active_state', 'Active State']])
     end
   end
 

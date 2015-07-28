@@ -689,10 +689,15 @@ feature 'Campaigns', js: true do
 
   feature 'custom filters', search: true, js: true do
     it_behaves_like 'a list that allow saving custom filters' do
+      let!(:brand1) { create(:brand, name: 'Brand 1', company: company) }
+      let!(:brand2) { create(:brand, name: 'Brand 2', company: company) }
+
       before do
         campaign = create(:campaign, company: company)
-        campaign.brands << create(:brand, name: 'Brand 1', company: company)
-        campaign.brands << create(:brand, name: 'Brand 2', company: company)
+        campaign.brands << brand1
+        campaign.brands << brand2
+        company_user.brands << brand1
+        company_user.brands << brand2
         company_user.campaigns << campaign
 
         create(:brand_portfolio, name: 'A Vinos Ticos', description: 'Algunos vinos de Costa Rica', company: company)

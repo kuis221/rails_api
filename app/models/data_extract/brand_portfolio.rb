@@ -20,10 +20,12 @@
 #
 
 class DataExtract::BrandPortfolio < DataExtract
-  define_columns name: 'name', 
-                 description: 'description', 
-                 created_by: 'trim(users.first_name || \' \' || users.last_name)',
+  define_columns name: 'name',
+                 description: 'description',
                  created_at: proc { "to_char(brand_portfolios.created_at, 'MM/DD/YYYY')" },
+                 created_by: '(SELECT trim(us.first_name || \' \' || us.last_name) FROM users as us WHERE brand_portfolios.created_by_id=us.id)',
+                 modified_at: proc { "to_char(brand_portfolios.updated_at, 'MM/DD/YYYY')" },
+                 modified_by: '(SELECT trim(us.first_name || \' \' || us.last_name) FROM users as us WHERE brand_portfolios.updated_by_id=us.id)',
                  active_state: 'CASE WHEN brand_portfolios.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END'
 
   def add_joins_to_scope(s)

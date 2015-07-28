@@ -26,9 +26,10 @@ RSpec.describe DataExtract::Area, type: :model do
     let(:subject) { described_class }
 
     it 'returns the correct columns' do
-      expect(subject.exportable_columns).to eql(
-        [%w(name Name), %w(description Description),
-         ['created_by', 'Created By'], ['created_at', 'Created At'], ['active_state', 'Active State']])
+      expect(subject.exportable_columns).to eql([
+        %w(name Name), %w(description Description), ['created_at', 'Created At'],
+        ['created_by', 'Created By'], ['modified_at', 'Modified At'],
+        ['modified_by', 'Modified By'], ['active_state', 'Active State']])
     end
   end
 
@@ -38,7 +39,7 @@ RSpec.describe DataExtract::Area, type: :model do
       create(:company_user, company: company,
                             user: create(:user, first_name: 'Benito', last_name: 'Camelas'))
     end
-    let(:subject) { described_class.new(company: company, current_user: company_user, 
+    let(:subject) { described_class.new(company: company, current_user: company_user,
                   columns: ['name', 'description', 'created_by', 'created_at', 'active_state']) }
 
     it 'returns empty if no rows are found' do

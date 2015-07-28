@@ -29,7 +29,8 @@ RSpec.describe DataExtract::Place, type: :model do
       expect(subject.exportable_columns).to eql([
         %w(name Name), %w(venues_types Types), ['street', 'Venue Street'], %w(city City),
         %w(state_name State), %w(country_name Country), %w(score Score), ['zipcode', 'ZIP code'],
-        ['td_linx_code', 'TD Linx Code'], ['created_by', 'Created By'], ['created_at', 'Created At']])
+        ['td_linx_code', 'TD Linx Code'], ['created_at', 'Created At'], ['created_by', 'Created By'],
+        ['modified_at', 'Modified At'], ['modified_by', 'Modified By']])
     end
   end
 

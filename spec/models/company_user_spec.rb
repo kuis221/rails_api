@@ -378,4 +378,56 @@ describe CompanyUser, type: :model do
       expect(user.notifications_settings).to include('event_recap_due_app')
     end
   end
+
+  describe '#accessible_brand_portfolios_brand_ids' do
+    let!(:company) { create :company }
+    let!(:company_user) { create :company_user, company: company }
+
+    let!(:brand1) { create :brand, company: company, active: true }
+    let!(:brand2) { create :brand, company: company, active: true }
+    let!(:brand_portfolio1) { create :brand_portfolio, company: company }
+    let!(:brand_portfolio2) { create :brand_portfolio, company: company }
+    let!(:brand_portfolios_brand1) { create :brand_portfolios_brand, brand: brand1, brand_portfolio: brand_portfolio1 }
+    let!(:brand_portfolios_brand2) { create :brand_portfolios_brand, brand: brand2, brand_portfolio: brand_portfolio2 }
+
+    before { create :membership, company_user: company_user, memberable: brand_portfolio1 }
+    before { create :membership, company_user: company_user, memberable: brand_portfolio2 }
+
+    it 'should return brand ids from brand portfolio brands' do
+      expect(company_user.accessible_brand_portfolios_brand_ids).to match_array([brand1.id, brand2.id])
+    end
+  end
+
+  describe '#accessible_brand_ids' do
+    let!(:company) { create :company }
+
+    let!(:company_user) { create :company_user, company: company }
+
+    let!(:brand1) { create :brand, company: company, active: true }
+    let!(:brand2) { create :brand, company: company, active: true }
+
+    context 'when user is an admin' do
+      before { allow(company_user).to receive(:is_admin?).and_return true }
+
+      it 'should return all brand ids' do
+        expect(company_user.accessible_brand_ids).to match_array([brand1.id, brand2.id])
+      end
+    end
+
+    context 'when user is not an admin' do
+      before { allow(company_user).to receive(:is_admin?).and_return false }
+
+      let!(:brand3) { create :brand, company: company, active: true }
+
+      before { company_user.brands << brand1 }
+      before { company_user.brands << brand2 }
+      before { company_user.brands << brand3 }
+
+      before { allow(company_user).to receive(:accessible_brand_portfolios_brand_ids).and_return([brand3.id, brand2.id]) }
+
+      it 'should return user brand ids and portfolio brand ids' do
+        expect(company_user.accessible_brand_ids).to match_array([brand1.id, brand2.id, brand3.id])
+      end
+    end
+  end
 end

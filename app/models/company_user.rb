@@ -206,6 +206,16 @@ class CompanyUser < ActiveRecord::Base
     end
   end
 
+  def accessible_brand_portfolios_brand_ids
+    BrandPortfoliosBrand.where(brand_portfolio_id: brand_portfolio_ids).pluck('brand_portfolios_brands.brand_id')
+  end
+
+  def accessible_brand_ids
+    @accessible_brand_ids ||= Rails.cache.fetch("user_accessible_brands_#{id}", expires_in: 10.minutes) do
+      is_admin? ? company.brand_ids : (brand_ids + accessible_brand_portfolios_brand_ids).uniq
+    end
+  end
+
   def accessible_locations
     @accessible_locations ||= Rails.cache.fetch("user_accessible_locations_#{id}", expires_in: 10.minutes) do
       (

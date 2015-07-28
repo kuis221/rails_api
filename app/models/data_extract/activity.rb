@@ -39,7 +39,12 @@ class DataExtract::Activity < DataExtract
                  place_state: 'places.state',
                  place_zipcode: 'places.zipcode',
                  event_status: 'initcap(events.aasm_state)',
-                 status: 'CASE WHEN events.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END'
+                 status: 'CASE WHEN events.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END',
+                 created_at: proc { "to_char(activities.created_at, 'MM/DD/YYYY')" },
+                 created_by: '(SELECT trim(us.first_name || \' \' || us.last_name) FROM users as us WHERE activities.created_by_id=us.id)',
+                 modified_at: proc { "to_char(activities.updated_at, 'MM/DD/YYYY')" },
+                 modified_by: '(SELECT trim(us.first_name || \' \' || us.last_name) FROM users as us WHERE activities.updated_by_id=us.id)'
+
 
   def add_filter_conditions_to_scope(s)
     return s if filters.nil? || filters.empty?

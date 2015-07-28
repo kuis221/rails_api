@@ -37,4 +37,18 @@ describe BrandPortfolio, type: :model do
       expect(brand_portfolio.active).to be_falsey
     end
   end
+
+  describe '#accessible_by_user' do
+    let!(:company) { create :company }
+    let!(:company_user) { create :company_user, company: company }
+
+    let!(:brand_portfolio1) { create :brand_portfolio, company: company }
+    let!(:brand_portfolio2) { create :brand_portfolio, company: company }
+
+    let(:collection) { BrandPortfolio.accessible_by_user(company_user).all }
+
+    it 'should return all company brand portfolios' do
+      expect(collection).to match_array([brand_portfolio1, brand_portfolio2])
+    end
+  end
 end

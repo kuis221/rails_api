@@ -26,6 +26,11 @@ feature 'Filter Settings', search: true, js: true do
     let(:user2) { create(:company_user, user: create(:user, first_name: 'Mario', last_name: 'Moreno'), company: company) }
     let(:user3) { create(:company_user, user: create(:user, first_name: 'Eugenio', last_name: 'Derbez'), company: company, active: false) }
 
+    before do
+      company_user.brands << brand1
+      company_user.brands << brand2
+    end
+
     scenario 'allows to configure filter settings' do
       event1.users << user1
       event1.users << user2
