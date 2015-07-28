@@ -32,7 +32,7 @@ class RsvpReportMailer < ActionMailer::Base
   def fail(failed, error_messages, files = [])
     @failed = failed
     @error_messages = error_messages
-    recipients = ENV['RSVP_SUCCESS_EMAILS'].split(',')
+    recipients = ENV['RSVP_INVALID_FORMAT_EMAILS'].split(',')
 
     files.each do |path|
       attachments[File.basename(path)] = File.read(path)
