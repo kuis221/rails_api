@@ -1,4 +1,4 @@
-tab-content.details-bar
+.tab-content.details-bar
   .info-bar
     .back-arrow
       a.close-details href="#{return_path || collection_path}" title="Close Event"
@@ -23,12 +23,11 @@ tab-content.details-bar
               i.icon-arrow-down-small
             ul#download-status-btn.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
               li
-                a href="#" role="menuitem" data-url="#{analysis_event_status_path(format: :xls)}"
+                a href="#" role="menuitem" data-url="#{analysis_campaign_summary_report_export_path(format: :xls)}"
                   | Download as XLS
               li
-                a href="#" role="menuitem" data-url="#{analysis_event_status_path(format: :pdf)}"
+                a href="#" role="menuitem" data-url="#{analysis_campaign_summary_report_export_path(format: :pdf)}"
                   | Download as PDF
-
     #report-container
       #analysis-campaign.details_box.content
         = render 'blank_state'
@@ -49,9 +48,16 @@ javascript:
       $('#analysis-campaign').empty().addClass('loading-spinner');
       submitForm();
     } else {
-      $('#download-status-btn').attr('disabled', true);
-      $('#analysis-campaign').empty().addClass("details_box content empty-state").prepend('<p class="text-center empty-state">Select a campaign from the list above');
+      $('#download-status-btns').attr('disabled', true);
+      $('#analysis-campaign').empty().addClass("details_box content empty-state main").prepend('<p class="text-center empty-state">Select a campaign from the list above');
     }
+  });
+
+  $('#download-status-btn a').on('click', function(e){
+    if ($('#report_campaign_id').val()) {
+      window.location.href = $(this).data('url') + '?campaign='+$('#report_campaign_id').val();
+    }
+    return false;
   });
 
   submitForm();
