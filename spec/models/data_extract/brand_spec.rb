@@ -53,6 +53,7 @@ RSpec.describe DataExtract::Brand, type: :model do
         brand = create(:brand, name: 'Guaro Cacique', company: company,
                                created_by_id: company_user.user.id,
                                created_at: Time.zone.local(2013, 8, 23, 9, 15))
+        create :membership, company_user: company_user, memberable: brand
         brand.marques << [create(:marque,  name: 'Marque 1'),
                           create(:marque,  name: 'Marque 2'),
                           create(:marque,  name: 'Marque 3')]
@@ -77,12 +78,15 @@ RSpec.describe DataExtract::Brand, type: :model do
       end
 
       it 'allows to sort the results' do
-        create(:brand, name: 'Cerveza Imperial', company: company,
+        brand1 = create(:brand, name: 'Cerveza Imperial', company: company,
                        created_by_id: company_user.user.id,
                        created_at: Time.zone.local(2014, 2, 12, 9, 15))
-        create(:brand, name: 'Cerveza Pilsen', company: company,
+        create :membership, company_user: company_user, memberable: brand1
+
+        brand2 = create(:brand, name: 'Cerveza Pilsen', company: company,
                        created_by_id: company_user.user.id,
                        created_at: Time.zone.local(2015, 2, 12, 9, 15))
+        create :membership, company_user: company_user, memberable: brand2
 
         subject.columns = %w(name created_at)
         subject.default_sort_by = 'name'
