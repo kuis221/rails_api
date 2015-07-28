@@ -39,6 +39,7 @@ module JbbFile
 
       @areas = {}
       @campaigns = {}
+      @new_events = []
 
       self.mailer = RsvpReportMailer
     end
@@ -87,7 +88,7 @@ module JbbFile
         p 'ENDED!'
 
         if errors.values.all? { |v| v.empty? }
-          success created, invalid_rows.count, multiple_events, invalid_rows
+          success created, invalid_rows.count, multiple_events, @new_events, invalid_rows
         else
           fail errors.values.flatten.count, invalid_rows, errors
         end
@@ -125,7 +126,6 @@ module JbbFile
 
       areas = campaign.areas.where('lower(name) = ?', row[:market].strip).all
       event_scope = campaign.events.in_campaign_areas(campaign, areas).where('events.local_start_at::date = ?', date_str).active
-
       if event_scope.count > 1
         self.multiple_events += 1
         return
@@ -147,6 +147,7 @@ module JbbFile
         end_time: '12:00am',
         place_reference: place.reference + '||' + place.place_id)
       return unless event.persisted?
+      @new_events.push Rails.application.routes.url_helpers.event_url(event)
       event
     end
 
@@ -154,13 +155,13 @@ module JbbFile
       Place.google_client.spots_by_query(city, types: [:political, :natural_feature]).first
     end
 
-    def success(created, failed, multiple_events, invalid_rows)
+    def success(created, failed, multiple_events, new_events, invalid_rows)
       path = "#{Rails.root}/tmp/invalid_rows.csv"
       CSV.open(path, 'wb') do |csv|
         csv << COLUMNS.values
         invalid_rows.each { |row| p row.inspect;  csv << row.values; }
       end if invalid_rows.any?
-      mailer.success(created, failed, multiple_events, (invalid_rows.any? ? [path] : nil)).deliver
+      mailer.success(created, failed, multiple_events, new_events.join("\n"), (invalid_rows.any? ? [path] : nil)).deliver
       false
     end
 

@@ -16,10 +16,11 @@ class RsvpReportMailer < ActionMailer::Base
     mail to: recipients, subject: 'RSVP Report Synch – Improper Format'
   end
 
-  def success(created, failed, multiple_events, files = [])
+  def success(created, failed, multiple_events, new_events = [], files = [])
     @created = created
     @failed = failed
     @multiple_events = multiple_events
+    @new_events = new_events
     recipients = ENV['RSVP_SUCCESS_EMAILS'].split(',')
 
     files.each do |path|
