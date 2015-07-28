@@ -59,7 +59,7 @@ feature 'Filter Settings', search: true, js: true do
 
       # checks that the filter sections were hidden
       expect(page).to have_filter_section('CAMPAIGNS', options: ['Campaign 1', 'Campaign 2'])
-      expect(page).to have_filter_section('BRANDS', options: ['Brand 1'])
+      expect(page).to have_filter_section('BRANDS', options: ['Brand 1', 'Brand 2'])
       expect(page).to have_filter_section('PEOPLE',
                                           options: ['Eugenio Derbez', 'Mario Moreno', 'Roberto Gomez', 'Test User'])
       expect(page).to have_filter_section('EVENT STATUS')
