@@ -5,12 +5,13 @@ module JbbFile
     COMPANY_ID = 2
 
     attr_accessor :ftp_username, :ftp_password, :ftp_server, :ftp_folder,
-                  :mailer, :invalid_files
+                  :mailer, :invalid_files, :invalid_columns
 
     def valid_format?(file)
       valid = false
       each_sheet(file) do |sheet|
         unless (self.class::VALID_COLUMNS - sheet.row(1)).empty?
+          @invalid_columns = sheet.row(1) - self.class::VALID_COLUMNS
           Rails.logger.info "Invalid columns: #{self.class::VALID_COLUMNS - sheet.row(1)}"
           return false
         end
@@ -100,7 +101,7 @@ module JbbFile
     end
 
     def invalid_format
-      mailer.invalid_format(self.invalid_files, self::class::VALID_COLUMNS).deliver
+      mailer.invalid_format(self.invalid_files, self::class::VALID_COLUMNS, @invalid_columns).deliver
       false
     end
 
