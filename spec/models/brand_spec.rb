@@ -80,13 +80,25 @@ describe Brand, type: :model do
     let!(:brand2) { create :brand, active: true }
     let!(:brand3) { create :brand, active: true }
 
-    before { create :membership, company_user: company_user, memberable: brand1 }
-    before { create :membership, company_user: company_user, memberable: brand3 }
-
     let(:collection) { Brand.accessible_by_user(company_user).all }
 
-    it "should return only the specific user's brands" do
-      expect(collection).to match_array [brand1, brand3]
+    context 'when user is an admin' do
+      before { allow(company_user).to receive(:is_admin?).and_return true }
+
+      it 'should return all brands' do
+        expect(collection).to match_array [brand1, brand2, brand3]
+      end
+    end
+
+    context 'when user is not an admin' do
+      before { allow(company_user).to receive(:is_admin?).and_return false }
+
+      before { create :membership, company_user: company_user, memberable: brand1 }
+      before { create :membership, company_user: company_user, memberable: brand3 }
+
+      it "should return only the specific user's brands" do
+        expect(collection).to match_array [brand1, brand3]
+      end
     end
   end
 end
