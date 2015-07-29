@@ -11,13 +11,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150715155057) do
+ActiveRecord::Schema.define(version: 20150728211903) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_trgm"
   enable_extension "plpgsql"
   enable_extension "hstore"
   enable_extension "pg_stat_statements"
-  enable_extension "pg_trgm"
   enable_extension "postgis"
   enable_extension "tablefunc"
 
@@ -803,7 +803,7 @@ ActiveRecord::Schema.define(version: 20150715155057) do
   create_table "places", force: true do |t|
     t.string   "name"
     t.string   "reference",              limit: 400
-    t.string   "place_id",               limit: 100
+    t.string   "place_id",               limit: 200
     t.string   "types_old"
     t.string   "formatted_address"
     t.string   "street_number"
