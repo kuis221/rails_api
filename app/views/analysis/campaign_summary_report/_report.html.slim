@@ -2,6 +2,8 @@
   .sidebar#resource-filter-column
     #collection-list-filters
   #analysis-campaign.details_box.content.form-results-box.main.campaign-summary-box
+    h5.results-title
+      = @campaign.name
     = render partial: 'form_fields_campaign', locals: { form_fields: @campaign.form_fields }
 - else
   #analysis-campaign.details_box.content.form-results-box
