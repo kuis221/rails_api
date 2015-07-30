@@ -1,7 +1,7 @@
 span.form-result-label= form_field.name
 - if result.any?
   - totals = presenter.gender_total(result)
-  #gender-graph.chart-area
+  #gender-graph.chart-area.pdf-keeptogether
     .male
       .percent
         span = totals[:male]
