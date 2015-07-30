@@ -2,7 +2,7 @@ class Analysis::CampaignSummaryReportController < ApplicationController
 
   respond_to :xls, :pdf, only: :export_results
 
-  helper_method :return_path
+  helper_method :return_path, :collection_count
   before_action :set_cache_header, only: [:export_results]
 
   def export_results
@@ -32,6 +32,14 @@ class Analysis::CampaignSummaryReportController < ApplicationController
 
   def results_scope
     scope = Event.where(active: true)
+  end
+
+  def items
+    render layout: false
+  end
+
+  def collection_count
+    @campaign.present? ? @campaign.events.where(results_scope).count : 0
   end
 
   protected

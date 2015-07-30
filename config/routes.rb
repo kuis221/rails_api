@@ -263,6 +263,7 @@ Brandscopic::Application.routes.draw do
     get :campaign_summary_report, to: 'campaign_summary_report#index'
     post :campaign_summary_report, to: 'campaign_summary_report#report'
     get :campaign_summary_report_export, to: 'campaign_summary_report#export_results'
+    get :campaign_summary_report_items, to: 'campaign_summary_report#items'
 
     get '/', to: 'analysis#index'
   end
