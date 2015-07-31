@@ -38,6 +38,7 @@
 javascript:
   submitForm = function() {
     if ( $('#report_campaign_id').val()){
+      $( "#clear-filters" ).trigger( "click" );
       $('form#report-analysis').submit();
     } else {
       $('#download-status-btn').attr('disabled', true);
@@ -58,9 +59,10 @@ javascript:
 
   $('#download-status-btn a').on('click', function(e){
     if ($('#report_campaign_id').val()) {
-      window.location.href = $(this).data('url') + '?campaign='+$('#report_campaign_id').val();
+      window.location.href = $(this).data('url') + '?campaign_summary='+$('#report_campaign_id').val() + '&' + $('#collection-list-filters').filteredList('paramsQueryString');
     }
     return false;
   });
 
   submitForm();
+  $('.collection-list-description').hide();

@@ -2,16 +2,14 @@
   .sidebar#resource-filter-column
     #collection-list-filters
   #analysis-campaign.details_box.content.form-results-box.main.campaign-summary-box
-    h5.results-title
-      = @campaign.name
-    = render partial: 'form_fields_campaign', locals: { form_fields: @campaign.form_fields }
 - else
   #analysis-campaign.details_box.content.form-results-box
     = render 'blank_state'
 
 javascript:
+  $('.collection-list-description').show();
   $('#collection-list-filters').filteredList({
-    'source': '#{analysis_campaign_summary_report_items_path}',
+    'source': '#{analysis_campaign_summary_report_items_path(campaign_summary: @campaign.id)}',
     'filtersUrl': '#{filter_url(:campaign_summary)}',
     'includeCalendars': true,
     'selectDefaultDate': false,
@@ -19,5 +17,9 @@ javascript:
     'includeSaveFilters': false,
     'allowCustomizeFilters': false,
     'ytdDatesRange': '#{current_company.ytd_dates_range}',
-    'includeAutoComplete': false
+    'includeAutoComplete': false,
+    'onItemsLoad': function(response, page){
+      params = $('#collection-list-filters').filteredList('paramsQueryString');
+      $.ajax({ url: '#{analysis_campaign_summary_report_result_path(campaign_summary: @campaign.id)}', data: params });
+    }
   });

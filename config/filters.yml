@@ -144,7 +144,7 @@ filters:
   campaign_summary:
     brands: [Brand]
     areas: [Area]
-    people: [CompanyUser, Team]
+    people: [CompanyUser]
     event_status:
       items: [Submitted, Late, Due, Approved, Rejected]
       name: 'event_status'
