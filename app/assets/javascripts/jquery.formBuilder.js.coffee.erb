@@ -40,6 +40,10 @@ $.widget 'nmk.formBuilder', {
 		$(window).resize()
 
 		@fieldsWrapper = @element.find('.fields-wrapper')
+		@fieldsWrapper.affix
+			offset: {
+				top: 250
+			}
 
 		@formWrapper.droppable
 			accept: ".field.module"

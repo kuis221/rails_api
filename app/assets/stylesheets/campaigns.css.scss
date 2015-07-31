@@ -59,6 +59,15 @@
 			}
 		}
 	}
+
+  	.fields-wrapper {
+	  &.affix {
+		position: fixed;
+		top: 97px;
+		z-index: 99;
+		right: 250px;
+	  }
+	}
 }
 
 
