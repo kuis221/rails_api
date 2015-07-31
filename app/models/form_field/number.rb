@@ -72,7 +72,8 @@ class FormField::Number < FormField
   end
 
   def grouped_results(campaign, event_scope)
-    result = form_field_results.for_event_campaign(campaign).merge(event_scope).pluck('value')
+    events = form_field_results.for_event_campaign(campaign).merge(event_scope)
+    result = events.map { |event| event.value }
     total = result.compact.inject{ |sum,x| sum.to_f + x.to_f } || 0
   end
 end
