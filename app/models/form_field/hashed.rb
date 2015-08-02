@@ -45,4 +45,23 @@ class FormField::Hashed < FormField
   def percent_of(n, t)
     n.to_f / t.to_f * 100.0
   end
+
+  def csv_results(campaign, event_scope, hash_result)
+    events = form_field_results.for_event_campaign(campaign).merge(event_scope)
+    options_for_input.each do |n,_|
+      hash_result[:titles] << "#{name} - #{n}"
+    end
+    events.each do |event|
+      value = event.hash_value.nil? ? "" : event.hash_value
+      hash_result[event.resultable_id].concat(values_by_option(value)) unless hash_result[event.resultable_id].nil?
+    end
+    hash_result
+  end
+
+  def values_by_option(hash_values)
+    options_for_input.inject([]) do |memo, option|
+      memo << hash_values[option[1].to_s]
+      memo
+    end
+  end
 end

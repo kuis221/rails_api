@@ -78,10 +78,8 @@ class FormField::Percentage < FormField::Hashed
   end
 
   def grouped_results(campaign, event_scope, age = false)
-    result = form_field_results.for_event_campaign(campaign).merge(event_scope)
-                                  .pluck('hash_value')
-                                  .select { |h| h unless h.blank? }
-
+    events = form_field_results.for_event_campaign(campaign).merge(event_scope)
+    result = events.map { |event| event.hash_value }.compact
     age ? result_for_age(campaign,result) : results_for_percentage_chart_for_hash(result)
   end
 

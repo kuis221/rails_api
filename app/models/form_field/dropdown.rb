@@ -70,4 +70,16 @@ class FormField::Dropdown < FormField::Hashed
     result = form_field_results.for_event_campaign(campaign).merge(event_scope).group(:value).count
     results_for_percentage_chart_for_value(result)
   end
+
+  def csv_results(campaign, event_scope, hash_result)
+    events = form_field_results.for_event_campaign(campaign).merge(event_scope)
+    hash_result[:titles] << name
+
+    events.each do |event|
+      options_map = Hash[options_for_input.map{|o| [o[1], o[0]] }]
+      value = event.value.nil? ? "" : options_map[event.value.to_i]
+      hash_result[event.resultable_id] << value
+    end
+    hash_result
+  end
 end

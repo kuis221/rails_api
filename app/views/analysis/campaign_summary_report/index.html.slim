@@ -26,10 +26,10 @@
               i.icon-arrow-down-small
             ul#download-status-btn.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
               li
-                a href="#" role="menuitem" data-url="#{analysis_campaign_summary_report_export_path(format: :xls)}"
-                  | Download as XLS
+                a#export-csv href="#" role="menuitem" data-url="#{analysis_campaign_summary_report_path(format: :csv)}"
+                  | Download as CSV
               li
-                a href="#" role="menuitem" data-url="#{analysis_campaign_summary_report_export_path(format: :pdf)}"
+                a#export-pdf href="#" role="menuitem" data-url="#{analysis_campaign_summary_report_export_path(format: :pdf)}" 
                   | Download as PDF
     #report-container
       #analysis-campaign.details_box.content
@@ -57,10 +57,19 @@ javascript:
     }
   });
 
-  $('#download-status-btn a').on('click', function(e){
+  $('#export-pdf').on('click', function(e){
     if ($('#report_campaign_id').val()) {
       window.location.href = $(this).data('url') + '?campaign_summary='+$('#report_campaign_id').val() + '&' + $('#collection-list-filters').filteredList('paramsQueryString');
     }
+    return false;
+  });
+
+  $(document).on('click', '#export-csv', function() {
+    url = $(this).data('url') + ($(this).data('url').indexOf('?') >= 0 ? '&' : '?') + 'campaign_summary='+$('#report_campaign_id').val() + '&' + $('#collection-list-filters').filteredList('paramsQueryString');
+    $.ajax(url, {
+      method: "GET",
+      dataType: "script"
+    });
     return false;
   });
 

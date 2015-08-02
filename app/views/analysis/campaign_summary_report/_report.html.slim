@@ -5,7 +5,6 @@
 - else
   #analysis-campaign.details_box.content.form-results-box
     = render 'blank_state'
-
 javascript:
   $('.collection-list-description').show();
   $('#collection-list-filters').filteredList({
@@ -19,7 +18,11 @@ javascript:
     'ytdDatesRange': '#{current_company.ytd_dates_range}',
     'includeAutoComplete': false,
     'onItemsLoad': function(response, page){
-      params = $('#collection-list-filters').filteredList('paramsQueryString');
+      params = 'campaign_summary=' + $('#report_campaign_id').val();
+      filters = $('#collection-list-filters').filteredList('paramsQueryString');
+      if (filters != "") {
+        params += '&' + filters
+      }
       $.ajax({ url: '#{analysis_campaign_summary_report_result_path(campaign_summary: @campaign.id)}', data: params });
     }
   });

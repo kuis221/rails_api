@@ -72,4 +72,14 @@ class FormField::Currency < FormField
     total = result.compact.inject{ |sum,x| sum.to_f + x.to_f } || 0
     "$#{total}"
   end
+
+  def csv_results(campaign, event_scope, hash_result)
+    events = form_field_results.for_event_campaign(campaign).merge(event_scope)
+    hash_result[:titles] << name
+    events.each do |event|
+      value = event.value.nil? ? "" : event.value
+      hash_result[event.resultable_id] << value unless hash_result[event.resultable_id].nil?
+    end
+    hash_result
+  end
 end
