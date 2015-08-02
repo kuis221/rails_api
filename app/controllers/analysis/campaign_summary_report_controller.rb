@@ -1,10 +1,16 @@
-class Analysis::CampaignSummaryReportController < ApplicationController
+class Analysis::CampaignSummaryReportController < InheritedResources::Base
+  include ExportableController
 
-  respond_to :xls, :pdf, only: :export_results
+  respond_to :pdf, only: :export_results
 
   helper_method :return_path, :collection_count
-  before_action :set_cache_header, only: [:export_results]
   before_action :initialize_campaign
+  set_callback :export
+  respond_to :csv, only: [:index]
+
+  FIELD_TYPE = ['FormField::Number', 'FormField::Currency', 'FormField::Summation',
+                'FormField::LikertScale', 'FormField::Percentage', 'FormField::Checkbox',
+                'FormField::Radio', 'FormField::Dropdown', 'FormField::Brand']
 
   def export_results
     @event_scope = results_scope
@@ -52,7 +58,11 @@ class Analysis::CampaignSummaryReportController < ApplicationController
   end
 
   def collection_count
-    @campaign.present? ? @campaign.events.merge(results_scope).count : 0
+    collection.count
+  end
+
+  def collection
+    @campaign.present? ? @campaign.events.merge(results_scope) : []
   end
 
   protected
@@ -61,7 +71,33 @@ class Analysis::CampaignSummaryReportController < ApplicationController
     analysis_path
   end
 
+  def collection_to_csv
+    params = @_export.params if @_exports.present?
+    initialize_campaign
+    CSV.generate do |csv|
+      generate_results_csv.each do |_, row|
+        csv << row
+      end
+    end
+  end
+
   private
+
+  def initialize_results_csv
+    hash_result = { titles: [] }
+    collection.inject(hash_result) do |hash, event|
+      hash[event.id] = []
+      hash
+    end
+  end
+
+  def generate_results_csv
+    hash_results = initialize_results_csv
+    @campaign.form_fields.each do |form_field|
+      form_field.csv_results(@campaign, results_scope, hash_results) if FIELD_TYPE.include?(form_field.type)
+    end
+    hash_results
+  end
 
   def pdf_form_file_name
     "#{@campaign.name.parameterize}-#{Time.now.strftime('%Y%m%d%H%M%S')}"
