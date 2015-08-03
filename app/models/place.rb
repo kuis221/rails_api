@@ -290,7 +290,8 @@ class Place < ActiveRecord::Base
     self.class.connection.transaction do
       Venue.where(place_id: place.id).each do |venue|
         real_venue = Venue.find_or_create_by(place_id: id, company_id: venue.company_id)
-        venue.activities.update_all(activitable_id: real_venue.id)
+        # Update them one by one so the versions are generated
+        venue.activities.each { |a| a.update_attribute(:activitable_id, real_venue.id) }
         venue.invites.update_all(venue_id: real_venue.id)
         venue.destroy
       end
