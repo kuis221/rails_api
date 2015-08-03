@@ -40,7 +40,7 @@ class Analysis::CampaignSummaryReportController < InheritedResources::Base
   end
 
   def results_scope
-    s = Event.where(active: true).uniq
+    s = Event.accessible_by_user(current_company_user).where(active: true).uniq
     s = s.in_areas(params['area']) if params['area'].present?
     s = in_places(s, params['place']) if params['place'].present?
     s = s.where(aasm_state: params['event_status'].map { |f| f.downcase}) if params['event_status'].present?
