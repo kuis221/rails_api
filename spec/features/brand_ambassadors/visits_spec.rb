@@ -159,7 +159,7 @@ feature 'Brand Ambassadors Visits' do
   end
 
   shared_examples_for 'a user that can filter the list of visits' do
-    let(:today) { Time.zone.local(Time.now.year, Time.now.month, 18, 12, 00) }
+    let(:today) { Time.zone.local(2015, 7, 18, 12, 00) }
     let(:another_user) { create(:company_user, user: create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: company) }
     let(:area1) { create(:area, name: 'California', company: company) }
     let(:area2) { create(:area, name: 'Texas', company: company) }
