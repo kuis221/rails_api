@@ -28,9 +28,9 @@
               li
                 a#export-csv href="#" role="menuitem" data-url="#{analysis_campaign_summary_report_path(format: :csv)}"
                   | Download as CSV
-              //li
-              //  a#export-pdf href="#" role="menuitem" data-url="#{analysis_campaign_summary_report_export_path(format: :pdf)}" 
-              //    | Download as PDF
+              li
+                a#export-pdf href="#" role="menuitem" data-url="#{analysis_campaign_summary_report_export_path(format: :pdf)}" 
+                  | Download as PDF
     #report-container
       #analysis-campaign.details_box.content
         = render 'blank_state'

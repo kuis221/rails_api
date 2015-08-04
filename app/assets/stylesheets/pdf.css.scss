@@ -15,6 +15,17 @@ body.app-layout {
 }
 .pdf-keeptogether {
 	page-break-inside: avoid !important;
+	#gender-graph {
+		height: 300px!important;
+		max-width: 600px!important;
+		min-width: 310px!important;
+		min-height: 300px!important;
+	}
+	.chart-area {
+		width: 800px!important;
+		max-height: 800px!important;
+		min-height: 350px!important;
+	}
 }
 .last-in-page { page-break-after: always; }
 #main-container{
