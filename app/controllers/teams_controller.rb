@@ -8,6 +8,15 @@ class TeamsController < FilteredController
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableController
 
+  def collection_to_csv
+    CSV.generate do |csv|
+      csv << ['NAME', 'DESCRIPTION', 'MEMBERS', 'ACTIVE STATE']
+      each_collection_item do |team|
+        csv << [team.name, team.description, number_with_delimiter(team.users.active.count, precision: 1), team.status]
+      end
+    end
+  end
+
   private
 
   def permitted_params

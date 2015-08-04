@@ -18,6 +18,33 @@ class Analysis::EventStatusController < ApplicationController
             end
   end
 
+  def collection_to_csv
+    group_by_title = if report_group_by == 'place'
+                       'PLACE/AREA'
+                     elsif report_group_by == 'staff'
+                       'USER/TEAM'
+                     end
+    CSV.generate do |csv|
+      if report_group_by == 'place' || report_group_by == 'staff'
+        csv << [group_by_title, 'METRIC', 'GOAL', 'EXECUTED', 'EXECUTED %', 'SCHEDULED', 'SCHEDULED %', 'REMAINING', 'REMAINING %']
+      else
+        csv << ['METRIC', 'GOAL', 'EXECUTED', 'EXECUTED %', 'SCHEDULED', 'SCHEDULED %', 'REMAINING', 'REMAINING %']
+      end
+      @data.each do |campaign|
+        row = [campaign['kpi'],
+               number_with_precision(campaign['goal'], strip_insignificant_zeros: true),
+               number_with_precision(campaign['executed'], strip_insignificant_zeros: true),
+               number_to_percentage(campaign['executed_percentage'], precision: 2),
+               number_with_precision(campaign['scheduled'], strip_insignificant_zeros: true),
+               number_to_percentage(campaign['scheduled_percentage'], precision: 2),
+               number_with_precision(campaign['remaining'], strip_insignificant_zeros: true),
+               number_to_percentage(campaign['remaining_percentage'], precision: 2)]
+        row.unshift(campaign['name']) if report_group_by == 'place' || report_group_by == 'staff'
+        csv << row
+      end
+    end
+  end
+
   def export_file_name
     "#{controller_name.underscore.downcase}-#{Time.now.strftime('%Y%m%d%H%M%S')}"
   end

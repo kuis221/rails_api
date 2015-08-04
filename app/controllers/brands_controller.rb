@@ -13,6 +13,15 @@ class BrandsController < FilteredController
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableController
 
+  def collection_to_csv
+    CSV.generate do |csv|
+      csv << ['NAME', 'ACTIVE STATE']
+      each_collection_item do |brand|
+        csv << [brand.name, brand.status]
+      end
+    end
+  end
+
   def create
     create! do |success, _|
       success.js do

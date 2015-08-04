@@ -32,6 +32,15 @@ class FilteredController < InheritedResources::Base
     super
   end
 
+  def collection_to_csv
+    CSV.generate do |csv|
+      csv << ['NAME', 'DESCRIPTION', 'ACTIVE STATE']
+      each_collection_item do |item|
+        csv << [item.name, item.description, item.status]
+      end
+    end
+  end
+
   protected
 
   def build_resource_params

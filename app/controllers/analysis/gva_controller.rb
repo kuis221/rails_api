@@ -19,6 +19,37 @@ class Analysis::GvaController < InheritedResources::Base
     render layout: false
   end
 
+  def collection_to_csv
+    group_by_title = if report_group_by == 'place'
+                       'PLACE/AREA'
+                     elsif report_group_by == 'staff'
+                       'USER/TEAM'
+                     end
+    CSV.generate do |csv|
+      if report_group_by == 'place' || report_group_by == 'staff'
+        csv << [group_by_title, 'METRIC', 'GOAL', 'ACTUAL', 'ACTUAL %', 'PENDING', 'PENDING %']
+      else
+        csv << ['METRIC', 'GOAL', 'ACTUAL', 'ACTUAL %', 'PENDING', 'PENDING %']
+      end
+      @goalables_data.each do |goalable|
+        goalable[:event_goal].each do |id, event_goal|
+          pending_and_total = (event_goal[:submitted] || 0) + event_goal[:total_count]
+          pending = number_with_precision(pending_and_total.round(2), strip_insignificant_zeros: true)
+          actual_percentage = event_goal[:completed_percentage]
+          pending_percentage = (pending_and_total / event_goal[:goal].value) * 100
+          row = [event_goal[:goal].kpi.present? ? event_goal[:goal].kpi.name + (event_goal[:goal].kpis_segment.nil? ? '' : ': ' + event_goal[:goal].kpis_segment.text) : event_goal[:goal].activity_type.name,
+                 number_with_precision(event_goal[:goal].value, strip_insignificant_zeros: true),
+                 number_with_precision(event_goal[:total_count], strip_insignificant_zeros: true),
+                 number_to_percentage(actual_percentage, precision: 2),
+                 pending,
+                 number_to_percentage(pending_percentage, precision: 2)]
+          row.unshift(goalable[:name]) if report_group_by == 'place' || report_group_by == 'staff'
+          csv << row
+        end
+      end
+    end
+  end
+
   def export_file_name
     "#{controller_name.underscore.downcase}-#{Time.now.strftime('%Y%m%d%H%M%S')}"
   end
@@ -108,7 +139,7 @@ class Analysis::GvaController < InheritedResources::Base
   end
 
   def set_report_scopes_for(goalable)
-    if ['xls', 'pdf'].include?(params[:format]) && (report_group_by == 'place' || report_group_by == 'staff')
+    if ['csv', 'pdf'].include?(params[:format]) && (report_group_by == 'place' || report_group_by == 'staff')
       @area, @place, @company_user, @team = nil, nil, nil, nil
       params.merge!(item_type: goalable.class.name, item_id: goalable.id)
     end

@@ -79,12 +79,12 @@ feature 'Brand Ambassadors Visits' do
       end
     end
 
-    scenario 'should be able to export as xls' do
+    scenario 'should be able to export as CSV' do
       visit brand_ambassadors_root_path
       choose_predefined_date_range 'Current month'
 
       click_js_link 'Download'
-      click_js_link 'Download as XLS'
+      click_js_link 'Download as CSV'
 
       within visible_modal do
         expect(page).to have_content('We are processing your request, the download will start soon...')
@@ -95,12 +95,12 @@ feature 'Brand Ambassadors Visits' do
 
       expect(ListExport.last).to have_rows([
         ['START DATE', 'END DATE', 'EMPLOYEE', 'AREA', 'CITY', 'CAMPAIGN', 'TYPE', 'DESCRIPTION'],
-        ["#{year_number}-#{month_number}-18T00:00", "#{year_number}-#{month_number}-19T00:00",
+        ["#{month_number}/18/#{year_number}", "#{month_number}/19/#{year_number}",
          'Test User', 'My Area', 'New York', 'My Campaign', 'Formal Market Visit',
          'The first visit description'],
-        ["#{year_number}-#{month_number}-20T00:00", "#{year_number}-#{month_number}-21T00:00",
+        ["#{month_number}/20/#{year_number}", "#{month_number}/21/#{year_number}",
          'Test User', 'My Area', 'New York', 'My Campaign', 'Brand Program', 'Visit description'],
-        ["#{year_number}-#{month_number}-22T00:00", "#{year_number}-#{month_number}-23T00:00",
+        ["#{month_number}/22/#{year_number}", "#{month_number}/23/#{year_number}",
          'Test User', nil, nil, 'My Campaign', 'PTO', 'Visit description']
       ])
     end
@@ -628,7 +628,7 @@ feature 'Brand Ambassadors Visits' do
       end
     end
 
-    scenario 'should be able to export as xls' do
+    scenario 'should be able to export as CSV' do
       cities = [
         create(:city, name: 'San Francisco', state: 'CA'),
         create(:city, name: 'New York', state: 'NY')
@@ -657,7 +657,7 @@ feature 'Brand Ambassadors Visits' do
       visit brand_ambassadors_visit_path(ba_visit)
 
       click_js_link 'Download'
-      click_js_link 'Download as XLS'
+      click_js_link 'Download as CSV'
 
       within visible_modal do
         expect(page).to have_content('We are processing your request, the download will start soon...')
@@ -668,12 +668,12 @@ feature 'Brand Ambassadors Visits' do
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'DURATION', 'VENUE NAME', 'ADDRESS', 'CITY',
          'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL'],
-        ['ABSOLUT Vodka', nil, "2014-02-01T09:00","2014-02-01T11:00", '2.00', 'My Place 3',
+        ['ABSOLUT Vodka', '', "2014-02-01 09:00","2014-02-01 11:00", '2.00', 'My Place 3',
          'My Place 3, 11 Main St., New York, NY, 12345', 'New York', 'NY', '12345', 'Active', 'Unsent',
-         'Test User', nil, "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event3.id}"],
-        ['ABSOLUT Vodka', nil, "2014-02-01T10:00","2014-02-01T11:00", '1.00', 'My Place 1',
+         'Test User', '', "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event3.id}"],
+        ['ABSOLUT Vodka', '', "2014-02-01 10:00","2014-02-01 11:00", '1.00', 'My Place 1',
          'My Place 1, 11 Main St., New York, NY, 12345', 'New York', 'NY', '12345', 'Active', 'Unsent',
-         'Test User', nil, "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event1.id}"]
+         'Test User', '', "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event1.id}"]
       ])
     end
 
