@@ -238,7 +238,7 @@ feature 'Events section' do
         end
 
         scenario 'should allow allow filter events by date range selected from the calendar' do
-          today = Time.zone.local(Time.now.year, Time.now.month, 18, 12, 00)
+          today = Time.zone.local(2015, 1, 18, 12, 00)
           tomorrow = today + 1.day
           Timecop.travel(today) do
             create(:event,
@@ -697,7 +697,7 @@ feature 'Events section' do
         end
 
         scenario 'Filters are preserved upon navigation' do
-          today = Time.zone.local(Time.now.year, Time.now.month, 18, 12, 00)
+          today = Time.zone.local(2015, 1, 18, 12, 00)
           tomorrow = today + 1.day
           Timecop.travel(today) do
             ev1 = create(:event, campaign: campaign,
