@@ -23,7 +23,6 @@ RSpec.shared_examples 'a fieldable element' do
   scenario 'user can add paragraph fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
-    page.execute_script "window.scrollBy(0,500)"
     text_area_field.drag_to form_builder
 
     expect(form_builder).to have_form_field('Paragraph')
@@ -484,7 +483,6 @@ RSpec.shared_examples 'a fieldable element' do
   scenario 'user can add brand fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
-    page.execute_script "window.scrollBy(0,500)"
     brand_field.drag_to form_builder
 
     expect(form_builder).to have_form_field('Brand')
@@ -546,7 +544,6 @@ RSpec.shared_examples 'a fieldable element' do
   scenario 'user can add marque fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
-    page.execute_script "window.scrollBy(0,500)"
     marque_field.drag_to form_builder
 
     expect(form_builder).to have_form_field('Marque')
@@ -1494,7 +1491,7 @@ def module_section(name)
 end
 
 def form_builder
-  find('.form-fields-sections .form-fields')
+  find('.form-fields')
 end
 
 def form_field_settings_for(field_name)
