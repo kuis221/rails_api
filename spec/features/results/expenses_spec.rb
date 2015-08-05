@@ -72,7 +72,7 @@ feature 'Results Expenses Page', js: true, search: true  do
     scenario 'clicking on the expense item should redirect the user to the event' do
       event = create(:approved_event, campaign: campaign1, company: company, start_date: '08/21/2013',
                                       end_date: '08/21/2013', start_time: '8:00pm', end_time: '11:00pm',
-                                      event_expenses: [ build(:event_expense, amount: 10) ])
+                                      event_expenses: [build(:event_expense, amount: 10)])
       Sunspot.commit
       visit results_expenses_path
 
@@ -102,19 +102,24 @@ feature 'Results Expenses Page', js: true, search: true  do
 
   feature 'export', search: true do
     let(:brand) { create(:brand, name: 'Brand 1', company: company) }
+    let!(:created_at) { DateTime.parse('2014-07-02 10:00 -07:00') }
+    let!(:updated_at) { DateTime.parse('2015-07-01 10:00 -07:00') }
+    let!(:approved_at) { DateTime.parse('2015-07-02 10:00 -07:00') }
+    let!(:submitted_at) { DateTime.parse('2015-07-01 10:00 -07:00') }
 
     before do
       create(:approved_event, campaign: campaign1,
                               start_date: '08/21/2013', end_date: '08/21/2013',
-                              start_time: '8:00pm', end_time: '11:00pm', place: create(:place),
+                              start_time: '8:00pm', end_time: '11:00pm', place: create(:place, name: 'Place 1'),
+                              submitted_at: submitted_at, approved_at: approved_at,
                               event_expenses: [
-                                build(:event_expense,  amount: 10, brand_id: brand.id)])
+                                build(:event_expense, amount: 10, brand_id: brand.id, created_at: created_at, updated_at: updated_at)])
 
       create(:approved_event, campaign: campaign2,
                               start_date: '08/25/2013', end_date: '08/25/2013',
-                              start_time: '9:00am', end_time: '10:00am', place: create(:place),
+                              start_time: '9:00am', end_time: '10:00am', place: create(:place, name: 'Place 2'),
                               event_expenses: [
-                                build(:event_expense,  amount: 20)])
+                                build(:event_expense, amount: 20, created_at: created_at, updated_at: updated_at)])
 
       Sunspot.commit
     end
@@ -130,6 +135,15 @@ feature 'Results Expenses Page', js: true, search: true  do
         ResqueSpec.perform_all(:export)
       end
       ensure_modal_was_closed
+
+      expect(ListExport.last).to have_rows([
+        ['CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'EVENT START DATE', 'EVENT END DATE',
+         'CREATED AT', 'CREATED BY', 'LAST MODIFIED', 'MODIFIED BY', 'SPENT', 'ENTERTAINMENT'],
+        ['First Campaign', 'Place 1', 'Place 1, 11 Main St., New York City, NY, 12345', 'US', '2013-08-21 20:00',
+         '2013-08-21 23:00', '2014-07-02 10:00', 'Test User', '2015-07-01 10:00', 'Test User', '10.0', '10.0'],
+        ['Second Campaign', 'Place 2', 'Place 2, 11 Main St., New York City, NY, 12345', 'US', '2013-08-25 09:00',
+         '2013-08-25 10:00', '2014-07-02 10:00', 'Test User', '2015-07-01 10:00', 'Test User', '20.0', '20.0']
+      ])
     end
   end
 end
