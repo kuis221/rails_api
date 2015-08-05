@@ -14,10 +14,10 @@
 ActiveRecord::Schema.define(version: 20150728211903) do
 
   # These are extensions that must be enabled in order to support this database
-  enable_extension "pg_trgm"
   enable_extension "plpgsql"
   enable_extension "hstore"
   enable_extension "pg_stat_statements"
+  enable_extension "pg_trgm"
   enable_extension "postgis"
   enable_extension "tablefunc"
 

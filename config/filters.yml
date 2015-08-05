@@ -141,3 +141,10 @@ filters:
       method: trend_campaigns
     brands: [Brand]
     areas: [Area]
+  campaign_summary:
+    brands: [Brand]
+    areas: [Area]
+    people: [CompanyUser]
+    event_status:
+      items: [Submitted, Late, Due, Approved, Rejected]
+      name: 'event_status'

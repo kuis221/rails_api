@@ -15,7 +15,7 @@
 #  kpi_id         :integer
 #
 
-class FormField::Percentage < FormField
+class FormField::Percentage < FormField::Hashed
   def field_options(result)
     {
       as: :percentage,
@@ -74,6 +74,23 @@ class FormField::Percentage < FormField
       if (required && total != 100) || (!required && total != 100 && total != 0)
         result.errors.add :value, :invalid
       end
+    end
+  end
+
+  def grouped_results(campaign, event_scope, age = false)
+    events = form_field_results.for_event_campaign(campaign).merge(event_scope)
+    result = events.map { |event| event.hash_value }.compact
+    age ? result_for_age(campaign,result) : results_for_percentage_chart_for_hash(result)
+  end
+
+  def result_for_age(campaign,result)
+    totals = results_for_hash_values(result)
+    total = totals.inject(0) { |total, (_, value)| total += value unless value.blank? }
+
+    options_map = Hash[options_for_input.map{ |o| [o[1], o[0]] }]
+    totals.inject({}) do |memo, (key, value)|
+      memo[options_map[key]] = percent_of(value, total).round(2)
+      memo
     end
   end
 end

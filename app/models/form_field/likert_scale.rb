@@ -63,6 +63,35 @@ class FormField::LikertScale < FormField
     )
   end
 
+  def grouped_results(campaign, event_scope)
+    events = form_field_results.for_event_campaign(campaign)
+    result = events.map { |event| event.hash_value }.compact
+    return [] if result.blank?
+
+    totals = initialize_totals_likert_scale
+
+    result.each do |value|
+      value.map do |(k, v)|
+        totals[k.to_i][:totals][v.to_i][:total] += 1
+      end
+    end
+    totals.map do |(key, statement)|
+      [key, statement[:name], totals_likert_scale(statement[:totals])]
+    end
+  end
+
+  def csv_results(campaign, event_scope, hash_result)
+    events = form_field_results.for_event_campaign(campaign).merge(event_scope)
+    statements.each do |statement|
+      hash_result[:titles] << "#{name} - #{statement.name}"
+    end
+    events.each do |event|
+      value = event.hash_value.nil? ? "" : event.hash_value
+      hash_result[event.resultable_id].concat(values_by_option(value)) unless hash_result[event.resultable_id].nil?
+    end
+    hash_result
+  end
+
   protected
 
   def valid_hash_keys
@@ -72,5 +101,33 @@ class FormField::LikertScale < FormField
   def is_valid_value_for_key?(_key, value)
     @_option_ids = options.pluck('id')
     value_is_numeric?(value) && @_option_ids.include?(value.to_i)
+  end
+
+  def initialize_totals_likert_scale
+    statements.inject({}) do |memo, (statement)|
+      memo[statement.id] = {
+        name: statement.name,
+        totals: options.inject({}) do |m, (option)|
+            m[option.id] = { name: option.name, total: 0 }
+            m
+        end
+      }
+      memo
+    end
+  end
+
+  def totals_likert_scale(totals)
+    values = totals.reject{ |_, v| v[:total].nil? || v[:total] == '' || v[:total].to_f == 0.0 }
+    values.map{ |_, v| [v[:name], v[:total]] }
+  end
+
+  def values_by_option(hash_values)
+    statements.inject([]) do |memo, statement|
+      opt = hash_values[statement.id.to_s]
+      object_option = options.find(opt.to_i) unless opt.nil?
+      value = object_option.nil? ? "" : object_option.name
+      memo << value
+      memo
+    end
   end
 end

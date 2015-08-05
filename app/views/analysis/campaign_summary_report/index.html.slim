@@ -1,0 +1,77 @@
+- content_for :alerts
+  div.collection-list-description
+    .filter-label
+.tab-content.details-bar
+  .info-bar
+    .back-arrow
+      a.close-details href="#{return_path || collection_path}" title="Close Event"
+        i.icon-angle-left
+    .details-bar-status
+      nav
+        ul.switch-list.unstyled.view-indicator
+          li
+            a href="#{return_path || collection_path}"
+              span You are viewing Campaign overview page. Click to close.
+  #list-view.tab-pane.active
+    .details_box.tool-box.first
+      h5.results-title CAMPAIGN OVERVIEW
+      #list-tools
+        = simple_form_for :report, url: analysis_campaign_summary_report_path, remote: true, html: { id: 'report-analysis' } do |f|
+          = f.input :campaign_id, collection: campaigns_list_for_dropdown, selected: params[:campaign_id], include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Select a campaign" } }
+
+        .export-xls.pull-right
+          .dropdown.btn-download
+            a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+              i.icon-download
+              i.icon-arrow-down-small
+            ul#download-status-btn.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+              li
+                a#export-csv href="#" role="menuitem" data-url="#{analysis_campaign_summary_report_path(format: :csv)}"
+                  | Download as CSV
+              li
+                a#export-pdf href="#" role="menuitem" data-url="#{analysis_campaign_summary_report_export_path(format: :pdf)}" 
+                  | Download as PDF
+    #report-container
+      #analysis-campaign.details_box.content
+        = render 'blank_state'
+
+javascript:
+  submitForm = function() {
+    if ( $('#report_campaign_id').val()){
+      $( "#clear-filters" ).trigger( "click" );
+      $('form#report-analysis').submit();
+    } else {
+      $('#download-status-btn').attr('disabled', true);
+    }
+  }
+
+  $('#report_campaign_id').on('change', function(e){
+    if ($('#report_campaign_id').val() != '') {
+      $('#download-status-btn').attr('disabled', false);
+      $('#analysis-campaign .content');
+      $('#analysis-campaign').empty().addClass('loading-spinner');
+      submitForm();
+    } else {
+      $('#download-status-btns').attr('disabled', true);
+      $('#analysis-campaign').empty().addClass("details_box content empty-state main").prepend('<p class="text-center empty-state">Select a campaign from the list above');
+    }
+  });
+
+  $('#export-pdf').on('click', function(e){
+    if ($('#report_campaign_id').val()) {
+      window.location.href = $(this).data('url') + '?campaign_summary='+$('#report_campaign_id').val() + '&' + $('#collection-list-filters').filteredList('paramsQueryString');
+    }
+    return false;
+  });
+
+  $(document).on('click', '#export-csv', function() {
+    url = $(this).data('url') + ($(this).data('url').indexOf('?') >= 0 ? '&' : '?') + 'campaign_summary='+$('#report_campaign_id').val() + '&' + $('#collection-list-filters').filteredList('paramsQueryString');
+    $.ajax(url, {
+      method: "GET",
+      dataType: "script"
+    });
+    return false;
+  });
+
+  submitForm();
+  $('.collection-list-description').hide();

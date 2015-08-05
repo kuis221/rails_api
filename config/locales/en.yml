@@ -272,6 +272,10 @@ en:
       empty:
         line1: 'No events have been scheduled for this visit.'
         line2: ''
+    campaign_summary:
+        empty:
+          line1: 'Choose a campaign to run Campaign Overview report'
+          line2: 'Use this report to track progress against a campaign'
 
     modules:
       event:
