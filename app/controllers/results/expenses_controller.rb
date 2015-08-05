@@ -16,8 +16,7 @@ class Results::ExpensesController < FilteredController
       each_collection_item do |event|
         csv << [
           event.campaign_name, event.place_name, event.place_address, event.country, event.start_date, event.end_date,
-          event.submitted_date, event.approved_date, event.first_event_expense_created_at, event.first_event_expense_created_by,
-          event.last_event_expense_updated_at, event.last_event_expense_updated_by
+          event.first_event_expense_created_at, event.first_event_expense_created_by, event.last_event_expense_updated_at, event.last_event_expense_updated_by
         ].concat(exporter.event_expenses(event))
       end
     end
