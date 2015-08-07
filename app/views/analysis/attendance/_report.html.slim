@@ -39,8 +39,8 @@
             ==< "Export"
           ul#download-gva-btn.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
             li
-              a.xlsx-download-link href="#" role="menuitem" data-base-url="#{analysis_attendance_path(format: :xls)}"
-                | Download as XLS
+              a.xlsx-download-link href="#" role="menuitem" data-base-url="#{analysis_attendance_path(format: :csv)}"
+                | Download as CSV
             li
               a.xlsx-download-link href="#" role="menuitem" data-base-url="#{analysis_attendance_path(format: :pdf)}"
                 | Download as PDF
@@ -165,7 +165,7 @@ javascript:
     else
       return 7;
   }
-  
+
   $( "#attendance-map-canvas" ).click(function() {
     $('.gm-style-iw').parent().draggable();
   });

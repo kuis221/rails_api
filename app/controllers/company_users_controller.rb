@@ -21,18 +21,6 @@ class CompanyUsersController < FilteredController
 
   skip_authorize_resource only: [:select_custom_user, :export_status, :login_as_select]
 
-  def collection_to_csv
-    CSV.generate do |csv|
-      csv << ['FIRST NAME', 'LAST NAME', 'EMAIL', 'PHONE NUMBER', 'ROLE', 'ADDRESS 1', 'ADDRESS 2',
-              'CITY', 'STATE', 'ZIP CODE', 'COUNTRY', 'TIME ZONE', 'LAST LOGIN', 'ACTIVE STATE']
-      each_collection_item do |user|
-        csv << [user.first_name, user.last_name, user.email, user.phone_number, user.role_name,
-                user.street_address, user.unit_number, user.city, user.state, user.zip_code,
-                [user.country_name].join(', '), user.time_zone, user.last_activity_at, user.active_status]
-      end
-    end
-  end
-
   def profile
     @company_user = current_company_user
     render :show
@@ -228,6 +216,18 @@ class CompanyUsersController < FilteredController
   end
 
   protected
+
+  def collection_to_csv
+    CSV.generate do |csv|
+      csv << ['FIRST NAME', 'LAST NAME', 'EMAIL', 'PHONE NUMBER', 'ROLE', 'ADDRESS 1', 'ADDRESS 2',
+              'CITY', 'STATE', 'ZIP CODE', 'COUNTRY', 'TIME ZONE', 'LAST LOGIN', 'ACTIVE STATE']
+      each_collection_item do |user|
+        csv << [user.first_name, user.last_name, user.email, user.phone_number, user.role_name,
+                user.street_address, user.unit_number, user.city, user.state, user.zip_code,
+                [user.country_name].join(', '), user.time_zone, user.last_activity_at, user.active_status]
+      end
+    end
+  end
 
   def permitted_params
     allowed = {

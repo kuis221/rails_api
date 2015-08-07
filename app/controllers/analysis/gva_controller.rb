@@ -19,6 +19,12 @@ class Analysis::GvaController < InheritedResources::Base
     render layout: false
   end
 
+  def export_file_name
+    "#{controller_name.underscore.downcase}-#{Time.now.strftime('%Y%m%d%H%M%S')}"
+  end
+
+  private
+
   def collection_to_csv
     group_by_title = if report_group_by == 'place'
                        'PLACE/AREA'
@@ -49,12 +55,6 @@ class Analysis::GvaController < InheritedResources::Base
       end
     end
   end
-
-  def export_file_name
-    "#{controller_name.underscore.downcase}-#{Time.now.strftime('%Y%m%d%H%M%S')}"
-  end
-
-  private
 
   def prepare_collection_for_export
     @goalables_data = goalables_by_type.map do |goalable|

@@ -371,8 +371,8 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
 
         expect(ListExport.last).to have_rows([
           ['METRIC', 'GOAL', 'ACTUAL', 'ACTUAL %', 'PENDING', 'PENDING %'],
-          ['Events', '2', '1', '0.5', '2', '1'],
-          ['Samples', '100', '25', '0.25', '45', '0.45']
+          ['Events', '2', '1', '50.00%', '2', '100.00%'],
+          ['Samples', '100', '25', '25.00%', '45', '45.00%']
         ])
       end
 
@@ -415,9 +415,9 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
 
         expect(ListExport.last).to have_rows([
           ['PLACE/AREA', 'METRIC', 'GOAL', 'ACTUAL', 'ACTUAL %', 'PENDING', 'PENDING %'],
-          ['Place 1', 'Events', '2', '1', '0.5', '2', '1'],
-          ['Place 1', 'Promo Hours', '4', '2', '0.5', '4', '1'],
-          ['Place 1', 'Samples', '150', '25', '0.17', '45', '0.3']
+          ['Place 1', 'Events', '2', '1', '50.00%', '2', '100.00%'],
+          ['Place 1', 'Promo Hours', '4', '2', '50.00%', '4', '100.00%'],
+          ['Place 1', 'Samples', '150', '25', '16.67%', '45', '30.00%']
         ])
       end
 
@@ -461,8 +461,8 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
 
         expect(ListExport.last).to have_rows([
           ['USER/TEAM', 'METRIC', 'GOAL', 'ACTUAL', 'ACTUAL %', 'PENDING', 'PENDING %'],
-          ['Juanito Bazooka', 'Events', '1', '1', '1', '2', '2'],
-          ['Juanito Bazooka', 'Samples', '50', '25', '0.5', '45', '0.9']
+          ['Juanito Bazooka', 'Events', '1', '1', '100.00%', '2', '200.00%'],
+          ['Juanito Bazooka', 'Samples', '50', '25', '50.00%', '45', '90.00%']
         ])
       end
     end
@@ -476,7 +476,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
     select_from_chosen(name, from: 'report[campaign_id]')
   end
 
-  def export_report(format = 'XLS')
+  def export_report(format = 'CSV')
     with_resque do
       expect do
         click_js_link('Download')

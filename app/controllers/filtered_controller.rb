@@ -32,6 +32,8 @@ class FilteredController < InheritedResources::Base
     super
   end
 
+  protected
+
   def collection_to_csv
     CSV.generate do |csv|
       csv << ['NAME', 'DESCRIPTION', 'ACTIVE STATE']
@@ -40,8 +42,6 @@ class FilteredController < InheritedResources::Base
       end
     end
   end
-
-  protected
 
   def build_resource_params
     [permitted_params || {}]

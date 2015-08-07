@@ -26,15 +26,6 @@ class CampaignsController < FilteredController
 
   layout false, only: :kpis
 
-  def collection_to_csv
-    CSV.generate do |csv|
-      csv << ['NAME', 'DESCRIPTION', 'FIRST EVENT', 'LAST EVENT', 'ACTIVE STATE']
-      each_collection_item do |campaign|
-        csv << [campaign.name, campaign.description, campaign.first_event_date, campaign.last_event_date, campaign.status]
-      end
-    end
-  end
-
   def update
     update! do |success, failure|
       success.js { render }
@@ -135,6 +126,15 @@ class CampaignsController < FilteredController
   end
 
   protected
+
+  def collection_to_csv
+    CSV.generate do |csv|
+      csv << ['NAME', 'DESCRIPTION', 'FIRST EVENT', 'LAST EVENT', 'ACTIVE STATE']
+      each_collection_item do |campaign|
+        csv << [campaign.name, campaign.description, campaign.first_event_date, campaign.last_event_date, campaign.status]
+      end
+    end
+  end
 
   # This is used for exporting the form in PDF format. Initializes
   # a new activity for the current campaign

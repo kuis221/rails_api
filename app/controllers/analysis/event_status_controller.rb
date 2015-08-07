@@ -18,6 +18,12 @@ class Analysis::EventStatusController < ApplicationController
             end
   end
 
+  def export_file_name
+    "#{controller_name.underscore.downcase}-#{Time.now.strftime('%Y%m%d%H%M%S')}"
+  end
+
+  protected
+
   def collection_to_csv
     group_by_title = if report_group_by == 'place'
                        'PLACE/AREA'
@@ -44,12 +50,6 @@ class Analysis::EventStatusController < ApplicationController
       end
     end
   end
-
-  def export_file_name
-    "#{controller_name.underscore.downcase}-#{Time.now.strftime('%Y%m%d%H%M%S')}"
-  end
-
-  protected
 
   def prepare_collection_for_export
     report

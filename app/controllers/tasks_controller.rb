@@ -18,15 +18,6 @@ class TasksController < FilteredController
   before_action :set_body_class, only: :index
   after_action :force_resource_reindex, only: [:create, :update]
 
-  def collection_to_csv
-    CSV.generate do |csv|
-      csv << ['TITLE', 'DATE', 'CAMPAIGN', 'STATUSES', 'EMPLOYEE']
-      each_collection_item do |task|
-        csv << [task.title, task.due_date, task.campaign_name, task.statuses.join(' '), task.user_full_name]
-      end
-    end
-  end
-
   def assignable_users
     if resource.event.present?
       (company_users.active.by_events(resource.event).for_dropdown +
@@ -50,6 +41,15 @@ class TasksController < FilteredController
   end
 
   private
+
+  def collection_to_csv
+    CSV.generate do |csv|
+      csv << ['TITLE', 'DATE', 'CAMPAIGN', 'STATUSES', 'EMPLOYEE']
+      each_collection_item do |task|
+        csv << [task.title, task.due_date, task.campaign_name, task.statuses.join(' '), task.user_full_name]
+      end
+    end
+  end
 
   def permitted_params
     params.permit(task: [:completed, :due_at, :title, :company_user_id, :event_id])[:task]

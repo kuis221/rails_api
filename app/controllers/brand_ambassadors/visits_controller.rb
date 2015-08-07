@@ -9,6 +9,8 @@ class BrandAmbassadors::VisitsController < FilteredController
 
   helper_method :return_path
 
+  protected
+
   def collection_to_csv
     CSV.generate do |csv|
       csv << ['START DATE', 'END DATE', 'EMPLOYEE', 'AREA', 'CITY', 'CAMPAIGN', 'TYPE', 'DESCRIPTION']
@@ -18,8 +20,6 @@ class BrandAmbassadors::VisitsController < FilteredController
       end
     end
   end
-
-  protected
 
   def permitted_params
     params.permit(brand_ambassadors_visit: [:visit_type, :campaign_id,

@@ -12,6 +12,16 @@ class Analysis::AttendanceController < ApplicationController
 
   protected
 
+  def collection_to_csv
+    CSV.generate do |csv|
+      csv << ['NEIGHBORHOOD', 'CITY', 'STATE', 'ATTENDEES', 'ACCOUNTS ATTENDED', 'INVITATIONS']
+      each_collection_item do |neighborhood|
+        csv << [neighborhood.name, neighborhood.city, neighborhood.state,
+                neighborhood.attendees, neighborhood.attended, neighborhood.invitations]
+      end
+    end
+  end
+
   def collection
     if event.campaign.module_setting('attendance', 'attendance_display') == '2'
       collection_for_market_level
