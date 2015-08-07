@@ -36,6 +36,17 @@ class VenuesController < FilteredController
 
   protected
 
+  def collection_to_csv
+    CSV.generate do |csv|
+      csv << ['VENUE NAME', 'TD LINX CODE', 'ADDRESS', 'CITY', 'STATE', 'SCORE', 'EVENTS COUNT',
+              'PROMO HOURS COUNT', 'TOTAL $ SPENT']
+      each_collection_item do |venue|
+        csv << [venue.name, venue.td_linx_code, venue.formatted_address, venue.city,
+                venue.state, venue.score, venue.events_count, venue.promo_hours, venue.spent]
+      end
+    end
+  end
+
   def permitted_params
     params.permit(venue: [:place_id, :company_id])[:venue]
   end

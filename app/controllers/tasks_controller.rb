@@ -42,6 +42,15 @@ class TasksController < FilteredController
 
   private
 
+  def collection_to_csv
+    CSV.generate do |csv|
+      csv << ['TITLE', 'DATE', 'CAMPAIGN', 'STATUSES', 'EMPLOYEE']
+      each_collection_item do |task|
+        csv << [task.title, task.due_date, task.campaign_name, task.statuses.join(' '), task.user_full_name]
+      end
+    end
+  end
+
   def permitted_params
     params.permit(task: [:completed, :due_at, :title, :company_user_id, :event_id])[:task]
   end

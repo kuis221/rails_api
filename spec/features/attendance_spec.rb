@@ -122,7 +122,7 @@ feature 'Attendance', js: true, search: true do
       create_invite account: 'Guillermitos Bar', invites: 12, type: 'venue'
 
       click_js_link 'Download'
-      click_js_link 'Download as XLS'
+      click_js_link 'Download as CSV'
 
       within visible_modal do
         expect(page).to have_content('We are processing your request, the download will start soon...')
@@ -144,7 +144,7 @@ feature 'Attendance', js: true, search: true do
       create_invite account: 'California', invites: 12, type: 'market'
 
       click_js_link 'Download'
-      click_js_link 'Download individual to XLS'
+      click_js_link 'Download individual to CSV'
 
       within visible_modal do
         expect(page).to have_content('We are processing your request, the download will start soon...')
@@ -167,7 +167,7 @@ feature 'Attendance', js: true, search: true do
       create_invite account: 'California', invites: 12, type: 'market'
 
       click_js_link 'Download'
-      click_js_link 'Download aggregate to XLS'
+      click_js_link 'Download aggregate to CSV'
 
       within visible_modal do
         expect(page).to have_content('We are processing your request, the download will start soon...')

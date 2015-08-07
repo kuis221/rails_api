@@ -55,7 +55,7 @@ feature 'Results Event Data Page', js: true, search: true  do
     end
   end
 
-  feature 'export as xls' do
+  feature 'export as CSV' do
     scenario 'should include any custom kpis from all the campaigns' do
       with_resque do
         field = create(:form_field_number, name: 'My Numeric Field', fieldable: campaign)

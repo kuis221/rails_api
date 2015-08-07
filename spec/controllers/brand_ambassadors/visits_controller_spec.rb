@@ -21,12 +21,12 @@ RSpec.describe BrandAmbassadors::VisitsController, type: :controller do
 
     it 'queue the job for export the list' do
       expect do
-        xhr :get, :index, format: :xls
+        xhr :get, :index, format: :csv
       end.to change(ListExport, :count).by(1)
       export = ListExport.last
       expect(ListExportWorker).to have_queued(export.id)
       expect(export.controller).to eql('BrandAmbassadors::VisitsController')
-      expect(export.export_format).to eql('xls')
+      expect(export.export_format).to eql('csv')
     end
 
     it 'queue the job for export the list' do
@@ -42,7 +42,7 @@ RSpec.describe BrandAmbassadors::VisitsController, type: :controller do
 
   describe "GET 'list_export'", search: true do
     it 'should return an empty book with the correct headers' do
-      expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+      expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['START DATE', 'END DATE', 'EMPLOYEE', 'AREA', 'CITY', 'CAMPAIGN', 'TYPE', 'DESCRIPTION']
@@ -64,12 +64,12 @@ RSpec.describe BrandAmbassadors::VisitsController, type: :controller do
                                  city: 'Test City', company: company)
       Sunspot.commit
 
-      expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+      expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
       expect(ListExportWorker).to have_queued(ListExport.last.id)
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['START DATE', 'END DATE', 'EMPLOYEE', 'AREA', 'CITY', 'CAMPAIGN', 'TYPE', 'DESCRIPTION'],
-        ['2014-01-23T00:00', '2014-01-24T00:00', 'Michale Jackson', 'Area 1', 'Test City',
+        ['01/23/2014', '01/24/2014', 'Michale Jackson', 'Area 1', 'Test City',
          'Imperial FY14', 'PTO', 'Test Visit description']
       ])
     end

@@ -33,6 +33,15 @@ class BrandsController < FilteredController
 
   protected
 
+  def collection_to_csv
+    CSV.generate do |csv|
+      csv << ['NAME', 'ACTIVE STATE']
+      each_collection_item do |brand|
+        csv << [brand.name, brand.status]
+      end
+    end
+  end
+
   def permitted_params
     params.permit(brand: [:name, :marques_list])[:brand]
   end

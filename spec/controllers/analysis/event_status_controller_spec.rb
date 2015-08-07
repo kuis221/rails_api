@@ -5,6 +5,8 @@ describe Analysis::EventStatusController, type: :controller do
   let(:company_user) { user.current_company_user }
   let(:company) { user.companies.first }
   let(:campaign) { create(:campaign, company: company, name: 'Test Campaign FY01') }
+  let(:area) { create(:area, name: 'Area 1', company: company) }
+  let(:place) { create(:place, name: 'Place 1') }
 
   before { user }
 
@@ -14,10 +16,10 @@ describe Analysis::EventStatusController, type: :controller do
       expect(response).to be_success
     end
 
-    describe 'XLS export' do
-      it 'queue the job for export the list' do
+    describe 'CSV export' do
+      it 'queue the job for export the list to CSV' do
         expect do
-          xhr :get, :index, format: :xls
+          xhr :get, :index, format: :csv
         end.to change(ListExport, :count).by(1)
         export = ListExport.last
         expect(ListExportWorker).to have_queued(export.id)
@@ -29,7 +31,7 @@ describe Analysis::EventStatusController, type: :controller do
       before { Kpi.create_global_kpis }
       before { ResqueSpec.reset! }
 
-      it 'queue the job for export the list' do
+      it 'queue the job for export the list to PDF' do
         expect do
           xhr :get, :index, report: { campaign_id: campaign.id, group_by: 'campaign' }, format: :pdf
         end.to change(ListExport, :count).by(1)
@@ -78,8 +80,6 @@ describe Analysis::EventStatusController, type: :controller do
       end
 
       it 'should render the report for the campaign grouped by Place as PDF' do
-        area = create(:area, name: 'Area 1', company: company)
-        place = create(:place, name: 'Place 1')
         area.places << place
         campaign.areas << area
 
@@ -167,6 +167,36 @@ describe Analysis::EventStatusController, type: :controller do
       Sunspot.commit
       post 'index', 'report' => { 'campaign_id' => campaign.id }
       expect(response).to be_success
+    end
+  end
+
+  describe "GET 'list_export'", search: true do
+    it 'should return an empty book with the correct headers' do
+      expect { xhr :get, :index, report: { campaign_id: campaign.id, group_by: 'campaign' }, format: :csv }.to change(ListExport, :count).by(1)
+      ResqueSpec.perform_all(:export)
+      expect(ListExport.last).to have_rows([
+        ['METRIC', 'GOAL', 'EXECUTED', 'EXECUTED %', 'SCHEDULED', 'SCHEDULED %', 'REMAINING', 'REMAINING %']
+      ])
+    end
+
+    it 'should include the event results' do
+      Kpi.create_global_kpis
+      area.places << place
+      campaign.areas << area
+
+      create(:approved_event, company: company, campaign: campaign, place: place)
+      create(:submitted_event, company: company, campaign: campaign, place: place)
+
+      create(:goal, parent: campaign, goalable: area, kpi: Kpi.events, value: 10)
+      create(:goal, parent: campaign, goalable: area, kpi: Kpi.promo_hours, value: 45)
+
+      expect { xhr :get, :index, report: { campaign_id: campaign.id, group_by: 'place' }, format: :csv }.to change(ListExport, :count).by(1)
+      ResqueSpec.perform_all(:export)
+      expect(ListExport.last).to have_rows([
+        ['PLACE/AREA', 'METRIC', 'GOAL', 'EXECUTED', 'EXECUTED %', 'SCHEDULED', 'SCHEDULED %', 'REMAINING', 'REMAINING %'],
+        ['Area 1', 'EVENTS', '10', '1', '10.00%', '1', '10.00%', '8', '80.00%'],
+        ['Area 1', 'PROMO HOURS', '45', '2', '4.00%', '2', '4.00%', '41', '92.00%']
+      ])
     end
   end
 end
