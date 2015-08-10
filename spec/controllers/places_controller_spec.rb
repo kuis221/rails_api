@@ -45,6 +45,45 @@ describe PlacesController, type: :controller do
       expect(area.places).to match_array([place])
     end
 
+    it 'should allow to create places with custom venue values' do
+      expect_any_instance_of(Place).to receive(:fetch_place_data).and_return(true)
+      expect_any_instance_of(GooglePlaces::Client).to receive(:spots).and_return([])
+      expect_any_instance_of(described_class).to receive(:open)
+        .and_return(double(read: ActiveSupport::JSON.encode('results' => [
+          { 'geometry' => { 'location' => { 'lat' => '1.2322', lng: '-3.23455' } } }])))
+
+      ff = create(:form_field_number, fieldable: create(:entity_form, entity: "Venue", company_id: company.id))
+      expect do
+        expect do
+          expect do
+            xhr :post, 'create', area_id: area.to_param, add_new_place: true, place: {
+              name: "Guille's place", street_number: '123 st', route: 'xyz 321',
+              city: 'Curridabat', state: 'San José', zipcode: '12345',
+              types: 'bar', country: 'CR', venues_attributes: { '0' =>
+                { company_id: company.id, results_attributes: { '0' =>
+                  { form_field_id: ff.id, value: 1 }
+                }
+              } } }, format: :js
+          end.to change(Place, :count).by(1)
+        end.to change(Venue, :count).by(1)
+      end.to change(FormFieldResult, :count).by(1)
+      place = Place.last
+      expect(place.name).to eql "Guille's place"
+      expect(place.street_number).to eql '123 st'
+      expect(place.route).to eql 'xyz 321'
+      expect(place.city).to eql 'Curridabat'
+      expect(place.state).to eql 'San José'
+      expect(place.zipcode).to eql '12345'
+      expect(place.country).to eql 'CR'
+      expect(place.latitude).to eql 1.2322
+      expect(place.longitude).to eql -3.23455
+      expect(place.locations.count).to eql 4
+      expect(Venue.last.results_for([ff]).first.value).to eql "1"
+
+      expect(area.places).to match_array([place])
+    end
+
+
     context 'the place already exists on API' do
       it "save the user's address data if spot have not address associated" do
         expect_any_instance_of(GooglePlaces::Client).to receive(:spot).and_return(double(

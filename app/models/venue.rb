@@ -52,7 +52,14 @@ class Venue < ActiveRecord::Base
 
   has_many :invites, dependent: :destroy, inverse_of: :venue
 
+  def entity_form
+    @entity_form ||= EntityForm.find_by(entity: self.class.name, company_id: company_id)
+  end
+  delegate :form_fields, to: :entity_form
+  has_many :form_fields, through: :entity_form
+
   include Normdist
+  include Resultable
 
   delegate :name, :types, :formatted_address, :formatted_phone_number, :website,
            :price_level, :city, :street, :state, :state_name, :country,

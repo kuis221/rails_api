@@ -29,6 +29,15 @@
       .span6
         = f.input :zipcode, label: 'ZIP Code', input_html: {class: 'input-large'}, required: true
 
+      = f.simple_fields_for :venues, resource.venues.find { |v| v.company_id = current_company.id } || resource.venues.build(company_id: current_company.id) do |vf|
+        - if vf.object.entity_form.present?
+          - vf.object.form_field_results.each do |result|
+            = vf.simple_fields_for :results, result do |rf|
+              = vf.hidden_field :company_id
+              .large-inputs class="#{result.form_field.css_class}"
+                = rf.input :value, result.form_field.field_options(result)
+                = rf.hidden_field :form_field_id
+
     = hidden_field_tag :add_new_place, 'true'
 
   .form-actions
