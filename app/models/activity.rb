@@ -17,7 +17,7 @@
 #
 
 class Activity < ActiveRecord::Base
-  include Fieldable
+  include Resultable
   track_who_does_it
 
   belongs_to :activity_type
