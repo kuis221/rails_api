@@ -59,6 +59,10 @@ class FormFieldResult < ActiveRecord::Base
     form_field.format_chart_data self
   end
 
+  def to_text
+    form_field.format_text self
+  end
+
   protected
 
   def valid_value?

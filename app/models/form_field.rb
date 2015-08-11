@@ -118,6 +118,10 @@ class FormField < ActiveRecord::Base
     result.value
   end
 
+  def format_text(result)
+    result.value
+  end
+
   def format_csv(result)
     result.value
   end

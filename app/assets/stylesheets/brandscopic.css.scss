@@ -7535,6 +7535,31 @@ form.button_to .button-with-icon {
 	width: auto!important;
 }
 
+.details-venues-custom-fields{
+	span {
+		font-size: 12px;
+	}
+	.form-result-label {
+		margin-right: 5px;
+	}
+	.result_checkbox{
+		.form-result-value{
+			span{
+				margin-right: 5px;
+				i{
+					display: none;
+				}
+				&:before{
+					content: ', ';
+				}
+				&:first-child:before{
+					content: '';
+				}
+			}
+		}
+	}
+}
+
 @import 'widgets/asset_upload_dialog';
 @import 'widgets/documents_list';
 @import 'widgets/resource_list';
