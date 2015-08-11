@@ -4,7 +4,7 @@
     - partial_name = form_field.type_name.underscore
     - if result.try(:to_html).present?
       .form-result class="result_#{partial_name}"
-        span.form-result-label = "#{form_field.name}: "
+        span.form-result-label.highlight-text = "#{form_field.name}: "
         - if form_field.type_name == 'Percentage'
           span.form-result-value = result.try(:to_text)
         - else
