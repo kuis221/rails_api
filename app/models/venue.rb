@@ -22,6 +22,7 @@
 #  score_dirty          :boolean          default(FALSE)
 #  jameson_locals       :boolean          default(FALSE)
 #  top_venue            :boolean          default(FALSE)
+#  web_address          :string
 #  created_by_id        :integer
 #  updated_by_id        :integer
 #
@@ -37,6 +38,7 @@ class Venue < ActiveRecord::Base
   belongs_to :place
 
   validates :place, presence: true, uniqueness: { scope: :company_id }
+  validates_format_of :web_address, :with => URI::regexp(%w(http https)), allow_blank: true
 
   has_many :events, through: :place
   has_many :activities, -> { order('activity_date ASC') }, as: :activitable do
@@ -199,6 +201,10 @@ class Venue < ActiveRecord::Base
         stat(:avg_impressions_cost, type: 'mean')
       end
     end
+  end
+
+  def website
+    self.web_address || place.website
   end
 
   def photos

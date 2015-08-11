@@ -30,6 +30,8 @@
         = f.input :zipcode, label: 'ZIP Code', input_html: {class: 'input-large'}, required: true
 
       = f.simple_fields_for :venues, resource.venues.find { |v| v.company_id = current_company.id } || resource.venues.build(company_id: current_company.id) do |vf|
+        .row-fluid
+        = vf.input :web_address, label: 'Website', input_html: {class: 'input-xxlarge'}, required: false, :autofocus => true
         - if vf.object.entity_form.present?
           - vf.object.form_field_results.each do |result|
             = vf.simple_fields_for :results, result do |rf|
