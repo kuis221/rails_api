@@ -190,6 +190,23 @@ module PlacesHelper
     (5 - price).times.map {|_| '$' }.join.html_safe
   end
 
+  def select_days()
+    days = { 'Mon': 0, 'Tue': 1, 'Wed': 2, 'Thu': 3, 'Fri': 4, 'Sat': 5, 'Sun': 6 }
+  end
+
+  def select_hours()
+    hours = { '12:00 am' => '0000', '12:30 am' => '0030' }
+    hours = (1..23).inject(hours) do |hash, h|
+              ampm = h > 11 ? 'pm' : 'am'
+              h24 = h < 10 ? "0#{h}" : h
+              hour12 = h > 12 ? h - 12 : h
+              h12 = hour12 < 10 ? "0#{hour12}" : hour12
+              hash["#{h12}:00 #{ampm}"] = "#{h24}00"
+              hash["#{h12}:30 #{ampm}"] = "#{h24}30"
+              hash
+            end
+  end
+
   private
 
   def score_calification_for(score)

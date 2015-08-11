@@ -5,7 +5,7 @@
       Just enter the place's information below and we'll add it to the campaign.
   br>/
 
-= simple_form_for([parent, resource], remote: true) do |f|
+= simple_nested_form_for([parent, resource], remote: true) do |f|
   = f.error_notification
   = f.error :base
 
@@ -28,10 +28,22 @@
         = f.input :state, collection: (resource.country.present? && Country[resource.country] ? Country.new(resource.country).states.map{|k, info| [info['name'],info['name']]} : []), input_html: {class: 'input-large chosen-enabled'}, required: true
       .span6
         = f.input :zipcode, label: 'ZIP Code', input_html: {class: 'input-large'}, required: true
-
       = f.simple_fields_for :venues, resource.venues.find { |v| v.company_id = current_company.id } || resource.venues.build(company_id: current_company.id) do |vf|
         .row-fluid
         = vf.input :web_address, label: 'Website', input_html: {class: 'input-xxlarge'}, required: false, :autofocus => true
+        .hours-list
+          = label_tag :hours_fields, 'Hours', class: 'control-label'
+          = vf.fields_for :hours_fields do |hf|
+            .row-fluid
+              .span3
+                = hf.input :day, collection: select_days, input_html: {class: 'input-large chosen-enabled'}
+              .span3
+                = hf.input :hour_open, label: 'Open', collection: select_hours, input_html: {class: 'input-large chosen-enabled'}
+              .span3
+                = hf.input :hour_close, label: 'Close', collection: select_hours, input_html: {class: 'input-large chosen-enabled'}
+              .span3
+                = hf.link_to_remove '', class: 'icon icon-minus-rounded', title: 'Remove Hours'
+        = vf.link_to_add '', :hours_fields, class: 'icon icon-rounded-add', title: 'Add Hours', data: { target: ".hours-list" }
         - if vf.object.entity_form.present?
           - vf.object.form_field_results.each do |result|
             = vf.simple_fields_for :results, result do |rf|

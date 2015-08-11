@@ -53,6 +53,9 @@ class Venue < ActiveRecord::Base
   end
 
   has_many :invites, dependent: :destroy, inverse_of: :venue
+  has_many :hours_fields, dependent: :destroy, inverse_of: :venue
+
+  accepts_nested_attributes_for :hours_fields
 
   def entity_form
     @entity_form ||= EntityForm.find_by(entity: self.class.name, company_id: company_id)
@@ -205,6 +208,10 @@ class Venue < ActiveRecord::Base
 
   def website
     self.web_address || place.website
+  end
+
+  def opening_hours
+    venue_opening_hours || place.opening_hours
   end
 
   def photos
@@ -431,5 +438,16 @@ class Venue < ActiveRecord::Base
       errors.add(:base, "cannot delete venue because it have events, invites or activites associated")
       return false
     end
+  end
+
+  def venue_opening_hours
+    return nil if hours_fields.blank?
+    periods = hours_fields.inject([]) do |hash, hour|
+                if hour.day.present? && hour.hour_open.present? && hour.hour_close.present?
+                  hash << { 'open' => { 'day' => hour.day, 'time' => hour.hour_open }, 'close' => { 'day' => hour.day, 'time' => hour.hour_close } }
+                end
+                hash
+              end
+    { 'periods' => periods }
   end
 end
