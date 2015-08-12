@@ -18,5 +18,23 @@ module Html
         the_date
       end
     end
+
+    def gender_total(data)
+      male = data.detect { |n| n[0] == 'Male' }
+      female = data.detect { |n| n[0] == 'Female' }
+
+      total_male = male.present? ? male[1].round : 0
+      total_female = female.present? ? female[1].round : 0
+      total = total_male + total_female
+
+      {
+        male: percent_of(total_male, total).round,
+        female: percent_of(total_female, total).round
+      }
+    end
+
+    def percent_of(n, t)
+      n.to_f / t.to_f * 100.0
+    end
   end
 end

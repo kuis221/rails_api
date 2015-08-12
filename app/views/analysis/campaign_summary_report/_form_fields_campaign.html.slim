@@ -1,0 +1,23 @@
+- partial_field_types = ['FormField::Section', 'FormField::Summation', 'FormField::LikertScale']
+- total_field_types = ['FormField::Number', 'FormField::Currency']
+- partial_porcentage_chart = ['FormField::Percentage', 'FormField::Checkbox', 'FormField::Radio', 'FormField::Dropdown', 'FormField::Brand']
+- if form_fields.any?
+  - presenter = present(@campaign)
+  h5.results-title
+    = @campaign.name
+  - form_fields.each do |form_field|
+    - partial_name = ['gender', 'age'].include?(form_field.name.downcase) ? form_field.name.downcase : form_field.type_name.underscore
+    - if partial_name == 'age' && form_field.type_name == 'Percentage'
+      - result = form_field.grouped_results(@campaign, @event_scope, true)
+    - else
+      - result = form_field.grouped_results(@campaign, @event_scope)
+    - if partial_field_types.include?(form_field.type) || partial_name == 'gender' || partial_name == 'age'
+      div.form-result.pdf-keeptogether class="result_#{partial_name}"
+        = render partial: 'form_field_'+partial_name, locals: { form_field: form_field, result: result, presenter: presenter }
+    - elsif partial_porcentage_chart.include?(form_field.type)
+      div.form-result.pdf-keeptogether class="result_percentage"
+        = render partial: 'porcentage_chart', locals: { form_field: form_field, result: result }
+    - elsif total_field_types.include?(form_field.type)
+      div.form-result.pdf-keeptogether class="result_#{partial_name}"
+        span.form-result-label = form_field.name
+        span.form-result-value = result

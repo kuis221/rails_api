@@ -37,6 +37,8 @@ class DataExtract::CompanyUser < DataExtract
                  time_zone: 'users.time_zone',
                  created_at: proc { "to_char(users.created_at, 'MM/DD/YYYY')" },
                  created_by: '(SELECT trim(us.first_name || \' \' || us.last_name) FROM users as us WHERE users.created_by_id=us.id)',
+                 modified_at: proc { "to_char(users.updated_at, 'MM/DD/YYYY')" },
+                 modified_by: '(SELECT trim(us.first_name || \' \' || us.last_name) FROM users as us WHERE users.updated_by_id=us.id)',
                  active_state: 'CASE WHEN company_users.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END'
 
   def add_joins_to_scope(s)

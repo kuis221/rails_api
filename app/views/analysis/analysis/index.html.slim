@@ -29,6 +29,12 @@
             .span10.report-item
               .text-large Trends Tracker
               p Explore and identify trends for your campaigns
+      - if can?(:campaign_summary_report, Campaign)        
+        .resource-item id="report_campaign_summary"
+          = link_to analysis_campaign_summary_report_path, title: 'Campaign Summary' do
+            .span10.report-item
+              .text-large Campaign Summary
+              p View Campaign Summary
 
     
 

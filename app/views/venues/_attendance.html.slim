@@ -8,7 +8,7 @@
           i.icon-arrow-down-small
         ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
           li
-            = link_to 'Download as XLS', venue_invites_path(resource, format: :csv), role: :menuitem, class: 'xlsx-download-link', data: { url: venue_invites_path(resource, format: :csv) }
+            = link_to 'Download as CSV', venue_invites_path(resource, format: :csv), role: :menuitem, class: 'xlsx-download-link', data: { url: venue_invites_path(resource, format: :csv) }
           li
             = link_to 'Download as PDF', venue_invites_path(resource, format: :pdf), role: :menuitem, class: 'xlsx-download-link', data: { url: venue_invites_path(resource, format: :pdf) }
       h5.module-title ATTENDANCE

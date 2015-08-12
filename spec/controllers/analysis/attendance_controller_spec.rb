@@ -38,6 +38,16 @@ describe Analysis::AttendanceController, type: :controller do
       get :index
       expect(response).to be_success
     end
+
+    describe 'CSV export' do
+      it 'queue the job for export the list to CSV' do
+        expect do
+          xhr :get, :index, format: :csv
+        end.to change(ListExport, :count).by(1)
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+      end
+    end
   end
 
   describe 'GET map' do
@@ -84,7 +94,7 @@ describe Analysis::AttendanceController, type: :controller do
     it 'exports an empty book with the correct headers' do
       expect do
         xhr :get, 'index', campaign_id: campaign.id,
-                           event_id: event.id, format: :xls
+                           event_id: event.id, format: :csv
       end.to change(ListExport, :count).by(1)
       export = ListExport.last
       expect(ListExportWorker).to have_queued(export.id)
@@ -98,7 +108,7 @@ describe Analysis::AttendanceController, type: :controller do
       create(:invite, event: event, venue: create(:venue, company: company, place: place))
 
       expect do
-        xhr :get, 'index', campaign_id: campaign.id, event_id: event.id, format: :xls
+        xhr :get, 'index', campaign_id: campaign.id, event_id: event.id, format: :csv
       end.to change(ListExport, :count).by(1)
       export = ListExport.last
       expect(ListExportWorker).to have_queued(export.id)

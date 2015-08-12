@@ -178,8 +178,8 @@ feature 'Results Event Status Page', js: true, search: true  do
 
       expect(ListExport.last).to have_rows([
         ['METRIC', 'GOAL', 'EXECUTED', 'EXECUTED %', 'SCHEDULED', 'SCHEDULED %', 'REMAINING', 'REMAINING %'],
-        ['PROMO HOURS', '100', '2', '0.02', '2', '0.02', '96', '0.96'],
-        ['EVENTS', '2', '1', '0.5', '1', '0.5', '0', '0']
+        ['PROMO HOURS', '100', '2', '2.00%', '2', '2.00%', '96', '96.00%'],
+        ['EVENTS', '2', '1', '50.00%', '1', '50.00%', '0', '0.00%']
       ])
     end
 
@@ -210,8 +210,8 @@ feature 'Results Event Status Page', js: true, search: true  do
 
       expect(ListExport.last).to have_rows([
         ['PLACE/AREA', 'METRIC', 'GOAL', 'EXECUTED', 'EXECUTED %', 'SCHEDULED', 'SCHEDULED %', 'REMAINING', 'REMAINING %'],
-        ['Area 1', 'EVENTS', '2', '1', '0.5', '1', '0.5', '0', '0'],
-        ['Area 1', 'PROMO HOURS', '10', '2', '0.2', '2', '0.2', '6', '0.6']
+        ['Area 1', 'EVENTS', '2', '1', '50.00%', '1', '50.00%', '0', '0.00%'],
+        ['Area 1', 'PROMO HOURS', '10', '2', '20.00%', '2', '20.00%', '6', '60.00%']
       ])
     end
 
@@ -242,8 +242,8 @@ feature 'Results Event Status Page', js: true, search: true  do
 
       expect(ListExport.last).to have_rows([
         ['USER/TEAM', 'METRIC', 'GOAL', 'EXECUTED', 'EXECUTED %', 'SCHEDULED', 'SCHEDULED %', 'REMAINING', 'REMAINING %'],
-        ['Juanito Bazooka', 'EVENTS', '2', '1', '0.5', '1', '0.5', '0', '0'],
-        ['Juanito Bazooka', 'PROMO HOURS', '10', '2', '0.2', '2', '0.2', '6', '0.6']
+        ['Juanito Bazooka', 'EVENTS', '2', '1', '50.00%', '1', '50.00%', '0', '0.00%'],
+        ['Juanito Bazooka', 'PROMO HOURS', '10', '2', '20.00%', '2', '20.00%', '6', '60.00%']
       ])
     end
 
@@ -389,10 +389,10 @@ feature 'Results Event Status Page', js: true, search: true  do
         expect(text).to include 'JuanitoBazooka'
         expect(text).to include '2GOAL'
         expect(text).to include 'EVENTS'
-        expect(text).to match /0(EVENTS)?REMAINING11/
+        expect(text).to match(/0(EVENTS)?REMAINING11/)
         expect(text).to include '10GOAL'
         expect(text).to include 'PROMOHOURS'
-        expect(text).to match /6(PROMOHOURS)?REMAINING22/
+        expect(text).to match(/6(PROMOHOURS)?REMAINING22/)
       end
     end
   end
@@ -405,7 +405,7 @@ feature 'Results Event Status Page', js: true, search: true  do
     select_from_chosen(name, from: 'report[campaign_id]')
   end
 
-  def export_report(format = 'XLS')
+  def export_report(format = 'CSV')
     with_resque do
       expect do
         click_js_link('Download')

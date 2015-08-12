@@ -238,7 +238,7 @@ feature 'Events section' do
         end
 
         scenario 'should allow allow filter events by date range selected from the calendar' do
-          today = Time.zone.local(Time.now.year, Time.now.month, 18, 12, 00)
+          today = Time.zone.local(2015, 1, 18, 12, 00)
           tomorrow = today + 1.day
           Timecop.travel(today) do
             create(:event,
@@ -327,7 +327,7 @@ feature 'Events section' do
             Sunspot.commit
           end
 
-          scenario 'should be able to export as xls' do
+          scenario 'should be able to export as CSV' do
             contact1 = create(:contact, first_name: 'Guillermo', last_name: 'Vargas', email: 'guilleva@gmail.com', company: company)
             contact2 = create(:contact, first_name: 'Chris', last_name: 'Jaskot', email: 'cjaskot@gmail.com', company: company)
             create(:contact_event, event: event1, contactable: contact1)
@@ -337,7 +337,7 @@ feature 'Events section' do
             visit events_path
 
             click_js_link 'Download'
-            click_js_link 'Download as XLS'
+            click_js_link 'Download as CSV'
 
             within visible_modal do
               expect(page).to have_content('We are processing your request, the download will start soon...')
@@ -349,14 +349,14 @@ feature 'Events section' do
             expect(ListExport.last).to have_rows([
               ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'DURATION', 'VENUE NAME', 'ADDRESS', 'CITY',
                'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL'],
-              ['Another Campaign April 03', nil, "#{year_number}-#{month_number}-#{today.strftime('%d')}T08:00",
-               "#{year_number}-#{month_number}-#{today.strftime('%d')}T09:00", '1.00', 'Place 2',
+              ['Another Campaign April 03', '', "#{year_number}-#{month_number}-#{today.strftime('%d')} 08:00",
+               "#{year_number}-#{month_number}-#{today.strftime('%d')} 09:00", '1.00', 'Place 2',
                'Place 2, 11 Main St., Los Angeles, CA, 67890', 'Los Angeles', 'CA', '67890', 'Active', 'Unsent',
-               nil, nil, "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event2.id}"],
-              ['Campaign FY2012', nil, "#{year_number}-#{month_number}-#{today.strftime('%d')}T10:00",
-               "#{year_number}-#{month_number}-#{today.strftime('%d')}T11:00", '1.00', 'Place 1',
+               '', '', "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event2.id}"],
+              ['Campaign FY2012', '', "#{year_number}-#{month_number}-#{today.strftime('%d')} 10:00",
+               "#{year_number}-#{month_number}-#{today.strftime('%d')} 11:00", '1.00', 'Place 1',
                'Place 1, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active',
-               'Unsent', nil, 'Chris Jaskot, Guillermo Vargas',
+               'Unsent', '', 'Chris Jaskot, Guillermo Vargas',
                "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event1.id}"]
             ])
           end
@@ -697,7 +697,7 @@ feature 'Events section' do
         end
 
         scenario 'Filters are preserved upon navigation' do
-          today = Time.zone.local(Time.now.year, Time.now.month, 18, 12, 00)
+          today = Time.zone.local(2015, 1, 18, 12, 00)
           tomorrow = today + 1.day
           Timecop.travel(today) do
             ev1 = create(:event, campaign: campaign,

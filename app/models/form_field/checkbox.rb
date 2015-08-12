@@ -15,7 +15,7 @@
 #  kpi_id         :integer
 #
 
-class FormField::Checkbox < FormField
+class FormField::Checkbox < FormField::Hashed
   def field_options(result)
     {
       as: :check_boxes,
@@ -86,5 +86,11 @@ class FormField::Checkbox < FormField
         result.errors.add :value, :invalid  # If a invalid key was given
       end
     end
+  end
+
+  def grouped_results(campaign, event_scope)
+    events = form_field_results.for_event_campaign(campaign).merge(event_scope)
+    result = events.map { |event| event.hash_value }.compact
+    results_for_percentage_chart_for_hash(result)
   end
 end

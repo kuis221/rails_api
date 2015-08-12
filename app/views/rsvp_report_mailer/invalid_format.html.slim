@@ -1,4 +1,8 @@
-p The Ratio RSVP Report for this month is not in the proper format. As a reminder, this must include the following columns: #{@columns.join(', ')}. Please update this file, upload to the FTP server and let us know once complete so that we can manually run the synch process.
+p The Ratio RSVP Report for this month is not in the proper format. The following column names are incorrect:
+br/
+p #{@invalid_columns.join(', ')}
+br/
+p As a reminder, this must include the following columns: #{@columns.join(', ')}. Please update this file, upload to the FTP server and let us know once complete so that we can manually run the synch process.
 
 p
   | Thanks,

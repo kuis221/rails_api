@@ -689,10 +689,15 @@ feature 'Campaigns', js: true do
 
   feature 'custom filters', search: true, js: true do
     it_behaves_like 'a list that allow saving custom filters' do
+      let!(:brand1) { create(:brand, name: 'Brand 1', company: company) }
+      let!(:brand2) { create(:brand, name: 'Brand 2', company: company) }
+
       before do
         campaign = create(:campaign, company: company)
-        campaign.brands << create(:brand, name: 'Brand 1', company: company)
-        campaign.brands << create(:brand, name: 'Brand 2', company: company)
+        campaign.brands << brand1
+        campaign.brands << brand2
+        company_user.brands << brand1
+        company_user.brands << brand2
         company_user.campaigns << campaign
 
         create(:brand_portfolio, name: 'A Vinos Ticos', description: 'Algunos vinos de Costa Rica', company: company)
@@ -727,11 +732,11 @@ feature 'Campaigns', js: true do
       Sunspot.commit
     end
 
-    scenario 'should be able to export as XLS' do
+    scenario 'should be able to export as CSV' do
       visit campaigns_path
 
       click_js_link 'Download'
-      click_js_link 'Download as XLS'
+      click_js_link 'Download as CSV'
 
       within visible_modal do
         expect(page).to have_content('We are processing your request, the download will start soon...')
@@ -742,8 +747,8 @@ feature 'Campaigns', js: true do
 
       expect(ListExport.last).to have_rows([
         ['NAME', 'DESCRIPTION', 'FIRST EVENT', 'LAST EVENT', 'ACTIVE STATE'],
-        ['Cacique FY13', 'Test campaign for guaro Cacique', '2013-08-21T10:00', '2013-08-28T11:00', 'Active'],
-        ['New Brand Campaign', 'Campaign for another brand', '2013-09-18T11:00', '2013-09-18T11:00', 'Active']
+        ['Cacique FY13', 'Test campaign for guaro Cacique', '08/21/2013 10:00', '08/28/2013 11:00', 'Active'],
+        ['New Brand Campaign', 'Campaign for another brand', '09/18/2013 11:00', '09/18/2013 11:00', 'Active']
       ])
     end
 

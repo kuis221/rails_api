@@ -210,7 +210,8 @@ class Ability
         can?(:attendance, Event) ||
         can?(:view_gva_report, Campaign) ||
         can?(:view_event_status, Campaign) ||
-        can?(:access, :trends_report)
+        can?(:access, :trends_report) ||
+        can?(:campaign_summary_report, Campaign)
       end
 
       can :access, :brand_ambassadors do

@@ -70,4 +70,26 @@ class FormField::Brand < FormField
       ::Company.current.brands.active
     end
   end
+
+  def grouped_results(campaign, event_scope)
+    totals = form_field_results.for_event_campaign(campaign).merge(event_scope).group(:value).count
+    return [] if totals.blank?
+
+    values = totals.reject{ |k, v| k == nil || v.nil? || v == '' || v.to_f == 0.0 }
+    r = campaign.events.first.results_for([self]).first
+    options_map = Hash[options_for_field(r).pluck(:id, :name)]
+    values.map{ |k, v| [options_map[k.to_i], v] }
+  end
+
+  def csv_results(campaign, event_scope, hash_result)
+    events = form_field_results.for_event_campaign(campaign).merge(event_scope)
+    hash_result[:titles] << name
+    r = campaign.events.first.results_for([self]).first
+    events.each do |event|
+      options_map = Hash[options_for_field(r).pluck(:id, :name)]
+      value = event.value.nil? ? "" : options_map[event.value.to_i]
+      hash_result[event.resultable_id] << value
+    end
+    hash_result
+  end
 end

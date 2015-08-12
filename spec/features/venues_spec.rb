@@ -121,11 +121,11 @@ feature 'Venues Section', js: true, search: true do
       Sunspot.commit
     end
 
-    scenario 'should be able to export as xls', :vcr, match_requests_on: [:s3_file] do
+    scenario 'should be able to export as CSV' do
       visit venues_path
 
       click_js_link 'Download'
-      click_js_link 'Download as XLS'
+      click_js_link 'Download as CSV'
 
       within visible_modal do
         expect(page).to have_content('We are processing your request, the download will start soon...')
@@ -136,8 +136,8 @@ feature 'Venues Section', js: true, search: true do
 
       expect(ListExport.last).to have_rows([
         ['VENUE NAME', 'TD LINX CODE', 'ADDRESS', 'CITY', 'STATE', 'SCORE', 'EVENTS COUNT', 'PROMO HOURS COUNT', 'TOTAL $ SPENT'],
-        ['Place 1', '5155520', '123 My Street', 'New York City', 'NY', nil, '1', '2.0', '1000.0'],
-        ['Place 2', '3929538', '456 Your Street', 'Los Angeles', 'CA', nil, '1', '2.0', '2000.0']
+        ['Place 1', '5155520', '123 My Street', 'New York City', 'NY', '0', '1', '2.0', '$1,000.00'],
+        ['Place 2', '3929538', '456 Your Street', 'Los Angeles', 'CA', '0', '1', '2.0', '$2,000.00']
       ])
     end
 

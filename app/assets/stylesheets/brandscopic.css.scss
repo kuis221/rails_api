@@ -7531,6 +7531,10 @@ form.button_to .button-with-icon {
 	}
 }
 
+.campaign-summary-box{
+	width: auto!important;
+}
+
 @import 'widgets/asset_upload_dialog';
 @import 'widgets/documents_list';
 @import 'widgets/resource_list';

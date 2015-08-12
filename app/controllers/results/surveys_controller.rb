@@ -6,6 +6,23 @@ class Results::SurveysController < FilteredController
 
   private
 
+  def collection_to_csv
+    CSV.generate do |csv|
+      csv << ['DESCRIPTION', 'CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS', 'EVENT START DATE', 'EVENT END DATE', 'SURVEY CREATED DATE']
+      each_collection_item do |event|
+        event.surveys.each do |survey|
+          survey = Csv::SurveyPresenter.new(survey, view_context)
+          desc = []
+          desc.push "#{survey.age} year old" if survey.age
+          desc.push survey.ethnicity
+          desc.push survey.gender
+          csv << [desc.join(','), event.campaign_name, event.place_name, survey.place_address(event),
+                  survey.event_start_date, survey.event_end_date, survey.created_date]
+        end
+      end
+    end
+  end
+
   def search_params
     @search_params || (super.tap do |p|
       p[:with_surveys_only] = true unless p.key?(:user) && !p[:user].empty?

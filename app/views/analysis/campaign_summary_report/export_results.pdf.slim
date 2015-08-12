@@ -1,0 +1,13 @@
+#analysis-campaign.details_box.content.form-results-box
+  - if @campaign.form_fields.any?
+    = render partial: 'form_fields_campaign', locals: { form_fields: @campaign.form_fields }, formats: [:html]
+
+- content_for :pdf_scripts
+  javascript:
+    Highcharts.setOptions({
+      plotOptions: {
+          series: {
+              animation: false
+          }
+      }
+    });

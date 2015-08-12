@@ -26,6 +26,8 @@ module JbbFile
 
     VALID_COLUMNS = COLUMNS.values
 
+    REQUIRED_COLUMNS = [:campaign, :market, :event_date, :account_name]
+
     attr_accessor :created, :failed, :multiple_events
 
     def initialize
@@ -37,6 +39,7 @@ module JbbFile
 
       @areas = {}
       @campaigns = {}
+      @new_events = []
 
       self.mailer = RsvpReportMailer
     end
@@ -45,6 +48,7 @@ module JbbFile
       puts "RsvpReport.process STARTED!"
       self.created = self.failed = self.multiple_events = 0
       invalid_rows = []
+      errors = { required_columns: {}, invalid_campaigns: {} }
       Dir.mktmpdir do |dir|
         files = download_files(dir)
         return invalid_format if invalid_files.any?
@@ -52,9 +56,12 @@ module JbbFile
         files.each do |file|
           ActiveRecord::Base.transaction do
             each_sheet(file[:excel]) do |sheet|
-              sheet.each(self.class::COLUMNS) do |row|
+              sheet.each_with_index(self.class::COLUMNS) do |row, index|
                 next if row[:final_date] == 'FinalDate'
                 campaign = find_campaign(row)
+                required_columns = validate_required(row.select { |k, _| self.class::REQUIRED_COLUMNS.include?(k) })
+                errors[:required_columns][index + 1] = required_columns if required_columns.present?
+                errors[:invalid_campaigns][index + 1] = row[:campaign].blank? ? '<empty campaign name>' : row[:campaign] if campaign.blank?
                 market_level = campaign.module_setting('attendance', 'attendance_display') == '2' if campaign
                 event = find_event_for_row(campaign, row) if campaign
                 area = find_area(campaign, row) if event && market_level
@@ -80,10 +87,22 @@ module JbbFile
         end
         p 'ENDED!'
 
-        success created, invalid_rows.count, multiple_events, invalid_rows
+        if errors.values.all? { |v| v.empty? }
+          success created, invalid_rows.count, multiple_events, @new_events, invalid_rows
+        else
+          fail errors.values.flatten.count, invalid_rows, errors
+        end
       end
     ensure
       close_connection
+    end
+
+    def validate_required(a)
+      columns = []
+      a.select do |k, v|
+        columns.push self.class::COLUMNS[k] if v.blank?
+      end
+      columns
     end
 
     def area(name)
@@ -107,7 +126,6 @@ module JbbFile
 
       areas = campaign.areas.where('lower(name) = ?', row[:market].strip).all
       event_scope = campaign.events.in_campaign_areas(campaign, areas).where('events.local_start_at::date = ?', date_str).active
-
       if event_scope.count > 1
         self.multiple_events += 1
         return
@@ -129,6 +147,7 @@ module JbbFile
         end_time: '12:00am',
         place_reference: place.reference + '||' + place.place_id)
       return unless event.persisted?
+      @new_events.push Rails.application.routes.url_helpers.event_url(event)
       event
     end
 
@@ -136,13 +155,26 @@ module JbbFile
       Place.google_client.spots_by_query(city, types: [:political, :natural_feature]).first
     end
 
-    def success(created, failed, multiple_events, invalid_rows)
+    def success(created, failed, multiple_events, new_events, invalid_rows)
       path = "#{Rails.root}/tmp/invalid_rows.csv"
       CSV.open(path, 'wb') do |csv|
         csv << COLUMNS.values
         invalid_rows.each { |row| p row.inspect;  csv << row.values; }
       end if invalid_rows.any?
-      mailer.success(created, failed, multiple_events, (invalid_rows.any? ? [path] : nil)).deliver
+      mailer.success(created, failed, multiple_events, new_events.join("\n"), (invalid_rows.any? ? [path] : nil)).deliver
+      false
+    end
+
+    def fail(failed, invalid_rows, errors)
+      path = "#{Rails.root}/tmp/invalid_rows.csv"
+      CSV.open(path, 'wb') do |csv|
+        csv << COLUMNS.values
+        invalid_rows.each { |row| p row.inspect; csv << row.values; }
+      end if invalid_rows.any?
+      error_messages = []
+      error_messages.push("Required values for column(s):\n" + errors[:required_columns].map { |k, v| "Line ##{k}: #{v.join(', ')}" }.join("\n"))
+      error_messages.push("Incorrect campaign name(s):\n" + errors[:invalid_campaigns].map { |k, v| "Line ##{k}: #{v}" }.join("\n"))
+      mailer.fail(failed, error_messages.join("\n\n"), (invalid_rows.any? ? [path] : nil)).deliver
       false
     end
 

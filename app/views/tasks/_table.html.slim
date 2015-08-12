@@ -10,8 +10,8 @@
         i.icon-arrow-down-small
       ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
         li
-          a#xls-export.xlsx-download-link href="#" role="menuitem" data-url="#{url_for(action: :index, scope: params[:scope], format: :xls)}"
-            | Download as XLS
+          a#xls-export.xlsx-download-link href="#" role="menuitem" data-url="#{url_for(action: :index, scope: params[:scope], format: :csv)}"
+            | Download as CSV
         li
           a#pdf-export.xlsx-download-link href="#" role="menuitem" data-url="#{url_for(action: :index, scope: params[:scope], format: :pdf)}"
             | Download as PDF
@@ -54,10 +54,10 @@ javascript:
     },
     'onPageLoaded' : function() {
       if ($("ul.task-navigation li.active").attr('id') === 'mine_tasks') {
-        $('#xls-export').data('url', '/tasks/mine.xls');
+        $('#xls-export').data('url', '/tasks/mine.csv');
         $('#pdf-export').data('url', '/tasks/mine.pdf');
       } else {
-        $('#xls-export').data('url', '/tasks/my_teams.xls');
+        $('#xls-export').data('url', '/tasks/my_teams.csv');
         $('#pdf-export').data('url', '/tasks/my_teams.pdf?scope=teams');
       }
     }

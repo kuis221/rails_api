@@ -69,11 +69,11 @@ describe Results::ExpensesController, type: :controller do
 
       expect(export.reload).to have_rows([
         ['CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'EVENT START DATE', 'EVENT END DATE',
-         "CREATED AT", "CREATED BY", "LAST MODIFIED", "MODIFIED BY", 'SPENT', 'ENTERTAINMENT', 'UNCATEGORIZED'],
-        ['Test Campaign FY01', 'Place 1', 'Place 1, 11 Main St., New York City, NY, 12345', "US",
-         '2013-08-21 20:00', '2013-08-21 23:00', "2015-07-01 10:00", '2015-07-02 10:00', "2014-07-02 10:00", "Test User", "2015-07-01 10:00", "Test User", '10.0', '10.0', nil],
-        ['Test Campaign FY01', 'Place 2', 'Place 2, 11 Main St., New York City, NY, 12345', "US",
-         '2013-08-25 09:00', '2013-08-25 10:00', nil, nil, "2014-07-02 10:00", "Test User", "2015-07-01 10:00", "Test User", '20.0', nil, '20.0']
+         'CREATED AT', 'CREATED BY', 'LAST MODIFIED', 'MODIFIED BY', 'SPENT', 'ENTERTAINMENT', 'UNCATEGORIZED'],
+        ['Test Campaign FY01', 'Place 1', 'Place 1, 11 Main St., New York City, NY, 12345', 'US',
+         '2013-08-21 20:00', '2013-08-21 23:00', '2014-07-02 10:00', 'Test User', '2015-07-01 10:00', 'Test User', '10.0', '10.0', nil],
+        ['Test Campaign FY01', 'Place 2', 'Place 2, 11 Main St., New York City, NY, 12345', 'US',
+         '2013-08-25 09:00', '2013-08-25 10:00', '2014-07-02 10:00', 'Test User', '2015-07-01 10:00', 'Test User', '20.0', nil, '20.0']
       ])
     end
   end
