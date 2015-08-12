@@ -36,13 +36,13 @@
               span.venues-optional-field
                 = '(optional)'
           = vf.fields_for :hours_fields do |hf|
-            .row-fluid
+            .row-fluid.hours-chosen
               .span3
-                = hf.input :day, collection: select_days, input_html: {class: 'input-large'}
+                = hf.input :day, collection: select_days, input_html: {class: 'input-large chosen-enabled'}
               .span3
-                = hf.input :hour_open, label: 'Open', collection: select_hours, input_html: {class: 'input-large'}
+                = hf.input :hour_open, label: 'Open', collection: select_hours, input_html: {class: 'input-large chosen-enabled'}
               .span3
-                = hf.input :hour_close, label: 'Close', collection: select_hours, input_html: {class: 'input-large'}
+                = hf.input :hour_close, label: 'Close', collection: select_hours, input_html: {class: 'input-large chosen-enabled'}
               .span3
                 = hf.link_to_remove '', class: 'icon icon-minus-rounded', title: 'Remove Hours'
         .add-hours
@@ -78,3 +78,6 @@ coffee:
       states.trigger('liszt:updated')
   $("#add-hours").trigger( "click" )
   $(".remove_nested_fields").hide()
+
+  $(document).on 'nested:fieldAdded', (e) =>
+    $('.hours-chosen:last .chosen-enabled').chosen()
