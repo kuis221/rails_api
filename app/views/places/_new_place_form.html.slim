@@ -38,14 +38,15 @@
           = vf.fields_for :hours_fields do |hf|
             .row-fluid
               .span3
-                = hf.input :day, collection: select_days, input_html: {class: 'input-large chosen-enabled'}
+                = hf.input :day, collection: select_days, input_html: {class: 'input-large'}
               .span3
-                = hf.input :hour_open, label: 'Open', collection: select_hours, input_html: {class: 'input-large chosen-enabled'}
+                = hf.input :hour_open, label: 'Open', collection: select_hours, input_html: {class: 'input-large'}
               .span3
-                = hf.input :hour_close, label: 'Close', collection: select_hours, input_html: {class: 'input-large chosen-enabled'}
+                = hf.input :hour_close, label: 'Close', collection: select_hours, input_html: {class: 'input-large'}
               .span3
                 = hf.link_to_remove '', class: 'icon icon-minus-rounded', title: 'Remove Hours'
-        = vf.link_to_add '', :hours_fields, class: 'icon icon-rounded-add', title: 'Add Hours', data: { target: ".hours-list" }
+        .add-hours
+          = vf.link_to_add '', :hours_fields, class: 'icon icon-rounded-add', title: 'Add Hours', data: { target: ".hours-list" }, id: 'add-hours'
         - if vf.object.entity_form.present?
           .venues-custom-fields.data-form-wrapper
             - vf.object.form_field_results.each do |result|
@@ -75,3 +76,5 @@ coffee:
             option.attr('selected', 'selected')
           states.append(option)
       states.trigger('liszt:updated')
+  $("#add-hours").trigger( "click" )
+  $(".remove_nested_fields").hide()

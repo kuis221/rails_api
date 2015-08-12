@@ -7595,7 +7595,7 @@ form.button_to .button-with-icon {
 
 .hours-list{
 	select{
-		width: 80px;
+		width: 100%;
 		border: 1px solid $gray-light;
 		color: $gray-dark!important;
 		font-size: 12px;
@@ -7604,6 +7604,15 @@ form.button_to .button-with-icon {
 		span{
 			display: none;
 		}
+	}
+}
+.add-hours{
+	position: relative;
+	width: 90%;
+	a{
+		position: absolute;
+		left: 90%;
+		top: -75px;
 	}
 }
 

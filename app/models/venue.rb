@@ -38,7 +38,9 @@ class Venue < ActiveRecord::Base
   belongs_to :place
 
   validates :place, presence: true, uniqueness: { scope: :company_id }
-  validates_format_of :web_address, :with => URI::regexp(%w(http https)), allow_blank: true
+
+  before_validation :smart_add_url_protocol
+  validates_format_of :web_address, :with => URI::regexp, allow_blank: true
 
   has_many :events, through: :place
   has_many :activities, -> { order('activity_date ASC') }, as: :activitable do
@@ -449,5 +451,12 @@ class Venue < ActiveRecord::Base
                 hash
               end
     { 'periods' => periods }
+  end
+  protected
+
+  def smart_add_url_protocol
+    unless self.web_address[/\Ahttp:\/\//] || self.web_address[/\Ahttps:\/\//]
+      self.web_address = "http://#{self.web_address}"
+    end
   end
 end
