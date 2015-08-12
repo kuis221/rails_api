@@ -119,16 +119,17 @@ feature 'Events section', js: true do
           expect(page).to have_content('$500.00 left')
 
           click_js_link 'Add Expense'
-          expect(page).to have_selector('.split-expense-form .expense-item', count: 3)
+          click_js_link 'Add Expense'
+          expect(page).to have_selector('.split-expense-form .expense-item', count: 4)
 
           within expense_items[0] do
             expect(find_field('event_expense_percentage').value).to eql ''
             select_from_chosen 'Phone', from: 'Category'
             select_from_chosen 'Brand 1', from: 'Brand'
             fill_in 'Date', with: '01/01/2014'
-            fill_in 'Amount', with: '300'
-            expect(page).to have_field('event_expense_percentage', with: '60')
-            expect(page).to_not have_content('$200.00 left')
+            fill_in 'Amount', with: '200'
+            expect(page).to have_field('event_expense_percentage', with: '40')
+            expect(page).to_not have_content('$300.00 left')
           end
 
           within expense_items[1] do
@@ -136,15 +137,26 @@ feature 'Events section', js: true do
             select_from_chosen 'Other', from: 'Category'
             select_from_chosen 'Brand 2', from: 'Brand'
             fill_in 'Date', with: '02/02/2014'
-            fill_in 'Amount', with: '200'
-            expect(page).to have_field('event_expense_percentage', with: '40')
+            fill_in 'Amount', with: '225'
+            expect(page).to have_field('event_expense_percentage', with: '45')
+            expect(page).to_not have_content('$75.00 left')
           end
 
           within expense_items[2] do
+            expect(find_field('event_expense_percentage').value).to eql '0'
+            select_from_chosen 'Other', from: 'Category'
+            select_from_chosen 'Brand 1', from: 'Brand'
+            fill_in 'Date', with: '02/03/2014'
+            fill_in 'Amount', with: '75'
+            expect(page).to have_field('event_expense_percentage', with: '15')
+            expect(page).to_not have_content('$0.00 left')
+          end
+
+          within expense_items[3] do
             click_js_link 'Remove Expense'
           end
 
-          expect(page).to have_selector('.split-expense-form .expense-item', count: 2)
+          expect(page).to have_selector('.split-expense-form .expense-item', count: 3)
           expect(page).to have_content('TOTAL:$500')
           expect(page).to_not have_content('$0.00 left')
 
