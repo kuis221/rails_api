@@ -444,19 +444,23 @@ class Venue < ActiveRecord::Base
 
   def venue_opening_hours
     return nil if hours_fields.blank?
-    periods = hours_fields.inject([]) do |hash, hour|
-                if hour.day.present? && hour.hour_open.present? && hour.hour_close.present?
-                  hash << { 'open' => { 'day' => hour.day, 'time' => hour.hour_open }, 'close' => { 'day' => hour.day, 'time' => hour.hour_close } }
+    periods = hours_fields.inject([]) do |memo, hour|
+                if hour.day.present? && hour.hour_open.present? || hour.hour_close.present?
+                  hash = {}
+                  hash.merge!('open' => { 'day' => hour.day, 'time' => hour.hour_open }) if hour.hour_open.present?
+                  hash.merge!('close' => { 'day' => hour.day, 'time' => hour.hour_close }) if hour.hour_close.present? && hour.hour_open.present?
+                  memo << hash unless hash.blank?
                 end
-                hash
+                memo
               end
     { 'periods' => periods }
   end
+
   protected
 
   def smart_add_url_protocol
     unless self.web_address[/\Ahttp:\/\//] || self.web_address[/\Ahttps:\/\//]
-      self.web_address = "http://#{self.web_address}"
+      self.web_address = "http://#{self.web_address}" if self.web_address.present?
     end
   end
 end

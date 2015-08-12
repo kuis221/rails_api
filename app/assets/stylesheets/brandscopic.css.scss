@@ -3429,6 +3429,7 @@ body.show {
 
 	address {
 		margin-bottom: 5px;
+		display: inline;
 	}
 
 	.details_box.box_custom+.details_box.box_custom{
@@ -7542,17 +7543,19 @@ form.button_to .button-with-icon {
 	.form-result-label {
 		margin-right: 5px;
 	}
+	.form-result{
+		margin-bottom: 8px;
+	}
 	.result_checkbox{
 		.form-result-value{
 			span{
-				margin-right: 5px;
 				i{
 					display: none;
 				}
-				&:before{
+				&:after{
 					content: ', ';
 				}
-				&:first-child:before{
+				&:last-child:after{
 					content: '';
 				}
 			}
