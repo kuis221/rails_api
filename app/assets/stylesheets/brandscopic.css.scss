@@ -7559,12 +7559,46 @@ form.button_to .button-with-icon {
 		}
 	}
 }
+.venues-optional-field, .place_venues_web_address span{
+	font-size: 12px;
+  color: $gray-light;
+  font-weight: normal;
+  display: inline!important;
+  margin-left: 2px;
+}
+.venues-custom-fields{
+	.checkbox{
+		width: 30%!important;
+	}
+
+	.percentage-progress-bar {
+		width: 220px;
+		position: relative;
+		.counter {
+			font-size: 12px;
+			position: absolute;
+			right: -36px;
+			text-align: left;
+			top: -5px;
+			width: 20px;
+		}
+	}
+	.control-group{
+		margin-bottom: 11px!important;
+	}
+
+	.control-label{
+		color: $brand!important;
+		font-weight: normal!important;
+	}
+}
 
 .hours-list{
 	select{
 		width: 80px;
 		border: 1px solid $gray-light;
 		color: $gray-dark!important;
+		font-size: 12px;
 	}
 	.control-label{
 		span{

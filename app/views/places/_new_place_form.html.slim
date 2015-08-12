@@ -4,7 +4,6 @@
       It looks like we couldn't find the place you were looking for.
       Just enter the place's information below and we'll add it to the campaign.
   br>/
-
 = simple_nested_form_for([parent, resource], remote: true) do |f|
   = f.error_notification
   = f.error :base
@@ -32,7 +31,10 @@
         .row-fluid
         = vf.input :web_address, label: 'Website', input_html: {class: 'input-xxlarge'}, required: false, :autofocus => true
         .hours-list
-          = label_tag :hours_fields, 'Hours', class: 'control-label'
+          = label_tag :hours_fields, '', class: 'control-label' do
+              = 'Hours'
+              span.venues-optional-field 
+                = '(optional)'
           = vf.fields_for :hours_fields do |hf|
             .row-fluid
               .span3
@@ -45,12 +47,13 @@
                 = hf.link_to_remove '', class: 'icon icon-minus-rounded', title: 'Remove Hours'
         = vf.link_to_add '', :hours_fields, class: 'icon icon-rounded-add', title: 'Add Hours', data: { target: ".hours-list" }
         - if vf.object.entity_form.present?
-          - vf.object.form_field_results.each do |result|
-            = vf.simple_fields_for :results, result do |rf|
-              = vf.hidden_field :company_id
-              .large-inputs class="#{result.form_field.css_class}"
-                = rf.input :value, result.form_field.field_options(result)
-                = rf.hidden_field :form_field_id
+          .venues-custom-fields.data-form-wrapper
+            - vf.object.form_field_results.each do |result|
+              = vf.simple_fields_for :results, result do |rf|
+                = vf.hidden_field :company_id
+                .large-inputs class="#{result.form_field.css_class}"
+                  = rf.input :value, result.form_field.field_options(result)
+                  = rf.hidden_field :form_field_id
 
     = hidden_field_tag :add_new_place, 'true'
 
