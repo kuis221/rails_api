@@ -92,6 +92,7 @@ $.widget 'branscopic.splitExpenseForm', {
 		@element.find('.fields:visible').each (index, row) =>
 			if $(row).find('.amount-currency').val()
 				@totalExpenses += parseFloat($(row).find('.amount-currency').val())
+		@totalExpenses = parseFloat(@totalExpenses.toFixed(2))
 		@sumContainer.find('span').html @totalExpenses.toFixed(2).replace(/\.00$/, '')
 		@leftContainer.html @amountLeftOverLabel((@expenseAmount - @totalExpenses).toFixed(2))
 		if @totalExpenses > @expenseAmount
