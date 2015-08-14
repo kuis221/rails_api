@@ -459,8 +459,10 @@ class Venue < ActiveRecord::Base
   protected
 
   def smart_add_url_protocol
-    unless self.web_address[/\Ahttp:\/\//] || self.web_address[/\Ahttps:\/\//]
-      self.web_address = "http://#{self.web_address}" if self.web_address.present?
+    if self.web_address.present?
+      unless self.web_address[/\Ahttp:\/\//] || self.web_address[/\Ahttps:\/\//]
+        self.web_address = "http://#{self.web_address}" if self.web_address.present?
+      end
     end
   end
 end
