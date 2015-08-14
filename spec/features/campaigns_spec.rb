@@ -685,6 +685,52 @@ feature 'Campaigns', js: true do
         end
       end
     end
+
+    feature 'Documents' do
+      scenario 'A user can upload a document to the Campaign' do
+        with_resque do
+          visit campaign_path(campaign)
+          click_js_link 'Documents'
+
+          within '#documents_upload_form' do
+            attach_file 'file', 'spec/fixtures/file.pdf'
+            wait_for_ajax(30) # For the file to upload to S3
+          end
+          expect(page).to_not have_content('DRAG & DROP')
+
+          document = AttachedAsset.last
+
+          # Check that the document appears is in the document list
+          within '#documents-list' do
+            src = document.file.url(:original, timestamp: false).gsub(/\Ahttp(s)?/, 'https')
+            expect(page).to have_xpath("//a[starts-with(@href, \"#{src}\")]", wait: 10)
+          end
+
+          expect(document.attachable).to eql(campaign)
+
+          # Make sure the document is still there after reloading page
+          visit current_path
+          click_js_link 'Documents'
+
+          # Check that the image appears on the page
+          within '#documents-list' do
+            src = document.file.url(:original, timestamp: false).gsub(/\Ahttp(s)?/, 'https')
+            expect(page).to have_xpath("//a[starts-with(@href, \"#{src}\")]", wait: 10)
+          end
+
+          # Delete the document
+          within '#documents-list' do
+            hover_and_click '.resource-item', 'Delete'
+          end
+          confirm_prompt 'Are you sure you want to delete this document?'
+
+          # Check that the document was removed
+          within '#documents-list' do
+            expect(page).not_to have_selector '.resource-item'
+          end
+        end
+      end
+    end
   end
 
   feature 'custom filters', search: true, js: true do
