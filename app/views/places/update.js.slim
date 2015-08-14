@@ -4,4 +4,6 @@
 - else
   |
     $('.bootbox.modal').modal('hide');
-  
+  - unless params[:venue_index].present?
+    |
+      window.location.reload(true);

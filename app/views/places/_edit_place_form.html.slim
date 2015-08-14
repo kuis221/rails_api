@@ -8,26 +8,26 @@
   = f.error_notification
   = f.error :base
 
-  .form-inputs
+  .form-inputs.venue-edit-form
     .row-fluid
-      = f.input :name, input_html: {class: 'input-xxlarge'}, required: true, :autofocus => true
+      = f.input :name, input_html: {class: 'input-xxlarge'}, required: true, :autofocus => true, disabled: true
     .row-fluid
-      = f.input :types, collection: t('venue_types').map{|k,v| [v, k]}, input_html: {class: 'input-xxlarge chosen-enabled'}, required: true
+      = f.input :types, collection: t('venue_types').map{|k,v| [v, k]}, input_html: {class: 'input-xxlarge chosen-enabled'}, required: true, disabled: true
     .row-fluid
-      = f.input :street_number, label: 'Address', input_html: {class: 'input-xxlarge'}, required: true
+      = f.input :street_number, label: 'Address', input_html: {class: 'input-xxlarge'}, required: true, disabled: true
     .row-fluid
-      = f.input :route, label: false, input_html: {class: 'input-xxlarge'}
+      = f.input :route, label: false, input_html: {class: 'input-xxlarge'}, disabled: true
     .row-fluid.users
       .span6
-        = f.input :country, required: true, input_html: {class: 'input-large chosen-enabled'}, required: true
+        = f.input :country, required: true, input_html: {class: 'input-large chosen-enabled'}, required: true, disabled: true
       .span6
-        = f.input :city, input_html: {class: 'input-large'}, required: true
+        = f.input :city, input_html: {class: 'input-large'}, required: true, disabled: true
     .row-fluid.users
       .span6
-        = f.input :state, collection: (resource.country.present? && Country[resource.country] ? Country.new(resource.country).states.map{|k, info| [info['name'],info['name']]} : []), input_html: {class: 'input-large chosen-enabled'}, required: true
+        = f.input :state, collection: (resource.country.present? && Country[resource.country] ? Country.new(resource.country).states.map{|k, info| [info['name'],info['name']]} : []), input_html: {class: 'input-large chosen-enabled'}, required: true, disabled: true
       .span6
-        = f.input :zipcode, label: 'ZIP Code', input_html: {class: 'input-large'}, required: true
-      = f.simple_fields_for :venues, resource.venues.find { |v| v.company_id = current_company.id } || resource.venues.build(company_id: current_company.id) do |vf|
+        = f.input :zipcode, label: 'ZIP Code', input_html: {class: 'input-large'}, required: true, disabled: true
+      = f.simple_fields_for :venues, resource.venues.find { |v| v.company_id == current_company.id } || resource.venues.build(company_id: current_company.id) do |vf|
         .row-fluid
         = vf.input :web_address, label: 'Website', input_html: {class: 'input-xxlarge'}, required: false, :autofocus => true
         .hours-list
@@ -57,6 +57,7 @@
                   = rf.hidden_field :form_field_id
 
   = hidden_field_tag :add_new_place, 'false'
+  = hidden_field_tag :venue_index, params[:venue_index]
   .form-actions
     = f.button :submit, 'Edit place', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
     = "&nbsp;".html_safe

@@ -21,6 +21,8 @@
         .details-title
           h2.special
             b= resource.name
+          .edition-links
+            = button_to_edit resource.place if can?(:edit, resource)
 
         - if resource.price_level(fetch_from_google: true)
           div.price

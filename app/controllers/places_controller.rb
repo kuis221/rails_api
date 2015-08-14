@@ -15,9 +15,7 @@ class PlacesController < FilteredController
   end
 
   def update
-    venue_attributes = place_params[:venues_attributes]
-    venue = Venue.find(venue_attributes['0'][:id])
-    venue.update!(venue_attributes['0']) do |_success, failure|
+    unless resource.update!(place_params)
       failure.js { render 'edit_place' }
     end
   end

@@ -4476,6 +4476,7 @@ body.roles{
 	.special{
 		line-height: 35px;
 		max-width: 82%;
+		display: inline;
 	}
 	.map_container{
 		border:1px solid $user_menu;
@@ -7594,6 +7595,15 @@ form.button_to .button-with-icon {
 	.control-label{
 		color: $brand!important;
 		font-weight: normal!important;
+	}
+}
+
+.venue-edit-form{
+	.disabled{
+		input[type="text"]{
+			border-color: $app_bg;
+			color: $silver!important;
+		}
 	}
 }
 

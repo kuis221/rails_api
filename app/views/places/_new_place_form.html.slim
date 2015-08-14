@@ -27,7 +27,7 @@
         = f.input :state, collection: (resource.country.present? && Country[resource.country] ? Country.new(resource.country).states.map{|k, info| [info['name'],info['name']]} : []), input_html: {class: 'input-large chosen-enabled'}, required: true
       .span6
         = f.input :zipcode, label: 'ZIP Code', input_html: {class: 'input-large'}, required: true
-      = f.simple_fields_for :venues, resource.venues.find { |v| v.company_id = current_company.id } || resource.venues.build(company_id: current_company.id) do |vf|
+      = f.simple_fields_for :venues, resource.venues.find { |v| v.company_id == current_company.id } || resource.venues.build(company_id: current_company.id) do |vf|
         .row-fluid
         = vf.input :web_address, label: 'Website', input_html: {class: 'input-xxlarge'}, required: false, :autofocus => true
         .hours-list
@@ -57,7 +57,6 @@
                   = rf.hidden_field :form_field_id
 
     = hidden_field_tag :add_new_place, 'true'
-
   .form-actions
     = f.button :submit, 'Add place', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
     = "&nbsp;".html_safe

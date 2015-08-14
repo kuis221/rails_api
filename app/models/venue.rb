@@ -57,7 +57,7 @@ class Venue < ActiveRecord::Base
   has_many :invites, dependent: :destroy, inverse_of: :venue
   has_many :hours_fields, dependent: :destroy, inverse_of: :venue
 
-  accepts_nested_attributes_for :hours_fields, reject_if: proc { |attributes| attributes['_destroy'].blank? }
+  accepts_nested_attributes_for :hours_fields, reject_if: proc { |attributes| attributes['_destroy'].blank? }, allow_destroy: true
 
   def entity_form
     @entity_form ||= EntityForm.find_by(entity: self.class.name, company_id: company_id)
