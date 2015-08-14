@@ -3987,7 +3987,7 @@ body.roles{
 		#venues-totals {
 			font-size: 11px;
 			height: 52px;
-			width: 100%;
+			width: calc(100% - 110px);
 			overflow: hidden;
 
 			.results-box-container {

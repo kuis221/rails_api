@@ -1,16 +1,24 @@
 class PlacesController < FilteredController
   include PlacesHelper::CreatePlace
 
-  skip_authorize_resource only: [:destroy, :create, :new]
+  skip_authorize_resource only: [:destroy, :create, :new, :edit, :update]
 
-  actions :index, :new, :create
+  actions :index, :new, :create, :edit, :update
   belongs_to :area, :campaign, :company_user, optional: true
   respond_to :json, only: [:index]
-  respond_to :js, only: [:new, :create]
+  respond_to :js, only: [:new, :create, :edit, :update]
 
   def create
     unless create_place(place_params, params[:add_new_place].present?)
       render 'new_place'
+    end
+  end
+
+  def update
+    venue_attributes = place_params[:venues_attributes]
+    venue = Venue.find(venue_attributes['0'][:id])
+    venue.update!(venue_attributes['0']) do |_success, failure|
+      failure.js { render 'edit_place' }
     end
   end
 
@@ -36,7 +44,7 @@ class PlacesController < FilteredController
   def place_params
     params.permit(place: [
       :name, :types, :street_number, :route, :city, :state, :zipcode, :country, :reference,
-      venues_attributes: [:web_address, :company_id, hours_fields_attributes: [:id, :day, :hour_close, :hour_open, :_destroy],
+      venues_attributes: [:id, :web_address, :company_id, hours_fields_attributes: [:id, :day, :hour_close, :hour_open, :_destroy],
       results_attributes: [:id, :value, :form_field_id]]
     ])[:place].tap do |whielisted|
       unless whielisted.nil? || whielisted[:venues_attributes].nil?
