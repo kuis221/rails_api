@@ -38,4 +38,16 @@ describe DocumentsController, type: :controller do
       expect(AssetsUploadWorker).to have_queued(document.id, 'AttachedAsset')
     end
   end
+
+  describe "DELETE 'destroy'" do
+    let(:document) { create(:document, attachable: event.campaign) }
+    it 'should delete the document attached to a Campaign' do
+      document
+      expect do
+        delete 'destroy', campaign_id: event.campaign.id, id: document.to_param, format: :js
+        expect(response).to be_success
+        expect(response).to render_template(:destroy)
+      end.to change(AttachedAsset, :count).by(-1)
+    end
+  end
 end

@@ -441,6 +441,12 @@ class Ability
         can?(:show, asset.attachable)
       end
 
+      can [:destroy], AttachedAsset do |asset|
+        asset.attachable.is_a?(Campaign) && asset.asset_type == 'document' &&
+        user.role.has_permission?(:remove_document, Campaign) &&
+        can?(:show, asset.attachable)
+      end
+
       # Photos permissions
       can :photos, Event do |event|
         user.role.has_permission?(:index_photos, Event) &&
