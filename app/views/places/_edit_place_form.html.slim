@@ -10,7 +10,7 @@
 
   .form-inputs.venue-edit-form
     .row-fluid
-      = f.input :name, input_html: {class: 'input-xxlarge'}, required: true, :autofocus => true, disabled: true
+      = f.input :name, input_html: {class: 'input-xxlarge'}, required: true, disabled: true
     .row-fluid
       = f.input :types, collection: t('venue_types').map{|k,v| [v, k]}, input_html: {class: 'input-xxlarge chosen-enabled'}, required: true, disabled: true
     .row-fluid
