@@ -300,9 +300,9 @@ describe Venue, type: :model do
     end
 
     it 'not should validate smart add url protocol if is null' do
-      venue = Venue.new(:web_address => '')
+      venue = Venue.new()
       venue.valid?
-      expect(venue.web_address).to eq('')
+      expect(venue.web_address).to eq(nil)
     end
   end
 
