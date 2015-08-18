@@ -291,4 +291,66 @@ describe Venue, type: :model do
       expect(described_class.in_campaign_scope(campaign)).to match_array [venue_la]
     end
   end
+
+  describe '#smart_add_url_protocol' do
+    it 'should validate smart add url protocol' do
+      venue = Venue.new(:web_address => 'www.test.com')
+      venue.valid?
+      expect(venue.web_address).to eq('http://www.test.com')
+    end
+
+    it 'not should validate smart add url protocol if is null' do
+      venue = Venue.new(:web_address => '')
+      venue.valid?
+      expect(venue.web_address).to eq('')
+    end
+  end
+
+  describe '#venue_opening_hours' do
+    it 'hours fields are blank' do
+      venue = Venue.new()
+      expect(venue.venue_opening_hours).to eq(nil)
+    end
+
+    it 'hours fields are day present' do
+      venue = Venue.new()
+      venue.hours_fields << HoursField.new(day: '1')
+      expect(venue.venue_opening_hours).to eq({ 'periods' => [] })
+    end
+
+    it 'hours fields are not day present and hour open present' do
+      venue = Venue.new()
+      venue.hours_fields << HoursField.new(hour_open: '1200')
+      expect(venue.venue_opening_hours).to eq({ 'periods' => [] })
+    end
+
+    it 'hours fields are not day present and hour close present' do
+      venue = Venue.new()
+      venue.hours_fields << HoursField.new(hour_close: '1200')
+      expect(venue.venue_opening_hours).to eq({ 'periods' => [] })
+    end
+
+    it 'hours fields are day present and hour close present' do
+      venue = Venue.new()
+      venue.hours_fields << HoursField.new(day: '1', hour_close: '1200')
+      expect(venue.venue_opening_hours).to eq({ 'periods' => [] })
+    end
+
+    it 'hours fields are day present and hour open present' do
+      venue = Venue.new()
+      venue.hours_fields << HoursField.new(day: '1', hour_open: '1200')
+      expect(venue.venue_opening_hours).to eq({ 'periods' => [
+                                                  { "open"=>{ "day"=>1, "time"=>"1200" } }
+                                                ]})
+    end
+
+    it 'hours fields are day present, hour open and close present' do
+      venue = Venue.new()
+      venue.hours_fields << HoursField.new(day: '1', hour_open: '1400', hour_close: '0200')
+      expect(venue.venue_opening_hours).to eq({ 'periods' => [
+                                                  { "open"=>{ "day"=>1, "time"=>"1400" },
+                                                    "close"=>{ "day"=>1, "time"=>"0200" } }
+                                                ]})
+    end
+  end
 end
