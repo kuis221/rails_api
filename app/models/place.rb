@@ -55,7 +55,7 @@ class Place < ActiveRecord::Base
   # Areas-Places relationship
   has_many :events
   has_many :placeables
-  has_many :venues, dependent: :destroy
+  has_many :venues, inverse_of: :place, dependent: :destroy
   has_and_belongs_to_many :locations, autosave: true
   belongs_to :location, autosave: true
 
@@ -88,7 +88,9 @@ class Place < ActiveRecord::Base
   after_commit :reindex_associated
   scope :accessible_by_user, ->(user) { in_company(user.company_id) }
   scope :in_company, ->(company) { joins(:venues).where(venues: { company_id: company }) }
-  scope :filters_between_dates, ->(start_date, end_date) { where(venues: {created_at: DateTime.parse(start_date)..DateTime.parse(end_date)})}
+  scope :filters_between_dates, ->(start_date, end_date) { where(venues: { created_at: DateTime.parse(start_date)..DateTime.parse(end_date)})}
+
+  accepts_nested_attributes_for :venues
 
   def self.linked_to_campaign(campaign)
     select('DISTINCT places.*')

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150728211903) do
+ActiveRecord::Schema.define(version: 20150813193047) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -480,6 +480,16 @@ ActiveRecord::Schema.define(version: 20150728211903) do
   add_index "document_folders", ["company_id"], :name => "index_document_folders_on_company_id"
   add_index "document_folders", ["parent_id"], :name => "index_document_folders_on_parent_id"
 
+  create_table "entity_forms", force: true do |t|
+    t.string   "entity"
+    t.integer  "entity_id"
+    t.integer  "company_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "entity_forms", ["entity", "company_id"], :name => "index_entity_forms_on_entity_and_company_id", :unique => true
+
   create_table "event_data", force: true do |t|
     t.integer  "event_id"
     t.integer  "impressions",                                        default: 0
@@ -620,6 +630,17 @@ ActiveRecord::Schema.define(version: 20150728211903) do
   add_index "goals", ["goalable_id", "goalable_type"], :name => "index_goals_on_goalable_id_and_goalable_type"
   add_index "goals", ["kpi_id"], :name => "index_goals_on_kpi_id"
   add_index "goals", ["kpis_segment_id"], :name => "index_goals_on_kpis_segment_id"
+
+  create_table "hours_fields", force: true do |t|
+    t.integer  "venue_id"
+    t.integer  "day"
+    t.string   "hour_open"
+    t.string   "hour_close"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "hours_fields", ["venue_id"], :name => "index_hours_fields_on_venue_id"
 
   create_table "invite_rsvps", force: true do |t|
     t.integer  "invite_id"
@@ -1054,6 +1075,7 @@ ActiveRecord::Schema.define(version: 20150728211903) do
     t.boolean  "top_venue",                                     default: false
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
+    t.string   "web_address"
   end
 
   add_index "venues", ["company_id", "place_id"], :name => "index_venues_on_company_id_and_place_id", :unique => true

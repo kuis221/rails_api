@@ -1,4 +1,4 @@
-module Fieldable
+module Resultable
   extend ActiveSupport::Concern
 
   included do
