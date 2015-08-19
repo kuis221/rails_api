@@ -143,7 +143,7 @@ class CampaignsController < FilteredController
       p.push(
         survey_brand_ids: [],
         form_fields_attributes: [
-          :id, :name, :field_type, :ordering, :required, :_destroy, :kpi_id,
+          :id, :name, :field_type, :ordering, :required, :capture_mechanism, :_destroy, :kpi_id,
           { settings: [:description, :range_min, :range_max, :range_format, :campaigns,
                        { disabled_segments: [] }] },
           { options_attributes: [:id, :name, :_destroy, :ordering] },

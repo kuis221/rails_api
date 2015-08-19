@@ -61,7 +61,7 @@ class ActivityTypesController < FilteredController
     params.permit(activity_type: [
       :name, :description,
       { form_fields_attributes: [
-        :id, :name, :field_type, :ordering, :required, :_destroy,
+        :id, :name, :field_type, :ordering, :required, :capture_mechanism, :_destroy,
         { settings: [:description, :range_min, :range_max, :range_format] },
         { options_attributes: [:id, :name, :_destroy, :ordering] },
         { statements_attributes: [:id, :name, :_destroy, :ordering] }] },
