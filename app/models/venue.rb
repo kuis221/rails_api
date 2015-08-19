@@ -208,6 +208,10 @@ class Venue < ActiveRecord::Base
     end
   end
 
+  def price_level(fetch_from_google: false)
+    self.place_price_level || place.place_level(fetch_from_google)
+  end
+
   def website
     self.web_address || place.website
   end
