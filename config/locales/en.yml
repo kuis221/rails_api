@@ -395,6 +395,8 @@ en:
       data_extract/team: "Edit Report"
       data_extract/company_user: "Edit Report"
       data_extract/venue: "Edit Report"
+      place: "Edit Venue"
+      venue: "Edit Venue"
     deactivate:
       event: "Deactivate Event"
       event_expense: "Deactivate Expense"

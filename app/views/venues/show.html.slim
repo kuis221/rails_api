@@ -21,12 +21,12 @@
         .details-title
           h2.special
             b= resource.name
+          .edition-links
+            = button_to_edit resource.place if can?(:edit, resource)
 
         - if resource.price_level(fetch_from_google: true)
           div.price
             = place_price(resource.price_level)
-
-
         ul.stripped-list.small.data-list
           li
             i.icon-wired-venue
@@ -37,11 +37,10 @@
             li
               i.icon-mobile
               span (415) 863-5964
-          - if resource.website
+          - if resource.website.present?
             li
               i.icon-web
-              - if resource.website
-                = place_website(resource.website)
+              = place_website(resource.website)
 
 
         ul.stripped-list.small
@@ -62,7 +61,9 @@
             li
               b.highlight-text> Top 100 Account:
               b<= resource.top_venue ? 'Yes' : 'No'
-
+        - if resource.entity_form.present?
+          .details-venues-custom-fields
+            = render partial: 'custom_form_fields', locals: { form_fields: resource.form_fields }
         / p.small Quis nostrud exerci tation, ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat duis autem. Consuetudium lectorum mirum est notare quam littera gothica quam nunc putamus parum! Vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat vel illum dolore. Volutpat ut wisi enim ad minim veniam eu feugiat nulla. Imperdiet doming id quod mazim placerat facer possim assum typi non habent claritatem? Nunc nobis videntur parum clari fiant sollemnes in?
 
         #venue-areas.add-details-info

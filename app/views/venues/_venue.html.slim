@@ -23,6 +23,8 @@
           .n_spent
             = "#{number_to_currency(venue.spent)}"
             .pdf-label= 'Spent'
+    .resource-item-actions
+      = button_to_edit venue, url: edit_place_path(venue.place, venue_index: true) if can?(:edit, venue)
 - else
   div.resource-item id="venue_#{venue.id}"
     = link_to_if_permitted(:show, Venue, venue_path(venue.place_id, ref: venue.reference), class: 'resource-item-link') do

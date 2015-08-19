@@ -24,7 +24,7 @@ class FormField::Dropdown < FormField::Hashed
       options: settings,
       required: required,
       input_html: {
-        value: result.value,
+        value: result.value.to_i,
         class: field_classes.push('chosen-enabled'),
         multiple: multiple?, required: (self.required? ? 'required' : nil) } }
   end

@@ -36,7 +36,7 @@ class Event < ActiveRecord::Base
 
   has_many :form_fields, through: :campaign, autosave: false
 
-  include Fieldable
+  include Resultable
 
   track_who_does_it
 
