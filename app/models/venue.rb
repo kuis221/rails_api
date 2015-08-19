@@ -22,6 +22,7 @@
 #  score_dirty          :boolean          default(FALSE)
 #  jameson_locals       :boolean          default(FALSE)
 #  top_venue            :boolean          default(FALSE)
+#  web_address          :string
 #  created_by_id        :integer
 #  updated_by_id        :integer
 #
@@ -38,6 +39,9 @@ class Venue < ActiveRecord::Base
 
   validates :place, presence: true, uniqueness: { scope: :company_id }
 
+  before_validation :smart_add_url_protocol
+  validates_format_of :web_address, :with => URI::regexp, allow_blank: true
+
   has_many :events, through: :place
   has_many :activities, -> { order('activity_date ASC') }, as: :activitable do
     def include_from_events
@@ -51,8 +55,18 @@ class Venue < ActiveRecord::Base
   end
 
   has_many :invites, dependent: :destroy, inverse_of: :venue
+  has_many :hours_fields, dependent: :destroy, inverse_of: :venue
+
+  accepts_nested_attributes_for :hours_fields, reject_if: proc { |attributes| attributes['_destroy'].blank? }, allow_destroy: true
+
+  def entity_form
+    @entity_form ||= EntityForm.find_by(entity: self.class.name, company_id: company_id)
+  end
+  delegate :form_fields, to: :entity_form
+  has_many :form_fields, through: :entity_form
 
   include Normdist
+  include Resultable
 
   delegate :name, :types, :formatted_address, :formatted_phone_number, :website,
            :price_level, :city, :street, :state, :state_name, :country,
@@ -192,6 +206,14 @@ class Venue < ActiveRecord::Base
         stat(:avg_impressions_cost, type: 'mean')
       end
     end
+  end
+
+  def website
+    self.web_address || place.website
+  end
+
+  def opening_hours
+    venue_opening_hours || place.opening_hours
   end
 
   def photos
@@ -418,5 +440,26 @@ class Venue < ActiveRecord::Base
       errors.add(:base, "cannot delete venue because it have events, invites or activites associated")
       return false
     end
+  end
+
+  def venue_opening_hours
+    return nil if hours_fields.blank?
+    periods = hours_fields.inject([]) do |memo, hour|
+                if hour.day.present? && hour.hour_open.present? || hour.hour_close.present?
+                  hash = {}
+                  hash.merge!('open' => { 'day' => hour.day, 'time' => hour.hour_open }) if hour.hour_open.present?
+                  hash.merge!('close' => { 'day' => hour.day, 'time' => hour.hour_close }) if hour.hour_close.present? && hour.hour_open.present?
+                  memo << hash unless hash.blank?
+                end
+                memo
+              end
+    { 'periods' => periods }
+  end
+
+  protected
+
+  def smart_add_url_protocol
+    return true if web_address.nil? || web_address[/\Ahttp:\/\//] || web_address[/\Ahttps:\/\//]
+    self.web_address = "http://#{self.web_address}"
   end
 end

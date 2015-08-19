@@ -36,9 +36,9 @@ class FormFieldResult < ActiveRecord::Base
   def value
     if form_field.present? && form_field.is_hashed_value?
       if form_field.type == 'FormField::Checkbox'
-        (attributes['hash_value'].try(:keys) || []).map(&:to_i)
+        (attributes['hash_value'].try(:keys) || attributes['value'] || []).map(&:to_i)
       else
-        attributes['hash_value'] || {}
+        attributes['hash_value'] || attributes['value'] || {}
       end
     elsif form_field.present? && form_field.settings.present? && form_field.settings.key?('multiple') && form_field.settings['multiple']
       attributes['value'].try(:split, ',')
@@ -57,6 +57,10 @@ class FormFieldResult < ActiveRecord::Base
 
   def to_chart_data
     form_field.format_chart_data self
+  end
+
+  def to_text
+    form_field.format_text self
   end
 
   protected

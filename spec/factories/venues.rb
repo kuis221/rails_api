@@ -47,5 +47,6 @@ FactoryGirl.define do
     score_dirty false
     jameson_locals false
     top_venue false
+    web_address 'http://www.test.com'
   end
 end

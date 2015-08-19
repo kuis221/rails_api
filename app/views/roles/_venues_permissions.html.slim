@@ -11,17 +11,15 @@
         .span1 EDIT
         .span1 DEACTIVATE
 
-      .span12
-        .span2.title Create
-        .span1
-          = permission_checkbox(f, :create, Venue)
-
       .span12.separate_small
         .span2.title
           h5 Venues List
         .span1
           = permission_checkbox(f, :index, Venue)
-
+        .span1
+          = permission_checkbox(f, :create, Venue)
+        .span1
+          = permission_checkbox(f, :edit, Venue)
       .span12.separate
         .span2.title
           h5 Venue Details

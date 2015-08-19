@@ -453,7 +453,7 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  resources :places, only: [:create, :new] do
+  resources :places, only: [:create, :new, :edit, :update] do
     get :search, format: :json, on: :collection
     resources :areas, only: [:new, :create]
   end

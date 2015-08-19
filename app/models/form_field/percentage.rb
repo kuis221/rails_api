@@ -67,6 +67,14 @@ class FormField::Percentage < FormField::Hashed
     end
   end
 
+  def format_text(result)
+    if result.value
+      options.map do |option|
+        "#{option.name}: #{result.value[option.id.to_s] || 0}%"
+      end.join(', ').html_safe
+    end
+  end
+
   def validate_result(result)
     super
     unless result.errors.get(:value) || !result.value.is_a?(Hash)
