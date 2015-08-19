@@ -474,18 +474,35 @@ describe FormFieldResult, type: :model do
              type: 'FormField::LikertScale',
              options: [create(:form_field_option, name: 'Opt1'), create(:form_field_option, name: 'Opt2')],
              statements: [create(:form_field_statement, name: 'Stat1'), create(:form_field_statement, name: 'Stat2')],
-             fieldable: create(:activity_type, company_id: 1),
+             fieldable: create(:activity_type, company_id: 1), capture_mechanism: 'radio',
              required: false)
     end
     before { subject.form_field_id = form_field.id }
-    it { is_expected.to allow_value(nil).for(:value) }
-    it { is_expected.to allow_value('').for(:value) }
-    it { is_expected.to allow_value(form_field.statements[0].id => form_field.options[0].id, form_field.statements[1].id => form_field.options[0].id).for(:value) }
-    it { is_expected.to allow_value(form_field.statements[0].id.to_s => form_field.options[0].id.to_s, form_field.statements[1].id.to_s => form_field.options[1].id.to_s).for(:value) }
-    it { is_expected.to allow_value(form_field.statements[0].id => '', form_field.statements[1].id => '').for(:value) }
-    it { is_expected.to allow_value(form_field.statements[0].id => form_field.options[0].id.to_s, form_field.statements[1].id => '').for(:value) }
-    it { is_expected.not_to allow_value(999 => 10, 888 => 90).for(:value) }
-    it { is_expected.not_to allow_value(1).for(:value) }
+
+    describe 'when it is radio buttons' do
+      it { is_expected.to allow_value(nil).for(:value) }
+      it { is_expected.to allow_value('').for(:value) }
+      it { is_expected.to allow_value(form_field.statements[0].id => form_field.options[0].id, form_field.statements[1].id => form_field.options[0].id).for(:value) }
+      it { is_expected.to allow_value(form_field.statements[0].id.to_s => form_field.options[0].id.to_s, form_field.statements[1].id.to_s => form_field.options[1].id.to_s).for(:value) }
+      it { is_expected.to allow_value(form_field.statements[0].id => '', form_field.statements[1].id => '').for(:value) }
+      it { is_expected.to allow_value(form_field.statements[0].id => form_field.options[0].id.to_s, form_field.statements[1].id => '').for(:value) }
+      it { is_expected.not_to allow_value(999 => 10, 888 => 90).for(:value) }
+      it { is_expected.not_to allow_value(1).for(:value) }
+    end
+
+    describe 'when it is checkboxes' do
+      before { subject.form_field.capture_mechanism = 'checkbox' }
+      it { is_expected.to allow_value(nil).for(:value) }
+      it { is_expected.to allow_value('').for(:value) }
+      it { is_expected.to allow_value(form_field.statements[0].id => [form_field.options[0].id], form_field.statements[1].id => [form_field.options[0].id]).for(:value) }
+      it { is_expected.to allow_value(form_field.statements[0].id.to_s => [form_field.options[0].id.to_s], form_field.statements[1].id.to_s => [form_field.options[1].id.to_s]).for(:value) }
+      it { is_expected.to allow_value(form_field.statements[0].id => '', form_field.statements[1].id => '').for(:value) }
+      it { is_expected.to allow_value(form_field.statements[0].id => [form_field.options[0].id.to_s], form_field.statements[1].id => '').for(:value) }
+      it { is_expected.to allow_value(form_field.statements[0].id => [form_field.options[0].id, form_field.options[1].id], form_field.statements[1].id => [form_field.options[0].id]).for(:value) }
+      it { is_expected.to allow_value(form_field.statements[0].id.to_s => [form_field.options[0].id.to_s], form_field.statements[1].id.to_s => [form_field.options[0].id.to_s, form_field.options[1].id.to_s]).for(:value) }
+      it { is_expected.not_to allow_value(999 => [10], 888 => [90, 100]).for(:value) }
+      it { is_expected.not_to allow_value(1).for(:value) }
+    end
 
     describe 'when it is required' do
       before { subject.form_field.required = true }

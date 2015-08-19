@@ -467,7 +467,11 @@ $margin-right: 240px;
 	border: 1px solid $gray-light;
 	box-sizing: border-box;
 	padding: 15px 15px 5px 15px;
-	width:300px;
+	width: 300px;
+
+	&.large-panel{
+		width: 600px;
+	}
 
 	.checker{
 		background-color: #c2c2c2;
@@ -549,6 +553,35 @@ $margin-right: 240px;
 		}
 		select{
 			width:100%;
+		}
+		.control-label{
+			color: $gray-dark;
+			&.likert-scale{
+				font-size: 13px;
+				font-weight: bold;
+			}
+		}
+		.controls{
+			margin-bottom: 20px;
+			label.radio{
+				color: $gray-dark;
+				font-size: 13px;
+				margin-top: 5px;
+				padding-left: 0;
+				div.radio{
+					span{
+						border-color: $user_menu;
+						&.checked:after{
+							background-color: $user_menu;
+						}
+					}
+				}
+			}
+		}
+		&.side-by-side{
+			float: left;
+			width: 50%;
+			overflow: hidden;
 		}
 	}
 	.field-options {

@@ -2793,6 +2793,14 @@ ul.ui-widget-content{
 				display: block;
 				width: initial;
 				margin-bottom: 10px;
+				&.multiple{
+					display: inline-block;
+					margin-bottom: 0;
+					min-height: 20px;
+					.checker span.checked:after{
+						left: 0;
+					}
+				}
 			}
 			&.control-label{
 				color: $text;
@@ -3302,6 +3310,23 @@ body.events.index {
 				padding-left: 0;
 				div.radio {
 					margin-right: 0;
+				}
+			}
+			label.checkbox{
+				font-weight:normal;
+				display: block;
+				width: initial;
+				margin-bottom: 10px;
+				&.multiple{
+					display: inline-block;
+					min-height: 20px;
+					padding-left: 0;
+					.checkbox{
+  						padding-left: 10px;
+					}
+					.checker span.checked:after{
+						left: 0;
+					}
 				}
 			}
 		}
