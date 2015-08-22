@@ -2,6 +2,8 @@ module Results
   class ActivitiesController < FilteredController
     respond_to :xls, :pdf, only: :index
 
+    private
+
     def collection_to_csv
       exporter = FormFieldDataExporter.new(current_company_user, search_params, resource_class)
       CSV.generate do |csv|
@@ -19,8 +21,6 @@ module Results
         end
       end
     end
-
-    private
 
     def authorize_actions
       authorize! :index_results, Activity

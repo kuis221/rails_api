@@ -148,6 +148,19 @@ class EventsController < FilteredController
 
   protected
 
+  def collection_to_csv
+    CSV.generate do |csv|
+      exporter = FormFieldDataExporter.new(current_company_user, search_params, resource_class)
+      csv << ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'DURATION', 'VENUE NAME', 'ADDRESS', 'CITY',
+              'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL']
+      each_collection_item do |event|
+        csv << [event.campaign_name, exporter.area_for_event(event), event.start_date, event.end_date, event.promo_hours,
+                event.place_name, event.place_address, event.place_city, event.place_state_name, event.place_zipcode, event.status,
+                event.event_status, event.team_members, event.contacts, event.url]
+      end
+    end
+  end
+
   def pdf_form_file_name
     "#{resource.campaign_name.parameterize}-#{Time.now.strftime('%Y%m%d%H%M%S')}"
   end

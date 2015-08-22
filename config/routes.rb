@@ -368,7 +368,7 @@ Brandscopic::Application.routes.draw do
       match 'activity_types/:activity_type_id' => 'campaigns#remove_activity_type', via: :delete, as: :remove_activity_type
     end
 
-    resources :documents, only: [:create], concerns: [:deactivatable]
+    resources :documents, only: [:create, :destroy], concerns: [:deactivatable]
   end
 
   resources :events, except: [:destroy], concerns: [:deactivatable, :filterable, :form_field_exportable] do

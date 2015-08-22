@@ -30,8 +30,10 @@ class FormFieldDataExporter < BaseExporter
     end).each do |row|
       @result.form_field = custom_fields_to_export[row['form_field_id'].to_i]
       if @result.form_field.is_hashed_value?
+        @result.value = nil
         @result.hash_value = row['hash_value']
       else
+        @result.hash_value = nil
         @result.value = row['value']
       end
       if SEGMENTED_FIELD_TYPES.include?(@result.form_field.type)

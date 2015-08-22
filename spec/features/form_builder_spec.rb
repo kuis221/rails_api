@@ -23,6 +23,7 @@ RSpec.shared_examples 'a fieldable element' do
   scenario 'user can add paragraph fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
+    page.execute_script "window.scrollBy(0,500)"
     text_area_field.drag_to form_builder
 
     expect(form_builder).to have_form_field('Paragraph')
@@ -483,6 +484,7 @@ RSpec.shared_examples 'a fieldable element' do
   scenario 'user can add brand fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
+    page.execute_script "window.scrollBy(0,500)"
     brand_field.drag_to form_builder
 
     expect(form_builder).to have_form_field('Brand')
@@ -544,6 +546,7 @@ RSpec.shared_examples 'a fieldable element' do
   scenario 'user can add marque fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
+    page.execute_script "window.scrollBy(0,500)"
     marque_field.drag_to form_builder
 
     expect(form_builder).to have_form_field('Marque')
@@ -817,6 +820,7 @@ RSpec.shared_examples 'a fieldable element' do
     field = FormField.last
     expect(field.name).to eql 'My Likert scale Field'
     expect(field.type).to eql 'FormField::LikertScale'
+    expect(field.capture_mechanism).to eql 'radio'
     expect(field.options.order('ordering ASC').map(&:name)).to eql [
       'First Option', 'Second Option', 'Disagree', 'Agree', 'Strongly Agree']
     expect(field.options.map(&:ordering)).to eql [0, 1, 2, 3, 4]
@@ -824,12 +828,36 @@ RSpec.shared_examples 'a fieldable element' do
                                                  'Statement 2', 'Statement 3']
     expect(field.statements.map(&:ordering)).to eql [0, 1, 2, 3]
 
-    # Remove fields
     expect(form_builder).to have_form_field('My Likert scale Field',
                                             with_options: ['First Option', 'Second Option', 'Disagree',
                                                            'Agree', 'Strongly Agree']
     )
 
+    within '.form_field_likertscale' do
+      expect(page).to have_selector('label.radio')
+      expect(page).to have_no_selector('label.checkbox.multiple')
+    end
+
+    # Multiple Answers / Checkboxes
+    within form_field_settings_for 'My Likert scale Field' do
+      choose 'Multiple Answer'
+    end
+
+    # Close the field settings form
+    form_builder.trigger 'click'
+
+    click_js_button 'Save'
+    wait_for_ajax
+
+    field = FormField.last
+    expect(field.capture_mechanism).to eql 'checkbox'
+
+    within '.form_field_likertscale' do
+      expect(page).to have_no_selector('label.radio')
+      expect(page).to have_selector('label.checkbox.multiple')
+    end
+
+    # Remove fields
     within form_field_settings_for 'My Likert scale Field' do
       # Remove the second option (the first one doesn't have the link)
       within('.field-options[data-type="option"] .field-option:nth-child(2)') { click_js_link 'Add option after this' }

@@ -25,6 +25,7 @@ class FormField::LikertScale < FormField
       label: name,
       field_id: id,
       options: settings,
+      capture_mechanism: capture_mechanism,
       required: required,
       input_html: {
         value: result.value,
@@ -59,7 +60,8 @@ class FormField::LikertScale < FormField
         { id: s.id, text: s.name,
           value: result ? result.value[s.id.to_s] : nil }
       end,
-      segments: options_for_input.map { |s| { id: s[1], text: s[0] } }
+      segments: options_for_input.map { |s| { id: s[1], text: s[0] } },
+      capture_mechanism: capture_mechanism
     )
   end
 
@@ -100,7 +102,12 @@ class FormField::LikertScale < FormField
 
   def is_valid_value_for_key?(_key, value)
     @_option_ids = options.pluck('id')
-    value_is_numeric?(value) && @_option_ids.include?(value.to_i)
+    value = eval(value)
+    if value.is_a?(Array)
+      value.each { |x| value_is_numeric?(x) } && value.each { |x| @_option_ids.include?(x.to_i) }
+    else
+      value_is_numeric?(value) && @_option_ids.include?(value.to_i)
+    end
   end
 
   def initialize_totals_likert_scale

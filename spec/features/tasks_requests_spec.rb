@@ -276,11 +276,11 @@ feature 'Tasks', js: true, search: true do
       Sunspot.commit
     end
 
-    scenario 'should be able to export as xls' do
+    scenario 'should be able to export as CSV' do
       visit mine_tasks_path
 
       click_js_link 'Download'
-      click_js_link 'Download as XLS'
+      click_js_link 'Download as CSV'
 
       within visible_modal do
         expect(page).to have_content('We are processing your request, the download will start soon...')
@@ -291,8 +291,8 @@ feature 'Tasks', js: true, search: true do
 
       expect(ListExport.last).to have_rows([
         %w(TITLE DATE CAMPAIGN STATUSES EMPLOYEE),
-        ['Pick up kidz at school', '2013-09-01T00:00', 'Cacique FY14', 'Active Assigned Incomplete Late', 'Test User'],
-        ['Bring beers to the party', '2013-09-02T00:00', 'Centenario FY14', 'Active Assigned Complete', 'Test User']
+        ['Pick up kidz at school', '09/01/2013', 'Cacique FY14', 'Active Assigned Incomplete Late', 'Test User'],
+        ['Bring beers to the party', '09/02/2013', 'Centenario FY14', 'Active Assigned Complete', 'Test User']
       ])
     end
 

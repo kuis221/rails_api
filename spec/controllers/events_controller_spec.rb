@@ -123,7 +123,7 @@ describe EventsController, type: :controller do
 
       it 'queue the job for export the list' do
         expect do
-          xhr :get, :index, format: :xls
+          xhr :get, :index, format: :csv
         end.to change(ListExport, :count).by(1)
         export = ListExport.last
         expect(ListExportWorker).to have_queued(export.id)
@@ -133,7 +133,7 @@ describe EventsController, type: :controller do
     describe "GET 'list_export'", search: true do
       let(:campaign) { create(:campaign, company: company, name: 'Test Campaign FY01') }
       it 'should return an empty book with the correct headers' do
-        expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+        expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
         ResqueSpec.perform_all(:export)
         expect(ListExport.last).to have_rows([
           ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'DURATION', 'VENUE NAME', 'ADDRESS', 'CITY',
@@ -158,12 +158,12 @@ describe EventsController, type: :controller do
         create(:contact_event, event: event, contactable: contact2)
         Sunspot.commit
 
-        expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+        expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
         ResqueSpec.perform_all(:export)
         expect(ListExport.last).to have_rows([
           ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'DURATION', 'VENUE NAME', 'ADDRESS', 'CITY',
            'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL'],
-          ['Test Campaign FY01', nil, '2019-01-23T10:00', '2019-01-23T12:00', '2.00',
+          ['Test Campaign FY01', '', '2019-01-23 10:00', '2019-01-23 12:00', '2.00',
            'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345', 'Los Angeles', 'California',
            '12345', 'Active', 'Approved', 'Test User, zteam', 'Chris Jaskot, Guillermo Vargas',
            "http://test.host/events/#{event.id}"]

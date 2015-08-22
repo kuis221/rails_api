@@ -8,12 +8,20 @@ table.table.likert-scale-table
           label= option.name
   tbody
     - form_field.statements.each do |statement|
-      - value = result.value.try(:[], statement.id.to_s).to_i
       tr
         td
           label= statement.name
         - form_field.options.each do |option|
           td
-            label.radio
-              .radio
-                input type='radio' readonly='readonly'checked=(value == option.id ? 'checked' : false)
+            - if form_field.capture_mechanism == 'radio'
+              - value = result.value.try(:[], statement.id.to_s).to_i
+              - checked = value == option.id ? 'checked' : false
+              label.radio
+                .radio
+                  input type='radio' readonly='readonly' checked=checked
+            - else
+              - value = eval(result.value[statement.id.to_s]) if result.value[statement.id.to_s].present?
+              - checked = value.present? && value.is_a?(Array) && value.include?(option.id.to_s) ? 'checked' : false
+              label.checkbox.multiple
+                .checkbox
+                  input type='checkbox' disabled='disabled' checked=checked

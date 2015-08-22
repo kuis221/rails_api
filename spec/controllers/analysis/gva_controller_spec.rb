@@ -14,10 +14,10 @@ describe Analysis::GvaController, type: :controller do
       expect(response).to be_success
     end
 
-    describe 'XLS export' do
-      it 'queue the job for export the list' do
+    describe 'CSV export' do
+      it 'queue the job for export the list to CSV' do
         expect do
-          xhr :get, :index, format: :xls
+          xhr :get, :index, format: :csv
         end.to change(ListExport, :count).by(1)
         export = ListExport.last
         expect(ListExportWorker).to have_queued(export.id)
@@ -30,7 +30,7 @@ describe Analysis::GvaController, type: :controller do
       before { ResqueSpec.reset! }
       before { campaign.add_kpi kpi }
 
-      it 'queue the job for export the list' do
+      it 'queue the job for export the list to PDF' do
         expect do
           xhr :get, :index, report: { campaign_id: campaign.id, group_by: 'campaign', view_mode: 'graph' }, format: :pdf
         end.to change(ListExport, :count).by(1)
@@ -273,6 +273,44 @@ describe Analysis::GvaController, type: :controller do
 
       expect(assigns(:events_scope)).to match_array events
       expect(assigns(:goals)).to match_array [place_goal]
+    end
+  end
+
+  describe "GET 'list_export'", search: true do
+    let(:campaign) { create(:campaign, name: 'My Super campaign', company: @company) }
+    it 'should return an empty book with the correct headers' do
+      expect { xhr :get, :index, report: { campaign_id: campaign.id, group_by: 'campaign' }, format: :csv }.to change(ListExport, :count).by(1)
+      ResqueSpec.perform_all(:export)
+      expect(ListExport.last).to have_rows([
+        ['METRIC', 'GOAL', 'ACTUAL', 'ACTUAL %', 'PENDING', 'PENDING %']
+      ])
+    end
+
+    it 'should include the event results' do
+      kpi = create(:kpi, name: 'My Custom KPI', company: @company)
+      ResqueSpec.reset!
+
+      campaign.add_kpi kpi
+      @company_user.campaigns << campaign
+
+      create(:goal, parent: campaign, goalable: @company_user, kpi: kpi, value: 50)
+
+      event = create(:approved_event, company: @company, campaign: campaign, user_ids: [@company_user.id])
+      event.result_for_kpi(kpi).value = '25'
+      event.save
+
+      event = create(:submitted_event, company: @company, campaign: campaign, user_ids: [@company_user.id])
+      event.result_for_kpi(kpi).value = '20'
+      event.save
+
+      create(:goal, goalable: campaign, kpi: kpi, value: '100')
+
+      expect { xhr :get, :index, report: { campaign_id: campaign.id, group_by: 'staff', view_mode: 'graph' }, format: :csv }.to change(ListExport, :count).by(1)
+      ResqueSpec.perform_all(:export)
+      expect(ListExport.last).to have_rows([
+        ['USER/TEAM', 'METRIC', 'GOAL', 'ACTUAL', 'ACTUAL %', 'PENDING', 'PENDING %'],
+        ['Test User', 'My Custom KPI', '50', '25', '50.00%', '45', '90.00%']
+      ])
     end
   end
 end

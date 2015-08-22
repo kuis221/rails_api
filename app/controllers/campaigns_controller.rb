@@ -127,6 +127,15 @@ class CampaignsController < FilteredController
 
   protected
 
+  def collection_to_csv
+    CSV.generate do |csv|
+      csv << ['NAME', 'DESCRIPTION', 'FIRST EVENT', 'LAST EVENT', 'ACTIVE STATE']
+      each_collection_item do |campaign|
+        csv << [campaign.name, campaign.description, campaign.first_event_date, campaign.last_event_date, campaign.status]
+      end
+    end
+  end
+
   # This is used for exporting the form in PDF format. Initializes
   # a new activity for the current campaign
   def fieldable
@@ -143,7 +152,7 @@ class CampaignsController < FilteredController
       p.push(
         survey_brand_ids: [],
         form_fields_attributes: [
-          :id, :name, :field_type, :ordering, :required, :_destroy, :kpi_id,
+          :id, :name, :field_type, :ordering, :required, :capture_mechanism, :_destroy, :kpi_id,
           { settings: [:description, :range_min, :range_max, :range_format, :campaigns,
                        { disabled_segments: [] }] },
           { options_attributes: [:id, :name, :_destroy, :ordering] },

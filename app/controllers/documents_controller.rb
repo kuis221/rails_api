@@ -3,7 +3,7 @@
 # This class handle the requests for the Documents
 #
 class DocumentsController < InheritedResources::Base
-  respond_to :js, only: [:create]
+  respond_to :js, only: [:create, :destroy]
 
   belongs_to :event, :campaign, polymorphic: true
 
