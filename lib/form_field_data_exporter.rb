@@ -30,8 +30,10 @@ class FormFieldDataExporter < BaseExporter
     end).each do |row|
       @result.form_field = custom_fields_to_export[row['form_field_id'].to_i]
       if @result.form_field.is_hashed_value?
+        @result.value = nil
         @result.hash_value = row['hash_value']
       else
+        @result.hash_value = nil
         @result.value = row['value']
       end
       if SEGMENTED_FIELD_TYPES.include?(@result.form_field.type)
@@ -48,6 +50,8 @@ class FormFieldDataExporter < BaseExporter
           end
         elsif @result.form_field.type == LIKERT_SCALE_TYPE
           @likert_statements_mapping[@result.form_field.id] ||= Hash[@result.form_field.statements.map{ |s| [s.id.to_s, s.name] }]
+          Rails.logger.info @result.form_field.inspect if @result.value == '6059'
+          Rails.logger.info @result.inspect if @result.value == '6059'
           @result.value.each do |statement_id, option_id|
             value = @likert_statements_mapping[@result.form_field.id][statement_id]
             key = @fields_mapping["#{@result.form_field.id}_#{option_id}"]
