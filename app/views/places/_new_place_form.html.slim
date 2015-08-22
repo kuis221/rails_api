@@ -49,6 +49,8 @@
           = vf.link_to_add '', :hours_fields, class: 'icon icon-rounded-add', title: 'Add Hours', data: { target: ".hours-list" }, id: 'add-hours'
         .row-fluid
           = vf.input :place_price_level, label: 'Price Level', collection: select_price_level, input_html: {class: 'input-large chosen-enabled'}, required: false
+        .row-fluid
+          = vf.input :phone_number, input_html: {class: 'input-xxlarge'}, required: false
         - if vf.object.entity_form.present?
           .venues-custom-fields.data-form-wrapper
             - vf.object.form_field_results.each do |result|

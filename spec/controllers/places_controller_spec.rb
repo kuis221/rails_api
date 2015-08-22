@@ -61,7 +61,8 @@ describe PlacesController, type: :controller do
               city: 'Curridabat', state: 'San José', zipcode: '12345',
               types: 'bar', country: 'CR', venues_attributes: { '0' =>
                 { company_id: company.id, web_address: 'www.guilles.com',
-                  place_price_level: '2', hours_fields_attributes: {
+                  place_price_level: '2', phone_number: '(404) 234234234',
+                  hours_fields_attributes: {
                   '0' => { day: '1', hour_open: '0600', hour_close: '0000', '_destroy' => 'false' }
                  }, results_attributes: { '0' =>
                   { form_field_id: ff.id, value: 1 }
@@ -84,6 +85,7 @@ describe PlacesController, type: :controller do
       expect(place.locations.count).to eql 4
       expect(venue.website).to eql 'http://www.guilles.com'
       expect(venue.price_level).to eql 2
+      expect(venue.phone_number).to eql '(404) 234234234'
       expect(venue.opening_hours.count).to eql 1
       expect(Venue.last.results_for([ff]).first.value).to eql "1"
 
@@ -314,8 +316,8 @@ describe PlacesController, type: :controller do
         expect do
           expect do
             xhr :patch, 'update', id: venue.place.id, add_new_place: 'false', place: { venues_attributes: { '0' =>
-                { id: venue.id, web_address: 'www.guilles.com', place_price_level: '3', company_id: company.id,
-                  hours_fields_attributes: {
+                { id: venue.id, web_address: 'www.guilles.com', place_price_level: '3', phone_number: '(404) 65652114',
+                  company_id: company.id, hours_fields_attributes: {
                   '0' => { day: '1', hour_open: '0600', hour_close: '0000', '_destroy' => 'false' }
                  } } } }, format: :js
           end.to change(Place, :count).by(1)
@@ -332,6 +334,7 @@ describe PlacesController, type: :controller do
       expect(place.country).to eql 'US'
       expect(venue.opening_hours.count).to eql 1
       expect(venue.website).to eql 'http://www.guilles.com'
+      expect(venue.phone_number).to eql '(404) 65652114'
       expect(venue.price_level).to eql 3
     end
   end

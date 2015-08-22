@@ -42,7 +42,7 @@ class PlacesController < FilteredController
   def place_params
     params.permit(place: [
       :name, :types, :street_number, :route, :city, :state, :zipcode, :country, :reference,
-      venues_attributes: [:id, :web_address, :company_id, :place_price_level,
+      venues_attributes: [:id, :web_address, :company_id, :place_price_level, :phone_number,
                           hours_fields_attributes: [:id, :day, :hour_close, :hour_open, :_destroy],
       results_attributes: [:id, :value, :form_field_id]]
     ])[:place].tap do |whielisted|
