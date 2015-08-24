@@ -40,7 +40,7 @@ class FormField
     def format_html(result)
       return if result.value.blank? || result.value == 0
       info = ::Place.where(id: result.value).pluck(:name, :formatted_address).first
-      [info[0], info[1].gsub(/^#{info[0]}\s*,\s*/i, '')].join(', ')
+      [info[0], info[1].present? ? info[1].gsub(/^#{info[0]}\s*,\s*/i, '') : nil].compact.join(', ')
     end
 
     def format_csv(result)

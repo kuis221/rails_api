@@ -83,26 +83,34 @@ feature 'Results Activity Data Page', js: true, search: true  do
       event = create(:event, campaign: campaign, place: venue.place)
       another_user = create(:user, company: company, first_name: 'Juanito', last_name: 'Bazooka')
       activity_type2 = create(:activity_type, name: 'Second Activity Type', company: company)
+      place1 = create(:place, name: 'Custom Name 1', formatted_address: 'Custom Place 1, Curridabat')
+      place2 = create(:place, name: 'Custom Name 2', formatted_address: nil)
+      place_field1 = create(:form_field, name: 'Custom Place 1', type: 'FormField::Place', fieldable: activity_type, ordering: 1)
+      place_field2 = create(:form_field, name: 'Custom Place 2', type: 'FormField::Place', fieldable: activity_type, ordering: 2)
 
       campaign.activity_types << activity_type
       campaign.activity_types << activity_type2
       # make sure activities are created before
-      create(:activity, activity_type: activity_type, activitable: venue, campaign: campaign,
-                        company_user: company_user, activity_date: '2013-02-04',
-                        created_at: DateTime.parse("2015-07-01 02:11 -07:00"),
-                        updated_at: DateTime.parse("2015-07-03 02:11 -07:00"))
+      activity = create(:activity, activity_type: activity_type, activitable: venue, campaign: campaign,
+                                   company_user: company_user, activity_date: '2013-02-04',
+                                   created_at: DateTime.parse('2015-07-01 02:11 -07:00'),
+                                   updated_at: DateTime.parse('2015-07-03 02:11 -07:00'))
       create(:activity, activity_type: activity_type2, activitable: venue, campaign: campaign,
                         company_user: another_user.company_users.first, activity_date: '2013-03-16',
-                        created_at: DateTime.parse("2015-07-01 02:11 -07:00"),
-                        updated_at: DateTime.parse("2015-07-03 02:11 -07:00"))
+                        created_at: DateTime.parse('2015-07-01 02:11 -07:00'),
+                        updated_at: DateTime.parse('2015-07-03 02:11 -07:00'))
       create(:activity, activity_type: activity_type, activitable: event, campaign: campaign,
                         company_user: another_user.company_users.first, activity_date: '2013-09-04',
-                        created_at: DateTime.parse("2015-07-01 02:11 -07:00"),
-                        updated_at: DateTime.parse("2015-07-03 02:11 -07:00"))
+                        created_at: DateTime.parse('2015-07-01 02:11 -07:00'),
+                        updated_at: DateTime.parse('2015-07-03 02:11 -07:00'))
       create(:activity, activity_type: activity_type, activitable: inactive_event, campaign: campaign,
                         company_user: another_user.company_users.first, activity_date: '2013-03-28',
-                        created_at: DateTime.parse("2015-07-01 02:11 -07:00"),
-                        updated_at: DateTime.parse("2015-07-03 02:11 -07:00"))
+                        created_at: DateTime.parse('2015-07-01 02:11 -07:00'),
+                        updated_at: DateTime.parse('2015-07-03 02:11 -07:00'))
+
+      activity.results_for([place_field1]).first.value = place1.id
+      activity.results_for([place_field2]).first.value = place2.id
+      activity.save
 
       Sunspot.commit
     end
@@ -122,22 +130,23 @@ feature 'Results Activity Data Page', js: true, search: true  do
 
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS',
-         'CITY', 'STATE', 'ZIP', 'COUNTRY', 'ACTIVE STATE', "CREATED AT", "CREATED BY", "LAST MODIFIED", "MODIFIED BY"],
+         'CITY', 'STATE', 'ZIP', 'COUNTRY', 'ACTIVE STATE', 'CREATED AT', 'CREATED BY', 'LAST MODIFIED', 'MODIFIED BY',
+         'CUSTOM PLACE 1', 'CUSTOM PLACE 2'],
         [campaign.name, 'Test User', '2013-02-04', 'My Activity Type', '', nil, 'My Place',
          'My Place, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'US', 'Active',
-         "2015-07-01 02:11", "Test User", "2015-07-03 02:11", "Test User"],
+         '2015-07-01 02:11', 'Test User', '2015-07-03 02:11', 'Test User', 'Custom Name 1, Custom Place 1, Curridabat', 'Custom Name 2'],
         [campaign.name, 'Juanito Bazooka', '2013-03-16', 'Second Activity Type', '', nil,
          'My Place', 'My Place, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'US', 'Active',
-         "2015-07-01 02:11", "Test User", "2015-07-03 02:11", "Test User"],
+         '2015-07-01 02:11', 'Test User', '2015-07-03 02:11', 'Test User', nil, nil],
         [campaign.name, 'Juanito Bazooka', '2013-09-04', 'My Activity Type', '', nil,
          'My Place', 'My Place, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'US', 'Active',
-         "2015-07-01 02:11", "Test User", "2015-07-03 02:11", "Test User"]
+         '2015-07-01 02:11', 'Test User', '2015-07-03 02:11', 'Test User', nil, nil]
       ])
 
       expect(ListExport.last).to_not have_rows([
         [campaign.name, 'Juanito Bazooka', '2013-03-28', 'My Activity Type', '', nil, 'The Place',
          'The Place, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'US', 'Active',
-         "2015-07-01 02:11", "Test User", "2015-07-03 02:11", "Test User"]
+         '2015-07-01 02:11', 'Test User', '2015-07-03 02:11', 'Test User', nil, nil]
       ])
     end
 
