@@ -45,7 +45,7 @@ feature 'Brand Ambassadors Visits' do
                                        start_date: (today + 4.days).to_s(:slashes),
                                        end_date: (today + 5.days).to_s(:slashes),
                                        city: nil, area: nil, campaign: campaign,
-                                       visit_type: 'pto', company_user: company_user, active: true)
+                                       visit_type: 'PTO', company_user: company_user, active: true)
       Sunspot.commit
     end
 
@@ -408,7 +408,7 @@ feature 'Brand Ambassadors Visits' do
         fill_in 'Start date', with: '01/23/2014'
         fill_in 'End date', with: '01/24/2014'
         select_from_chosen company_user.name, from: 'Employee'
-        select_from_chosen 'Formal Market Visit', from: 'Visit type'
+        select2_add_tag 'Visit type', from: 'Formal Market Visit'
         select_from_chosen 'My Area', from: 'Area'
         select_from_chosen 'My Campaign', from: 'Campaign'
         select_from_chosen 'My City', from: 'City'
@@ -446,12 +446,13 @@ feature 'Brand Ambassadors Visits' do
       end
 
       within visible_modal do
-        expect(find_field('Visit type', visible: false).value).to eql 'Formal Market Visit'
+        expect(find('#s2id_brand_ambassadors_visit_visit_type')).to have_content 'Formal Market Visit'
         expect(find_field('Area', visible: false).value).to eql area.id.to_s
         expect(find_field('Campaign', visible: false).value).to eql campaign.id.to_s
         expect(find_field('City', visible: false).value).to eql 'New York'
         expect(find_field('Description', visible: false).value).to eql 'Visit1 description'
-        select_from_chosen 'Brand Program', from: 'Visit type'
+        select2_remove_tag 'Formal Market Visit'
+        select2_add_tag 'Visit type', 'Brand Program'
         select_from_chosen 'My Area', from: 'Area'
         select_from_chosen 'My Campaign', from: 'Campaign'
         select_from_chosen 'My City', from: 'City'
@@ -536,7 +537,8 @@ feature 'Brand Ambassadors Visits' do
       click_js_button('Edit')
 
       within visible_modal do
-        select_from_chosen 'Brand Program', from: 'Visit type'
+        select2_remove_tag 'Formal Market Visit'
+        select2_add_tag 'Visit type', 'Brand Program'
         fill_in 'Description', with: 'new visit description'
         click_js_button 'Save'
       end

@@ -35,7 +35,8 @@ module Api
             param :campaign_id, Integer, allow_nil: true, required: true, desc: 'Campaign ID'
             param :area_id, Integer, desc: 'Area ID'
             param :city, String, desc: 'City name'
-            param :visit_type, ::BrandAmbassadors::Visit::VISIT_TYPE_OPTIONS.values, required: true, desc: 'Visit Type key'
+            param :visit_type, current_company.brand_ambassadors_visits.order(:visit_type).pluck(:visit_type).uniq.compact,
+                  required: true, desc: 'Visit Type Tag'
             param :description, String, desc: "Visit's description"
             param :active, %w(true false),
                   required: false, desc: 'Visit\'s active state. Defaults to true for new visits '\
@@ -266,14 +267,14 @@ module Api
 
         RESPONSE:
         {
-            "Brand Program": "brand_program",
-            "PTO": "pto",
-            "Market Visit": "market_visit",
-            "Local Market Request": "local_market_request"
+            "Brand Program",
+            "PTO",
+            "Market Visit",
+            "Local Market Request"
         }
         EOS
         def types
-          render json: ::BrandAmbassadors::Visit::VISIT_TYPE_OPTIONS
+          render json: current_company.brand_ambassadors_visits.order(:visit_type).pluck(:visit_type).uniq.compact.to_json
         end
 
         api :GET, '/api/v1/brand_ambassadors/visits/:id/events', 'Get a list of events for a visit'
