@@ -35,8 +35,7 @@ module Api
             param :campaign_id, Integer, allow_nil: true, required: true, desc: 'Campaign ID'
             param :area_id, Integer, desc: 'Area ID'
             param :city, String, desc: 'City name'
-            param :visit_type, current_company.brand_ambassadors_visits.order(:visit_type).pluck(:visit_type).uniq.compact,
-                  required: true, desc: 'Visit Type Tag'
+            param :visit_type, String, required: true, desc: 'Visit Type Tag'
             param :description, String, desc: "Visit's description"
             param :active, %w(true false),
                   required: false, desc: 'Visit\'s active state. Defaults to true for new visits '\
