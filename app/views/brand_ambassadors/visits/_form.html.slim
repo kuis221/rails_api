@@ -18,7 +18,7 @@
 
     = f.input :city, collection: (resource.area.present? ? resource.area.cities.map{|r| [r['name'], r['name']]} : []), input_html: {class: 'chosen-enabled'}
 
-    = f.input :visit_type, collection: BrandAmbassadors::Visit::VISIT_TYPE_OPTIONS, include_blank: '', required: true, input_html: {class: 'chosen-enabled', data: {placeholder: "Select the type"}}
+    = f.input :visit_type
 
     .row-fluid
       .span12
@@ -37,3 +37,5 @@ javascript:
       })).trigger('liszt:updated');
     });
   });
+
+  $('#brand_ambassadors_visit_visit_type').select2({ tags: #{ raw(current_company.brand_ambassadors_visits.order(:visit_type).pluck(:visit_type).uniq.compact.to_json).html_safe }, maximumSelectionSize: 1 });

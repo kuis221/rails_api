@@ -90,7 +90,8 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
   end
 
   def visit_type_name
-    BrandAmbassadors::Visit::VISIT_TYPE_OPTIONS.find { |_k, v| v == visit_type }.try(:[], 0) if visit_type
+    #BrandAmbassadors::Visit::VISIT_TYPE_OPTIONS.find { |_k, v| v == visit_type }.try(:[], 0) if visit_type
+    visit_type
   end
 
   def status

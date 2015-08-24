@@ -12,7 +12,7 @@ describe BrandAmbassadors::VisitsController, type: :controller, search: true do
 
     it 'returns the list of visits' do
       visit = create(:brand_ambassadors_visit,
-                     visit_type: 'market_visit', start_date: '08/26/2014', end_date: '08/27/2014',
+                     visit_type: 'Formal Market Visit', start_date: '08/26/2014', end_date: '08/27/2014',
                      company: @company, campaign: campaign, active: true)
       Sunspot.commit
       get 'index', format: :json
