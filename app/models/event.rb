@@ -20,15 +20,32 @@
 #  local_start_at :datetime
 #  local_end_at   :datetime
 #  description    :text
+#  kbmg_event_id  :string(255)
+#  rejected_at    :datetime
+#  submitted_at   :datetime
+#  approved_at    :datetime
+#  active_photos_count   :integer          default(0)
 #
 
 class Event < ActiveRecord::Base
   include AASM
+  include EventPhases
+  # Defines the method do_search
+  include SolrSearchable
+  include EventBaseSolrSearchable
+
+  has_many :form_fields, through: :campaign, autosave: false
+
+  include Resultable
 
   track_who_does_it
 
   attr_accessor :visit_id
 
+  has_paper_trail
+
+  belongs_to :created_by, class_name: 'User'
+  belongs_to :updated_by, class_name: 'User'
   belongs_to :campaign
   belongs_to :place, autosave: true
 
@@ -41,13 +58,7 @@ class Event < ActiveRecord::Base
            class_name: 'AttachedAsset', dependent: :destroy, as: :attachable, inverse_of: :attachable
   has_many :teamings, as: :teamable, dependent: :destroy, inverse_of: :teamable
   has_many :teams, through: :teamings, after_remove: :after_remove_member
-  has_many :results, as: :resultable, dependent: :destroy,
-                     class_name: 'FormFieldResult', inverse_of: :resultable do
-    def active
-      where(form_field_id: proxy_association.owner.campaign.form_field_ids)
-    end
-  end
-  has_many :event_expenses, dependent: :destroy, inverse_of: :event, autosave: true
+  has_many :event_expenses, -> { order('category ASC') }, dependent: :destroy, inverse_of: :event, autosave: true
   has_many :activities, -> { order('activity_date ASC') }, as: :activitable, dependent: :destroy do
     def active
       joins(activity_type: :activity_type_campaigns)
@@ -70,8 +81,8 @@ class Event < ActiveRecord::Base
 
   has_many :invites, dependent: :destroy, inverse_of: :event
 
+  accepts_nested_attributes_for :event_expenses, allow_destroy: true
   accepts_nested_attributes_for :surveys
-  accepts_nested_attributes_for :results
   accepts_nested_attributes_for :photos
   accepts_nested_attributes_for :comments, reject_if: proc { |attributes| attributes['content'].blank? }
 
@@ -83,6 +94,7 @@ class Event < ActiveRecord::Base
   scope :by_campaigns, ->(campaigns) { where(campaign_id: campaigns) }
   scope :in_past, -> { where('events.end_at < ?', Time.now) }
   scope :with_team, ->(team) { joins(:teamings).where(teamings: { team_id: team }) }
+  scope :filters_between_dates, ->(start_date, end_date) { where(start_at: DateTime.parse(start_date)..DateTime.parse(end_date))}
 
   def self.between_dates(start_date, end_date)
     prefix = ''
@@ -123,12 +135,11 @@ class Event < ActiveRecord::Base
     if  company_user.is_admin?
       self
     else
-      joins(:place)
-        .where('events.place_id in (?) OR events.place_id in (
-                select place_id FROM locations_places where location_id in (?))',
-               company_user.accessible_places + [0],
-               company_user.accessible_locations + [0]
-        )
+      where('events.place_id in (?) OR events.place_id in (
+              select place_id FROM locations_places where location_id in (?))',
+             company_user.accessible_places + [0],
+             company_user.accessible_locations + [0]
+      )
     end
   end
 
@@ -200,16 +211,9 @@ class Event < ActiveRecord::Base
       .joins("INNER JOIN (#{area_query} UNION #{place_query}) areas_places ON events.place_id=areas_places.place_id")
   end
 
-  #
   def self.in_areas(areas)
-    subquery = Place.select('DISTINCT places.location_id')
-               .joins(:placeables).where(placeables: { placeable_type: 'Area', placeable_id: areas }, is_location: true)
-    place_query = "select place_id FROM locations_places INNER JOIN (#{subquery.to_sql})"\
-                  ' locations on locations.location_id=locations_places.location_id'
-    area_query = Placeable.select('place_id')
-                 .where(placeable_type: 'Area', placeable_id: areas).to_sql
-    joins(:place)
-      .joins("INNER JOIN (#{area_query} UNION #{place_query}) areas_places ON events.place_id=areas_places.place_id")
+    subquery = Place.connection.unprepared_statement { Place.in_areas(areas).to_sql }
+    joins("INNER JOIN (#{subquery}) areas_places ON areas_places.id=events.place_id")
   end
 
   def self.in_places(places)
@@ -253,6 +257,7 @@ class Event < ActiveRecord::Base
   delegate :name, to: :campaign, prefix: true, allow_nil: true
   delegate :name, :state, :city, :zipcode, :neighborhood, :street_number, :route, :latitude,
            :state_name, :longitude, :formatted_address, :name_with_location, :td_linx_code,
+           :street, :country,
            to: :place, prefix: true, allow_nil: true
 
   delegate :impressions, :interactions, :samples, :spent, :gender_female, :gender_male,
@@ -265,19 +270,19 @@ class Event < ActiveRecord::Base
     state :approved
     state :rejected
 
-    event :submit do
-      transitions from: [:unsent, :rejected], to: :submitted, guard: :valid_results?
+    event :submit, before: -> { self.submitted_at = DateTime.now } do
+      transitions from: [:unsent, :rejected], to: :submitted, guard: :valid_to_submit?
     end
 
-    event :approve do
+    event :approve, before: -> { self.approved_at = DateTime.now } do
       transitions from: :submitted, to: :approved
     end
 
-    event :unapprove do
+    event :unapprove, before: -> { self.approved_at = nil } do
       transitions from: :approved, to: :submitted
     end
 
-    event :reject do
+    event :reject, before: -> { self.rejected_at = DateTime.now } do
       transitions from: :submitted, to: :rejected
     end
   end
@@ -326,6 +331,7 @@ class Event < ActiveRecord::Base
     double :promo_hours, stored: true
     double :impressions, stored: true
     double :interactions, stored: true
+    double :active_photos_count, stored: true
     double :samples, stored: true
     double :spent, stored: true
     double :gender_female, stored: true
@@ -343,14 +349,6 @@ class Event < ActiveRecord::Base
 
   def deactivate!
     update_attribute :active, false
-  end
-
-  def form_field_results
-    campaign.form_fields.map do |field|
-      result = results.find { |r| r.form_field_id == field.id } || results.build(form_field_id: field.id)
-      result.form_field = field
-      result
-    end
   end
 
   def place_reference=(value)
@@ -411,6 +409,17 @@ class Event < ActiveRecord::Base
       )
   end
 
+  def event_team_members
+    ActiveRecord::Base.connection.unprepared_statement do
+      ActiveRecord::Base.connection.select_values("
+        #{users.joins(:user).select('users.first_name || \' \' || users.last_name AS name').reorder(nil).to_sql}
+        UNION ALL
+        #{teams.select('teams.name').reorder(nil).to_sql}
+        ORDER BY name
+      ").join(', ')
+    end
+  end
+
   def venue
     return if place_id.nil?
     @venue ||= Venue.find_or_create_by(company_id: company_id, place_id: place_id)
@@ -433,27 +442,6 @@ class Event < ActiveRecord::Base
       users += team.users if team.users.present?
     end
     users.uniq
-  end
-
-  def results_for(fields)
-    # The results are mapped by field or kpi_id to make it find them in case
-    # the form field was deleted and readded to the form
-    fields.map do |field|
-      result = results.find { |r| r.form_field_id == field.id } || results.build(form_field_id: field.id)
-      result.form_field = field # Assign it so it won't be reloaded if requested.
-      result
-    end
-  end
-
-  def result_for_kpi(kpi)
-    field = campaign.form_fields.find { |f| f.kpi_id == kpi.id }
-    return unless field.present?
-    field.kpi = kpi # Assign it so it won't be reloaded if requested.
-    results_for([field]).first
-  end
-
-  def results_for_kpis(kpis)
-    kpis.map { |kpi| result_for_kpi(kpi) }.flatten.compact
   end
 
   def locations_for_index
@@ -527,39 +515,48 @@ class Event < ActiveRecord::Base
   end
 
   # Returns true if all the results for the current campaign are valid
-  def valid_results?
+  def valid_to_submit?
     # Ensure all the results have been assigned/initialized
     if campaign.present?
-      results_for(campaign.form_fields).all?(&:valid?) && validate_modules_ranges
+      valid_results? && validate_modules_ranges
     end
+  end
+
+  def valid_results?
+    unless results_for(campaign.form_fields).all?(&:valid?)
+      errors.add :base, I18n.translate('invalid_submit_messages.per')
+    end
+    errors.empty?
   end
 
   # Validates that the event meets the min and max items for the assigned modules
   def validate_modules_ranges
+    message = []
     campaign.modules.each do |campaign_module|
       if campaign.range_module_settings?(campaign_module[0])
         settings = campaign_module[1]['settings']
 
         case campaign_module[1]['name']
         when 'photos'
-          items = photos.active.length
+          items = photos.active.count
         when 'expenses'
-          items = event_expenses.length
+          items = event_expenses.count
         when 'comments'
-          items = comments.length
+          items = comments.count
         end
 
-        min_result = !settings['range_min'].present? || (items >= settings['range_min'].to_i)
-        max_result = !settings['range_max'].present? || (items <= settings['range_max'].to_i)
+        min_result = settings['range_min'].blank? || (items >= settings['range_min'].to_i)
+        max_result = settings['range_max'].blank? || (items <= settings['range_max'].to_i)
 
         if !min_result || !max_result
-          message = []
-          message.push("at least #{settings['range_min']}") if settings['range_min'].present?
-          message.push("not more than #{settings['range_max']}") if settings['range_max'].present?
-          errors.add :base, "It is required #{message.join(' and ')} #{campaign_module[1]['name']}"
+          message.push(I18n.translate("invalid_submit_messages.#{campaign_module[1]['name']}.min", range_min: settings['range_min'])) if settings['range_min'].present? && !settings['range_max'].present?
+          message.push(I18n.translate("invalid_submit_messages.#{campaign_module[1]['name']}.max", range_max: settings['range_max'])) if !settings['range_min'].present? && settings['range_max'].present?
+          message.push(I18n.translate("invalid_submit_messages.#{campaign_module[1]['name']}.min_max", range_min: settings['range_min'], range_max: settings['range_max'])) if settings['range_min'].present? && settings['range_max'].present?
         end
       end
     end if campaign.modules.present?
+
+    errors.add :base, message.to_sentence(last_word_connector: ' and ') if message.present?
 
     errors.empty?
   end
@@ -571,7 +568,7 @@ class Event < ActiveRecord::Base
       timezone = Time.zone.name
       timezone = 'UTC' if Company.current && Company.current.timezone_support?
       Time.use_zone(timezone) do
-        super do
+        super(params, include_facets, includes: [:campaign, :place]) do
           with(:has_event_data, true) if params[:with_event_data_only].present?
           with(:spent).greater_than(0) if params[:with_expenses_only].present?
           with(:has_surveys, true) if params[:with_surveys_only].present?
@@ -581,6 +578,7 @@ class Event < ActiveRecord::Base
             stat(:promo_hours, type: 'sum')
             stat(:impressions, type: 'sum')
             stat(:interactions, type: 'sum')
+            stat(:active_photos_count, type: 'sum')
             stat(:samples, type: 'sum')
             stat(:spent, type: 'sum')
             stat(:gender_female, type: 'mean')
@@ -646,25 +644,9 @@ class Event < ActiveRecord::Base
     end
 
     def searchable_params
-      [:start_date, :end_date, :page, :sorting, :sorting_dir, :per_page,
+      [:page, :sorting, :sorting_dir, :per_page, start_date: [], end_date: [],
        campaign: [], area: [], user: [], team: [], event_status: [], brand: [], status: [],
        venue: [], role: [], brand_portfolio: [], id: [], event: [], place: []]
-    end
-
-    def search_start_date_field
-      if Company.current && Company.current.timezone_support?
-        :local_start_at
-      else
-        :start_at
-      end
-    end
-
-    def search_end_date_field
-      if Company.current && Company.current.timezone_support?
-        :local_end_at
-      else
-        :end_at
-      end
     end
 
     def total_promo_hours_for_places(places)
@@ -734,7 +716,35 @@ class Event < ActiveRecord::Base
     localize_date(:end_at)
   end
 
+  def first_event_expense_created_at
+    first_event_expense.present? ? first_event_expense.created_at : created_at
+  end
+
+  def first_event_expense_created_by
+    first_event_expense.present? ? first_event_expense.created_by : created_by
+  end
+
+  def last_event_expense_updated_at
+    last_event_expense.present? ? last_event_expense.updated_at : updated_at
+  end
+
+  def last_event_expense_updated_by
+    last_event_expense.present? ? last_event_expense.updated_by : updated_by
+  end
+
+  def update_active_photos_count
+    update_column :active_photos_count, photos.active.count
+  end
+
   private
+
+  def first_event_expense
+    @first_event_expense ||= event_expenses.order_by_id_asc.first
+  end
+
+  def last_event_expense
+    @last_event_expense ||= event_expenses.order_by_id_asc.last
+  end
 
   def valid_campaign?
     return unless campaign_id.present? && (new_record? || campaign_id_changed?)
@@ -830,7 +840,6 @@ class Event < ActiveRecord::Base
     reindex_campaign
 
     if @reindex_place
-      Resque.enqueue(EventPhotosIndexer, id)
       if place_id_was.present?
         previous_venue = Venue.find_by(company_id: company_id, place_id: place_id_was)
         Resque.enqueue(VenueIndexer, previous_venue.id) unless previous_venue.nil?
@@ -888,7 +897,7 @@ class Event < ActiveRecord::Base
               User.current.current_company_user.allowed_to_access_place?(place)
     errors.add(:place_reference,
                'You do not have permissions to this place. '\
-               'Please contact your campaingn administrator to request access.')
+               'Please contact your campaign administrator to request access.')
     errors.add(:place_reference, 'is not part of your authorized locations')
   end
 

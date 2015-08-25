@@ -1,0 +1,31 @@
+<% versions = resource.versions %>
+<% if versions.any? %>
+  <h3>Current Version: <%= resource.version ? resource.version.index : 'Current' %></h3>
+
+  <b>Created At:</b>
+  <%= resource.version ? resource.version.created_at : resource.updated_at %>
+  <br>
+  <b>User</b>: <%= resource.version ? User.find(resource.version.whodunnit).email : User.find(resource.updated_by_id).email %>
+  <br>
+  <br>
+  <h3>Resource Versions</h3>
+  <ul>
+  <% versions.each do |version| %>
+    <li><%= link_to "[#{version.index}] - #{version.created_at}", { version: version.index } %></li>
+  <% end %>
+  </ul>
+  <% if params[:version] %>
+    <h3>This is version <%= "#{params[:version]}"%></h3>
+
+    <b>Created at:</b>
+    <%= versions[(params[:version].to_i - 1)].created_at %>
+    <br>
+    <b>Admin</b>:
+    <%= User.find(versions[(params[:version].to_i - 1)].whodunnit).email %>
+    <br>
+
+    <%= link_to "Go to current version"%>
+  <% end %>
+<% else %>
+  <p>This item does not have any registered version.</p>
+<% end %>

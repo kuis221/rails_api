@@ -1,7 +1,7 @@
 = user_new_feature('results_comments') do
   h5 Getting Started: Comments Report
   a.close.btn-dismiss-alert.icon.icon-close href="#" title="Dismiss"
-  a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/U8-H27dxhTE?rel=0" data-width="640" data-height="360"
+  a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/m6aJrjlW8X8?rel=0" data-width="640" data-height="360"
     img src="#{image_path('video_arrow.png')}" width="70" height="70" /
   .feature-description
     p
@@ -22,7 +22,7 @@
     #list-view.tab-pane.active
       #list-tools.row-fluid
         .pull-right
-          button.btn.download.xlsx-download-link data-url="#{results_comments_path(format: "xls")}" title="Download" data-disable-with="..."
+          button.btn.download.xlsx-download-link data-url="#{results_comments_path(format: :csv)}" title="Download" data-disable-with="..."
             span.icon-download
       #comment-list.resource-list.without-actions
         div.placeholder
@@ -46,6 +46,11 @@ javascript:
     'userFilters': #{user_saved_filters('results_comments').to_json.html_safe},
     'autoCompletePath': '#{autocomplete_path(:events, format: :json)}',
     'defaultParams': '#{j default_params_for_view('status[]=Active', scope: 'results_comments')}',
+    'emptyStateMessage': '#{j t("results_comments.empty.line1", scope: :blank_states) }',
+    'emptyStateMessageLine2': '#{j t("results_comments.empty.line2", scope: :blank_states) }',
+    'emptyFilterResultsMessage': '#{j t("results_comments.filters.line1", default: :filters_line1, scope: :blank_states) }',
+    'emptyFilterResultsMessageLine2': '#{j t("results_comments.filters.line2", default: :filters_line2, scope: :blank_states) }',
+    'emptyStateImage': '#{asset_path('blank-comments.png')}',
     'onChange': function(filterBox){
       $(document).trigger('comments-filter:changed')
     },

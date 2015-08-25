@@ -20,6 +20,10 @@
 #  local_start_at :datetime
 #  local_end_at   :datetime
 #  description    :text
+#  kbmg_event_id  :string(255)
+#  rejected_at    :datetime
+#  submitted_at   :datetime
+#  approved_at    :datetime
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl
@@ -52,12 +56,12 @@ FactoryGirl.define do
 
     before(:create) do |event, evaluator|
       evaluator.expenses.each do |attrs|
-        ex = event.event_expenses.build(attrs)
+        ex = event.event_expenses << build(:event_expense, attrs.merge(event: event))
       end
 
       if results = evaluator.results
         Kpi.create_global_kpis if Kpi.impressions.nil?
-        event.campaign.assign_all_global_kpis if event.campaign.form_fields.empty?
+        event.campaign.assign_all_global_kpis if event.form_fields.empty?
         BrandscopiSpecHelpers.set_event_results(event, results, false)
       end
     end

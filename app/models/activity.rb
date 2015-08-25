@@ -12,15 +12,24 @@
 #  activity_date    :datetime
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
+#  created_by_id    :integer
+#  updated_by_id    :integer
 #
 
 class Activity < ActiveRecord::Base
+  include Resultable
+  track_who_does_it
+
   belongs_to :activity_type
   belongs_to :activitable, polymorphic: true
   belongs_to :company_user
   belongs_to :campaign
+  belongs_to :created_by, class_name: 'User'
+  belongs_to :updated_by, class_name: 'User'
 
-  has_many :results, class_name: 'FormFieldResult', inverse_of: :resultable, as: :resultable
+  track_who_does_it
+
+  has_paper_trail
 
   validates :activity_type_id, numericality: true, presence: true,
     inclusion: { in: :valid_activity_type_ids }
@@ -33,26 +42,17 @@ class Activity < ActiveRecord::Base
 
   scope :active, -> { where(active: true) }
 
-  scope :with_results_for, ->(fields) {
-    select('DISTINCT activities.*')
-    .joins(:results)
-    .where(form_field_results: { form_field_id: fields })
-    .where('form_field_results.value is not NULL AND form_field_results.value !=\'\'')
-  }
-
-  scope :accessible_by_user, -> { self }
+  scope :accessible_by_user, ->(user) { in_company(user.company) }
 
   after_initialize :set_default_values
 
-  delegate :company_id, :company, :place, to: :activitable, allow_nil: true
-  delegate :td_linx_code, :name, :city, :state, :zipcode, :street_number, :route,
+  delegate :company_id, :company, :place, :place_id, to: :activitable, allow_nil: true
+  delegate :td_linx_code, :name, :city, :state, :zipcode, :street_number, :route, :formatted_address, :country,
            to: :place, allow_nil: true, prefix: true
   delegate :name, to: :campaign, allow_nil: true, prefix: true
   delegate :full_name, to: :company_user, allow_nil: true, prefix: true
   delegate :name, :description, to: :activity_type, allow_nil: true, prefix: true
-  delegate :place, :place_id, to: :activitable, allow_nil: true
-
-  accepts_nested_attributes_for :results, allow_destroy: true
+  delegate :form_fields, to: :activity_type
 
   before_validation :delegate_campaign_id_from_event
 
@@ -65,11 +65,20 @@ class Activity < ActiveRecord::Base
     integer :location, multiple: true do
       locations_for_index
     end
+    integer :activitable_id
+    string :activitable_type
     string :activitable do
       "#{activitable_type}#{activitable_id}"
     end
     date :activity_date
     string :status
+    join(:events_active, target: Event, type: :boolean, join: { from: :id, to: :activitable_id }, as: :active_b)
+  end
+
+  def self.in_company(company)
+    joins('LEFT JOIN events ue ON activitable_type=\'Event\' AND ue.id=activitable_id').
+    joins('LEFT JOIN venues uv ON activitable_type=\'Venue\' AND uv.id=activitable_id').
+    where('ue.company_id=:company OR uv.company_id=:company', company: company)
   end
 
   def activate!
@@ -78,22 +87,6 @@ class Activity < ActiveRecord::Base
 
   def deactivate!
     update_attribute :active, false
-  end
-
-  def form_field_results
-    activity_type.form_fields.map do |field|
-      result = results.find { |r| r.form_field_id == field.id } || results.build(form_field_id: field.id)
-      result.form_field = field
-      result
-    end
-  end
-
-  def results_for(fields)
-    fields.map do |field|
-      result = results.select { |r| r.form_field_id == field.id }.first || results.build(form_field_id: field.id)
-      result.form_field = field
-      result
-    end
   end
 
   def photos
@@ -159,18 +152,47 @@ class Activity < ActiveRecord::Base
         end
 
         if params[:start_date].present? && params[:end_date].present?
-          d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
-          d2 = Timeliness.parse(params[:end_date], zone: :current).end_of_day
-          with :activity_date, d1..d2
+          params[:start_date] = Array(params[:start_date])
+          params[:end_date] = Array(params[:end_date])
+          any_of do
+            params[:start_date].each_with_index do |start, index|
+              d1 = Timeliness.parse(start, zone: :current).beginning_of_day
+              d2 = Timeliness.parse(params[:end_date][index], zone: :current).end_of_day
+              with :activity_date, d1..d2
+            end
+          end
         elsif params[:start_date].present?
-          d = Timeliness.parse(params[:start_date], zone: :current)
+          d = Timeliness.parse(params[:start_date][0], zone: :current)
           with :activity_date, d
+        end
+
+        any_of do
+          all_of do
+            with :activitable_type, 'Event'
+            with :events_active, true
+          end
+          with :activitable_type, 'Venue'
         end
 
         order_by(params[:sorting] || :activity_date, params[:sorting_dir] || :asc)
         paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
       end
     end
+  end
+
+  def self.in_areas(areas)
+    subquery = Place.connection.unprepared_statement { Place.in_areas(areas).to_sql }
+    joins("INNER JOIN (#{subquery}) areas_places ON areas_places.id=events.place_id")
+  end
+
+  def self.in_places(places)
+    places_list = Place.where(id: places)
+    where(
+      'events.place_id in (?) or events.place_id in (
+          select place_id FROM locations_places where location_id in (?)
+      )',
+      places_list.map(&:id).uniq + [0],
+      places_list.select(&:is_location?).map(&:location_id).compact.uniq + [0])
   end
 
   private

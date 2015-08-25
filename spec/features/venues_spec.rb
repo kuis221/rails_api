@@ -38,6 +38,7 @@ feature 'Venues Section', js: true, search: true do
 
     scenario 'search for places', :vcr do
       visit venues_path
+      expect(page).to have_content('You do not have any venues right now.')
       select_places_autocomplete 'San Francisco CA', from: 'Enter a location'
       fill_in 'I am looking for', with: 'Alcatraz'
       click_js_button 'Search'
@@ -62,12 +63,12 @@ feature 'Venues Section', js: true, search: true do
         create(:event, campaign: campaign,
                        place: create(:place, name: 'Bar Benito'),
                        results: { impressions: 35, interactions: 65, samples: 15 },
-                       expenses: [{ name: 'Expense 1', amount: 1000 }])
+                       expenses: [{ amount: 1000 }])
 
         create(:event, campaign: campaign,
                        place: create(:place, name: 'Bar Camelas'),
                        results: { impressions: 35, interactions: 65, samples: 15 },
-                       expenses: [{ name: 'Expense 1', amount: 2000 }])
+                       expenses: [{ amount: 2000 }])
       end
 
       Venue.reindex
@@ -97,7 +98,7 @@ feature 'Venues Section', js: true, search: true do
       create(:event, campaign: campaign,
                      place: create(:place, name: 'Place 1', td_linx_code: '5155520'),
                      results: { impressions: 35, interactions: 65, samples: 15 },
-                     expenses: [{ name: 'Expense 1', amount: 1_000 }])
+                     expenses: [{ amount: 1_000 }])
     end
     let(:event2) do
       create(:event, campaign: create(:campaign, name: 'Another Campaign April 03', company: company),
@@ -107,7 +108,7 @@ feature 'Venues Section', js: true, search: true do
                         zipcode: '67890',
                         td_linx_code: '3929538'),
                      results: { impressions: 45, interactions: 75, samples: 25 },
-                     expenses: [{ name: 'Expense 1', amount: 2_000 }])
+                     expenses: [{ amount: 2_000 }])
     end
 
     before do
@@ -120,11 +121,11 @@ feature 'Venues Section', js: true, search: true do
       Sunspot.commit
     end
 
-    scenario 'should be able to export as xls', :vcr, match_requests_on: [:s3_file]  do
+    scenario 'should be able to export as CSV' do
       visit venues_path
 
       click_js_link 'Download'
-      click_js_link 'Download as XLS'
+      click_js_link 'Download as CSV'
 
       within visible_modal do
         expect(page).to have_content('We are processing your request, the download will start soon...')
@@ -134,9 +135,9 @@ feature 'Venues Section', js: true, search: true do
       ensure_modal_was_closed
 
       expect(ListExport.last).to have_rows([
-        ['VENUE NAME', 'TD LINX CODE', 'ADDRESS', 'CITY', 'STATE', 'EVENTS COUNT', 'PROMO HOURS COUNT', 'TOTAL $ SPENT'],
-        ['Place 1', '5155520', '123 My Street', 'New York City', 'NY', '1', '2.0', '1000.0'],
-        ['Place 2', '3929538', '456 Your Street', 'Los Angeles', 'CA', '1', '2.0', '2000.0']
+        ['VENUE NAME', 'TD LINX CODE', 'ADDRESS', 'CITY', 'STATE', 'SCORE', 'EVENTS COUNT', 'PROMO HOURS COUNT', 'TOTAL $ SPENT'],
+        ['Place 1', '5155520', '123 My Street', 'New York City', 'NY', '0', '1', '2.0', '$1,000.00'],
+        ['Place 2', '3929538', '456 Your Street', 'Los Angeles', 'CA', '0', '1', '2.0', '$2,000.00']
       ])
     end
 

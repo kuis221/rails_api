@@ -116,11 +116,11 @@ feature 'DayParts', js: true, search: true do
     scenario 'allows the user to activate/deactivate a day part' do
       day_part = create(:day_part, company: company, active: true)
       visit day_part_path(day_part)
-      find('.links-data').click_js_button 'Deactivate Day Part'
+      find('.edition-links').click_js_button 'Deactivate Day Part'
 
       confirm_prompt 'Are you sure you want to deactivate this day part?'
 
-      find('.links-data').click_js_button 'Activate Day Part'
+      find('.edition-links').click_js_button 'Activate Day Part'
     end
 
     scenario 'allows the user to edit the day_part' do
@@ -128,7 +128,7 @@ feature 'DayParts', js: true, search: true do
       visit day_part_path(day_part)
 
       expect(page).to have_content('Old name')
-      find('.links-data').click_js_button('Edit Day Part')
+      find('.edition-links').click_js_button('Edit Day Part')
 
       within("form#edit_day_part_#{day_part.id}") do
         fill_in 'Name', with: 'edited day part name'
@@ -145,7 +145,7 @@ feature 'DayParts', js: true, search: true do
       day_part = create(:day_part, company: company)
       visit day_part_path(day_part)
 
-      click_js_link('Add Time')
+      click_js_button 'Add Time'
 
       within visible_modal do
         fill_in 'Start', with: '1:00am'
@@ -177,11 +177,11 @@ feature 'DayParts', js: true, search: true do
       Sunspot.commit
     end
 
-    scenario 'should be able to export as XLS' do
+    scenario 'should be able to export as CSV' do
       visit day_parts_path
 
       click_js_link 'Download'
-      click_js_link 'Download as XLS'
+      click_js_link 'Download as CSV'
 
       within visible_modal do
         expect(page).to have_content('We are processing your request, the download will start soon...')

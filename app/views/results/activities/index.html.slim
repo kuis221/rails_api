@@ -1,3 +1,5 @@
+= user_new_feature 'results_activity_data'
+
 - content_for :alerts
   div.collection-list-description
     .filter-label
@@ -7,18 +9,18 @@
 #main.main.with-details-close-bar
   = resource_details_bar("You are viewing the Activity Data report. Click to close.")
   #list-tools.text-right
-    .dropdown.btn-download
+    .dropdown.btn-download#btn-export
       a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
         i.icon-download
         i.icon-arrow-down-small
       ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
         li
-          a.xlsx-download-link href="#" role="menuitem" data-url="#{results_activities_path(format: :xls)}"
-            | Download as XLS
+          a.xlsx-download-link href="#" role="menuitem" data-url="#{results_activities_path(format: :csv)}"
+            | Download as CSV
         li
           a#pdf-export.xlsx-download-link href="#" role="menuitem" data-url="#{results_activities_path(format: :pdf)}"
             | Download as PDF
-  div.resource-list id="#{controller_name}-list"
+  div.resource-list.without-actions id="#{controller_name}-list"
 
 = render partial: 'help_tutorial'
 
@@ -35,5 +37,10 @@ javascript:
     'includeAutoComplete': true,
     'autoCompletePath': '#{autocomplete_path(:events, format: :json)}',
     'ytdDatesRange': '#{current_company.ytd_dates_range}',
-    'defaultParams': '#{j default_params_for_view('status[]=Active')}'
+    'defaultParams': '#{j default_params_for_view('status[]=Active')}',
+    'emptyStateMessage': '#{j t("results_activities.empty.line1", scope: :blank_states) }',
+    'emptyStateMessageLine2': '#{j t("results_activities.empty.line2", scope: :blank_states) }',
+    'emptyFilterResultsMessage': '#{j t("results_activities.filters.line1", default: :filters_line1, scope: :blank_states) }',
+    'emptyFilterResultsMessageLine2': '#{j t("results_activities.filters.line2", default: :filters_line2, scope: :blank_states) }',
+    'emptyStateImage': '#{asset_path('blank-activity.png')}'
   });

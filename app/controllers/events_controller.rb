@@ -11,12 +11,17 @@ class EventsController < FilteredController
   extend TeamMembersHelper
 
   # This helper provide the methods to export HTML to PDF
-  extend ExportableFormHelper
+  include ExportableForm
 
   # This helper provide the methods to activate/deactivate the resource
-  include DeactivableHelper
+  include DeactivableController
   include EventsHelper
   include ApplicationHelper
+
+  # Handle the noticaitions for new events
+  include NotificableController
+
+  notifications_scope -> { current_company_user.notifications.events }
 
   helper_method :calendar_highlights, :event_activities
 
@@ -25,8 +30,10 @@ class EventsController < FilteredController
   respond_to :json, only: [:map, :calendar_highlights]
   respond_to :xls, :pdf, only: :index
 
-  custom_actions member: [:tasks, :edit_results, :edit_data, :edit_surveys]
-  layout false, only: :tasks
+  custom_actions member: [:attendance, :edit_results, :edit_data, :edit_surveys]
+  layout false, only: [:attendance]
+
+  before_action :check_activities_message, only: :show
 
   skip_load_and_authorize_resource only: :update
   before_action :authorize_update, only: :update
@@ -56,20 +63,24 @@ class EventsController < FilteredController
           email_message).deliver
       end
     end
+    flash[:event_message_success] = I18n.translate('instructive_messages.execute.submit.success')
     rescue AASM::InvalidTransition => e
       Rails.logger.debug e.message
   end
 
   def approve
     resource.approve! if resource.submitted?
-    flash[:alert] = resource.errors.full_messages if resource.errors.any?
-    redirect_to resource_path(status: 'approved', return: params[:return])
+    flash[:event_message_fail] = resource.errors.full_messages.join('<br>') if resource.errors.any?
+    redirect_to resource_path(status: 'approved')
   end
 
   def unapprove
     resource.unapprove! if resource.approved?
-    flash[:alert] = resource.errors.full_messages if resource.errors.any?
-    redirect_to resource_path(status: 'unapproved', return: params[:return])
+    flash[:event_message_success] = I18n.translate('instructive_messages.results.unapprove') if resource.errors.empty?
+    redirect_to resource_path(status: 'unapproved')
+  end
+
+  def results
   end
 
   def reject
@@ -77,7 +88,7 @@ class EventsController < FilteredController
     return unless resource.submitted? && reject_reason.present?
 
     resource.reject!
-    resource.update_column(:reject_reason, reject_reason)
+    resource.update_columns(reject_reason: reject_reason, rejected_at: Time.now)
     resource.users.each do |company_user|
       if company_user.allow_notification?('event_recap_rejected_sms')
         sms_message = I18n.translate(
@@ -96,6 +107,7 @@ class EventsController < FilteredController
         ).deliver
       end
     end
+    flash[:event_message_fail] = I18n.translate('instructive_messages.results.rejected')
   end
 
   def calendar
@@ -135,6 +147,19 @@ class EventsController < FilteredController
   end
 
   protected
+
+  def collection_to_csv
+    CSV.generate do |csv|
+      exporter = FormFieldDataExporter.new(current_company_user, search_params, resource_class)
+      csv << ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'DURATION', 'VENUE NAME', 'ADDRESS', 'CITY',
+              'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL']
+      each_collection_item do |event|
+        csv << [event.campaign_name, exporter.area_for_event(event), event.start_date, event.end_date, event.promo_hours,
+                event.place_name, event.place_address, event.place_city, event.place_state_name, event.place_zipcode, event.status,
+                event.event_status, event.team_members, event.contacts, event.url]
+      end
+    end
+  end
 
   def pdf_form_file_name
     "#{resource.campaign_name.parameterize}-#{Time.now.strftime('%Y%m%d%H%M%S')}"
@@ -206,28 +231,30 @@ class EventsController < FilteredController
 
   def search_params
     @search_params || (super.tap do |p|
-      p[:sorting] ||= 'start_at'
+      p[:sorting] ||= Event.search_start_date_field
       p[:sorting_dir] ||= 'asc'
       p[:search_permission] = :view_list
-
-      # Get a list of new events notifications to obtain the
-      # list of ids, then delete them as they are already seen, but
-      # store them in the session to allow the user to navigate, paginate, etc
-      if params.key?(:new_at) && params[:new_at]
-        p[:id] = session["new_events_at_#{params[:new_at].to_i}"] ||= begin
-          ids = if params.key?(:notification) && params[:notification] == 'new_team_event'
-                  current_company_user.notifications.new_team_events.pluck("params->'event_id'")
-                else
-                  current_company_user.notifications.new_events.pluck("params->'event_id'")
-                end
-          current_company_user.notifications.where("params->'event_id' in (?)", ids).destroy_all
-          ids
-        end
-      end
     end)
   end
 
   def list_exportable?
     params['mode'] == 'calendar' || super
+  end
+
+  def default_url_options
+    options = super
+    options[:phase] = params[:phase] if params[:phase]
+    options
+  end
+
+  def check_activities_message
+    return unless params[:activity_form].present? &&
+                  params[:activity_type_id].present? &&
+                  session["activity_create_#{params[:activity_form]}"]
+    activity_type = current_company.activity_types.find(params[:activity_type_id])
+    flash[:event_message_success] = I18n.translate('instructive_messages.execute.activity.added',
+                                                   count: session["activity_create_#{params[:activity_form]}"].to_i,
+                                                   activity_type: activity_type.name)
+    session.delete "activity_create_#{params[:activity_form]}"
   end
 end

@@ -3,12 +3,13 @@ require 'rails_helper'
 describe Api::V1::CampaignsController, type: :controller do
   let(:user) { sign_in_as_user }
   let(:company) { user.company_users.first.company }
+  let(:campaign) { create(:campaign, company: company, name: 'Cerveza Imperial FY14') }
 
   before { set_api_authentication_headers user, company }
 
   describe "GET 'all'"do
     it 'return a list of events' do
-      campaign = create(:campaign, company: company, name: 'Cerveza Imperial FY14')
+      campaign
       create(:campaign, company: company, name: 'Cerveza Imperial FY14', aasm_state: 'closed')
       create(:campaign, company: company, name: 'Cerveza Imperial FY14', aasm_state: 'inactive')
 
@@ -23,10 +24,6 @@ describe Api::V1::CampaignsController, type: :controller do
   describe "GET 'overall_stats'"do
     before { Kpi.create_global_kpis }
     it 'return a list of campaings with the info' do
-      campaign = create(:campaign, company: company, name: 'Cerveza Imperial FY14')
-      create(:campaign, company: company, name: 'Cerveza Imperial FY14', aasm_state: 'closed')
-      create(:campaign, company: company, name: 'Cerveza Imperial FY14', aasm_state: 'inactive')
-
       create(:event, campaign: campaign)
       goal = campaign.goals.for_kpi(Kpi.events)
       goal.value = 200
@@ -47,8 +44,6 @@ describe Api::V1::CampaignsController, type: :controller do
   describe "GET 'stats'"do
     before { Kpi.create_global_kpis }
     it 'return a list of campaings with the info' do
-      campaign = create(:campaign, company: company, name: 'Cerveza Imperial FY14')
-
       area = create(:area, name: 'California', company: company)
       area.places << create(:place, city: 'Los Angeles', state: 'California', types: ['political'])
       campaign.areas << area
@@ -74,10 +69,7 @@ describe Api::V1::CampaignsController, type: :controller do
   end
 
   describe "GET 'events'"do
-    before { Kpi.create_global_kpis }
     it 'return a list of events the campaign' do
-      campaign = create(:campaign, company: company, name: 'Cerveza Imperial FY14')
-
       place = create(:place)
       create_list(:event, 3, company: company, campaign: campaign, place: place)
 
@@ -86,6 +78,18 @@ describe Api::V1::CampaignsController, type: :controller do
       events = JSON.parse(response.body)
 
       expect(events.count).to eq(3)
+    end
+  end
+
+  describe "GET 'expense_categories'", :show_in_doc do
+    it 'return a list of expense categories for the campaign' do
+      categories = %w(Phone Entertainment Fuel Other)
+      campaign.update_attribute(:modules, 'expenses' => {
+        'settings' => { 'categories' => categories } })
+
+      get :expense_categories, id: campaign.to_param, format: :json
+      expect(response).to be_success
+      expect(json).to eql categories
     end
   end
 end

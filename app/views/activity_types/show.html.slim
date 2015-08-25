@@ -8,21 +8,21 @@
   = resource_details_bar("You are viewing Activity type details. Click to close.")
 
   .details_box.padding-top-close-bar
-    h2= resource.name
+    .details-main-title
+      h2.pull-left= resource.name
+      .edition-links
+        = button_to_edit resource if can?(:edit, resource)
+        = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
 
     - if resource.description.present?
       .description-data
-        i.icon-wired-description
         span
           = resource.description
 
-    .links-data
-      = button_to_edit resource if can?(:edit, resource)
-      = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
-
     // The is info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
-      h3= resource.name
+      span.primary-info
+        = resource.name
       = button_to_edit resource if can?(:edit, resource)
       = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
 
@@ -114,11 +114,16 @@
             br
             | Marque
 
+          .field data-type="Place"
+            span.icon-venue
+            br
+            | Place
+
       .form-fields-sections
         .form-fields.clearfix.form-section.pull-left
           div.empty-form-legend
-            b No Fields! You should add a field.
-            p This is a live preview of your form. Currently, you don't have any fields. Enable any KPI to add fields to your form.
+            b No fields have been added to this form. 
+            p Use the right side panel to build your Activity. Drag, drop and rearrange fields. 
         .clearfix
 
 

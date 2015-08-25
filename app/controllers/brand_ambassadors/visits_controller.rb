@@ -3,7 +3,7 @@ class BrandAmbassadors::VisitsController < FilteredController
   respond_to :xls, :pdf, only: :index
 
   # This helper provide the methods to activate/deactivate the resource
-  include DeactivableHelper
+  include DeactivableController
 
   include EventsHelper
 
@@ -11,8 +11,20 @@ class BrandAmbassadors::VisitsController < FilteredController
 
   protected
 
+  def collection_to_csv
+    CSV.generate do |csv|
+      csv << ['START DATE', 'END DATE', 'EMPLOYEE', 'AREA', 'CITY', 'CAMPAIGN', 'TYPE', 'DESCRIPTION']
+      each_collection_item do |visit|
+        csv << [visit.start_date, visit.end_date, visit.company_user.try(:full_name), visit.area_name,
+                visit.city, visit.campaign_name, visit.visit_type_name, visit.description]
+      end
+    end
+  end
+
   def permitted_params
-    params.permit(brand_ambassadors_visit: [:visit_type, :campaign_id, :area_id, :city, :description, :start_date, :end_date, :company_user_id])[:brand_ambassadors_visit]
+    params.permit(brand_ambassadors_visit: [:visit_type, :campaign_id,
+                                            :area_id, :city, :description,
+                                            :start_date, :end_date, :company_user_id])[:brand_ambassadors_visit]
   end
 
   def build_resource
@@ -47,12 +59,12 @@ class BrandAmbassadors::VisitsController < FilteredController
   end
 
   def permitted_search_params
-    [:start_date, :end_date, :page, :sorting, :sorting_dir, :per_page,
-     campaign: [], area: [], user: [], city: []]
+    [:page, :sorting, :sorting_dir, :per_page, start_date: [],
+     end_date: [], campaign: [], area: [], user: [], city: []]
   end
 
   def return_path
-    url_to_return = params[:return] || request.env['HTTP_REFERER'] || brand_ambassadors_root_path
+    url_to_return = super || brand_ambassadors_root_path
     url_to_return if url_valid? url_to_return
   end
 end

@@ -1,14 +1,14 @@
 module PlacesHelper
   module CreatePlace
     def create_place(attributes, add_new_place)
-      attributes[:types] = attributes[:types].downcase.split(',') if attributes[:types].present?
+      attributes[:types] = attributes[:types].downcase.split(/\s*,\s*/) if attributes[:types].present?
 
       if attributes[:country] && attributes[:state]
         country = Country.new(attributes[:country])
-        if country.valid? && country.states.key?(attributes[:state])
+        if country.present? && country.states.key?(attributes[:state])
           attributes[:state] = country.states[attributes[:state]]['name']
         else
-          attributes[:state] = nil unless country.valid? && country.states.find { |_k, v| v['name'] == attributes[:state] }.present?
+          attributes[:state] = nil unless country.present? && country.states.find { |_k, v| v['name'] == attributes[:state] }.present?
         end
       end
 
@@ -188,6 +188,23 @@ module PlacesHelper
   def place_price(price)
     content_tag(:span, price.times.map {|_| '$' }.join, class: 'price-level' ) +
     (5 - price).times.map {|_| '$' }.join.html_safe
+  end
+
+  def select_days()
+    days = { 'Mon': 0, 'Tue': 1, 'Wed': 2, 'Thu': 3, 'Fri': 4, 'Sat': 5, 'Sun': 6 }
+  end
+
+  def select_hours()
+    hours = { '12:00 am' => '0000', '12:30 am' => '0030' }
+    hours = (1..23).inject(hours) do |hash, h|
+              ampm = h > 11 ? 'pm' : 'am'
+              h24 = h < 10 ? "0#{h}" : h
+              hour12 = h > 12 ? h - 12 : h
+              h12 = hour12 < 10 ? "0#{hour12}" : hour12
+              hash["#{h12}:00 #{ampm}"] = "#{h24}00"
+              hash["#{h12}:30 #{ampm}"] = "#{h24}30"
+              hash
+            end
   end
 
   private

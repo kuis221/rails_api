@@ -110,11 +110,11 @@ feature 'DateRanges', search: true, js: true do
     scenario 'allows the user to activate/deactivate a date range' do
       date_range = create(:date_range, company: company, active: true)
       visit date_range_path(date_range)
-      find('.links-data').click_js_button('Deactivate Date Range')
+      find('.edition-links').click_js_button('Deactivate Date Range')
 
       confirm_prompt 'Are you sure you want to deactivate this date range?'
 
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button 'Activate Date Range'
         expect(page).to have_button 'Deactivate Date Range' # test the link have changed
       end
@@ -125,7 +125,7 @@ feature 'DateRanges', search: true, js: true do
       visit date_range_path(date_range)
       expect(page).to have_content('Old name')
 
-      find('.links-data').click_js_button('Edit Date Range')
+      find('.edition-links').click_js_button('Edit Date Range')
 
       within("form#edit_date_range_#{date_range.id}") do
         fill_in 'Name', with: 'edited date range name'
@@ -143,7 +143,7 @@ feature 'DateRanges', search: true, js: true do
       date_range = create(:date_range, company: company)
       visit date_range_path(date_range)
 
-      click_js_link('Add Date')
+      click_js_button 'Add Date'
 
       within visible_modal do
         find('#calendar_start_date').click_js_link '25'
@@ -176,11 +176,11 @@ feature 'DateRanges', search: true, js: true do
       Sunspot.commit
     end
 
-    scenario 'should be able to export as XLS' do
+    scenario 'should be able to export as CSV' do
       visit date_ranges_path
 
       click_js_link 'Download'
-      click_js_link 'Download as XLS'
+      click_js_link 'Download as CSV'
 
       within visible_modal do
         expect(page).to have_content('We are processing your request, the download will start soon...')

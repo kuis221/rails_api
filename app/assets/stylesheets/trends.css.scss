@@ -21,11 +21,11 @@
 }
 
 .indicator-up:before{
-	content: '\e612';
+	content: '\e63e';
 }
 
 .indicator-down:before{
-	content: '\e613';
+	content: '\e63f';
 }
 
 #all-mentions-box h3 .blue {
@@ -148,7 +148,12 @@
 			}
 		}
 	}
+}
 
+.trends_report_campaigns, .trends_report_sources{
+	p.small{
+		color: $brand;
+	}
 }
 
 #terms-container{
@@ -173,13 +178,14 @@
 	}
 	button{
 		background-color: $brand;
-		color: white;
 		font-size: 25px;
 		font-weight: 300;
 		line-height: 21px;
 		padding: 7px 12px;
 		-webkit-border-radius: 0px 6px 6px 0px;
 		border-radius: 0px 6px 6px 0px;
+		min-width: 0;
+		height: 39px;
 	}
 	legend{
 		border-bottom:0;

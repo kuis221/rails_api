@@ -9,13 +9,18 @@ class CampaignsController < FilteredController
 
   before_action :search_params, only: [:index]
 
-  include DeactivableHelper
+  include DeactivableController
 
   # This helper provide the methods to add/remove campaigns members to the event
   extend TeamMembersHelper
 
   # This helper provide the methods to export HTML to PDF
-  extend ExportableFormHelper
+  include ExportableForm
+
+  # Handle the noticaitions for new campaigns
+  include NotificableController
+
+  notifications_scope -> { current_company_user.notifications.new_campaigns }
 
   skip_authorize_resource only: :tab
 
@@ -86,7 +91,7 @@ class CampaignsController < FilteredController
   end
 
   def new_date_range
-    @date_ranges = current_company.date_ranges
+    @date_ranges = current_company.date_ranges.active
       .where('date_ranges.id not in (?)', resource.date_range_ids + [0])
   end
 
@@ -101,7 +106,7 @@ class CampaignsController < FilteredController
   end
 
   def new_day_part
-    @day_parts = current_company.day_parts
+    @day_parts = current_company.day_parts.active
       .where('day_parts.id not in (?)', resource.day_part_ids + [0])
   end
 
@@ -122,6 +127,15 @@ class CampaignsController < FilteredController
 
   protected
 
+  def collection_to_csv
+    CSV.generate do |csv|
+      csv << ['NAME', 'DESCRIPTION', 'FIRST EVENT', 'LAST EVENT', 'ACTIVE STATE']
+      each_collection_item do |campaign|
+        csv << [campaign.name, campaign.description, campaign.first_event_date, campaign.last_event_date, campaign.status]
+      end
+    end
+  end
+
   # This is used for exporting the form in PDF format. Initializes
   # a new activity for the current campaign
   def fieldable
@@ -138,8 +152,8 @@ class CampaignsController < FilteredController
       p.push(
         survey_brand_ids: [],
         form_fields_attributes: [
-          :id, :name, :field_type, :ordering, :required, :_destroy, :kpi_id,
-          { settings: [:description, :range_min, :range_max, :range_format,
+          :id, :name, :field_type, :ordering, :required, :capture_mechanism, :_destroy, :kpi_id,
+          { settings: [:description, :range_min, :range_max, :range_format, :campaigns,
                        { disabled_segments: [] }] },
           { options_attributes: [:id, :name, :_destroy, :ordering] },
           { statements_attributes: [:id, :name, :_destroy, :ordering] }])
@@ -172,21 +186,5 @@ class CampaignsController < FilteredController
       end
       brands[index] = b.to_i
     end
-  end
-
-  def search_params
-    @search_params || (super.tap do |p|
-      # Get a list of new campaigns notifications to obtain the list of ids,
-      # then delete them as they are already seen, but
-      # store them in the session to allow the user to navigate, paginate, etc
-      if params.key?(:new_at) && params[:new_at]
-        p[:id] = session["new_campaigns_at_#{params[:new_at].to_i}"] ||= begin
-          notifications = current_company_user.notifications.new_campaigns
-          ids = notifications.map { |n| n.params['campaign_id'] }.compact
-          notifications.destroy_all
-          ids
-        end
-      end
-    end)
   end
 end

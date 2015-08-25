@@ -15,6 +15,7 @@ feature 'Events section' do
     add_permissions permissions
     sign_in user
   end
+
   after { Warden.test_reset! }
 
   shared_examples_for 'a user that can activate/deactivate events' do
@@ -64,13 +65,13 @@ feature 'Events section' do
 
     scenario 'allows the user to activate/deactivate a event from the event details page' do
       visit event_path(events.first)
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button 'Deactivate Event'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this event?'
 
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button('Activate Event')
         expect(page).to have_button('Deactivate Event') # test the link have changed
       end
@@ -98,44 +99,23 @@ feature 'Events section' do
       end
 
       feature 'Close bar' do
-        let(:events)do
-          [
-            create(:submitted_event,
-                   start_date: '08/21/2013', end_date: '08/21/2013',
-                   campaign: create(:campaign, name: 'Campaign #1 FY2012', company: company)),
-            create(:submitted_event,
-                   start_date: '08/28/2013', end_date: '08/29/2013',
-                   campaign: create(:campaign, name: 'Campaign #2 FY2012', company: company)),
-            create(:submitted_event,
-                   start_date: '08/28/2013', end_date: '08/29/2013',
-                   campaign: create(:campaign, name: 'Campaign #3 FY2012', company: company)),
-            create(:event, campaign: create(:campaign, name: 'Campaign #4 FY2012', company: company))
-          ]
-        end
-
-        scenario 'Close bar should return the list of events' do
-          events  # make sure users are created before
+        scenario 'clicking the return button should preserve the filter tags' do
+          create(:submitted_event, campaign: campaign)
           Sunspot.commit
           visit events_path
 
-          expect(page).to have_selector('#events-list .resource-item', count: 1)
           add_filter 'EVENT STATUS', 'Submitted'
+          add_filter 'EVENT STATUS', 'Approved'
           remove_filter 'Today To The Future'
-          expect(page).to have_selector('#events-list .resource-item', count: 3)
 
-          within resource_item(2) do
+          within resource_item(1) do
             click_js_link 'Event Details'
           end
 
-          expect(page).to have_selector('h2', text: 'Campaign #2 FY2012')
-
-          within('.alert') do
-            click_link 'approve'
-          end
-
-          expect(page).to have_content('Your post event report has been approved.')
-          find('#resource-close-details').click
-          expect(page).to have_selector('#events-list .resource-item', count: 2)
+          close_resource_details
+          expect(collection_description).to have_filter_tag 'Submitted'
+          expect(collection_description).to have_filter_tag 'Approved'
+          expect(collection_description).to_not have_filter_tag 'Today To The Future'
         end
       end
 
@@ -258,7 +238,7 @@ feature 'Events section' do
         end
 
         scenario 'should allow allow filter events by date range selected from the calendar' do
-          today = Time.zone.local(Time.now.year, Time.now.month, 18, 12, 00)
+          today = Time.zone.local(2015, 1, 18, 12, 00)
           tomorrow = today + 1.day
           Timecop.travel(today) do
             create(:event,
@@ -280,7 +260,6 @@ feature 'Events section' do
               expect(page).to have_content('Campaign FY2012')
               expect(page).to have_content('Another Campaign April 03')
             end
-
 
             expect(page).to have_filter_section(title: 'CAMPAIGNS',
                                                 options: ['Campaign FY2012', 'Another Campaign April 03'])
@@ -348,7 +327,7 @@ feature 'Events section' do
             Sunspot.commit
           end
 
-          scenario 'should be able to export as xls' do
+          scenario 'should be able to export as CSV' do
             contact1 = create(:contact, first_name: 'Guillermo', last_name: 'Vargas', email: 'guilleva@gmail.com', company: company)
             contact2 = create(:contact, first_name: 'Chris', last_name: 'Jaskot', email: 'cjaskot@gmail.com', company: company)
             create(:contact_event, event: event1, contactable: contact1)
@@ -358,25 +337,26 @@ feature 'Events section' do
             visit events_path
 
             click_js_link 'Download'
-            click_js_link 'Download as XLS'
+            click_js_link 'Download as CSV'
 
             within visible_modal do
               expect(page).to have_content('We are processing your request, the download will start soon...')
               expect(ListExportWorker).to have_queued(ListExport.last.id)
               ResqueSpec.perform_all(:export)
             end
+
             ensure_modal_was_closed
             expect(ListExport.last).to have_rows([
               ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'DURATION', 'VENUE NAME', 'ADDRESS', 'CITY',
                'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL'],
-              ['Another Campaign April 03', nil, "#{year_number}-#{month_number}-#{today.strftime('%d')}T08:00",
-               "#{year_number}-#{month_number}-#{today.strftime('%d')}T09:00", '1.0', 'Place 2',
+              ['Another Campaign April 03', '', "#{year_number}-#{month_number}-#{today.strftime('%d')} 08:00",
+               "#{year_number}-#{month_number}-#{today.strftime('%d')} 09:00", '1.00', 'Place 2',
                'Place 2, 11 Main St., Los Angeles, CA, 67890', 'Los Angeles', 'CA', '67890', 'Active', 'Unsent',
-               nil, nil, "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event2.id}"],
-              ['Campaign FY2012', nil, "#{year_number}-#{month_number}-#{today.strftime('%d')}T10:00",
-               "#{year_number}-#{month_number}-#{today.strftime('%d')}T11:00", '1.0', 'Place 1',
+               '', '', "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event2.id}"],
+              ['Campaign FY2012', '', "#{year_number}-#{month_number}-#{today.strftime('%d')} 10:00",
+               "#{year_number}-#{month_number}-#{today.strftime('%d')} 11:00", '1.00', 'Place 1',
                'Place 1, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active',
-               'Unsent', nil, 'Chris Jaskot, Guillermo Vargas',
+               'Unsent', '', 'Chris Jaskot, Guillermo Vargas',
                "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event1.id}"]
             ])
           end
@@ -403,7 +383,7 @@ feature 'Events section' do
               # with white spaces, so, remove them and look for strings
               # without whitespaces
               text = page.text.gsub(/[\s\n]/, '')
-              expect(text).to include '2eventsfoundfor:'
+              expect(text).to include '2eventsfoundfor'
               expect(text).to include 'CampaignFY2012'
               expect(text).to include 'AnotherCampaignApril03'
               expect(text).to include 'NewYorkCity,NY,12345'
@@ -440,7 +420,7 @@ feature 'Events section' do
               # with white spaces, so, remove them and look for strings
               # without whitespaces
               text = page.text.gsub(/[\s\n]/, '')
-              expect(text).to include 'MyKoolBrand'
+              expect(text).to include 'MyKool'
               expect(text).to include "#{today.strftime('%B')}#{year_number}"
             end
           end
@@ -478,7 +458,7 @@ feature 'Events section' do
             visit events_path
 
             choose_predefined_date_range 'Today'
-            wait_for_ajax
+            expect(page).to have_filter_tag('Today')
 
             expect(page).to have_selector('#events-list .resource-item', count: 2)
             within events_list do
@@ -522,7 +502,7 @@ feature 'Events section' do
             visit events_path
 
             choose_predefined_date_range 'Current month'
-            wait_for_ajax
+            expect(page).to have_content('2 events found for:')
 
             expect(page).to have_selector('#events-list .resource-item', count: 2)
             within events_list do
@@ -541,7 +521,7 @@ feature 'Events section' do
             visit events_path
 
             choose_predefined_date_range 'Previous week'
-            wait_for_ajax
+            expect(page).to have_content('2 events found for:')
 
             expect(page).to have_selector('#events-list .resource-item', count: 1)
             within events_list do
@@ -643,13 +623,13 @@ feature 'Events section' do
             create(:event, campaign: campaign2,
                            start_date: today.to_s(:slashes), end_date: today.to_s(:slashes))
             create(:event, campaign: campaign2,
-                           start_date: Date.today.beginning_of_week.to_s(:slashes),
-                           end_date: Date.today.beginning_of_week.to_s(:slashes))
+                           start_date: Date.today.beginning_of_week(:sunday).to_s(:slashes),
+                           end_date: Date.today.beginning_of_week(:sunday).to_s(:slashes))
             create(:event, campaign: campaign3,
                            start_date: today.to_s(:slashes), end_date: today.to_s(:slashes))
             create(:event, campaign: campaign3,
-                           start_date: (Date.today.beginning_of_week + 5.days).to_s(:slashes),
-                           end_date: (Date.today.beginning_of_week + 5.days).to_s(:slashes))
+                           start_date: (Date.today.beginning_of_week(:sunday) + 5.days).to_s(:slashes),
+                           end_date: (Date.today.beginning_of_week(:sunday) + 5.days).to_s(:slashes))
             Sunspot.commit
 
             visit events_path
@@ -659,9 +639,9 @@ feature 'Events section' do
             within 'ul.dropdown-menu' do
               expect(page).to have_button('Apply', disabled: true)
               find_field('Start date').click
-              select_and_fill_from_datepicker('custom_start_date', Date.today.beginning_of_week.to_s(:slashes))
+              select_and_fill_from_datepicker('custom_start_date', Date.today.beginning_of_week(:sunday).to_s(:slashes))
               find_field('End date').click
-              select_and_fill_from_datepicker('custom_end_date', (Date.today.beginning_of_week + 5.days).to_s(:slashes))
+              select_and_fill_from_datepicker('custom_end_date', (Date.today.beginning_of_week(:sunday) + 5.days).to_s(:slashes))
               expect(page).to have_button('Apply', disabled: false)
               click_js_button 'Apply'
             end
@@ -717,7 +697,7 @@ feature 'Events section' do
         end
 
         scenario 'Filters are preserved upon navigation' do
-          today = Time.zone.local(Time.now.year, Time.now.month, 18, 12, 00)
+          today = Time.zone.local(2015, 1, 18, 12, 00)
           tomorrow = today + 1.day
           Timecop.travel(today) do
             ev1 = create(:event, campaign: campaign,
@@ -851,9 +831,7 @@ feature 'Events section' do
         end
 
         feature 'filters' do
-
           it_behaves_like 'a list that allow saving custom filters' do
-
             before do
               create(:campaign, name: 'Campaign 1', company: company)
               create(:campaign, name: 'Campaign 2', company: company)
@@ -1022,7 +1000,7 @@ feature 'Events section' do
         create(:campaign, company: company, name: 'ABSOLUT Vodka')
         visit events_path
 
-        click_button 'Create'
+        click_button 'New Event'
 
         within visible_modal do
           expect(page).to have_content(company_user.full_name)
@@ -1044,12 +1022,12 @@ feature 'Events section' do
           create(:campaign, company: company)
           visit events_path
 
-          click_button 'Create'
+          click_button 'New Event'
 
           within visible_modal do
             # Test both dates are the same
-            expect(find_field('event_start_date').value).to eql '07/30/2013'
-            expect(find_field('event_end_date').value).to eql '07/30/2013'
+            expect(page).to have_field('Start', with: '07/30/2013')
+            expect(page).to have_field('End', with: '07/30/2013')
 
             # Change the start date and make sure the end date is changed automatically
             find_field('event_start_date').click
@@ -1067,15 +1045,15 @@ feature 'Events section' do
 
             # Change the start time and make sure the end date is changed automatically
             # to one hour later
-            find_field('event_start_time').click
-            find_field('event_start_time').set '08:00am'
-            find_field('event_end_time').click
-            expect(find_field('event_end_time').value).to eql '9:00am'
+            find_field('event[start_time]').click
+            find_field('event[start_time]').set '08:00am'
+            find_field('event[end_time]').click
+            expect(page).to have_field('event[end_time]', with: '9:00am')
 
-            find_field('event_start_time').click
-            find_field('event_start_time').set '4:00pm'
-            find_field('event_end_time').click
-            expect(find_field('event_end_time').value).to eql '5:00pm'
+            find_field('event[start_time]').click
+            find_field('event[start_time]').set '4:00pm'
+            find_field('event[end_time]').click
+            expect(page).to have_field('event[end_time]', with: '5:00pm')
           end
         end
       end
@@ -1085,7 +1063,7 @@ feature 'Events section' do
           create(:campaign, company: company)
           visit events_path
 
-          click_button 'Create'
+          click_button 'New Event'
 
           within visible_modal do
             # Test both dates are the same
@@ -1188,7 +1166,7 @@ feature 'Events section' do
     end
 
     feature '/events/:event_id', js: true do
-      scenario 'a user can play and dismiss the video tutorial (scheduled event)' do
+      scenario 'a user can play and dismiss the video tutorial' do
         event = create(:event,
                        start_date: '08/28/2013', end_date: '08/28/2013',
                        start_time: '8:00 PM', end_time: '11:00 PM',
@@ -1198,34 +1176,7 @@ feature 'Events section' do
         feature_name = 'GETTING STARTED: EVENT DETAILS'
 
         expect(page).to have_selector('h5', text: feature_name)
-        expect(page).to have_content('Welcome to the Event Details page')
-        click_link 'Play Video'
-
-        within visible_modal do
-          click_js_link 'Close'
-        end
-        ensure_modal_was_closed
-
-        within('.new-feature') do
-          click_js_link 'Dismiss'
-        end
-        wait_for_ajax
-
-        visit event_path(event)
-        expect(page).to have_no_selector('h5', text: feature_name)
-      end
-
-      scenario 'a user can play and dismiss the video tutorial (executed event)' do
-        event = create(:approved_event,
-                       start_date: '08/28/2013', end_date: '08/28/2013',
-                       start_time: '8:00 PM', end_time: '11:00 PM',
-                       campaign: campaign)
-        visit event_path(event)
-
-        feature_name = 'GETTING STARTED: EVENT DETAILS'
-
-        expect(page).to have_selector('h5', text: feature_name)
-        expect(page).to have_content('You are viewing the Event Details page for an executed event')
+        expect(page).to have_content('The Event Details page manages the entire event lifecycle')
         click_link 'Play Video'
 
         within visible_modal do
@@ -1249,8 +1200,7 @@ feature 'Events section' do
         visit event_path(event)
         expect(page).to have_selector('h2', text: 'Campaign FY2012')
         within('.calendar-data') do
-          expect(page).to have_content('WED Aug 28')
-          expect(page).to have_content('8:00 PM - 11:00 PM')
+          expect(page).to have_content('WED Aug 28, 2013 from 8:00 PM to 11:00 PM')
         end
       end
 
@@ -1274,56 +1224,9 @@ feature 'Events section' do
           visit event_path(event)
 
           within('.calendar-data') do
-            expect(page).to have_content('WED Aug 21')
-            expect(page).to have_content('10:00 AM - 11:00 AM')
+            expect(page).to have_content('WED Aug 21, 2013 from 10:00 AM to 11:00 AM')
           end
         end
-      end
-
-      scenario 'allows to add a member to the event', js: true do
-        pablo = create(:user,
-                       first_name: 'Pablo', last_name: 'Baltodano', email: 'palinair@gmail.com',
-                       company_id: company.id, role_id: company_user.role_id).company_users.first
-        create(:user,
-               first_name: 'Anonymous', last_name: 'User', email: 'anonymous@gmail.com',
-               company_id: company.id, role_id: company_user.role_id)
-
-        visit event_path(event)
-
-        click_js_button 'Add Team Member'
-        within visible_modal do
-          fill_in 'staff-search-item', with: 'Pab'
-          expect(page).to have_text 'Pablo Baltodano'
-          expect(page).to have_no_text 'Anonymous User'
-          within resource_item("#staff-member-user-#{pablo.id}") do
-            click_js_link 'Add'
-          end
-
-          expect(page).to have_no_text('Pablo Baltodano')
-        end
-        close_modal
-
-        # Re-open the modal to make sure it's not added again to the list
-        click_js_button 'Add Team Member'
-        within visible_modal do
-          expect(page).to have_no_text('Pablo Baltodano')
-          expect(page).to have_text('Anonymous User')
-        end
-        close_modal
-
-        # Test the user was added to the list of event members and it can be removed
-        within event_team_member(pablo) do
-          expect(page).to have_content('Pablo Baltodano')
-          click_js_link 'Remove Member'
-        end
-
-        confirm_prompt('Any tasks that are assigned to Pablo Baltodano must be reassigned. '\
-                       'Would you like to remove Pablo Baltodano from the event team?')
-        expect(page).not_to have_content('Pablo Baltodano')
-
-        # Refresh the page and make sure the user is not there
-        visit event_path(event)
-        expect(all('#event-team-members .team-member').count).to eq(0)
       end
 
       scenario 'allows to add a user as contact to the event', js: true do
@@ -1334,7 +1237,7 @@ feature 'Events section' do
 
         visit event_path(event)
 
-        click_js_button 'Add Contact'
+        click_js_button 'Add Contacts'
         within visible_modal do
           fill_in 'contact-search-box', with: 'Pab'
           expect(page).to have_content('Pablo Baltodano')
@@ -1345,11 +1248,13 @@ feature 'Events section' do
           expect(page).to have_no_content('Pablo Baltodano')
         end
         close_modal
+        expect(page).to have_content('Good work. One contact have been added.')
 
         # Test the user was added to the list of event members and it can be removed
-        within '#event-contacts-list' do
+        within contact_list do
           expect(page).to have_content('Pablo Baltodano')
-          hover_and_click('.event-contact', 'Remove Contact')
+          click_js_link 'Remove Contact'
+          expect(page).to_not have_content('Pablo Baltodano')
         end
 
         # Refresh the page and make sure the user is not there
@@ -1359,41 +1264,52 @@ feature 'Events section' do
       end
 
       scenario 'allows to add a contact as contact to the event', js: true do
-        create(:contact,
-               first_name: 'Guillermo', last_name: 'Vargas',
-               email: 'guilleva@gmail.com', company_id: company.id)
+        create(:contact, first_name: 'Pedro', last_name: 'Urrutia',
+                         company_id: company.id)
+        create(:contact, first_name: 'Pedro', last_name: 'Guerra',
+                         company_id: company.id)
         Sunspot.commit
 
         visit event_path(event)
 
-        click_js_button 'Add Contact'
+        click_js_button 'Add Contacts'
         within visible_modal do
-          fill_in 'contact-search-box', with: 'Gui'
-          expect(page).to have_content('Guillermo Vargas')
-          within resource_item do
+          fill_in 'contact-search-box', with: 'Ped'
+          expect(page).to have_content('Pedro Guerra')
+          expect(page).to have_content 'Pedro Urrutia'
+          within resource_item(1) do
+            click_js_link 'Add'
+          end
+          expect(page).to have_no_content('Pedro Guerra')
+          within resource_item(1) do
             click_js_link 'Add'
           end
 
-          expect(page).to have_no_content 'Guillermo Vargas'
+          expect(page).to have_no_content 'Pedro Urrutia'
         end
         close_modal
+        expect(page).to have_content('Good work. 2 contacts have been added.')
 
         # Test the user was added to the list of event members and it can be removed
-        within '#event-contacts-list' do
-          expect(page).to have_content('Guillermo Vargas')
-          hover_and_click('.event-contact', 'Remove Contact')
+        within contact_list do
+          expect(page).to have_content('Pedro Guerra')
+          expect(page).to have_content('Pedro Urrutia')
+          within find('.user-tag-option', text: 'Pedro Urrutia') do
+            click_js_link 'Remove Contact'
+          end
         end
+        expect(page).to_not have_content('Pedro Urrutia')
 
         # Refresh the page and make sure the user is not there
         visit event_path(event)
 
-        expect(page).to_not have_content('Guillermo Vargas')
+        expect(page).to_not have_content('Pedro Urrutia')
       end
 
       scenario 'allows to create a contact', js: true do
         visit event_path(event)
 
-        click_js_button 'Add Contact'
+        click_js_button 'Add Contacts'
         visible_modal.click_js_link('Create New Contact')
 
         within '.contactevent_modal' do
@@ -1412,45 +1328,38 @@ feature 'Events section' do
         ensure_modal_was_closed
 
         # Test the contact was added to the list of event members and it can be removed
-        within '#event-contacts-list' do
+        within contact_list do
           expect(page).to have_content('Pedro Picapiedra')
         end
 
+        # Test tooltip
+        within contact_list do
+          find('.has-tooltip').trigger('click')
+        end
+
+        within '.tooltip.in' do
+          expect(page).to have_content 'Pedro Picapiedra'
+          expect(page).to have_link 'pedro@racadura.com'
+          expect(page).to have_link '+1 505 22343222'
+          expect(page).to have_content 'ABC 123, Los Angeles, CA, United States'
+        end
+
+        # Clink in the tooltip and make sure it isn't closed
+        find('.tooltip .contact-name').click
+        expect(page).to have_selector('.tooltip.in')
+
+        # Click outside the tooltip and make sure it's closed
+        find('.trackers-bar').click
+        expect(page).to_not have_selector('.tooltip.in')
+
         # Test removal of the contact
-        hover_and_click('#event-contacts-list .event-contact', 'Remove Contact')
+        click_js_link 'Remove Contact'
         expect(page).to_not have_content('Pedro Picapiedra')
 
         # Refresh the page and make sure the contact is not there
         visit event_path(event)
 
         expect(page).to_not have_content('Pedro Picapiedra')
-      end
-
-      scenario 'allows to edit a contact', js: true do
-        contact = create(:contact, first_name: 'Guillermo', last_name: 'Vargas', email: 'guilleva@gmail.com', company: company)
-        create(:contact_event, event: event, contactable: contact)
-        Sunspot.commit
-
-        visit event_path(event)
-
-        expect(page).to have_content('Guillermo Vargas')
-
-        hover_and_click('#event-contacts-list .event-contact', 'Edit Contact')
-
-        within visible_modal do
-          fill_in 'First name', with: 'Pedro'
-          fill_in 'Last name', with: 'Picapiedra'
-          click_js_button 'Save'
-        end
-        sleep 1
-        ensure_modal_was_closed
-
-        # Test the user was added to the list of event members and it can be removed
-        within '#event-contacts-list' do
-          expect(page).to have_no_content('Guillermo Vargas')
-          expect(page).to have_content('Pedro Picapiedra')
-          # find('a.remove-member-btn').click
-        end
       end
 
       scenario 'allows to create a new task for the event and mark it as completed' do
@@ -1463,7 +1372,7 @@ feature 'Events section' do
 
         visit event_path(event)
 
-        click_js_button 'Create Task'
+        click_js_button 'Add Task'
         within('form#new_task') do
           fill_in 'Title', with: 'Pick up the kidz at school'
           fill_in 'Due at', with: '05/16/2013'
@@ -1471,45 +1380,33 @@ feature 'Events section' do
           click_js_button 'Submit'
         end
 
-        expect(page).to have_text('0 UNASSIGNED')
-        expect(page).to have_text('0 COMPLETED')
-        expect(page).to have_text('1 ASSIGNED')
-        expect(page).to have_text('1 LATE')
-
         within resource_item list: '#tasks-list' do
-          expect(page).to have_content('Pick up the kidz at school')
-          expect(page).to have_content('Juanito Bazooka')
-          expect(page).to have_content('THU May 16')
-        end
-
-        # Mark the tasks as completed
-        within('#event-tasks-container') do
-          checkbox = find('.task-completed-checkbox', visible: :false)
-          expect(checkbox['checked']).to be_falsey
-          find('.task-completed-checkbox').trigger('click')
-          wait_for_ajax
-
-          # refresh the page to make sure the checkbox remains selected
-          visit event_path(event)
-          expect(find('.task-completed-checkbox', visible: :false)['checked']).to be_truthy
+          expect(page).to have_content 'Pick up the kidz at school'
+          expect(page).to have_content 'Juanito Bazooka'
+          expect(page).to have_content 'THU May 16'
         end
 
         # Check that the totals where properly updated
-        expect(page).to have_text('0 UNASSIGNED')
-        expect(page).to have_text('1 COMPLETED')
-        expect(page).to have_text('1 ASSIGNED')
-        expect(page).to have_text('0 LATE')
+        expect(page).to have_text('1INCOMPLETE')
+        expect(page).to have_text('0UNASSIGNED')
+        expect(page).to have_text('1LATE')
 
-        # Delete Juanito Bazooka from the team and make sure that the tasks list
-        # is refreshed and the task unassigned
-        hover_and_click("#event-member-#{juanito_user.id}", 'Remove Member')
-        confirm_prompt 'Any tasks that are assigned to Juanito Bazooka must be reassigned. ' \
-                       'Would you like to remove Juanito Bazooka from the event team?'
-        expect(page).to_not have_content('Juanito Bazooka')
-
-        within('#event-tasks-container') do
-          expect(page).to_not have_content('Juanito Bazooka')
+        # Mark the tasks as completed
+        within('#event-tasks') do
+          checkbox = find('.task-completed-checkbox', visible: :false)
+          expect(checkbox['checked']).to be_falsey
+          find('.task-completed-checkbox').trigger('click')
         end
+        wait_for_ajax
+
+        # Check that the totals where properly updated
+        expect(page).to have_text('0INCOMPLETE')
+        expect(page).to have_text('0UNASSIGNED')
+        expect(page).to have_text('0LATE')
+
+        # refresh the page to make sure the checkbox remains selected
+        visit event_path(event)
+        expect(find('.task-completed-checkbox', visible: :false)['checked']).to be_truthy
       end
 
       scenario 'the entered data should be saved automatically when submitting the event recap' do
@@ -1526,13 +1423,13 @@ feature 'Events section' do
 
         fill_in 'Test Field', with: '98765'
 
-        click_js_link 'submit'
+        click_js_button 'Submit'
 
-        expect(page).to have_content('Your post event report has been submitted for approval.')
-        expect(page).to have_content('TEST FIELD 98,765')
+        expect(page).to have_content('Great job! Your PER has been submitted for approval.')
+        expect(page).to have_content('Test Field 98,765')
       end
 
-      scenario 'should not submit the event data if there are validation errors' do
+      scenario 'cannot submit a event if the per is not valid' do
         kpi = create(:kpi, name: 'Test Field', kpi_type: 'number', capture_mechanism: 'integer')
 
         field = campaign.add_kpi(kpi)
@@ -1546,50 +1443,57 @@ feature 'Events section' do
 
         visit event_path(event)
 
-        click_js_link 'submit'
+        expect(page).to_not have_button 'Submit'
+
+        click_js_button 'Save'
 
         expect(find_field('Test Field')).to have_error('This field is required.')
+        fill_in 'Test Field', with: '123'
+        click_js_button 'Save'
 
-        expect(page).to have_no_content('Your post event report has been submitted for approval.')
+        expect(page).to have_button 'Submit'
       end
 
       scenario 'allows to unapprove an approved event' do
-        event = create(:approved_event,
-                       start_date: Date.yesterday.to_s(:slashes),
-                       end_date: Date.yesterday.to_s(:slashes),
-                       campaign: campaign)
+        event = create(:approved_event, start_date: Date.yesterday.to_s(:slashes),
+                                        end_date: Date.yesterday.to_s(:slashes),
+                                        campaign: campaign)
 
         visit event_path(event)
 
-        expect(page).to have_content('Your post event report has been approved. Click here to unapprove.')
+        expect(page).to have_content('Nice! Your event has been Approved.')
 
-        click_js_link 'unapprove'
+        click_js_button 'Unapprove'
 
-        expect(page).to have_content('Your post event report has been submitted for approval.')
+        expect(page).to have_content('Your event have been Unapproved.')
       end
 
       scenario "display errors when an event don't meet a campaign module range" do
         event = create(:late_event,
-                       campaign: create(:campaign, company: company, name: 'Campaign FY2012', brands: [brand], modules: { 'comments' => { 'name' => 'comments', 'field_type' => 'module', 'settings' => { 'range_min' => '1', 'range_max' => '2'} } }))
+                       campaign: create(:campaign,
+                                        company: company, name: 'Campaign FY2012',
+                                        brands: [brand],
+                                        modules: {
+                                          'comments' => {
+                                            'name' => 'comments', 'field_type' => 'module',
+                                            'settings' => { 'range_min' => '1',
+                                                            'range_max' => '2'} } }))
 
         visit event_path(event)
 
-        expect(page).to have_content('Your post event report is late. Please submit post event data and enter comments now. Once complete, please submit your post event form.')
+        expect(page).to_not have_button 'Submit'
 
-        click_js_link 'submit'
-
+        click_js_button 'Add Comment'
         within visible_modal do
-          expect(page).to have_content('It is required at least 1 and not more than 2 comments')
-          click_js_link 'OK'
+          fill_in "comment[content]", with: 'This is a test comment'
+          click_js_button 'Create'
         end
-        ensure_modal_was_closed
+        expect(page).to have_content 'Looks good. Your comment has been saved.'
+        expect(page).to have_content 'This is a test comment'
 
-        event.comments << create(:comment, content: 'Comment #1', commentable: event)
-        event.save
+        click_js_button 'Submit'
 
-        click_js_link 'submit'
-
-        expect(page).to have_content('Your post event report has been submitted for approval.')
+        expect(page).to have_content('Great job! Your PER has been submitted for approval.')
       end
     end
   end
@@ -1600,5 +1504,13 @@ feature 'Events section' do
 
   def events_list
     '#events-list'
+  end
+
+  def contact_list
+    '#event-contacts-list'
+  end
+
+  def tracker_bar
+    '.trackers-bar'
   end
 end

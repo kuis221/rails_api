@@ -1,12 +1,12 @@
 module VenuesHelper
   def upcomming_venue_events_list
-    @venue_events = Event.do_search(
+    @venue_events ||= Event.do_search(
       company_id: current_company.id,
       current_company_user: current_company_user,
       venue: [resource.id], per_page: 5,
       sorting: :start_at, sorting_dir: :asc,
-      start_date: Time.zone.now.strftime('%m/%d/%Y'),
-      end_date: Time.zone.now + 10.years)
+      start_date: [Time.zone.now.strftime('%m/%d/%Y')],
+      end_date: [(Time.zone.now + 10.years).strftime('%m/%d/%Y')])
     @venue_events_total = @venue_events.total
     @venue_events.results
   end
@@ -17,7 +17,7 @@ module VenuesHelper
 
   def link_to_get_directions(venue)
     address = [venue.street, venue.city, venue.state, venue.zipcode, venue.country].join(' ')
-    link_to 'Get Directions', "https://maps.google.com?#{ { daddr: address}.to_query }",
+    link_to 'Get Directions', "https://maps.google.com?#{ { daddr: address }.to_query }",
             class: 'get-venue-directions', target: '_blank'
   end
 end

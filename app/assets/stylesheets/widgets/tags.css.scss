@@ -1,0 +1,104 @@
+/*
+A markup for tags
+
+Styleguide 6.1
+*/
+
+.tags-list{
+  list-style-type: none;
+  padding: 0px;
+  margin: 0px;
+  p{
+  	margin-bottom: 6px;
+  }
+  li{
+  	margin-bottom: 15px;
+  }
+}
+
+.user-tag{
+	padding: 0 10px 0 28px;
+}
+
+.user-tag-option{
+	padding: 0 22px 0 28px;
+}
+
+.user-tag, .user-tag-option{
+	display: inline-block;
+	font-size: 13px;
+	position: relative;
+	margin: 1px 5px 3px 0;
+  height: 24px;
+	border-radius: 12px;
+	background-color: $brand;
+	color: $white;
+	cursor: default;
+	.user-type{
+		background-color: $tags-gray;
+		display: inline-block;
+		@include border-radius(12px);
+		height: 24px;
+		position: absolute;
+		left: 0;
+		line-height: 26px;
+		overflow: hidden;
+		text-align: center;
+		width: 24px;
+		img{
+			vertical-align: top;
+			height: 100%;
+		  max-width: 200%;
+	    left: 100%;
+	    margin-left: -20%;
+		}
+	}
+	.icon-close {
+		color: $white;
+		display: block;
+		font-size: 9px;
+    line-height: 26px;
+		position: absolute;
+		right: 7px;
+		&:hover {
+			text-decoration: none;
+		}
+	}
+}
+
+.search-choice {
+	display: inline-block;
+	font-size: 13px;
+	position: relative;
+	margin: 1px 5px 3px 0;
+	padding: 0 22px 0 10px;
+	line-height: 24px;
+  height: 24px;
+	border-radius: 12px;
+	background-color: $brand;
+	color: $white;
+	cursor: default;
+	.icon-close{
+		color: $white;
+		display: block;
+		font-size: 10px;
+		position: absolute;
+		top: 8px;
+		right: 7px;
+		&:hover {
+			text-decoration: none;
+		}
+	}
+}
+
+.rounded-tag{
+	background-color: $gray-light;
+	color: $white;
+	@include border-radius(15px);
+	height: 25px;
+	text-align: center;
+	width: 25px;
+	i{
+		line-height: 25px;
+	}
+}

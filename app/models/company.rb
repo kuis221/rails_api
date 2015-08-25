@@ -2,12 +2,13 @@
 #
 # Table name: companies
 #
-#  id               :integer          not null, primary key
-#  name             :string(255)
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
-#  timezone_support :boolean
-#  settings         :hstore
+#  id                 :integer          not null, primary key
+#  name               :string(255)
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  timezone_support   :boolean
+#  settings           :hstore
+#  expense_categories :text
 #
 
 class Company < ActiveRecord::Base
@@ -31,6 +32,7 @@ class Company < ActiveRecord::Base
   has_many :kpis, dependent: :destroy
   has_many :reports, dependent: :destroy
   has_many :activity_types, dependent: :destroy
+  has_many :data_extracts, dependent: :destroy
   has_many :brand_ambassadors_visits, -> { order 'brand_ambassadors_visits.start_date ASC' },
            class_name: 'BrandAmbassadors::Visit', dependent: :destroy
   has_many :brand_ambassadors_documents, -> { order('attached_assets.file_file_name ASC') },
@@ -56,6 +58,11 @@ class Company < ActiveRecord::Base
   validates :admin_email, format: { with: /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/ }, allow_blank: true
 
   after_create :create_admin_role_and_user
+
+  before_save do
+    self.expense_categories ||= "Uncategorized\n Entertainment\nFuel/Mileage\n"\
+                                "Lodging\nMeals\nOther\nPhone\nTransportation"
+  end
 
   YTD_DEFAULT = 1
   YTD_JULY1_JUNE30 = 2 # Alternative YTD from July 1 to June 30

@@ -95,13 +95,13 @@ feature 'Brands', js: true do
     scenario 'allows the user to activate/deactivate a team' do
       brand = create(:brand, active: true, company_id: user.current_company.id)
       visit brand_path(brand)
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button 'Deactivate Brand'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this brand?'
 
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button 'Activate Brand'
         expect(page).to have_button 'Deactivate Brand' # test the link have changed
       end
@@ -112,7 +112,7 @@ feature 'Brands', js: true do
       Sunspot.commit
       visit brand_path(brand)
 
-      within('.links-data') { click_js_button 'Edit Brand' }
+      within('.edition-links') { click_js_button 'Edit Brand' }
 
       within visible_modal do
         fill_in 'Name', with: 'Edited brand name'
@@ -131,7 +131,7 @@ feature 'Brands', js: true do
       Sunspot.commit
       visit brand_path(brand)
 
-      within('.links-data') { click_js_button 'Edit Brand' }
+      within('.edition-links') { click_js_button 'Edit Brand' }
 
       within visible_modal do
         select2_remove_tag('Marque 1')
@@ -155,11 +155,11 @@ feature 'Brands', js: true do
       Sunspot.commit
     end
 
-    scenario 'should be able to export as XLS' do
+    scenario 'should be able to export as CSV' do
       visit brands_path
 
       click_js_link 'Download'
-      click_js_link 'Download as XLS'
+      click_js_link 'Download as CSV'
 
       within visible_modal do
         expect(page).to have_content('We are processing your request, the download will start soon...')
@@ -175,7 +175,7 @@ feature 'Brands', js: true do
       ])
     end
 
-    scenario 'should be able to export as PDF' do
+    scenario 'export list of brands as PDF' do
       visit brands_path
 
       click_js_link 'Download'

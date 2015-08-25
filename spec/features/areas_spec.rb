@@ -18,7 +18,7 @@ feature 'Areas', js: true, search: true  do
     scenario 'allows the user to edit the area' do
       visit area_path(area)
 
-      within('.links-data') { click_js_button 'Edit Area' }
+      within('.edition-links') { click_js_button 'Edit Area' }
 
       within visible_modal do
         fill_in 'Name', with: 'edited area name'
@@ -41,7 +41,7 @@ feature 'Areas', js: true, search: true  do
       company_user.places << venue.place
       visit area_path(area)
 
-      click_js_link 'Add Place'
+      click_js_button 'Add Place'
 
       within visible_modal do
         select_from_autocomplete 'Search for a place', 'Guillermitos Bar'
@@ -58,8 +58,8 @@ feature 'Areas', js: true, search: true  do
       expect(Area.last.places.count).to eql 0
     end
 
-    scenario 'can add an NON existing place to the area. (place from Google\'s)', :vcr do
-      expect(Place).to receive(:open).and_return(double(read: { results:
+    scenario 'can add an NON existing place to the area. (place from Google\'s)' do
+      expect_any_instance_of(CombinedSearch).to receive(:open).and_return(double(read: { results:
         [
           { reference: 'xxxxx', place_id: '1111', name: 'Walt Disney World Dolphin',
             formatted_address: '1500 Epcot Resorts Blvd, Lake Buena Vista, Florida, United States' }
@@ -77,7 +77,7 @@ feature 'Areas', js: true, search: true  do
       ))
       visit area_path(area)
 
-      click_js_link 'Add Place'
+      click_js_button 'Add Place'
 
       expect do
         within visible_modal do
@@ -223,13 +223,13 @@ feature 'Areas', js: true, search: true  do
 
       scenario 'allows the user to activate/deactivate a area' do
         visit area_path(area)
-        within('.links-data') do
+        within('.edition-links') do
           click_js_button 'Deactivate Area'
         end
 
         confirm_prompt 'Are you sure you want to deactivate this area?'
 
-        within('.links-data') do
+        within('.edition-links') do
           click_js_button 'Activate Area'
           expect(page).to have_button 'Deactivate Area' # test the link have changed
         end
@@ -255,11 +255,11 @@ feature 'Areas', js: true, search: true  do
         Sunspot.commit
       end
 
-      scenario 'should be able to export as XLS' do
+      scenario 'should be able to export as CSV' do
         visit areas_path
 
         click_js_link 'Download'
-        click_js_link 'Download as XLS'
+        click_js_link 'Download as CSV'
 
         within visible_modal do
           expect(page).to have_content('We are processing your request, the download will start soon...')
@@ -306,5 +306,4 @@ feature 'Areas', js: true, search: true  do
       end
     end
   end
-
 end

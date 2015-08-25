@@ -14,6 +14,7 @@
 #  updated_at     :datetime         not null
 #  kpi_id         :integer
 #
+
 include ActionView::Helpers::NumberHelper
 
 class FormField::Currency < FormField
@@ -24,6 +25,11 @@ class FormField::Currency < FormField
       field_id: id,
       options: settings,
       required: required,
+      hint: range_message,
+      hint_html: {
+        id: "hint-#{id}",
+        class: 'range-help-block'
+      },
       input_html: {
         value: result.value,
         class: field_classes.push('elements-range'),
@@ -40,6 +46,7 @@ class FormField::Currency < FormField
       data['range-format'] = settings['range_format'] if settings['range_format'].present?
       data['range-min'] = settings['range_min'] if settings['range_min'].present?
       data['range-max'] = settings['range_max'] if settings['range_max'].present?
+      data['field-id'] = id
     end
     data
   end
@@ -57,5 +64,22 @@ class FormField::Currency < FormField
 
   def is_numeric?
     true
+  end
+
+  def grouped_results(campaign, event_scope)
+    events = form_field_results.for_event_campaign(campaign).merge(event_scope)
+    result = events.map { |event| event.value }
+    total = result.compact.inject{ |sum,x| sum.to_f + x.to_f } || 0
+    "$#{total}"
+  end
+
+  def csv_results(campaign, event_scope, hash_result)
+    events = form_field_results.for_event_campaign(campaign).merge(event_scope)
+    hash_result[:titles] << name
+    events.each do |event|
+      value = event.value.nil? ? "" : event.value
+      hash_result[event.resultable_id] << value unless hash_result[event.resultable_id].nil?
+    end
+    hash_result
   end
 end

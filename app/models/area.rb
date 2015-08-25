@@ -21,6 +21,11 @@ class Area < ActiveRecord::Base
 
   scoped_to_company
 
+  has_paper_trail
+
+  # Defines the method do_search
+  include SolrSearchable
+
   validates :name, presence: true, uniqueness: { scope: :company_id }
   validates :company_id, presence: true
 
@@ -32,6 +37,8 @@ class Area < ActiveRecord::Base
 
   scope :active, -> { where(active: true) }
   scope :not_in_venue, ->(place) { where('areas.id not in (?)', place.area_ids + [0]) }
+
+  belongs_to :created_by, class_name: 'User'
 
   def self.accessible_by_user(company_user)
     if company_user.is_admin?
@@ -69,6 +76,10 @@ class Area < ActiveRecord::Base
 
     string :name
 
+    integer :location_ids, multiple: true do
+      common_denominators_locations + locations.map(&:id)
+    end
+
     string :status
 
     boolean :active
@@ -78,11 +89,10 @@ class Area < ActiveRecord::Base
 
   # Returns a list of locations ids that are associated to the area
   def locations
-    @locations ||=
-      Rails.cache.fetch("area_locations_#{id}") do
-        Location.joins('INNER JOIN places ON places.location_id=locations.id')
-                .where(places: { id: place_ids, is_location: true }).group('locations.id').to_a
-      end
+    Rails.cache.fetch("area_locations_#{id}") do
+      Location.joins('INNER JOIN places ON places.location_id=locations.id')
+              .where(places: { id: place_ids, is_location: true }).group('locations.id').to_a
+    end
   end
 
   def cities
@@ -132,20 +142,6 @@ class Area < ActiveRecord::Base
   end
 
   class << self
-    # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
-    def do_search(params, include_facets = false)
-      solr_search do
-        with(:company_id, params[:company_id])
-        with(:status, params[:status]) if params.key?(:status) && params[:status].present?
-        with(:id, params[:area]) if params.key?(:area) && params[:area].present?
-
-        facet :status if include_facets
-
-        order_by(params[:sorting] || :name, params[:sorting_dir] || :asc)
-        paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
-      end
-    end
-
     def searchable_params
       [area: [], status: []]
     end
@@ -178,6 +174,7 @@ class Area < ActiveRecord::Base
   def update_common_denominators
     denominators = []
     list_places = places.all.to_a.select { |p| !p.types.nil? && p.is_location? }
+    list_places.reject! { |p| p.types && p.types.include?('natural_feature') && p.city.nil? }
     continents = list_places.map(&:continent_name)
     if continents.compact.size == list_places.size && continents.uniq.size == 1
       denominators.push continents.first

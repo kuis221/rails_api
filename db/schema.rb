@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150226220017) do
+ActiveRecord::Schema.define(version: 20150814224113) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,7 +19,6 @@ ActiveRecord::Schema.define(version: 20150226220017) do
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
   enable_extension "postgis"
-  enable_extension "postgres_fdw"
   enable_extension "tablefunc"
 
   create_table "active_admin_comments", force: true do |t|
@@ -47,6 +46,8 @@ ActiveRecord::Schema.define(version: 20150226220017) do
     t.datetime "activity_date"
     t.datetime "created_at",                      null: false
     t.datetime "updated_at",                      null: false
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
   end
 
   add_index "activities", ["activitable_id", "activitable_type"], :name => "index_activities_on_activitable_id_and_activitable_type"
@@ -66,10 +67,12 @@ ActiveRecord::Schema.define(version: 20150226220017) do
   create_table "activity_types", force: true do |t|
     t.string   "name"
     t.text     "description"
-    t.boolean  "active",      default: true
+    t.boolean  "active",        default: true
     t.integer  "company_id"
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
   end
 
   add_index "activity_types", ["company_id"], :name => "index_activity_types_on_company_id"
@@ -151,13 +154,14 @@ ActiveRecord::Schema.define(version: 20150226220017) do
     t.string   "attachable_type"
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
-    t.datetime "created_at",                        null: false
-    t.datetime "updated_at",                        null: false
-    t.boolean  "active",            default: true
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
+    t.boolean  "active",                default: true
     t.string   "direct_upload_url"
-    t.boolean  "processed",         default: false, null: false
-    t.integer  "rating",            default: 0
+    t.integer  "rating",                default: 0
     t.integer  "folder_id"
+    t.integer  "status",                default: 0
+    t.integer  "processing_percentage", default: 0
   end
 
   add_index "attached_assets", ["attachable_type", "attachable_id"], :name => "index_attached_assets_on_attachable_type_and_attachable_id"
@@ -297,10 +301,11 @@ ActiveRecord::Schema.define(version: 20150226220017) do
 
   create_table "companies", force: true do |t|
     t.string   "name"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
     t.boolean  "timezone_support"
     t.hstore   "settings"
+    t.text     "expense_categories"
   end
 
   create_table "company_users", force: true do |t|
@@ -313,6 +318,7 @@ ActiveRecord::Schema.define(version: 20150226220017) do
     t.datetime "last_activity_at"
     t.string   "notifications_settings",  default: [],                array: true
     t.datetime "last_activity_mobile_at"
+    t.string   "tableau_username"
   end
 
   add_index "company_users", ["company_id"], :name => "index_company_users_on_company_id"
@@ -342,8 +348,11 @@ ActiveRecord::Schema.define(version: 20150226220017) do
     t.string   "state"
     t.string   "city"
     t.string   "zip_code"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
+    t.string   "company_name"
   end
 
   create_table "custom_filters", force: true do |t|
@@ -366,6 +375,27 @@ ActiveRecord::Schema.define(version: 20150226220017) do
   end
 
   add_index "custom_filters_categories", ["company_id"], :name => "index_custom_filters_categories_on_company_id"
+
+  create_table "data_extracts", force: true do |t|
+    t.string   "type"
+    t.integer  "company_id"
+    t.boolean  "active",           default: true
+    t.string   "sharing"
+    t.string   "name"
+    t.text     "description"
+    t.text     "columns"
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "default_sort_by"
+    t.string   "default_sort_dir"
+    t.text     "params"
+  end
+
+  add_index "data_extracts", ["company_id"], :name => "index_data_extracts_on_company_id"
+  add_index "data_extracts", ["created_by_id"], :name => "index_data_extracts_on_created_by_id"
+  add_index "data_extracts", ["updated_by_id"], :name => "index_data_extracts_on_updated_by_id"
 
   create_table "data_migrations", force: true do |t|
     t.integer  "remote_id"
@@ -450,6 +480,16 @@ ActiveRecord::Schema.define(version: 20150226220017) do
   add_index "document_folders", ["company_id"], :name => "index_document_folders_on_company_id"
   add_index "document_folders", ["parent_id"], :name => "index_document_folders_on_parent_id"
 
+  create_table "entity_forms", force: true do |t|
+    t.string   "entity"
+    t.integer  "entity_id"
+    t.integer  "company_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "entity_forms", ["entity", "company_id"], :name => "index_entity_forms_on_entity_and_company_id", :unique => true
+
   create_table "event_data", force: true do |t|
     t.integer  "event_id"
     t.integer  "impressions",                                        default: 0
@@ -471,13 +511,18 @@ ActiveRecord::Schema.define(version: 20150226220017) do
 
   create_table "event_expenses", force: true do |t|
     t.integer  "event_id"
-    t.string   "name"
-    t.decimal  "amount",        precision: 9, scale: 2, default: 0.0
+    t.decimal  "amount",        precision: 15, scale: 2, default: 0.0
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
-    t.datetime "created_at",                                          null: false
-    t.datetime "updated_at",                                          null: false
+    t.datetime "created_at",                                           null: false
+    t.datetime "updated_at",                                           null: false
     t.integer  "brand_id"
+    t.string   "category"
+    t.date     "expense_date"
+    t.boolean  "reimbursable"
+    t.boolean  "billable"
+    t.string   "merchant"
+    t.text     "description"
   end
 
   add_index "event_expenses", ["brand_id"], :name => "index_event_expenses_on_brand_id"
@@ -491,16 +536,21 @@ ActiveRecord::Schema.define(version: 20150226220017) do
     t.string   "aasm_state"
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
-    t.datetime "created_at",                                            null: false
-    t.datetime "updated_at",                                            null: false
-    t.boolean  "active",                                 default: true
+    t.datetime "created_at",                                                 null: false
+    t.datetime "updated_at",                                                 null: false
+    t.boolean  "active",                                      default: true
     t.integer  "place_id"
-    t.decimal  "promo_hours",    precision: 6, scale: 2, default: 0.0
+    t.decimal  "promo_hours",         precision: 6, scale: 2, default: 0.0
     t.text     "reject_reason"
     t.string   "timezone"
     t.datetime "local_start_at"
     t.datetime "local_end_at"
     t.text     "description"
+    t.string   "kbmg_event_id"
+    t.datetime "rejected_at"
+    t.datetime "submitted_at"
+    t.datetime "approved_at"
+    t.integer  "active_photos_count",                         default: 0
   end
 
   add_index "events", ["aasm_state"], :name => "index_events_on_aasm_state"
@@ -536,7 +586,7 @@ ActiveRecord::Schema.define(version: 20150226220017) do
     t.datetime "created_at",                                             null: false
     t.datetime "updated_at",                                             null: false
     t.hstore   "hash_value"
-    t.decimal  "scalar_value",    precision: 10, scale: 2, default: 0.0
+    t.decimal  "scalar_value",    precision: 15, scale: 2, default: 0.0
     t.integer  "resultable_id"
     t.string   "resultable_type"
   end
@@ -554,9 +604,10 @@ ActiveRecord::Schema.define(version: 20150226220017) do
     t.text     "settings"
     t.integer  "ordering"
     t.boolean  "required"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
     t.integer  "kpi_id"
+    t.string   "capture_mechanism"
   end
 
   add_index "form_fields", ["fieldable_id", "fieldable_type"], :name => "index_form_fields_on_fieldable_id_and_fieldable_type"
@@ -581,6 +632,17 @@ ActiveRecord::Schema.define(version: 20150226220017) do
   add_index "goals", ["kpi_id"], :name => "index_goals_on_kpi_id"
   add_index "goals", ["kpis_segment_id"], :name => "index_goals_on_kpis_segment_id"
 
+  create_table "hours_fields", force: true do |t|
+    t.integer  "venue_id"
+    t.integer  "day"
+    t.string   "hour_open"
+    t.string   "hour_close"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "hours_fields", ["venue_id"], :name => "index_hours_fields_on_venue_id"
+
   create_table "invite_rsvps", force: true do |t|
     t.integer  "invite_id"
     t.integer  "registrant_id"
@@ -597,6 +659,11 @@ ActiveRecord::Schema.define(version: 20150226220017) do
     t.string   "bartender_role"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "date_of_birth"
+    t.string   "zip_code"
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
+    t.boolean  "attended"
   end
 
   add_index "invite_rsvps", ["invite_id"], :name => "index_invite_rsvps_on_invite_id"
@@ -605,15 +672,19 @@ ActiveRecord::Schema.define(version: 20150226220017) do
     t.integer  "event_id"
     t.integer  "venue_id"
     t.string   "market"
-    t.integer  "invitees",    default: 0
-    t.integer  "rsvps_count", default: 0
-    t.integer  "attendees",   default: 0
+    t.integer  "invitees",      default: 0
+    t.integer  "rsvps_count",   default: 0
+    t.integer  "attendees",     default: 0
     t.date     "final_date"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "active",      default: true
+    t.boolean  "active",        default: true
+    t.integer  "area_id"
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
   end
 
+  add_index "invites", ["area_id"], :name => "index_invites_on_area_id"
   add_index "invites", ["event_id"], :name => "index_invites_on_event_id"
   add_index "invites", ["venue_id"], :name => "index_invites_on_venue_id"
 
@@ -715,7 +786,7 @@ ActiveRecord::Schema.define(version: 20150226220017) do
     t.spatial "geog",     limit: {:srid=>4326, :type=>"multi_polygon", :geographic=>true}
   end
 
-  add_index "neighborhoods", ["geog"], :name => "neighborhoods_geog_idx", :spatial => true
+  add_index "neighborhoods", ["geog"], :name => "index_neighborhoods_on_geog", :spatial => true
 
   create_table "notifications", force: true do |t|
     t.integer  "company_user_id"
@@ -754,8 +825,8 @@ ActiveRecord::Schema.define(version: 20150226220017) do
   create_table "places", force: true do |t|
     t.string   "name"
     t.string   "reference",              limit: 400
-    t.string   "place_id",               limit: 100
-    t.string   "types"
+    t.string   "place_id",               limit: 200
+    t.string   "types_old"
     t.string   "formatted_address"
     t.string   "street_number"
     t.string   "route"
@@ -775,6 +846,8 @@ ActiveRecord::Schema.define(version: 20150226220017) do
     t.string   "neighborhoods",                                                                                array: true
     t.spatial  "lonlat",                 limit: {:srid=>4326, :type=>"point", :geographic=>true}
     t.integer  "td_linx_confidence"
+    t.integer  "merged_with_place_id"
+    t.string   "types",                                                                                        array: true
   end
 
   add_index "places", ["city"], :name => "index_places_on_city"
@@ -816,12 +889,14 @@ ActiveRecord::Schema.define(version: 20150226220017) do
 
   create_table "roles", force: true do |t|
     t.string   "name"
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
     t.integer  "company_id"
-    t.boolean  "active",      default: true
+    t.boolean  "active",        default: true
     t.text     "description"
-    t.boolean  "is_admin",    default: false
+    t.boolean  "is_admin",      default: false
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
   end
 
   create_table "satisfaction_surveys", force: true do |t|
@@ -999,10 +1074,46 @@ ActiveRecord::Schema.define(version: 20150226220017) do
     t.boolean  "score_dirty",                                   default: false
     t.boolean  "jameson_locals",                                default: false
     t.boolean  "top_venue",                                     default: false
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
+    t.string   "web_address"
   end
 
   add_index "venues", ["company_id", "place_id"], :name => "index_venues_on_company_id_and_place_id", :unique => true
   add_index "venues", ["company_id"], :name => "index_venues_on_company_id"
   add_index "venues", ["place_id"], :name => "index_venues_on_place_id"
+
+  create_table "version_associations", force: true do |t|
+    t.integer "version_id"
+    t.string  "foreign_key_name", null: false
+    t.integer "foreign_key_id"
+  end
+
+  add_index "version_associations", ["foreign_key_name", "foreign_key_id"], :name => "index_version_associations_on_foreign_key"
+  add_index "version_associations", ["version_id"], :name => "index_version_associations_on_version_id"
+
+  create_table "versions", force: true do |t|
+    t.string   "item_type",      null: false
+    t.integer  "item_id",        null: false
+    t.string   "event",          null: false
+    t.string   "ip"
+    t.string   "user_agent"
+    t.string   "whodunnit"
+    t.text     "object"
+    t.datetime "created_at"
+    t.integer  "transaction_id"
+  end
+
+  add_index "versions", ["item_type", "item_id"], :name => "index_versions_on_item_type_and_item_id"
+  add_index "versions", ["transaction_id"], :name => "index_versions_on_transaction_id"
+
+  create_table "views_for_data_extracts", force: true do |t|
+  end
+
+  create_table "zipcode_locations", force: true do |t|
+    t.string  "zipcode",                                                                  null: false
+    t.spatial "lonlat",          limit: {:srid=>4326, :type=>"point", :geographic=>true}
+    t.integer "neighborhood_id"
+  end
 
 end

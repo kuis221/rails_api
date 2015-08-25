@@ -8,7 +8,7 @@
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  hash_value      :hstore
-#  scalar_value    :decimal(10, 2)   default(0.0)
+#  scalar_value    :decimal(15, 2)   default(0.0)
 #  resultable_id   :integer
 #  resultable_type :string(255)
 #
@@ -42,10 +42,10 @@ describe FormFieldResult, type: :model do
     describe "when doesn't have range validation rules" do
       let(:form_field) do
         create(:form_field,
-                           type: 'FormField::Number',
-                           settings: {},
-                           fieldable: create(:activity_type, company_id: 1),
-                           required: false)
+               type: 'FormField::Number',
+               settings: {},
+               fieldable: create(:activity_type, company_id: 1),
+               required: false)
       end
       before { subject.form_field_id = form_field.id }
       it { is_expected.to validate_numericality_of(:value) }
@@ -58,10 +58,10 @@ describe FormFieldResult, type: :model do
     describe 'when range format is digits' do
       let(:form_field) do
         create(:form_field,
-                           type: 'FormField::Number',
-                           settings: { 'range_format' => 'digits', 'range_min' => '2', 'range_max' => '4' },
-                           fieldable: create(:activity_type, company_id: 1),
-                           required: false)
+               type: 'FormField::Number',
+               settings: { 'range_format' => 'digits', 'range_min' => '2', 'range_max' => '4' },
+               fieldable: create(:activity_type, company_id: 1),
+               required: false)
       end
       before { subject.form_field_id = form_field.id }
       it { is_expected.to allow_value(nil).for(:value) }
@@ -77,10 +77,10 @@ describe FormFieldResult, type: :model do
     describe 'when range format is value' do
       let(:form_field) do
         create(:form_field,
-                           type: 'FormField::Number',
-                           settings: { 'range_format' => 'value', 'range_min' => '2', 'range_max' => '4' },
-                           fieldable: create(:activity_type, company_id: 1),
-                           required: false)
+               type: 'FormField::Number',
+               settings: { 'range_format' => 'value', 'range_min' => '2', 'range_max' => '4' },
+               fieldable: create(:activity_type, company_id: 1),
+               required: false)
       end
       before { subject.form_field_id = form_field.id }
       it { is_expected.to allow_value(nil).for(:value) }
@@ -96,16 +96,59 @@ describe FormFieldResult, type: :model do
       it { is_expected.not_to allow_value(4.1).for(:value).with_message('is invalid') }
       it { is_expected.not_to allow_value('5').for(:value).with_message('is invalid') }
     end
+
+    describe 'when only have a min but not a max' do
+      let(:form_field) do
+        create(:form_field,
+               type: 'FormField::Number',
+               settings: { 'range_format' => 'value', 'range_min' => '2', 'range_max' => '' },
+               fieldable: create(:activity_type, company_id: 1),
+               required: false)
+      end
+      before { subject.form_field_id = form_field.id }
+      it { is_expected.to allow_value(nil).for(:value) }
+      it { is_expected.to allow_value('').for(:value) }
+      it { is_expected.to allow_value(2).for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value(3).for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value(500).for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value(4.0).for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value('4').for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value('5000').for(:value).with_message('is invalid') }
+      it { is_expected.not_to allow_value(1).for(:value).with_message('is invalid') }
+    end
+
+    describe 'when only have a max but not a min' do
+      let(:form_field) do
+        create(:form_field,
+               type: 'FormField::Number',
+               settings: { 'range_format' => 'value', 'range_min' => '', 'range_max' => '4' },
+               fieldable: create(:activity_type, company_id: 1),
+               required: false)
+      end
+      before { subject.form_field_id = form_field.id }
+      it { is_expected.to allow_value(nil).for(:value) }
+      it { is_expected.to allow_value('').for(:value) }
+      it { is_expected.to allow_value(-2).for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value(0).for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value(3).for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value(4.0).for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value('4').for(:value).with_message('is invalid') }
+      it { is_expected.not_to allow_value(500).for(:value).with_message('is invalid') }
+      it { is_expected.not_to allow_value('5000').for(:value).with_message('is invalid') }
+      it { is_expected.not_to allow_value(4.1).for(:value).with_message('is invalid') }
+      it { is_expected.not_to allow_value(10).for(:value).with_message('is invalid') }
+      it { is_expected.not_to allow_value('10').for(:value).with_message('is invalid') }
+    end
   end
 
   describe 'for currency fields' do
     describe "when doesn't have range validation rules" do
       let(:form_field) do
         create(:form_field,
-                           type: 'FormField::Currency',
-                           settings: {},
-                           fieldable: create(:activity_type, company_id: 1),
-                           required: false)
+               type: 'FormField::Currency',
+               settings: {},
+               fieldable: create(:activity_type, company_id: 1),
+               required: false)
       end
       before { subject.form_field_id = form_field.id }
       it { is_expected.to validate_numericality_of(:value) }
@@ -118,10 +161,10 @@ describe FormFieldResult, type: :model do
     describe 'when range format is digits' do
       let(:form_field) do
         create(:form_field,
-                           type: 'FormField::Currency',
-                           settings: { 'range_format' => 'digits', 'range_min' => '2', 'range_max' => '4' },
-                           fieldable: create(:activity_type, company_id: 1),
-                           required: false)
+               type: 'FormField::Currency',
+               settings: { 'range_format' => 'digits', 'range_min' => '2', 'range_max' => '4' },
+               fieldable: create(:activity_type, company_id: 1),
+               required: false)
       end
       before { subject.form_field_id = form_field.id }
       it { is_expected.to allow_value(nil).for(:value) }
@@ -137,10 +180,10 @@ describe FormFieldResult, type: :model do
     describe 'when range format is value' do
       let(:form_field) do
         create(:form_field,
-                           type: 'FormField::Currency',
-                           settings: { 'range_format' => 'value', 'range_min' => '2', 'range_max' => '4' },
-                           fieldable: create(:activity_type, company_id: 1),
-                           required: false)
+               type: 'FormField::Currency',
+               settings: { 'range_format' => 'value', 'range_min' => '2', 'range_max' => '4' },
+               fieldable: create(:activity_type, company_id: 1),
+               required: false)
       end
       before { subject.form_field_id = form_field.id }
       it { is_expected.to allow_value(nil).for(:value) }
@@ -171,10 +214,10 @@ describe FormFieldResult, type: :model do
     describe "when it's required" do
       let(:form_field) do
         create(:form_field,
-                           type: 'FormField::Text',
-                           settings: {},
-                           fieldable: create(:activity_type, company_id: 1),
-                           required: true)
+               type: 'FormField::Text',
+               settings: {},
+               fieldable: create(:activity_type, company_id: 1),
+               required: true)
       end
       before { subject.form_field_id = form_field.id }
       it { is_expected.to_not allow_value(nil).for(:value) }
@@ -186,10 +229,10 @@ describe FormFieldResult, type: :model do
     describe "when doesn't have range validation rules" do
       let(:form_field) do
         create(:form_field,
-                           type: 'FormField::Text',
-                           settings: {},
-                           fieldable: create(:activity_type, company_id: 1),
-                           required: false)
+               type: 'FormField::Text',
+               settings: {},
+               fieldable: create(:activity_type, company_id: 1),
+               required: false)
       end
       before { subject.form_field_id = form_field.id }
       it { is_expected.to allow_value(nil).for(:value) }
@@ -202,10 +245,10 @@ describe FormFieldResult, type: :model do
     describe 'when range format is characters' do
       let(:form_field) do
         create(:form_field,
-                           type: 'FormField::Text',
-                           settings: { 'range_format' => 'characters', 'range_min' => '2', 'range_max' => '4' },
-                           fieldable: create(:activity_type, company_id: 1),
-                           required: false)
+               type: 'FormField::Text',
+               settings: { 'range_format' => 'characters', 'range_min' => '2', 'range_max' => '4' },
+               fieldable: create(:activity_type, company_id: 1),
+               required: false)
       end
       before { subject.form_field_id = form_field.id }
       it { is_expected.to allow_value(nil).for(:value) }
@@ -218,10 +261,10 @@ describe FormFieldResult, type: :model do
     describe 'when range format is words' do
       let(:form_field) do
         create(:form_field,
-                           type: 'FormField::Text',
-                           settings: { 'range_format' => 'words', 'range_min' => '2', 'range_max' => '4' },
-                           fieldable: create(:activity_type, company_id: 1),
-                           required: false)
+               type: 'FormField::Text',
+               settings: { 'range_format' => 'words', 'range_min' => '2', 'range_max' => '4' },
+               fieldable: create(:activity_type, company_id: 1),
+               required: false)
       end
       before { subject.form_field_id = form_field.id }
       it { is_expected.to allow_value(nil).for(:value) }
@@ -234,10 +277,10 @@ describe FormFieldResult, type: :model do
     describe 'when have a range-min but not range-max validation' do
       let(:form_field) do
         create(:form_field,
-                           type: 'FormField::Text',
-                           settings: { 'range_format' => 'words', 'range_min' => '2', 'range_max' => '' },
-                           fieldable: create(:activity_type, company_id: 1),
-                           required: false)
+               type: 'FormField::Text',
+               settings: { 'range_format' => 'words', 'range_min' => '2', 'range_max' => '' },
+               fieldable: create(:activity_type, company_id: 1),
+               required: false)
       end
       before { subject.form_field_id = form_field.id }
       it { is_expected.to allow_value(nil).for(:value) }
@@ -251,10 +294,10 @@ describe FormFieldResult, type: :model do
     describe 'when have a range-max but not range-min validation' do
       let(:form_field) do
         create(:form_field,
-                           type: 'FormField::Text',
-                           settings: { 'range_format' => 'characters', 'range_min' => '', 'range_max' => '2' },
-                           fieldable: create(:activity_type, company_id: 1),
-                           required: false)
+               type: 'FormField::Text',
+               settings: { 'range_format' => 'characters', 'range_min' => '', 'range_max' => '2' },
+               fieldable: create(:activity_type, company_id: 1),
+               required: false)
       end
       before { subject.form_field_id = form_field.id }
       it { is_expected.to allow_value(nil).for(:value) }
@@ -271,10 +314,10 @@ describe FormFieldResult, type: :model do
     describe "when it's required" do
       let(:form_field) do
         create(:form_field,
-                           type: 'FormField::TextArea',
-                           settings: {},
-                           fieldable: create(:activity_type, company_id: 1),
-                           required: true)
+               type: 'FormField::TextArea',
+               settings: {},
+               fieldable: create(:activity_type, company_id: 1),
+               required: true)
       end
       before { subject.form_field_id = form_field.id }
       it { is_expected.to_not allow_value(nil).for(:value) }
@@ -286,10 +329,10 @@ describe FormFieldResult, type: :model do
     describe "when doesn't have range validation rules" do
       let(:form_field) do
         create(:form_field,
-                           type: 'FormField::TextArea',
-                           settings: {},
-                           fieldable: create(:activity_type, company_id: 1),
-                           required: false)
+               type: 'FormField::TextArea',
+               settings: {},
+               fieldable: create(:activity_type, company_id: 1),
+               required: false)
       end
       before { subject.form_field_id = form_field.id }
       it { is_expected.to allow_value(nil).for(:value) }
@@ -301,10 +344,10 @@ describe FormFieldResult, type: :model do
     describe 'when range format is characters' do
       let(:form_field) do
         create(:form_field,
-                           type: 'FormField::TextArea',
-                           settings: { 'range_format' => 'characters', 'range_min' => '2', 'range_max' => '4' },
-                           fieldable: create(:activity_type, company_id: 1),
-                           required: false)
+               type: 'FormField::TextArea',
+               settings: { 'range_format' => 'characters', 'range_min' => '2', 'range_max' => '4' },
+               fieldable: create(:activity_type, company_id: 1),
+               required: false)
       end
       before { subject.form_field_id = form_field.id }
       it { is_expected.to allow_value(nil).for(:value) }
@@ -335,10 +378,10 @@ describe FormFieldResult, type: :model do
     describe 'when not associated to a KPI' do
       let(:form_field) do
         create(:form_field,
-                           type: 'FormField::Percentage',
-                           options: [create(:form_field_option, name: 'Opt1'), create(:form_field_option, name: 'Opt2')],
-                           fieldable: create(:activity_type, company_id: 1),
-                           required: false)
+               type: 'FormField::Percentage',
+               options: [create(:form_field_option, name: 'Opt1'), create(:form_field_option, name: 'Opt2')],
+               fieldable: create(:activity_type, company_id: 1),
+               required: false)
       end
       before { subject.form_field_id = form_field.id }
       it { is_expected.to allow_value(nil).for(:value) }
@@ -366,15 +409,14 @@ describe FormFieldResult, type: :model do
     describe 'when associated to a KPI' do
       let(:form_field) do
         create(:form_field,
-                           type: 'FormField::Percentage',
-                           kpi: kpi,
-                           fieldable: create(:activity_type, company_id: 1),
-                           required: false)
+               type: 'FormField::Percentage',
+               kpi: kpi,
+               fieldable: create(:activity_type, company_id: 1),
+               required: false)
       end
       let(:kpi) do
-        create(:kpi,
-                           kpi_type: 'percentage',
-                           kpis_segments: [create(:kpis_segment), create(:kpis_segment)])
+        create(:kpi, kpi_type: 'percentage',
+                     kpis_segments: [create(:kpis_segment), create(:kpis_segment)])
       end
       before { subject.form_field_id = form_field.id }
       it { is_expected.to allow_value(nil).for(:value) }
@@ -429,21 +471,38 @@ describe FormFieldResult, type: :model do
   describe 'for likert scale fields' do
     let(:form_field) do
       create(:form_field,
-                         type: 'FormField::LikertScale',
-                         options: [create(:form_field_option, name: 'Opt1'), create(:form_field_option, name: 'Opt2')],
-                         statements: [create(:form_field_statement, name: 'Stat1'), create(:form_field_statement, name: 'Stat2')],
-                         fieldable: create(:activity_type, company_id: 1),
-                         required: false)
+             type: 'FormField::LikertScale',
+             options: [create(:form_field_option, name: 'Opt1'), create(:form_field_option, name: 'Opt2')],
+             statements: [create(:form_field_statement, name: 'Stat1'), create(:form_field_statement, name: 'Stat2')],
+             fieldable: create(:activity_type, company_id: 1), capture_mechanism: 'radio',
+             required: false)
     end
     before { subject.form_field_id = form_field.id }
-    it { is_expected.to allow_value(nil).for(:value) }
-    it { is_expected.to allow_value('').for(:value) }
-    it { is_expected.to allow_value(form_field.statements[0].id => form_field.options[0].id, form_field.statements[1].id => form_field.options[0].id).for(:value) }
-    it { is_expected.to allow_value(form_field.statements[0].id.to_s => form_field.options[0].id.to_s, form_field.statements[1].id.to_s => form_field.options[1].id.to_s).for(:value) }
-    it { is_expected.to allow_value(form_field.statements[0].id => '', form_field.statements[1].id => '').for(:value) }
-    it { is_expected.to allow_value(form_field.statements[0].id => form_field.options[0].id.to_s, form_field.statements[1].id => '').for(:value) }
-    it { is_expected.not_to allow_value(999 => 10, 888 => 90).for(:value) }
-    it { is_expected.not_to allow_value(1).for(:value) }
+
+    describe 'when it is radio buttons' do
+      it { is_expected.to allow_value(nil).for(:value) }
+      it { is_expected.to allow_value('').for(:value) }
+      it { is_expected.to allow_value(form_field.statements[0].id => form_field.options[0].id, form_field.statements[1].id => form_field.options[0].id).for(:value) }
+      it { is_expected.to allow_value(form_field.statements[0].id.to_s => form_field.options[0].id.to_s, form_field.statements[1].id.to_s => form_field.options[1].id.to_s).for(:value) }
+      it { is_expected.to allow_value(form_field.statements[0].id => '', form_field.statements[1].id => '').for(:value) }
+      it { is_expected.to allow_value(form_field.statements[0].id => form_field.options[0].id.to_s, form_field.statements[1].id => '').for(:value) }
+      it { is_expected.not_to allow_value(999 => 10, 888 => 90).for(:value) }
+      it { is_expected.not_to allow_value(1).for(:value) }
+    end
+
+    describe 'when it is checkboxes' do
+      before { subject.form_field.capture_mechanism = 'checkbox' }
+      it { is_expected.to allow_value(nil).for(:value) }
+      it { is_expected.to allow_value('').for(:value) }
+      it { is_expected.to allow_value(form_field.statements[0].id => [form_field.options[0].id], form_field.statements[1].id => [form_field.options[0].id]).for(:value) }
+      it { is_expected.to allow_value(form_field.statements[0].id.to_s => [form_field.options[0].id.to_s], form_field.statements[1].id.to_s => [form_field.options[1].id.to_s]).for(:value) }
+      it { is_expected.to allow_value(form_field.statements[0].id => '', form_field.statements[1].id => '').for(:value) }
+      it { is_expected.to allow_value(form_field.statements[0].id => [form_field.options[0].id.to_s], form_field.statements[1].id => '').for(:value) }
+      it { is_expected.to allow_value(form_field.statements[0].id => [form_field.options[0].id, form_field.options[1].id], form_field.statements[1].id => [form_field.options[0].id]).for(:value) }
+      it { is_expected.to allow_value(form_field.statements[0].id.to_s => [form_field.options[0].id.to_s], form_field.statements[1].id.to_s => [form_field.options[0].id.to_s, form_field.options[1].id.to_s]).for(:value) }
+      it { is_expected.not_to allow_value(999 => [10], 888 => [90, 100]).for(:value) }
+      it { is_expected.not_to allow_value(1).for(:value) }
+    end
 
     describe 'when it is required' do
       before { subject.form_field.required = true }
@@ -458,10 +517,10 @@ describe FormFieldResult, type: :model do
   describe 'for checkbox fields' do
     let(:form_field) do
       create(:form_field,
-                         type: 'FormField::Checkbox',
-                         options: [create(:form_field_option, name: 'Opt1'), create(:form_field_option, name: 'Opt2')],
-                         fieldable: create(:activity_type, company_id: 1),
-                         required: false)
+             type: 'FormField::Checkbox',
+             options: [create(:form_field_option, name: 'Opt1'), create(:form_field_option, name: 'Opt2')],
+             fieldable: create(:activity_type, company_id: 1),
+             required: false)
     end
     before { subject.form_field_id = form_field.id }
     it { is_expected.to allow_value(nil).for(:value) }
@@ -484,10 +543,10 @@ describe FormFieldResult, type: :model do
   describe 'for radio fields' do
     let(:form_field) do
       create(:form_field,
-                         type: 'FormField::Radio',
-                         options: [create(:form_field_option, name: 'Opt1'), create(:form_field_option, name: 'Opt2')],
-                         fieldable: create(:activity_type, company_id: 1),
-                         required: false)
+             type: 'FormField::Radio',
+             options: [create(:form_field_option, name: 'Opt1'), create(:form_field_option, name: 'Opt2')],
+             fieldable: create(:activity_type, company_id: 1),
+             required: false)
     end
     before { subject.form_field_id = form_field.id }
     it { is_expected.to allow_value(nil).for(:value) }
@@ -513,10 +572,10 @@ describe FormFieldResult, type: :model do
   describe 'prepare_for_store' do
     let(:form_field) do
       create(:form_field,
-                         type: 'FormField::Percentage',
-                         options: [create(:form_field_option, name: 'Opt1'), create(:form_field_option, name: 'Opt2')],
-                         fieldable: create(:activity_type, company_id: 1),
-                         required: false)
+             type: 'FormField::Percentage',
+             options: [create(:form_field_option, name: 'Opt1'), create(:form_field_option, name: 'Opt2')],
+             fieldable: create(:activity_type, company_id: 1),
+             required: false)
     end
 
     it 'should assign the hash_value for hashed_fields' do

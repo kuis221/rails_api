@@ -13,11 +13,15 @@ describe DocumentsController, type: :controller do
     it 'queue a job for processing the photos' do
       s3object = double
       allow(s3object).to receive(:copy_from).and_return(true)
+      file_object = double(head: double(content_length: 100, content_type: 'image/jpeg', last_modified: Time.now))
+      objects = double(objects: {
+        'uploads/dummy/test.jpg' => file_object,
+        'attached_assets/original/test.jpg' => s3object
+      })
+      allow(file_object).to receive(:exists?).at_least(:once).and_return(true)
+      allow(s3object).to receive(:exists?).at_least(:once).and_return(true)
       expect_any_instance_of(AWS::S3).to receive(:buckets).at_least(:once).and_return(
-        'brandscopic-dev' => double(objects: {
-                                      'uploads/dummy/test.jpg' => double(head: double(content_length: 100, content_type: 'image/jpeg', last_modified: Time.now)),
-                                      'attached_assets/original/test.jpg' => s3object
-                                    }))
+        'brandscopic-dev' => objects)
       expect_any_instance_of(Paperclip::Attachment).to receive(:path).at_least(:once).and_return('/attached_assets/original/test.jpg')
       expect_any_instance_of(AttachedAsset).to receive(:download_url).at_least(:once).and_return('dummy.jpg')
       expect do
@@ -35,14 +39,15 @@ describe DocumentsController, type: :controller do
     end
   end
 
-  describe "GET 'new'" do
-    it 'should render the comment form for a event comment' do
-      xhr :get, 'new', event_id: event.to_param, format: :js
-      expect(response).to render_template('documents/_form')
-      expect(response).to render_template('_form_dialog')
-      expect(assigns(:document).new_record?).to be_truthy
-      expect(assigns(:document).attachable).to eq(event)
+  describe "DELETE 'destroy'" do
+    let(:document) { create(:document, attachable: event.campaign) }
+    it 'should delete the document attached to a Campaign' do
+      document
+      expect do
+        delete 'destroy', campaign_id: event.campaign.id, id: document.to_param, format: :js
+        expect(response).to be_success
+        expect(response).to render_template(:destroy)
+      end.to change(AttachedAsset, :count).by(-1)
     end
   end
-
 end

@@ -9,6 +9,7 @@
       = simple_form_for contact_event, url: form_path, remote: true,  html: { class: "button_to" } do |f|
         = f.hidden_field :contactable_id, :value => contact.id
         = f.hidden_field :contactable_type, :value => contact.class.name
+        = hidden_field_tag 'form_id', params[:form_id]
         a.icon-plus-sign id="add-contact-btn-#{contact.class.name.underscore}-#{contact.id}" href="#" data-submit-link="true" title="Add" disable_with=''
 
 .resource-item.empty-list-message

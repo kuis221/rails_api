@@ -38,11 +38,11 @@ describe TasksController, type: :controller do
 
     it 'should render the form_dialog template if errors' do
       expect do
-        xhr :post, 'create', event_id: event.to_param, format: :js
+        xhr :post, 'create', task: { title: '' }, event_id: event.to_param, format: :js
       end.not_to change(Task, :count)
       expect(response).to render_template(:create)
       expect(response).to render_template('_form_dialog')
-      assigns(:event).errors.count > 0
+      expect(assigns(:task).errors.count).to be > 0
     end
 
     it 'should assign the correct event id' do
@@ -146,6 +146,50 @@ describe TasksController, type: :controller do
         get 'index', scope: 'teams'
         expect(response).to be_success
       end
+
+      it 'queue the job for export the list to CSV' do
+        expect do
+          xhr :get, :index, scope: 'user', format: :csv
+        end.to change(ListExport, :count).by(1)
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+        expect(export.controller).to eql('TasksController')
+        expect(export.export_format).to eql('csv')
+      end
+
+      it 'queue the job for export the list to PDF' do
+        expect do
+          xhr :get, :index, scope: 'user', format: :pdf
+        end.to change(ListExport, :count).by(1)
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+        expect(export.controller).to eql('TasksController')
+        expect(export.export_format).to eql('pdf')
+      end
+    end
+  end
+
+  describe "GET 'list_export'", search: true do
+    it 'should return an empty book with the correct headers' do
+      expect { xhr :get, 'index', scope: 'user', format: :csv }.to change(ListExport, :count).by(1)
+      ResqueSpec.perform_all(:export)
+      expect(ListExport.last).to have_rows([
+        %w(TITLE DATE CAMPAIGN STATUSES EMPLOYEE)
+      ])
+    end
+
+    it 'should include the results' do
+      create(:task, event_id: event.id, title: 'New task title',
+             due_at: '12/31/2013', company_user: company_user)
+      Sunspot.commit
+
+      expect { xhr :get, 'index', scope: 'user', format: :csv }.to change(ListExport, :count).by(1)
+      expect(ListExportWorker).to have_queued(ListExport.last.id)
+      ResqueSpec.perform_all(:export)
+      expect(ListExport.last).to have_rows([
+        %w(TITLE DATE CAMPAIGN STATUSES EMPLOYEE),
+        ['New task title', '12/31/2013', event.campaign.name, 'Active Assigned Incomplete Late', 'Test User']
+      ])
     end
   end
 end

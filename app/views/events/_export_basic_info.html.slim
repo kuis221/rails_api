@@ -1,0 +1,24 @@
+#event-info.details_box class="phase-#{presenter.current_phase}"
+  .details-title
+    h2.special
+      b= resource.campaign_name
+
+  .event-calendar.calendar-data
+    span
+      i.icon-calendar
+      = presenter.date_range_basic_info
+  - unless resource.place.nil?
+    .place-data
+      i.icon-wired-venue
+      span
+        = strip_tags(place_address(resource.place, false, ', ', ' ', true)) if resource.place
+
+  - unless resource.description.nil? || resource.description.empty?
+    .description-data
+      span= simple_format resource.description
+
+  - if can?(:view_members, resource)
+    - unless resource.users.empty? && resource.teams.empty?
+      #event-team-members.add-details-info
+        i.icon-team.indicate-icon
+        = presenter.team_members

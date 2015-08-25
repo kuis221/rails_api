@@ -1,0 +1,64 @@
+
+/*
+A markup for Blank States // Details pages
+Blank states for details pages
+
+Styleguide 5.1
+*/
+
+/*
+A markup for Blank States // Results views
+Reports and Lists views
+
+Styleguide 5.2
+*/
+
+.blank-state{
+	padding: 30px 10px 60px;
+	position: relative;
+	width: auto;
+	border: 1px solid lightgrey;
+	&.section-module {
+		border: 0;
+		padding: 10px 10px;
+		h5 {
+			font-weight: normal;
+		}
+		.btn-primary {
+			min-width: 130px;
+  			width: auto !important;
+  			max-width: none !important;
+		}
+	}
+	form.button_to {
+		margin: 0 auto;
+		display: block;
+	}
+	.btn{
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		margin-top: 30px;
+	}
+	p{
+		color: $brand;
+		max-width: 410px;
+		margin-left: auto;
+		margin-right: auto;
+		position: relative;
+	}
+}
+
+.blank-state-arrow{
+	left: 60px;
+	position: absolute;
+	top: 15px;
+}
+
+.blank-state-icon{
+	height: 100px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 60px;
+	width: 100px;
+}

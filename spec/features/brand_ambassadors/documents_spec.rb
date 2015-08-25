@@ -27,15 +27,11 @@ feature 'Brand Ambassadors Documents', js: true do
       with_resque do
         visit brand_ambassadors_root_path
 
-        documents_section.click_button 'Upload'
-
-        within visible_modal do
+        within drag_n_drop_zone do
           attach_file 'file', 'spec/fixtures/file.pdf'
-          expect(upload_queue).to have_file_in_queue('file.pdf')
           wait_for_ajax(30) # For the file to upload to S3
-          click_js_link 'OK'
         end
-        ensure_modal_was_closed
+        expect(page).to_not have_content('DRAG & DROP')
 
         document = BrandAmbassadors::Document.last
 
@@ -69,15 +65,12 @@ feature 'Brand Ambassadors Documents', js: true do
       with_resque do
         visit brand_ambassadors_root_path
 
-        documents_section.click_button 'Upload'
-
-        within visible_modal do
+        within drag_n_drop_zone do
+          expect(page).to have_content('DRAG & DROP')
           attach_file 'file', 'spec/fixtures/file.pdf'
-          expect(upload_queue).to have_file_in_queue('file.pdf')
           wait_for_ajax(30) # For the file to upload to S3
-          click_js_link 'OK'
+          expect(page).to_not have_content('DRAG & DROP')
         end
-        ensure_modal_was_closed
 
         document = BrandAmbassadors::Document.last
 
@@ -151,15 +144,12 @@ feature 'Brand Ambassadors Documents', js: true do
 
       # Upload a document to the folder
       open_folder 'New Folder Name'
-      documents_section.click_button 'Upload'
 
-      within visible_modal do
+      click_js_link 'Upload'
+      within drag_n_drop_zone do
         attach_file 'file', 'spec/fixtures/file.pdf'
-        expect(upload_queue).to have_file_in_queue('file.pdf')
         wait_for_ajax(30) # For the file to upload to S3
-        click_js_link 'OK'
       end
-      ensure_modal_was_closed
 
       # Check that the document appears is in the document list
       document = BrandAmbassadors::Document.last
@@ -216,13 +206,10 @@ feature 'Brand Ambassadors Documents', js: true do
           expect(page).to have_link('My Folder')
         end
 
-        documents_section.click_button 'Upload'
-        within visible_modal do
-          expect(page).to have_content 'New Document'
+        within drag_n_drop_zone do
+          expect(page).to have_content 'DRAG & DROP'
           attach_file 'file', 'spec/fixtures/file.pdf'
-          expect(upload_queue).to have_file_in_queue('file.pdf')
           wait_for_ajax(30) # For the file to upload to S3
-          click_js_link 'OK'
         end
         ensure_modal_was_closed
 
@@ -261,16 +248,11 @@ feature 'Brand Ambassadors Documents', js: true do
       with_resque do
         visit brand_ambassadors_visit_path(ba_visit)
 
-        documents_section.click_button 'Upload'
-
-        within visible_modal do
-          expect(page).to have_content 'New Document'
+        within drag_n_drop_zone do
+          expect(page).to have_content 'DRAG & DROP'
           attach_file 'file', 'spec/fixtures/file.pdf'
-          expect(upload_queue).to have_file_in_queue('file.pdf')
           wait_for_ajax(30) # For the file to upload to S3
-          click_js_link 'OK'
         end
-        ensure_modal_was_closed
 
         document = BrandAmbassadors::Document.last
         # Check that the image appears on the page
@@ -295,13 +277,9 @@ feature 'Brand Ambassadors Documents', js: true do
       with_resque do
         visit brand_ambassadors_visit_path(ba_visit)
 
-        documents_section.click_button 'Upload'
-
-        within visible_modal do
+        within drag_n_drop_zone do
           attach_file 'file', 'spec/fixtures/file.pdf'
-          expect(upload_queue).to have_file_in_queue('file.pdf')
           wait_for_ajax(30) # For the file to upload to S3
-          click_js_link 'OK'
         end
         ensure_modal_was_closed
 
@@ -390,5 +368,9 @@ feature 'Brand Ambassadors Documents', js: true do
 
   def open_root_folder
     documents_section.click_js_link('DOCUMENTS')
+  end
+
+  def drag_n_drop_zone
+    '#documents_upload_form'
   end
 end

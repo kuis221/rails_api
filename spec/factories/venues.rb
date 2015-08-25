@@ -22,6 +22,8 @@
 #  score_dirty          :boolean          default(FALSE)
 #  jameson_locals       :boolean          default(FALSE)
 #  top_venue            :boolean          default(FALSE)
+#  created_by_id        :integer
+#  updated_by_id        :integer
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl
@@ -42,5 +44,9 @@ FactoryGirl.define do
     avg_impressions_cost 1.00
     score_impressions 100
     score_cost 1000
+    score_dirty false
+    jameson_locals false
+    top_venue false
+    web_address 'http://www.test.com'
   end
 end

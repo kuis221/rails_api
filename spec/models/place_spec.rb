@@ -6,7 +6,7 @@
 #  name                   :string(255)
 #  reference              :string(400)
 #  place_id               :string(100)
-#  types                  :string(255)
+#  types_old              :string(255)
 #  formatted_address      :string(255)
 #  street_number          :string(255)
 #  route                  :string(255)
@@ -21,10 +21,13 @@
 #  td_linx_code           :string(255)
 #  location_id            :integer
 #  is_location            :boolean
-#  neighborhoods          :string(255)      is an Array
 #  price_level            :integer
 #  phone_number           :string(255)
+#  neighborhoods          :string(255)      is an Array
 #  lonlat                 :spatial          point, 4326
+#  td_linx_confidence     :integer
+#  merged_with_place_id   :integer
+#  types                  :string(255)      is an Array
 #
 
 require 'rails_helper'
@@ -33,6 +36,13 @@ describe Place, type: :model do
 
   it { is_expected.to validate_presence_of(:place_id) }
   it { is_expected.to validate_presence_of(:reference) }
+
+  it { is_expected.to allow_value(['restaurant', 'bar']).for(:types) }
+  it { is_expected.to allow_value(['political']).for(:types) }
+
+  it { is_expected.to_not allow_value(nil).for(:types) }
+  it { is_expected.to_not allow_value(['foo']).for(:types) }
+  it { is_expected.to_not allow_value(['foo', 'bar']).for(:types) }
 
   it { is_expected.to allow_value(nil).for(:country) }
   it { is_expected.to allow_value('').for(:country) }
@@ -43,7 +53,7 @@ describe Place, type: :model do
   it { is_expected.not_to allow_value('Costa Rica').for(:country).with_message('is not valid') }
   it { is_expected.not_to allow_value('United States').for(:country).with_message('is not valid') }
 
-  describe 'fetch_place_data', :vcr do
+  describe 'fetch_place_data' do
     it 'should correctly assign the attributes returned by the api call' do
       place = described_class.new(reference: 'YXZ', place_id: '123')
       api_client = double(:google_places_client)
@@ -54,7 +64,7 @@ describe Place, type: :model do
                lat: '12.345678',
                lng: '-87.654321',
                formatted_address: '123 Mi Casa, Costa Rica',
-               types: [1, 2, 3],
+               types: %w(bar establishment),
                address_components: [
                  { 'types' => ['country'], 'short_name' => 'CR', 'long_name' => 'Costa Rica' },
                  { 'types' => ['administrative_area_level_1'], 'short_name' => 'SJO', 'long_name' => 'San Jose' },
@@ -72,7 +82,7 @@ describe Place, type: :model do
       expect(place.latitude).to eq(12.345678)
       expect(place.longitude).to eq(-87.654321)
       expect(place.formatted_address).to eq('123 Mi Casa, Costa Rica')
-      expect(place.types).to eq([1, 2, 3])
+      expect(place.types).to eq(%w(bar establishment))
       expect(place.country).to eq('CR')
       expect(place.city).to eq('Curridabat')
       expect(place.state).to eq('San Jose')
@@ -93,7 +103,7 @@ describe Place, type: :model do
                lat: '12.345678',
                lng: '-87.654321',
                formatted_address: '123 Mi Casa, Costa Rica',
-               types: [1, 2, 3],
+               types: %w(bar establishment),
                address_components: [
                  { 'types' => ['country'], 'short_name' => 'US', 'long_name' => 'United States' },
                  { 'types' => ['administrative_area_level_1'], 'short_name' => 'CA', 'long_name' => 'CA' },
@@ -380,157 +390,87 @@ describe Place, type: :model do
     end
   end
 
-  describe '#combined_search', search: true do
-    let(:google_results) { { results: [] } }
-    let(:company_user) { create(:company_user, role: create(:non_admin_role)) }
+  describe '#in_campaign_scope' do
+    let(:company) { create(:company) }
+    let(:campaign) { create(:campaign, company: company) }
 
-    before do
-      expect(described_class).to receive(:open).and_return(
-        double(read: JSON.generate(google_results))
-      )
+    it 'includes only places within the campaign areas' do
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      place_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco')
+      city_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
+      city_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco', types: ['locality'])
+
+      area_la = create(:area, company: company)
+      area_sf = create(:area, company: company)
+
+      campaign.areas << [area_la, area_sf]
+
+      area_la.places << [city_la, city_sf]
+
+      expect(described_class.in_campaign_scope(campaign)).to match_array [place_la, place_sf, city_la, city_sf]
     end
 
-    it 'should return empty if no results' do
-      expect(described_class.combined_search(q: 'aa')).to eql []
+    it 'excludes places that are in places that were excluded from the campaign' do
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+
+      place_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco')
+
+      area_la = create(:area, company: company)
+      area_sf = create(:area, company: company)
+
+      area_la.places << place_la
+      area_sf.places << place_sf
+
+      # Associate areas to campaigns
+      create(:areas_campaign, area: area_la, campaign: campaign, exclusions: [place_la.id])
+      create(:areas_campaign, area: area_sf, campaign: campaign)
+
+      expect(described_class.in_campaign_scope(campaign)).to match_array [place_sf]
     end
 
-    it 'should only places valid for the current user' do
-      venue = create(:venue,
-                     place: create(:place, name: 'Qwerty', city: 'AB', state: 'California', country: 'CR'),
-                     company: company_user.company)
-      create(:venue,
-             place: create(:place, name: 'Qwerty', city: 'XY', state: 'California', country: 'CR'),
-             company: company_user.company)
+    it 'excludes places that are in places inside an excluded city' do
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
 
-      Sunspot.commit
+      city_la = create(:city, name: 'Los Angeles', country: 'US', state: 'California')
+      area_la = create(:area, company: company)
 
-      company_user.places << create(:city, name: 'AB', state: 'California', country: 'CR')
+      area_la.places << city_la
 
-      params = { q: 'qw', current_company_user: company_user }
-      expect(described_class.combined_search(params)).to eql [
-        {
-          value: 'Qwerty, 123 My Street',
-          label: 'Qwerty, 123 My Street',
-          id: venue.place_id,
-          valid: true
-        }
-      ]
+      area_campaign_la = create(:areas_campaign, area: area_la, campaign: campaign)
+      expect(described_class.in_campaign_scope(campaign)).to match_array [place_la, city_la]
+
+      area_campaign_la.update_attribute :exclusions, [city_la.id]
+      expect(described_class.in_campaign_scope(campaign)).to be_empty
     end
 
-    describe 'with results form Google API' do
-      let(:google_results) do
-        { results: [{
-          'formatted_address' => 'Los Angeles, CA, USA',
-          'place_id' => 'PLACEID1',
-          'name' => 'Los Angeles',
-          'reference' => 'REFERENCE1',
-          'types' => %w(locality political)
-        },
-                    {
-                      'formatted_address' => 'Los Angeles, ON, Canada',
-                      'place_id' => 'PLACEID2',
-                      'name' => 'Los Angeles',
-                      'reference' => 'REFERENCE2',
-                      'types' => %w(locality political)
-                    }, {
-                      'formatted_address' => 'Tower 42, Los Angeles, CA 23211, United States',
-                      'place_id' => 'PLACEID3',
-                      'name' => 'Vertigo 42',
-                      'reference' => 'REFERENCE3',
-                      'types' => %w(food bar establishment)
-                    }] }
-      end
+    it 'includes places that are inside an included city' do
+      campaign2 = create(:campaign, company: company)
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      place_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco')
 
-      it "should include all the places returned by google with the 'valid' flag set to false" do
-        params = { q: 'qw', current_company_user: company_user }
-        expect(described_class.combined_search(params)).to eql [
-          {
-            value: 'Los Angeles, CA, USA',
-            label: 'Los Angeles, CA, USA',
-            id: 'REFERENCE1||PLACEID1',
-            valid: false
-          },
-          {
-            value: 'Los Angeles, ON, Canada',
-            label: 'Los Angeles, ON, Canada',
-            id: 'REFERENCE2||PLACEID2',
-            valid: false
-          },
-          {
-            value: 'Vertigo 42, Tower 42, Los Angeles, CA 23211, United States',
-            label: 'Vertigo 42, Tower 42, Los Angeles, CA 23211, United States',
-            id: 'REFERENCE3||PLACEID3',
-            valid: false
-          }
-        ]
-      end
+      city_la = create(:city, name: 'Los Angeles', country: 'US', state: 'California')
+      city_sf = create(:city, name: 'San Francisco', country: 'US', state: 'California')
+      area_la = create(:area, company: company)
+      area_sf = create(:area, company: company)
+      area_sf.places << city_sf
 
-      it "should set the 'valid' flag to tru for places the user is allowed to access" do
-        company_user.places << create(:city, name: 'Los Angeles', state: 'California', country: 'US')
-        params = { q: 'qw', current_company_user: company_user }
-        expect(described_class.combined_search(params)).to eql [
-          {
-            value: 'Los Angeles, CA, USA',
-            label: 'Los Angeles, CA, USA',
-            id: 'REFERENCE1||PLACEID1',
-            valid: true
-          },
-          {
-            value: 'Vertigo 42, Tower 42, Los Angeles, CA 23211, United States',
-            label: 'Vertigo 42, Tower 42, Los Angeles, CA 23211, United States',
-            id: 'REFERENCE3||PLACEID3',
-            valid: true
-          },
-          {
-            value: 'Los Angeles, ON, Canada',
-            label: 'Los Angeles, ON, Canada',
-            id: 'REFERENCE2||PLACEID2',
-            valid: false
-          }
-        ]
-      end
+      area_campaign_la = create(:areas_campaign, area: area_la, campaign: campaign)
+      create(:areas_campaign, area: area_sf, campaign: campaign)
+      create(:areas_campaign, area: area_la, campaign: campaign2)
 
-      it "returns mixed places from google and the app listing app's places first " do
-        venue = create(:venue,
-                       place: create(:place, name: 'Qwerty', city: 'Los Angeles',
-                                             state: 'California', country: 'US'),
-                       company: company_user.company)
-        create(:venue,
-               place: create(:place, name: 'Qwerty', city: 'XY', state: 'California', country: 'CR'),
-               company: company_user.company)
+      expect(described_class.in_campaign_scope(campaign)).to match_array [place_sf, city_sf]
 
-        Sunspot.commit
+      area_campaign_la.update_attribute :inclusions, [city_la.id]
+      expect(described_class.in_campaign_scope(campaign)).to match_array [place_sf, place_la, city_la, city_sf]
+    end
 
-        company_user.places << create(:city, name: 'Los Angeles', state: 'California', country: 'US')
+    it 'includes places that are inside a city added directly to the campaign' do
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      city_la = create(:city, name: 'Los Angeles', country: 'US', state: 'California')
 
-        params = { q: 'Angeles', current_company_user: company_user }
-        expect(described_class.combined_search(params)).to eql [
-          {
-            value: 'Qwerty, 123 My Street',
-            label: 'Qwerty, 123 My Street',
-            id: venue.place_id,
-            valid: true
-          },
-          {
-            value: 'Los Angeles, CA, USA',
-            label: 'Los Angeles, CA, USA',
-            id: 'REFERENCE1||PLACEID1',
-            valid: true
-          },
-          {
-            value: 'Vertigo 42, Tower 42, Los Angeles, CA 23211, United States',
-            label: 'Vertigo 42, Tower 42, Los Angeles, CA 23211, United States',
-            id: 'REFERENCE3||PLACEID3',
-            valid: true
-          },
-          {
-            value: 'Los Angeles, ON, Canada',
-            label: 'Los Angeles, ON, Canada',
-            id: 'REFERENCE2||PLACEID2',
-            valid: false
-          }
-        ]
-      end
+      campaign.places << city_la
+
+      expect(described_class.in_campaign_scope(campaign)).to match_array [place_la, city_la]
     end
   end
 end

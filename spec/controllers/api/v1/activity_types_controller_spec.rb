@@ -13,9 +13,8 @@ RSpec.describe Api::V1::ActivityTypesController, :type => :controller do
       campaign.activity_types << create(:activity_type, company: company, name: 'MyAT')
       get 'index', campaign_id: campaign.id, format: :json
       expect(response).to be_success
-      result = JSON.parse(response.body)
-      expect(result.count).to eql 1
-      expect(result).to include(
+      expect(json.count).to eql 1
+      expect(json).to include(
         'id' =>  campaign.activity_types.first.id, 'name' => 'MyAT')
     end
 
@@ -25,11 +24,10 @@ RSpec.describe Api::V1::ActivityTypesController, :type => :controller do
       at2 = create(:activity_type, company: company2, name: 'NotInCompany')
       get 'index', format: :json
       expect(response).to be_success
-      result = JSON.parse(response.body)
-      expect(result.count).to eql 1
-      expect(result).to include(
+      expect(json.count).to eql 1
+      expect(json).to include(
         'id' =>  at1.id, 'name' => 'MyAT')
-      expect(result).not_to include(
+      expect(json).not_to include(
         'id' =>  at2.id, 'name' => 'NotInCompany')
     end
   end
@@ -41,10 +39,9 @@ RSpec.describe Api::V1::ActivityTypesController, :type => :controller do
       activity_type.campaigns << create(:campaign, company: company, name: 'Cerveza Imperial FY14')
       get 'campaigns', id: activity_type.id, format: :json
       expect(response).to be_success
-      result = JSON.parse(response.body)
-      
-      expect(result.count).to eql 1
-      expect(result).to include(
+
+      expect(json.count).to eql 1
+      expect(json).to include(
         'id' =>  activity_type.campaigns.first.id, 'name' => 'Cerveza Imperial FY14')
     end
 
@@ -55,11 +52,10 @@ RSpec.describe Api::V1::ActivityTypesController, :type => :controller do
       at2.campaigns << create(:campaign, company: company, name: 'Cerveza Pilsen FY14')
       get 'campaigns', id: at1.id, format: :json
       expect(response).to be_success
-      result = JSON.parse(response.body)
-      expect(result.count).to eql 1
-      expect(result).to include(
+      expect(json.count).to eql 1
+      expect(json).to include(
         'id' =>  at1.campaigns.first.id, 'name' => 'Cerveza Imperial FY14')
-      expect(result).not_to include(
+      expect(json).not_to include(
         'id' =>  at2.campaigns.first.id, 'name' => 'Cerveza Pilsen FY14')
     end
   end

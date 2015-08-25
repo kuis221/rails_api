@@ -64,15 +64,15 @@ describe Venue, type: :model, search: true do
       .to match_array([venue, venue2])
 
     # Search for Venues with events on a given date range
-    expect(search(company_id: company.id, start_date: '02/21/2013', end_date: '02/23/2013'))
+    expect(search(company_id: company.id, start_date: ['02/21/2013'], end_date: ['02/23/2013']))
       .to match_array([venue])
-    expect(search(company_id: company.id, start_date: '02/22/2013'))
+    expect(search(company_id: company.id, start_date: ['02/22/2013']))
       .to match_array([venue])
-    expect(search(company_id: company.id, start_date: '03/21/2013', end_date: '03/23/2013'))
+    expect(search(company_id: company.id, start_date: ['03/21/2013'], end_date: ['03/23/2013']))
       .to match_array([venue2])
-    expect(search(company_id: company.id, start_date: '03/22/2013'))
+    expect(search(company_id: company.id, start_date: ['03/22/2013']))
       .to match_array([venue2])
-    expect(search(company_id: company.id, start_date: '01/21/2013', end_date: '01/23/2013'))
+    expect(search(company_id: company.id, start_date: ['01/21/2013'], end_date: ['01/23/2013']))
       .to be_empty
 
     # Range filters
@@ -133,6 +133,26 @@ describe Venue, type: :model, search: true do
       # Should include the venues from sf but not the venue from L.A.
       expect(search(company_id: company.id, campaign: [campaign.id]))
           .to match_array([venue_sf1, venue_sf2])
+    end
+  end
+
+  describe 'fulltext searches' do
+    it 'should return the correct results' do
+      maximus = create(:venue, company_id: 1, place: create(:place, name: 'Maximus Place', types: %w(restaurant)))
+      cats_saloon = create(:venue, company_id: 1, place: create(:place, name: 'Cat\'s Eye Saloon', types: %w(bar)))
+      j_bar = create(:venue, company_id: 1, place: create(:place, name: 'The J Bar N', types: %w(bar)))
+
+      expect(search(company_id: 1, q: 'Bar', sorting: :score, sorting_dir: :desc))
+        .to eql [j_bar, cats_saloon]
+      expect(search(company_id: 1, q: 'The J Bar N', sorting: :score, sorting_dir: :desc))
+        .to eql [j_bar, cats_saloon]
+
+      expect(search(company_id: 1, q: 'restaurant', sorting: :score, sorting_dir: :desc))
+        .to eql([maximus])
+      expect(search(company_id: 1, q: 'maximus restaurant', sorting: :score, sorting_dir: :desc))
+        .to eql([maximus])
+      expect(search(company_id: 1, q: 'bar restaurant', sorting: :score, sorting_dir: :desc))
+        .to eql([j_bar, cats_saloon, maximus])
     end
   end
 

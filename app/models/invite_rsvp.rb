@@ -18,8 +18,53 @@
 #  bartender_role                   :string(255)
 #  created_at                       :datetime
 #  updated_at                       :datetime
+#  date_of_birth                    :string(255)
+#  zip_code                         :string(255)
+#  created_by_id                    :integer
+#  updated_by_id                    :integer
+#  attended                         :boolean
 #
 
 class InviteRsvp < ActiveRecord::Base
   belongs_to :invite
+
+  delegate :place_name, :campaign_name, :invitees, :rsvps_count, :attendees,
+           :jameson_locals?, :top_venue?, :event, :area,
+           to: :invite
+
+  def self.for_event(event)
+    where(invite: event.invites)
+  end
+
+  def self.without_locations
+    joins('LEFT JOIN zipcode_locations zl ON zl.zipcode=invite_rsvps.zip_code')
+      .where('zl.zipcode IS NULL')
+  end
+
+  def self.update_zip_code_location(zip_code)
+    latlng = get_latlng_for_zip_code(zip_code)
+    neighborhood_id = find_closest_neighborhood(latlng)
+    point = latlng ? connection.quote("POINT(#{latlng['lng']} #{latlng['lat']})") : 'NULL'
+    connection.execute(<<-EOQ)
+      INSERT INTO zipcode_locations(zipcode, lonlat, neighborhood_id)
+      VALUES (#{connection.quote(zip_code)},
+              #{point},
+              #{neighborhood_id || 'NULL'})
+    EOQ
+  end
+
+  def self.get_latlng_for_zip_code(zipcode)
+    data = JSON.parse(open(
+            'https://maps.googleapis.com/maps/api/geocode/json?components='\
+            "postal_code:#{zipcode}|country:US&sensor=true").read)
+    data['results'].first['geometry']['location'] rescue nil
+  end
+
+  def self.find_closest_neighborhood(latlng)
+    return unless latlng
+    point = "POINT(#{latlng['lng']} #{latlng['lat']})"
+    id = Neighborhood.where('ST_Intersects(ST_GeomFromText(?), geog)', point).pluck(:gid).first
+    id ||= Neighborhood.order("ST_Distance(ST_GeomFromText('#{point}'), geog) ASC").pluck(:gid).first
+    id
+  end
 end

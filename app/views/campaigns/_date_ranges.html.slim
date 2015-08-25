@@ -1,3 +1,7 @@
-= link_to "Add Date Range", new_date_range_campaign_path(resource), remote: true, id: 'add-date-range-btn', class: 'btn btn-primary', title: 'Add Date Range'
-= render layout: 'goalable_list', locals: { goalables: resource.date_ranges, kpis: resource.active_kpis, activity_types: resource.activity_types } do |date_range|
-  = link_to '', delete_date_range_campaign_path(resource, date_range), remote: true, method: :delete, remote: true, class: 'icon-remove-circle', title: 'Remove Date Range'
+- if resource.date_ranges.any?
+  = link_to "Add Date Range", new_date_range_campaign_path(resource), remote: true, id: 'add-date-range-btn', class: 'btn btn-primary', title: 'Add Date Range' if can?(:add_date_range, resource)
+  = render layout: 'goalable_list', locals: { goalables: resource.date_ranges, kpis: resource.active_kpis, activity_types: resource.activity_types } do |date_range|
+    = link_to '', delete_date_range_campaign_path(resource, date_range), remote: true, method: :delete, class: 'icon-remove-circle', title: 'Remove Date Range'
+- else
+  = blank_state_module('campaign.date_ranges') do
+    = button_to 'Add Date Range', new_date_range_campaign_path(resource), id: 'add-date-range-btn', remote: true, method: :get, class: 'btn btn-primary'  if can?(:add_date_range, resource)

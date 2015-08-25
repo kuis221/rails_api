@@ -1,6 +1,13 @@
 .resource-item id="activity_#{activity.id}"
   = link_to_if_permitted(:show, Activity, activity_path(activity), title: 'Activity Details', class: 'resource-item-link')
-    .span7= activity.activity_type.name
-    .span5
-      .date= format_date(activity.activity_date)
+    .span4
+      .text-large= activity.activity_type.name
       = activity.company_user.full_name
+    .span3
+      .date= format_date(activity.activity_date)
+    .span5
+      .text-large= activity.campaign_name
+      = activity.place_name
+      br
+      = activity.place_formatted_address
+      

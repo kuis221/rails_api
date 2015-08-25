@@ -25,6 +25,13 @@ GIT
       resque
 
 GIT
+  remote: git://github.com/guilleva/sunspot-queue.git
+  revision: 61101c6803a29c2be91c3ffc00d7b4c676e34f1c
+  specs:
+    sunspot-queue (0.10.2)
+      sunspot_rails (>= 1.3.0)
+
+GIT
   remote: git://github.com/nadarei/nkss-rails.git
   revision: 8f5e27e98115daad591ac871a50a7c5ffa966d3e
   specs:
@@ -88,6 +95,8 @@ GEM
       activesupport (= 4.1.9)
       builder (~> 3.1)
       erubis (~> 2.7.0)
+    active_model_serializers (0.9.3)
+      activemodel (>= 3.2)
     activemodel (4.1.9)
       activesupport (= 4.1.9)
       builder (~> 3.1)
@@ -108,7 +117,7 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.1)
       tzinfo (~> 1.1)
-    addressable (2.3.6)
+    addressable (2.3.8)
     afm (0.2.2)
     airbrake (4.0.0)
       builder
@@ -118,7 +127,7 @@ GEM
     annotate (2.6.5)
       activerecord (>= 2.3.0)
       rake (>= 0.8.7)
-    apipie-rails (0.2.4)
+    apipie-rails (0.3.3)
       json
     arbre (1.0.2)
       activesupport (>= 3.0.0)
@@ -194,6 +203,8 @@ GEM
       devise (>= 3.2.0)
     diff-lcs (1.2.5)
     docile (1.1.5)
+    domain_name (0.5.24)
+      unf (>= 0.0.5, < 1.0.0)
     em-websocket (0.5.1)
       eventmachine (>= 0.12.9)
       http_parser.rb (~> 0.6.0)
@@ -202,7 +213,7 @@ GEM
       mail (~> 2.2)
     erubis (2.7.0)
     eventmachine (1.0.4)
-    excon (0.40.0)
+    excon (0.45.3)
     execjs (2.2.2)
     factory_girl (4.4.0)
       activesupport (>= 3.0.0)
@@ -213,6 +224,24 @@ GEM
       i18n (~> 0.5)
     ffaker (1.31.0)
     ffi (1.9.3)
+    fog-aws (0.4.0)
+      fog-core (~> 1.27)
+      fog-json (~> 1.0)
+      fog-xml (~> 0.1)
+      ipaddress (~> 0.8)
+    fog-core (1.30.0)
+      builder
+      excon (~> 0.45)
+      formatador (~> 0.2)
+      mime-types
+      net-scp (~> 1.1)
+      net-ssh (>= 2.1.3)
+    fog-json (1.0.2)
+      fog-core (~> 1.0)
+      multi_json (~> 1.10)
+    fog-xml (0.1.2)
+      fog-core
+      nokogiri (~> 1.5, >= 1.5.11)
     formatador (0.2.5)
     formtastic (3.1.2)
       actionpack (>= 3.2.13)
@@ -245,9 +274,21 @@ GEM
       moneta
       multi_json (>= 1.9.2)
       netrc
+    heroku (3.32.0)
+      heroku-api (>= 0.3.19)
+      launchy (>= 0.3.2)
+      multi_json (>= 1.10)
+      netrc (>= 0.10.0)
+      rest-client (>= 1.6.0)
+      rubyzip (>= 0.9.9)
+    heroku-api (0.3.23)
+      excon (~> 0.44)
+      multi_json (~> 1.8)
     highline (1.6.21)
     hike (1.2.3)
     hodel_3000_compliant_logger (0.1.1)
+    http-cookie (1.0.2)
+      domain_name (~> 0.5)
     http_parser.rb (0.6.0)
     httparty (0.13.1)
       json (~> 1.8)
@@ -259,6 +300,7 @@ GEM
       railties (>= 3.2, < 4.2)
       responders (~> 1.0)
     interception (0.5)
+    ipaddress (0.8.0)
     jquery-rails (3.1.2)
       railties (>= 3.0, < 5.0)
       thor (>= 0.14, < 2.0)
@@ -272,7 +314,7 @@ GEM
     kdtree (0.3)
     kgio (2.9.2)
     kss (0.5.0)
-    launchy (2.4.2)
+    launchy (2.4.3)
       addressable (~> 2.3)
     listen (2.7.9)
       celluloid (>= 0.15.2)
@@ -283,19 +325,22 @@ GEM
       mime-types (>= 1.16, < 3)
     memcachier (0.0.2)
     method_source (0.8.2)
-    mime-types (2.4.3)
+    mime-types (2.6.1)
     mini_portile (0.6.2)
     minitest (5.5.1)
     moneta (0.8.0)
     mono_logger (1.1.0)
-    multi_json (1.10.1)
+    multi_json (1.11.0)
     multi_xml (0.5.5)
     nearest_time_zone (0.0.2)
       andand
       kdtree
       require_all
     nested_form (0.3.2)
-    netrc (0.7.7)
+    net-scp (1.2.1)
+      net-ssh (>= 2.6.5)
+    net-ssh (2.9.2)
+    netrc (0.10.3)
     newrelic_rpm (3.9.9.275)
     nokogiri (1.6.6.2)
       mini_portile (~> 0.6.0)
@@ -305,6 +350,10 @@ GEM
     oj (2.10.1)
     options (2.3.2)
     orm_adapter (0.5.0)
+    paper_trail (4.0.0.rc1)
+      activerecord (>= 3.0, < 6.0)
+      activesupport (>= 3.0, < 6.0)
+      request_store (~> 1.1.0)
     paperclip (4.2.1)
       activemodel (>= 3.0.0)
       activesupport (>= 3.0.0)
@@ -323,9 +372,13 @@ GEM
       ruby-rc4
       ttfunk
     pg (0.18.1)
+    pgbackups-archive (1.0.3)
+      fog-aws
+      heroku (>= 3.28.6, <= 3.32)
+      rake
     platform-api (0.2.0)
       heroics (~> 0.0.10)
-    poltergeist (1.5.1)
+    poltergeist (1.6.0)
       capybara (~> 2.1)
       cliver (~> 0.3.1)
       multi_json (~> 1.0)
@@ -354,7 +407,7 @@ GEM
       railties (>= 3.1, < 5.0)
     rabl (0.11.0)
       activesupport (>= 2.3.14)
-    rack (1.5.2)
+    rack (1.5.3)
     rack-cors (0.2.9)
     rack-livereload (0.3.15)
       rack
@@ -400,6 +453,7 @@ GEM
     redis (3.1.0)
     redis-namespace (1.5.1)
       redis (~> 3.0, >= 3.0.4)
+    request_store (1.1.0)
     require_all (1.3.2)
     responders (1.1.2)
       railties (>= 3.2, < 4.2)
@@ -420,9 +474,15 @@ GEM
       rspec-core (>= 3.0.0)
       rspec-expectations (>= 3.0.0)
       rspec-mocks (>= 3.0.0)
+    rest-client (1.8.0)
+      http-cookie (>= 1.0.2, < 2.0)
+      mime-types (>= 1.16, < 3.0)
+      netrc (~> 0.7)
     rgeo (0.3.20)
     rgeo-activerecord (1.2.0)
       activerecord (~> 4.0)
+      rgeo (~> 0.3)
+    rgeo-geojson (0.3.1)
       rgeo (~> 0.3)
     roo (1.13.2)
       nokogiri
@@ -457,10 +517,10 @@ GEM
       rainbow (>= 1.99.1, < 3.0)
       ruby-progressbar (~> 1.4)
     rubocop-rspec (1.2.0)
-    ruby-ole (1.2.11.7)
+    ruby-ole (1.2.11.8)
     ruby-progressbar (1.5.1)
     ruby-rc4 (0.1.5)
-    rubyzip (1.1.6)
+    rubyzip (1.1.7)
     safe_yaml (1.0.4)
     sass (3.2.19)
     sass-rails (4.0.5)
@@ -498,7 +558,7 @@ GEM
     slop (3.6.0)
     sms-spec (0.1.7)
       rspec
-    spreadsheet (1.0.0)
+    spreadsheet (1.0.3)
       ruby-ole (>= 1.0)
     spring (1.2.0)
     spring-commands-rspec (1.0.2)
@@ -512,8 +572,6 @@ GEM
       actionpack (>= 3.0)
       activesupport (>= 3.0)
       sprockets (>= 2.8, < 4.0)
-    sunspot-queue (0.10.2)
-      sunspot_rails (>= 1.3.0)
     sunspot_matchers (2.1.1.0)
     sunspot_stats (0.0.7)
     sunspot_test (0.4.0)
@@ -535,6 +593,9 @@ GEM
     uglifier (2.5.3)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.1)
     unicorn (4.8.3)
       kgio (~> 2.6)
       rack
@@ -551,7 +612,9 @@ GEM
     webmock (1.20.4)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
-    websocket-driver (0.4.0)
+    websocket-driver (0.5.4)
+      websocket-extensions (>= 0.1.0)
+    websocket-extensions (0.1.2)
     wicked_pdf (0.11.0)
       rails
     xpath (2.0.0)
@@ -562,6 +625,7 @@ PLATFORMS
 
 DEPENDENCIES
   aasm
+  active_model_serializers
   activeadmin!
   activerecord-postgis-adapter
   activerecord-session_store
@@ -605,10 +669,12 @@ DEPENDENCIES
   nkss-rails!
   oink
   oj
+  paper_trail (~> 4.0.0.rc)
   paperclip (~> 4.1)
   parallel_tests
   pdf-reader
   pg
+  pgbackups-archive
   poltergeist
   populator
   progress_bar
@@ -629,6 +695,7 @@ DEPENDENCIES
   resque-timeout
   resque_mailer
   resque_spec
+  rgeo-geojson
   roo
   rspec-mocks
   rspec-rails (~> 3.0.0)
@@ -645,7 +712,7 @@ DEPENDENCIES
   sms-spec
   spring
   spring-commands-rspec
-  sunspot-queue
+  sunspot-queue!
   sunspot_matchers
   sunspot_rails!
   sunspot_solr!

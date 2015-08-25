@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>API documentation</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/bundled/bootstrap.min.css'/>
+<link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/bundled/prettify.css'/>
+<link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/bundled/bootstrap-responsive.min.css'/>
+  <link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/application.css'/>
+  <!-- IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div id='container'>
+        <ul class='breadcrumb'>
+  <li>
+    <a href='../apidoc.html'>Brandscopic 1.0</a>
+    <span class='divider'>/</span>
+  </li>
+  <li class='active'>
+    Brand Ambassadors Visits
+    
+  </li>
+  
+</ul>
+
+<div class='page-header'>
+  <h1>
+    Brand Ambassadors Visits
+    <br>
+    <small>Visits</small>
+  </h1>
+</div>
+
+
+
+  <h2>Supported Formats</h2>
+  json, xml
+
+
+
+<div class='accordion' id='accordion'>
+
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/visits/index.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-index'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/brand_ambassadors/visits
+          </a>
+          <br>
+          <small>Search for a list of visits</small>
+        </h2>
+    </div>
+
+
+    <div id='description-index' class='collapse accordion-body'>
+      
+<p>Returns a list of visits filtered by the given params.</p>
+
+<p>The results are returned on groups of 30 per request. To obtain the next 30
+results provide the &lt;page&gt; param.</p>
+
+<p>The dates are returned on the user&#39;s timezone.</p>
+
+<p><strong>Facets</strong></p>
+
+<p>Faceting is a feature of Solr that determines the number of documents that
+match a given search and an additional criteria.</p>
+
+<p>When &lt;page&gt; is “1”, the result will include a list of facets scoped
+on the following search params:</p>
+<ul><li>
+<p>start_date</p>
+</li><li>
+<p>end_date</p>
+</li></ul>
+
+<p>*Facets Results*</p>
+
+<p>The API returns the facets on the following format:</p>
+
+<pre>[
+  {
+    label: String,            # Any of: Campaigns, Brands, Location, People, Active State, Event Status
+    items: [                  # List of items for the facet sorted by relevance
+      {
+        &quot;label&quot;: String,      # The name of the item
+        &quot;id&quot;: String,         # The id of the item, this should be used to filter the list by this items
+        &quot;name&quot;: String,       # The param name to be use for filtering the list (campaign, user, team, place, area, status, event_status)
+        &quot;count&quot;: Number,      # The number of results for this item
+        &quot;selected&quot;: Boolean   # True if the list is being filtered by this item
+      },
+      ....
+    ],
+    top_items: [              # Some facets will return this as a list of items that have the greater number of results
+      &lt;other list of items&gt;
+    ]
+  }
+]</pre>
+
+<p>Each visit in the result set has the following attributes:</p>
+<ul><li>
+<p><strong>id</strong>: the visits&#39;s ID</p>
+</li><li>
+<p><strong>visit_type_name</strong>: the visit&#39;s type name</p>
+</li><li>
+<p><strong>start_date</strong>: the visit&#39;s start date</p>
+</li><li>
+<p><strong>end_date</strong>: the visit&#39;s end date</p>
+</li><li>
+<p><strong>campaign_name</strong>: the campaign to which the visit belongs</p>
+</li><li>
+<p><strong>area_name</strong>: the area to which the visit belongs</p>
+</li><li>
+<p><strong>city</strong>: the city for the visit</p>
+</li><li>
+<p><strong>description</strong>: the visit&#39;s description</p>
+</li><li>
+<p><strong>status</strong>: the visit&#39;s status</p>
+</li><li>
+<p><strong>user</strong>:</p>
+<ul><li>
+<p><strong>id</strong>: the user id</p>
+</li><li>
+<p><strong>full_name</strong>: the name of the user to which the visit belongs</p>
+</li></ul>
+</li></ul>
+
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
+    401
+    Unauthorized access
+    <br>
+    404
+    The requested resource was not found
+    <br>
+    406
+    The server cannot return data in the requested format
+    <br>
+    422
+    Unprocessable Entity: The change could not be processed because of errors on the data
+    <br>
+    500
+    Server crashed for some reason. Possible because of missing required params or wrong parameters
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">GET /api/v1/brand_ambassadors/visits.json
+{
+  &quot;page&quot;: 1,
+  &quot;total_pages&quot;: 8
+  &quot;total&quot;: 215,
+  &quot;facets&quot;: [
+    &lt;HERE GOES THE LIST FACETS DESCRIBED ABOVE&gt;
+  ],
+  &quot;results&quot;: [
+    {
+      id: 213,
+      visit_type_name: &quot;Market Visit&quot;,
+      start_date: &quot;2014-07-01&quot;,
+      end_date: &quot;2014-07-02&quot;,
+      campaign_name: &quot;Gin BA FY15&quot;,
+      area_name: &quot;Miami&quot;,
+      city: &quot;Miami&quot;,
+      description: &quot;Three Martini Lunch&quot;,
+      status: &quot;Active&quot;,
+      user: {
+        id: 130,
+        full_name: &quot;Nick van Tiel&quot;
+      }
+    },
+    {
+      id: 115,
+      visit_type_name: &quot;PTO&quot;,
+      start_date: &quot;2014-07-07&quot;,
+      end_date: &quot;2014-07-11&quot;,
+      campaign_name: &quot;Absolut BA FY15&quot;,
+      area_name: null,
+      city: null,
+      description: &quot;&quot;,
+      status: &quot;Active&quot;,
+      user: {
+        id: 103,
+        full_name: &quot;Rudy Aguero&quot;
+      }
+    },
+    ...
+  ]
+}
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>start_date </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A date to filter the visit list. When provided a start_date without an
+<code>end_date</code>, the result will only include visits that happen on
+this day. The date should be in the format MM/DD/YYYY.</p>
+
+        <br>
+        Value: 
+<p>Must match regular expression /Ad{2}/d{2}/d{4}z/.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>end_date </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A date to filter the visit list. This should be provided together with the
+<code>start_date</code> param and when provided will filter the list with
+those visits that are between that range. The date should be in the format
+MM/DD/YYYY.</p>
+
+        <br>
+        Value: 
+<p>Must match regular expression /Ad{2}/d{2}/d{4}z/.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>user </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of Brand Ambassador ids to filter the results</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>campaign </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of Campaign ids to filter the results</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>area </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of Area ids to filter the results</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>city </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of City ids to filter the results</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>page </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>The number of the page, Default: 1</p>
+
+        <br>
+        Value: 
+<p>Must be Integer.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+
+
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/visits/show.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-show'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/brand_ambassadors/visits/:id
+          </a>
+          <br>
+          <small>Return a visit's details</small>
+        </h2>
+    </div>
+
+
+    <div id='description-show' class='collapse accordion-body'>
+      
+<p>Returns the event&#39;s details, including the actions that a user can
+perform on this event according to the user&#39;s permissions and the KPIs
+that are enabled for the event&#39;s campaign.</p>
+
+<p>The possible attributes returned are:</p>
+
+<pre>* *id*: the visits&#39;s ID
+* *visit_type_name*: the visit&#39;s type name
+* *start_date*: the visit&#39;s start date
+* *end_date*: the visit&#39;s end date
+* *campaign_name*: the campaign to which the visit belongs
+* *area_name*: the area to which the visit belongs
+* *city*: the city for the visit
+* *description*: the visit&#39;s description
+* *status*: the visit&#39;s status
+* *user*:
+  * *id*: the user id
+  * *full_name*: the name of the user to which the visit belongs</pre>
+
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
+    401
+    Unauthorized access
+    <br>
+    404
+    The requested resource was not found
+    <br>
+    406
+    The server cannot return data in the requested format
+    <br>
+    422
+    Unprocessable Entity: The change could not be processed because of errors on the data
+    <br>
+    500
+    Server crashed for some reason. Possible because of missing required params or wrong parameters
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">{
+  id: 319,
+  visit_type_name: &quot;Brand Program&quot;,
+  start_date: &quot;2014-11-08&quot;,
+  end_date: &quot;2014-11-08&quot;,
+  campaign_name: &quot;Whisky Show TGL FY15&quot;,
+  area_name: &quot;Atlanta&quot;,
+  city: &quot;Atlanta&quot;,
+  description: &quot;Whiskies of the World show. &quot;,
+  status: &quot;Active&quot;,
+  user: {
+    id: 88,
+    full_name: &quot;Craig Vaught&quot;
+  }
+}
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Visit ID</p>
+
+        <br>
+        Value: 
+<p>Must be Integer.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+
+
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/visits/create.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-create'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            POST /api/v1/brand_ambassadors/visits
+          </a>
+          <br>
+          <small>Create a new visit</small>
+        </h2>
+    </div>
+
+
+    <div id='description-create' class='collapse accordion-body'>
+      
+<p>Allows to create a new visit.</p>
+
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
+    401
+    Unauthorized access
+    <br>
+    404
+    The requested resource was not found
+    <br>
+    406
+    The server cannot return data in the requested format
+    <br>
+    422
+    Unprocessable Entity: The change could not be processed because of errors on the data
+    <br>
+    500
+    Server crashed for some reason. Possible because of missing required params or wrong parameters
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">POST /api/v1/brand_ambassadors/visits.json
+DATA:
+{
+  visit: {
+    start_date: &quot;11/09/2014&quot;,
+    end_date: &quot;11/10/2014&quot;,
+    company_user_id: &quot;345&quot;,
+    campaign_id: &quot;115&quot;,
+    area_id: &quot;21&quot;,
+    city: &quot;Decatur&quot;,
+    visit_type: &quot;market_visit&quot;,
+    description: &quot;My description&quot;
+  }
+}
+
+RESPONSE:
+{
+  {
+    id: 361,
+    visit_type_name: &quot;Market Visit&quot;,
+    start_date: &quot;2014-11-09&quot;,
+    end_date: &quot;2014-11-10&quot;,
+    campaign_name: &quot;Absolut BA FY15&quot;,
+    area_name: &quot;Atlanta&quot;,
+    city: &quot;Decatur&quot;,
+    description: &quot;My description&quot;,
+    status: &quot;Active&quot;,
+    user: {
+      id: 345,
+      full_name: &quot;Chris Combs&quot;
+    }
+  }
+}
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>visit </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: 
+<p>Must be a Hash</p>
+
+
+
+    </td>
+
+  </tr>
+
+    <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>visit[start_date] </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Visit&#39;s start date. Should be in format MM/DD/YYYY.</p>
+
+        <br>
+        Value: 
+<p>Must be String</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>visit[end_date] </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Visit&#39;s end date. Should be in format MM/DD/YYYY.</p>
+
+        <br>
+        Value: 
+<p>Must be String</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>visit[company_user_id] </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Company User ID</p>
+
+        <br>
+        Value: 
+<p>Must be Integer.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>visit[campaign_id] </strong><br>
+      <small>
+        required
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Campaign ID</p>
+
+        <br>
+        Value: 
+<p>Must be Integer.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>visit[area_id] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Area ID</p>
+
+        <br>
+        Value: 
+<p>Must be Integer.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>visit[city] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>City name</p>
+
+        <br>
+        Value: 
+<p>Must be String</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>visit[visit_type] </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Visit Type key</p>
+
+        <br>
+        Value: 
+<p>Must be one of: brand_program, pto, market_visit, local_market_request.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>visit[description] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Visit&#39;s description</p>
+
+        <br>
+        Value: 
+<p>Must be String</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>visit[active] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Visit&#39;s active state. Defaults to true for new visits or unchanged for
+existing records.</p>
+
+        <br>
+        Value: 
+<p>Must be one of: true, false.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+
+
+    </tbody>
+  </table>
+
+
+
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/visits/update.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-update'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            PUT /api/v1/brand_ambassadors/visits/:id
+          </a>
+          <br>
+          <small>Update a visit's details</small>
+        </h2>
+    </div>
+
+
+    <div id='description-update' class='collapse accordion-body'>
+      
+<p>Allows to update an existing visit.</p>
+
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
+    401
+    Unauthorized access
+    <br>
+    404
+    The requested resource was not found
+    <br>
+    406
+    The server cannot return data in the requested format
+    <br>
+    422
+    Unprocessable Entity: The change could not be processed because of errors on the data
+    <br>
+    500
+    Server crashed for some reason. Possible because of missing required params or wrong parameters
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">PUT /api/v1/brand_ambassadors/visits/1.json
+DATA:
+{
+  visit: {
+    start_date: &quot;11/09/2014&quot;,
+    end_date: &quot;11/10/2014&quot;,
+    company_user_id: &quot;345&quot;,
+    campaign_id: &quot;115&quot;,
+    area_id: &quot;21&quot;,
+    city: &quot;Decatur&quot;,
+    visit_type: &quot;market_visit&quot;,
+    description: &quot;My description&quot;
+  }
+}
+
+RESPONSE:
+{
+  {
+    id: 361,
+    visit_type: &quot;market_visit&quot;,
+    visit_type_name: &quot;Market Visit&quot;,
+    start_date: &quot;2014-11-09&quot;,
+    end_date: &quot;2014-11-10&quot;,
+    campaign_id: 115,
+    area_id: 21,
+    city: &quot;Decatur&quot;,
+    description: &quot;My description&quot;,
+    status: &quot;Active&quot;,
+    user: {
+      id: 345,
+      full_name: &quot;Chris Combs&quot;
+    }
+    campaign: {
+      id: 115,
+      full_name: &quot;Absolut BA FY15&quot;
+    }
+    area: {
+      id: 21,
+      full_name: &quot;Atlanta&quot;
+    }
+  }
+}
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>visit </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: 
+<p>Must be a Hash</p>
+
+
+
+    </td>
+
+  </tr>
+
+    <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>visit[start_date] </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Visit&#39;s start date. Should be in format MM/DD/YYYY.</p>
+
+        <br>
+        Value: 
+<p>Must be String</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>visit[end_date] </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Visit&#39;s end date. Should be in format MM/DD/YYYY.</p>
+
+        <br>
+        Value: 
+<p>Must be String</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>visit[company_user_id] </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Company User ID</p>
+
+        <br>
+        Value: 
+<p>Must be Integer.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>visit[campaign_id] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Campaign ID</p>
+
+        <br>
+        Value: 
+<p>Must be Integer.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>visit[area_id] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Area ID</p>
+
+        <br>
+        Value: 
+<p>Must be Integer.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>visit[city] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>City name</p>
+
+        <br>
+        Value: 
+<p>Must be String</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>visit[visit_type] </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Visit Type key</p>
+
+        <br>
+        Value: 
+<p>Must be one of: brand_program, pto, market_visit, local_market_request.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>visit[description] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Visit&#39;s description</p>
+
+        <br>
+        Value: 
+<p>Must be String</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>visit[active] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Visit&#39;s active state. Defaults to true for new visits or unchanged for
+existing records.</p>
+
+        <br>
+        Value: 
+<p>Must be one of: true, false.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+
+
+    </tbody>
+  </table>
+
+
+
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/visits/types.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-types'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/brand_ambassadors/visits/types
+          </a>
+          <br>
+          <small>Returns a list of valid Visit Types to be used in forms</small>
+        </h2>
+    </div>
+
+
+    <div id='description-types' class='collapse accordion-body'>
+      
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
+    401
+    Unauthorized access
+    <br>
+    404
+    The requested resource was not found
+    <br>
+    406
+    The server cannot return data in the requested format
+    <br>
+    422
+    Unprocessable Entity: The change could not be processed because of errors on the data
+    <br>
+    500
+    Server crashed for some reason. Possible because of missing required params or wrong parameters
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">GET /api/v1/brand_ambassadors/visits/types.json
+
+RESPONSE:
+{
+    &quot;Brand Program&quot;: &quot;brand_program&quot;,
+    &quot;PTO&quot;: &quot;pto&quot;,
+    &quot;Market Visit&quot;: &quot;market_visit&quot;,
+    &quot;Local Market Request&quot;: &quot;local_market_request&quot;
+}
+</pre>
+
+
+
+
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/visits/events.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-events'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/brand_ambassadors/visits/:id/events
+          </a>
+          <br>
+          <small>Get a list of events for a visit</small>
+        </h2>
+    </div>
+
+
+    <div id='description-events' class='collapse accordion-body'>
+      
+<p>Returns a list of the events for a visit.</p>
+
+<p>Each event item have the following attributes:</p>
+<ul><li>
+<p><strong>id</strong>: the event&#39;s ID</p>
+</li><li>
+<p><strong>start_date</strong>: the event&#39;s start date</p>
+</li><li>
+<p><strong>start_time</strong>: the event&#39;s start time</p>
+</li><li>
+<p><strong>end_date</strong>: the event&#39;s end date</p>
+</li><li>
+<p><strong>end_time</strong>: the event&#39;s end time</p>
+</li><li>
+<p><strong>status</strong>: the event&#39;s active state</p>
+</li><li>
+<p><strong>event_status</strong>: the event&#39;s PER status</p>
+</li><li>
+<p><strong>campaign</strong>:</p>
+<ul><li>
+<p><strong>id</strong>: the campaign id</p>
+</li><li>
+<p><strong>name</strong>: the campaign name associated to the event</p>
+</li></ul>
+</li><li>
+<p><strong>place</strong>:</p>
+<ul><li>
+<p><strong>id</strong>: the place id</p>
+</li><li>
+<p><strong>name</strong>: the name of the place associated to the event</p>
+</li><li>
+<p><strong>formatted_address</strong>: full address of the place</p>
+</li><li>
+<p><strong>country</strong>: country code of the place</p>
+</li><li>
+<p><strong>state_name</strong>: state name of the place</p>
+</li><li>
+<p><strong>city</strong>: city name of the place</p>
+</li><li>
+<p><strong>zipcode</strong>: zip code of the place</p>
+</li></ul>
+</li></ul>
+
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
+    401
+    Unauthorized access
+    <br>
+    404
+    The requested resource was not found
+    <br>
+    406
+    The server cannot return data in the requested format
+    <br>
+    422
+    Unprocessable Entity: The change could not be processed because of errors on the data
+    <br>
+    500
+    Server crashed for some reason. Possible because of missing required params or wrong parameters
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">GET /api/v1/brand_ambassadors/visits/361/events.json
+[
+  {
+    id: 42397,
+    start_date: &quot;11/09/2014&quot;,
+    start_time: &quot;2:45 PM&quot;,
+    end_date: &quot;11/10/2014&quot;,
+    end_time: &quot;3:45 PM&quot;,
+    campaign: {
+      id: 115,
+      name: &quot;Absolut BA FY15&quot;
+    },
+    place: {
+      id: 6754,
+      name: &quot;Atlanta&quot;,
+      formatted_address: &quot;Atlanta, GA, USA&quot;,
+      country: &quot;US&quot;,
+      state_name: &quot;Georgia&quot;,
+      city: &quot;Atlanta&quot;,
+      zipcode: null
+    }
+  },
+  {
+    id: 42398,
+    start_date: &quot;11/10/2014&quot;,
+    start_time: &quot;11:00 AM&quot;,
+    end_date: &quot;11/10/2014&quot;,
+    end_time: &quot;12:00 PM&quot;,
+    campaign: {
+      id: 14,
+      name: &quot;Absolut BA FY14&quot;
+    },
+    place: {
+      id: 6401,
+      name: &quot;Fado Irish Pub&quot;,
+      formatted_address: &quot;Atlanta, GA, United States&quot;,
+      country: &quot;US&quot;,
+      state_name: &quot;Georgia&quot;,
+      city: &quot;Atlanta&quot;,
+      zipcode: null
+    }
+  },
+  ...
+]
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>The visit&#39;s ID.</p>
+
+        <br>
+        Value: 
+<p>Must be Integer.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+
+
+    </div>
+</div>
+
+
+        
+      </div>
+    </div>
+    <hr>
+    <footer></footer>
+  </div>
+  <script type='text/javascript' src='../apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
+<script type='text/javascript' src='../apidoc/javascripts/bundled/bootstrap-collapse.js'></script>
+<script type='text/javascript' src='../apidoc/javascripts/bundled/prettify.js'></script>
+<script type='text/javascript' src='../apidoc/javascripts/apipie.js'></script>
+</body>
+</html>

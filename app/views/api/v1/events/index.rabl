@@ -12,9 +12,17 @@ node :total do
   collection_count
 end
 
+node :filters do
+  @filter_tags
+end
+
 child @events => 'results' do
 
   attributes :id, :start_date, :start_time, :end_date, :end_time, :status
+
+  node :phases do |event|
+    event_phases_and_steps_for_api(event)
+  end
 
   node :event_status do |event|
     if event.unsent?

@@ -13,98 +13,93 @@ class Api::V1::TasksController < Api::V1::FilteredController
     EOS
   end
 
-  api :GET, '/api/v1/events/:event_id/tasks', 'Get a list of taks for an Event'
-  api :GET, '/api/v1/tasks/teams', "Get a list of taks for the user's teams"
-  api :GET, '/api/v1/tasks/mine', 'Get a list of taks for the user'
-  param :event_id, :number, required: false, desc: 'Event ID, required when getting the list of tasks for a event'
-  param :status, Array, desc: 'A list of photo status to filter the results. Options: Active, Inactive'
-  param :task_status, Array, desc: 'A list of photo status to filter the results. Options: Late, Complete, Incomplete, Assigned, Unassigned'
-  param :page, :number, desc: 'The number of the page, Default: 1'
-  example <<-EOS
-    Get a list of active tasks
-    GET /api/v1/events/4924/tasks.json?status[]=Active
-    {
-        "page": 1,
-        "total": 1,
-        "results": [
-            {
-                "id": 30,
-                "title": "Inactive task",
-                "due_at": null,
-                "completed": false,
-                "active": false,
-                "status": [
-                    "Inactive",
-                    "Assigned",
-                    "Incomplete"
-                ],
-                "user": {
-                    "id": 7,
-                    "full_name": "Guillermo Vargas"
-                }
-            }
-        ]
-    }
-  EOS
-  def index
-    collection
+  def_param_group :task do
+    param :task, Hash, required: true, action_aware: true do
+      param :title, String, required: true, desc: 'Task Title'
+      param :due_at, %r{\A\d{1,2}/\d{1,2}/\d{4}\z}, required: false, desc: "Task's due date. Should be in format MM/DD/YYYY."
+      param :completed, [true, false], required: false, desc: "Task's completeness state. By default it's false."
+      param :active, [true, false, 'true', 'false'], required: false, desc: "Task's active state'. Default: true"
+      param :company_user_id, :number, desc: 'Company User ID. Required when the task is not being assigned to a event'
+    end
   end
 
-  api :GET, '/api/v1/tasks/:id/comments', 'Get a list of comments for a Task'
+  api :GET, '/api/v1/events/:event_id/tasks', 'Get a list of taks for an Event'
+  api :GET, '/api/v1/tasks/team', "Get a list of taks for the user's teams"
+  api :GET, '/api/v1/tasks/mine', 'Get a list of taks for the user'
+  param :event_id, :number, required: false, desc: 'Event ID, required when getting the list of tasks for a event'
+  param :start_date, %r{\A\d{1,2}/\d{1,2}/\d{4}\z}, desc: 'A date to filter the task list. When provided a start_date without an +end_date+, the result will only include events that happen on this day. The date should be in the format MM/DD/YYYY.'
+  param :end_date, %r{\A\d{1,2}/\d{1,2}/\d{4}\z}, desc: 'A date to filter the task list. This should be provided together with the +start_date+ param and when provided will filter the list with those events that are between that range. The date should be in the format MM/DD/YYYY.'
+  param :status, Array, desc: 'A list of photo status to filter the results. Options: Active, Inactive'
+  param :task_status, Array, desc: 'A list of photo status to filter the results. Options: Late, Complete, Incomplete, Assigned, Unassigned'
+  param :campaign, Array, desc: 'A list of campaign ids to filter the results'
+  param :user, Array, desc: 'A list of user ids to filter the results'
+  param :team, Array, desc: 'A list of team ids to filter the results'
+  param :page, :number, desc: 'The number of the page, Default: 1'
+  def index
+    authorize_index!
+    render json: paginated_result
+  end
+
+  api :POST, '/api/v1/tasks', 'Create a new task'
+  api :POST, '/api/v1/events/:event_id/tasks', 'Create a new task for an Event'
+  param :event_id, :number, required: false, desc: 'Event ID'
+  param_group :task
+  def create
+    authorize! :create, build_resource
+    create! do |success, failure|
+      success.json { render json: resource }
+      failure.json { render json: resource.errors, status: :unprocessable_entity }
+    end
+  end
+
+  api :PUT, '/api/v1/tasks/:id', 'Update a task\'s details'
   param :id, :number, required: true, desc: 'Task ID'
-  description <<-EOS
-    Returns a list of comments associated to a given task.
+  param :event_id, :number, required: false, desc: 'Event ID'
+  param_group :task
+  def update
+    authorize! :create, resource
+    update! do |success, failure|
+      success.json { render json: resource }
+      failure.json { render json: resource.errors, status: :unprocessable_entity }
+    end
+  end
 
-    The results are sorted ascending by +created_at+.
-
-    Each item have the following attributes:
-    * *id*: the comment id
-    * *name*: the comment text
-    * *created_at*: the date and time of creation for the comment
-    * *created_by:* information of the creator of the comment
-
-       This will contain a list with the following attributes:
-
-       * *id:* the user ID for the comment creator
-       * *full_name:* the name for the comment creator
-  EOS
-  example <<-EOS
-    An example with comments for an event in the response
-    GET: /api/v1/tasks/353/comments.json
-    [
-      {
-        "id": 10,
-        "content": "Comment #1 - Task 353",
-        "created_at": "2013-10-03T08:42:32-07:00",
-        "created_by": {
-          "id": 2,
-          "full_name": "Test User"
-        }
-      },
-      {
-        "id": 11,
-        "content": "Comment #2 - Task 353",
-        "created_at": "2013-10-03T08:42:38-07:00",
-        "created_by": {
-          "id": 2,
-          "full_name": "Test User"
-        }
-      }
-    ]
-  EOS
-  def comments
-    authorize! :index_my_comments, resource
-    @comments = resource.comments
+  api :GET, '/api/v1/tasks/:id', 'Get a task\'s details'
+  param :id, :number, required: true, desc: 'Task ID'
+  def show
+    authorize! :show, resource
+    render json: resource
   end
 
   protected
 
+  def permitted_params
+    params.require(:task).permit(:title, :due_at, :company_user_id, :active, :completed)
+  end
+
   def permitted_search_params
-    params.permit(:event_id, { status: [] }, task_status: [])
+    params.permit(:event_id,
+      start_date: [], end_date: [], status: [], task_status: [],
+      campaign: [], user: [], team: [])
   end
 
   def search_params
     super
     @search_params.merge!(Task.search_params_for_scope(params[:scope], current_company_user))
+  end
+
+  def authorize_index!
+    if params[:scope] == 'user'
+      authorize!(:index_my, Task)
+    elsif params[:scope] == 'teams'
+      authorize!(:index_team, Task)
+    else
+      authorize!(:index, Task)
+    end
+  end
+
+  # we are handling custom validations in methods
+  def skip_default_validation
+    true
   end
 end

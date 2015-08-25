@@ -20,6 +20,10 @@
 #  local_start_at :datetime
 #  local_end_at   :datetime
 #  description    :text
+#  kbmg_event_id  :string(255)
+#  rejected_at    :datetime
+#  submitted_at   :datetime
+#  approved_at    :datetime
 #
 
 require 'rails_helper'
@@ -94,7 +98,7 @@ describe Event, type: :model do
   end
 
   describe 'end_after_start validation' do
-    subject { Event.new(start_at: Time.zone.local(2016, 1, 20, 12, 5, 0)) }
+    subject { described_class.new(start_at: Time.zone.local(2016, 1, 20, 12, 5, 0)) }
 
     it { is_expected.not_to allow_value(Time.zone.local(2016, 1, 20, 12, 0, 0)).for(:end_at).with_message('must be after') }
     it { is_expected.to allow_value(Time.zone.local(2016, 1, 20, 12, 5, 0)).for(:end_at) }
@@ -110,9 +114,9 @@ describe Event, type: :model do
     end
 
     subject do
-      Event.new(start_at: Time.zone.local(2016, 2, 1, 11, 5, 0),
-                end_at: Time.zone.local(2016, 2, 1, 12, 5, 0),
-                visit_id: visit.id)
+      described_class.new(start_at: Time.zone.local(2016, 2, 1, 11, 5, 0),
+                          end_at: Time.zone.local(2016, 2, 1, 12, 5, 0),
+                          visit_id: visit.id)
     end
 
     it { is_expected.not_to allow_value(Time.zone.local(2016, 1, 31, 12, 0, 0).to_s(:slashes)).for(:start_date).with_message('should be after 01/31/2016') }
@@ -167,25 +171,33 @@ describe Event, type: :model do
 
       it 'should change to :submitted on :unsent or :rejected' do
         event.submit
+        expect(event.submitted_at).to be_present
         expect(event).to be_submitted
       end
 
       it 'should change to :approved on :submitted' do
         event.submit
+        expect(event.submitted_at).to be_present
         event.approve
+        expect(event.approved_at).to be_present
         expect(event).to be_approved
       end
 
       it 'should change to :submitted on :approved' do
         event.submit
+        expect(event.submitted_at).to be_present
         event.approve
+        expect(event.approved_at).to be_present
         event.unapprove
+        expect(event.approved_at).to be_nil
         expect(event).to be_submitted
       end
 
       it 'should change to :rejected on :submitted' do
         event.submit
+        expect(event.submitted_at).to be_present
         event.reject
+        expect(event.rejected_at).to be_present
         expect(event).to be_rejected
       end
     end
@@ -226,31 +238,31 @@ describe Event, type: :model do
     let(:company_user) { create(:company_user, company: company, role: create(:role, is_admin: false, company: company)) }
 
     it "should return empty if the user doesn't have campaigns nor places" do
-      expect(Event.accessible_by_user(company_user)).to be_empty
+      expect(described_class.accessible_by_user(company_user)).to be_empty
     end
 
-    it 'should return empty if the user have access to the campaing but not the place' do
+    it 'should return empty if the user have access to the campaign but not the place' do
       company_user.campaigns << campaign
-      expect(Event.accessible_by_user(company_user)).to be_empty
+      expect(described_class.accessible_by_user(company_user)).to be_empty
     end
 
     it 'should return the event if the user have the place directly assigned to the user' do
       company_user.campaigns << campaign
       company_user.places << place
-      expect(Event.accessible_by_user(company_user)).to match_array([@event])
+      expect(described_class.accessible_by_user(company_user)).to match_array([@event])
     end
 
     it 'should return the event if the user have access to an area that includes the place' do
       company_user.campaigns << campaign
       area.places << place
       company_user.areas << area
-      expect(Event.accessible_by_user(company_user)).to match_array([@event])
+      expect(described_class.accessible_by_user(company_user)).to match_array([@event])
     end
 
     it 'should return the event if the user has access to the city' do
       company_user.campaigns << campaign
       company_user.places << create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
-      expect(Event.accessible_by_user(company_user)).to match_array([@event])
+      expect(described_class.accessible_by_user(company_user)).to match_array([@event])
     end
   end
 
@@ -258,7 +270,7 @@ describe Event, type: :model do
     let(:campaign) { create(:campaign) }
     let(:user) { create(:company_user, company: campaign.company) }
     it 'should return empty if the user is not assiged to any event' do
-      expect(Event.with_user_in_team(user)).to be_empty
+      expect(described_class.with_user_in_team(user)).to be_empty
     end
 
     it 'should return all the events where a user is assigned as part of the event team' do
@@ -266,7 +278,7 @@ describe Event, type: :model do
       events.each { |e| e.users << user }
       create(:event, campaign: campaign)
 
-      expect(Event.with_user_in_team(user)).to match_array(events)
+      expect(described_class.with_user_in_team(user)).to match_array(events)
     end
 
     it 'should return all the events where a user is part of a team that is assigned to the event' do
@@ -276,7 +288,7 @@ describe Event, type: :model do
       events.each { |e| e.teams << team }
       create(:event, campaign: campaign)
 
-      expect(Event.with_user_in_team(user)).to match_array(events)
+      expect(described_class.with_user_in_team(user)).to match_array(events)
     end
   end
 
@@ -286,10 +298,10 @@ describe Event, type: :model do
 
     it 'should include only events within the given areas' do
       event_la = create(:event, campaign: campaign,
-                                            place: create(:place, country: 'US', state: 'California', city: 'Los Angeles'))
+                                place: create(:place, country: 'US', state: 'California', city: 'Los Angeles'))
 
       event_sf = create(:event, campaign: campaign,
-                                            place: create(:place, country: 'US', state: 'California', city: 'San Francisco'))
+                                place: create(:place, country: 'US', state: 'California', city: 'San Francisco'))
 
       area_la = create(:area, company: company)
       area_sf = create(:area, company: company)
@@ -300,8 +312,8 @@ describe Event, type: :model do
       area_campaign_la = create(:areas_campaign, area: area_la, campaign: campaign)
       area_campaign_sf = create(:areas_campaign, area: area_sf, campaign: campaign)
 
-      expect(Event.in_campaign_area(area_campaign_la)).to match_array [event_la]
-      expect(Event.in_campaign_area(area_campaign_sf)).to match_array [event_sf]
+      expect(described_class.in_campaign_area(area_campaign_la)).to match_array [event_la]
+      expect(described_class.in_campaign_area(area_campaign_sf)).to match_array [event_sf]
     end
 
     it 'should include events that are scheduled on places that are part of the areas' do
@@ -320,8 +332,8 @@ describe Event, type: :model do
       area_campaign_la = create(:areas_campaign, area: area_la, campaign: campaign)
       area_campaign_sf = create(:areas_campaign, area: area_sf, campaign: campaign)
 
-      expect(Event.in_campaign_area(area_campaign_la)).to match_array [event_la]
-      expect(Event.in_campaign_area(area_campaign_sf)).to match_array [event_sf]
+      expect(described_class.in_campaign_area(area_campaign_la)).to match_array [event_la]
+      expect(described_class.in_campaign_area(area_campaign_sf)).to match_array [event_sf]
     end
 
     it 'should exclude events that are scheduled on places that were excluded from the campaign' do
@@ -339,8 +351,8 @@ describe Event, type: :model do
 
       area_campaign_la = create(:areas_campaign, area: area_la, campaign: campaign, exclusions: [place_la.id])
       area_campaign_sf = create(:areas_campaign, area: area_sf, campaign: campaign)
-      expect(Event.in_campaign_area(area_campaign_la)).to be_empty
-      expect(Event.in_campaign_area(area_campaign_sf)).to match_array [event_sf]
+      expect(described_class.in_campaign_area(area_campaign_la)).to be_empty
+      expect(described_class.in_campaign_area(area_campaign_sf)).to match_array [event_sf]
     end
 
     it 'should exclude events that are scheduled on places inside an excluded city' do
@@ -353,10 +365,10 @@ describe Event, type: :model do
       area_la.places << city_la
 
       area_campaign_la = create(:areas_campaign, area: area_la, campaign: campaign)
-      expect(Event.in_campaign_area(area_campaign_la)).to match_array [event_la]
+      expect(described_class.in_campaign_area(area_campaign_la)).to match_array [event_la]
 
       area_campaign_la.exclusions = [city_la.id]
-      expect(Event.in_campaign_area(area_campaign_la)).to be_empty
+      expect(described_class.in_campaign_area(area_campaign_la)).to be_empty
     end
 
     it 'should includes events that are scheduled on places inside an included city' do
@@ -369,12 +381,12 @@ describe Event, type: :model do
 
       area_campaign_la = create(:areas_campaign, area: area_la, campaign: campaign)
       area_campaign2_la = create(:areas_campaign, area: area_la, campaign: campaign2)
-      expect(Event.in_campaign_area(area_campaign_la)).to be_empty
-      expect(Event.in_campaign_area(area_campaign2_la)).to be_empty
+      expect(described_class.in_campaign_area(area_campaign_la)).to be_empty
+      expect(described_class.in_campaign_area(area_campaign2_la)).to be_empty
 
       area_campaign_la.update_attribute :inclusions, [city_la.id]
-      expect(Event.in_campaign_area(area_campaign_la)).to match_array [event_la]
-      expect(Event.in_campaign_area(area_campaign2_la)).to be_empty
+      expect(described_class.in_campaign_area(area_campaign_la)).to match_array [event_la]
+      expect(described_class.in_campaign_area(area_campaign2_la)).to be_empty
     end
   end
 
@@ -384,10 +396,10 @@ describe Event, type: :model do
 
     it 'should include only events within the given areas' do
       event_la = create(:event, campaign: campaign,
-                                            place: create(:place, country: 'US', state: 'California', city: 'Los Angeles'))
+                                place: create(:place, country: 'US', state: 'California', city: 'Los Angeles'))
 
       event_sf = create(:event, campaign: campaign,
-                                            place: create(:place, country: 'US', state: 'California', city: 'San Francisco'))
+                                place: create(:place, country: 'US', state: 'California', city: 'San Francisco'))
 
       area_la = create(:area, company: company)
       area_sf = create(:area, company: company)
@@ -400,9 +412,9 @@ describe Event, type: :model do
       area_campaign_la = create(:areas_campaign, area: area_la, campaign: campaign)
       area_campaign_sf = create(:areas_campaign, area: area_sf, campaign: campaign)
 
-      expect(Event.in_campaign_areas(campaign, [area_la])).to match_array [event_la]
-      expect(Event.in_campaign_areas(campaign, [area_sf])).to match_array [event_sf]
-      expect(Event.in_campaign_areas(campaign, [area_la, area_sf])).to match_array [event_la, event_sf]
+      expect(described_class.in_campaign_areas(campaign, [area_la])).to match_array [event_la]
+      expect(described_class.in_campaign_areas(campaign, [area_sf])).to match_array [event_sf]
+      expect(described_class.in_campaign_areas(campaign, [area_la, area_sf])).to match_array [event_la, event_sf]
     end
 
     it 'should include events that are scheduled on places that are part of the areas' do
@@ -424,9 +436,9 @@ describe Event, type: :model do
       campaign2 = create(:campaign, company: company)
       campaign2.areas << [area_la, area_sf]
 
-      expect(Event.in_campaign_areas(campaign, [area_la])).to match_array [event_la]
-      expect(Event.in_campaign_areas(campaign, [area_sf])).to match_array [event_sf]
-      expect(Event.in_campaign_areas(campaign, [area_la, area_sf])).to match_array [event_la, event_sf]
+      expect(described_class.in_campaign_areas(campaign, [area_la])).to match_array [event_la]
+      expect(described_class.in_campaign_areas(campaign, [area_sf])).to match_array [event_sf]
+      expect(described_class.in_campaign_areas(campaign, [area_la, area_sf])).to match_array [event_la, event_sf]
     end
 
     it 'should exclude events that are scheduled on places that were excluded from the campaign' do
@@ -445,8 +457,8 @@ describe Event, type: :model do
       area_campaign_la = create(:areas_campaign, area: area_la, campaign: campaign, exclusions: [place_la.id])
       area_campaign_sf = create(:areas_campaign, area: area_sf, campaign: campaign)
 
-      expect(Event.in_campaign_areas(campaign, [area_la])).to be_empty
-      expect(Event.in_campaign_areas(campaign, [area_sf])).to match_array [event_sf]
+      expect(described_class.in_campaign_areas(campaign, [area_la])).to be_empty
+      expect(described_class.in_campaign_areas(campaign, [area_sf])).to match_array [event_sf]
     end
 
     it 'should exclude events that are scheduled on places inside an excluded city' do
@@ -459,10 +471,10 @@ describe Event, type: :model do
       area_la.places << city_la
 
       area_campaign_la = create(:areas_campaign, area: area_la, campaign: campaign)
-      expect(Event.in_campaign_areas(campaign, [area_la])).to match_array [event_la]
+      expect(described_class.in_campaign_areas(campaign, [area_la])).to match_array [event_la]
 
       area_campaign_la.update_attribute :exclusions, [city_la.id]
-      expect(Event.in_campaign_areas(campaign, [area_la])).to be_empty
+      expect(described_class.in_campaign_areas(campaign, [area_la])).to be_empty
     end
 
     it 'should includes events that are scheduled on places inside an included city' do
@@ -481,14 +493,14 @@ describe Event, type: :model do
       area_campaign_la = create(:areas_campaign, area: area_la, campaign: campaign)
       area_campaign_sf = create(:areas_campaign, area: area_sf, campaign: campaign)
       create(:areas_campaign, area: area_la, campaign: campaign2)
-      expect(Event.in_campaign_areas(campaign, [area_la])).to be_empty
-      expect(Event.in_campaign_areas(campaign2, [area_la])).to be_empty
+      expect(described_class.in_campaign_areas(campaign, [area_la])).to be_empty
+      expect(described_class.in_campaign_areas(campaign2, [area_la])).to be_empty
 
       area_campaign_la.update_attribute :inclusions, [city_la.id]
-      expect(Event.in_campaign_areas(campaign, [area_la])).to match_array [event_la]
-      expect(Event.in_campaign_areas(campaign2, [area_la])).to be_empty
+      expect(described_class.in_campaign_areas(campaign, [area_la])).to match_array [event_la]
+      expect(described_class.in_campaign_areas(campaign2, [area_la])).to be_empty
 
-      expect(Event.in_campaign_areas(campaign, [area_la, area_sf])).to match_array [event_la, event_sf]
+      expect(described_class.in_campaign_areas(campaign, [area_la, area_sf])).to match_array [event_la, event_sf]
 
     end
   end
@@ -514,16 +526,16 @@ describe Event, type: :model do
       area_la.places << create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
       area_sf.places << create(:place, country: 'US', state: 'California', city: 'San Francisco', types: ['locality'])
 
-      expect(Event.in_areas([area_la])).to match_array [event_la]
-      expect(Event.in_areas([area_sf])).to match_array [event_sf]
-      expect(Event.in_areas([area_la, area_sf])).to match_array [event_la, event_sf]
+      expect(described_class.in_areas([area_la])).to match_array [event_la]
+      expect(described_class.in_areas([area_sf])).to match_array [event_sf]
+      expect(described_class.in_areas([area_la, area_sf])).to match_array [event_la, event_sf]
     end
 
     it 'should include events that are scheduled on places that are part of the areas' do
-      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
       event_la = create(:event, campaign: campaign, place: place_la)
 
-      place_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco')
+      place_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco', types: ['locality'])
       event_sf = create(:event, campaign: campaign, place: place_sf)
 
       area_la = create(:area, company: company)
@@ -535,9 +547,9 @@ describe Event, type: :model do
       # Create another campaign just to test
       campaign2 = create(:campaign, company: company)
 
-      expect(Event.in_areas([area_la])).to match_array [event_la]
-      expect(Event.in_areas([area_sf])).to match_array [event_sf]
-      expect(Event.in_areas([area_la, area_sf])).to match_array [event_la, event_sf]
+      expect(described_class.in_areas([area_la])).to match_array [event_la]
+      expect(described_class.in_areas([area_sf])).to match_array [event_sf]
+      expect(described_class.in_areas([area_la, area_sf])).to match_array [event_la, event_sf]
     end
 
   end
@@ -553,28 +565,28 @@ describe Event, type: :model do
       place_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco')
       event_sf = create(:event, campaign: campaign, place: place_sf)
 
-      expect(Event.in_places([place_la])).to match_array [event_la]
-      expect(Event.in_places([place_sf])).to match_array [event_sf]
+      expect(described_class.in_places([place_la])).to match_array [event_la]
+      expect(described_class.in_places([place_sf])).to match_array [event_sf]
     end
 
     it 'should include events that are scheduled within the given scope if the place is a locality' do
       los_angeles = create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
       event_la = create(:event, campaign: campaign,
-                                            place: create(:place, country: 'US', state: 'California', city: 'Los Angeles'))
+                                place: create(:place, country: 'US', state: 'California', city: 'Los Angeles'))
 
       san_francisco = create(:place, country: 'US', state: 'California', city: 'San Francisco', types: ['locality'])
       event_sf = create(:event, campaign: campaign,
-                                            place: create(:place, country: 'US', state: 'California', city: 'San Francisco'))
+                                place: create(:place, country: 'US', state: 'California', city: 'San Francisco'))
 
-      expect(Event.in_places([los_angeles])).to match_array [event_la]
-      expect(Event.in_places([san_francisco])).to match_array [event_sf]
-      expect(Event.in_places([los_angeles, san_francisco])).to match_array [event_la, event_sf]
+      expect(described_class.in_places([los_angeles])).to match_array [event_la]
+      expect(described_class.in_places([san_francisco])).to match_array [event_sf]
+      expect(described_class.in_places([los_angeles, san_francisco])).to match_array [event_la, event_sf]
     end
   end
 
   describe '#start_at attribute' do
     it 'should be correctly set when assigning valid start_date and start_time' do
-      event = Event.new
+      event = described_class.new
       event.start_date = '01/20/2012'
       event.start_time = '12:05pm'
       event.valid?
@@ -582,13 +594,13 @@ describe Event, type: :model do
     end
 
     it 'should be nil if no start_date and start_time are provided' do
-      event = Event.new
+      event = described_class.new
       event.valid?
       expect(event.start_at).to be_nil
     end
 
     it 'should have only the date if no start_time provided' do
-      event = Event.new
+      event = described_class.new
       event.start_date = '01/20/2012'
       event.start_time = nil
       event.valid?
@@ -598,7 +610,7 @@ describe Event, type: :model do
 
   describe '#end_at attribute' do
     it 'should be correcly set when assigning valid end_date and end_time' do
-      event = Event.new
+      event = described_class.new
       event.end_date = '01/20/2012'
       event.end_time = '12:05pm'
       event.valid?
@@ -606,13 +618,13 @@ describe Event, type: :model do
     end
 
     it 'should be nil if no end_date and end_time are provided' do
-      event = Event.new
+      event = described_class.new
       event.valid?
       expect(event.end_at).to be_nil
     end
 
     it 'should have only the date if no end_time provided' do
-      event = Event.new
+      event = described_class.new
       event.end_date = '01/20/2012'
       event.end_time = nil
       event.valid?
@@ -841,35 +853,6 @@ describe Event, type: :model do
 
   end
 
-  describe 'photos reindexing' do
-    before do
-      ResqueSpec.reset!
-    end
-    let(:event) { create(:event) }
-
-    it 'should queue a job to reindex photos after a event have been updated if place_id changed' do
-      event.place_id = 1
-      event.save
-      ResqueSpec.reset!
-
-      # Changing the place should reindex all photos for the event
-      event.place_id =  1199
-      expect(event.save).to be_truthy
-      expect(EventPhotosIndexer).to have_queued(event.id)
-    end
-
-    it 'should not queue a job to reindex if the place_id not changed' do
-      event.place_id = 1
-      event.save
-      ResqueSpec.reset!
-
-      # Changing the place should reindex all photos for the event
-      event.start_at = event.start_at - 1.hour
-      expect(event.save).to be_truthy
-      expect(EventPhotosIndexer).not_to have_queued(event.id)
-    end
-  end
-
   describe '#place_reference=' do
     it 'should not fail if nill' do
       event = build(:event, place: nil)
@@ -949,23 +932,15 @@ describe Event, type: :model do
   end
 
   describe 'validate_modules_ranges' do
-    let(:event) { create(:event, campaign: create(:campaign, modules: { 'comments' => { 'name' => 'comments', 'field_type' => 'module', 'settings' => { 'range_min' => '1', 'range_max' => '2'} } }) ) }
-    it 'should validate ranges for event campaign modules' do
+    let(:event) { create(:event, campaign: create(:campaign, modules: { 'comments' => { 'name' => 'comments', 'field_type' => 'module', 'settings' => { 'range_min' => '1', 'range_max' => '2' } } })) }
+
+    it 'validates the minimun number of comments' do
       expect(event.validate_modules_ranges).to be_falsey
-      expect(event.errors[:base]).to include('It is required at least 1 and not more than 2 comments')
+      expect(event.errors[:base]).to include('Between 1 and 2 comments are required')
+    end
 
-      comment_to_delete = create(:comment, content: 'Comment #1', commentable: event)
-      event.comments << comment_to_delete
-      event.comments << create(:comment, content: 'Comment #2', commentable: event)
-      event.comments << create(:comment, content: 'Comment #3', commentable: event)
-      event.save
-
-      expect(event.validate_modules_ranges).to be_falsey
-      expect(event.errors[:base]).to include('It is required at least 1 and not more than 2 comments')
-
-      event.comments.delete(comment_to_delete)
-      event.save
-
+    it 'returns valid if the minimun number of comments is covered' do
+      event.comments << create(:comment, content: 'Comment #1', commentable: event)
       expect(event.validate_modules_ranges).to be_truthy
       expect(event.errors[:base]).to be_empty
     end
@@ -1274,7 +1249,7 @@ describe Event, type: :model do
       expect(event.valid?).to be_falsey
       expect(event.errors[:place_reference]).to include(
         'You do not have permissions to this place. '\
-        'Please contact your campaingn administrator to request access.')
+        'Please contact your campaign administrator to request access.')
 
       event.place = place_LA
       expect(event.valid?).to be_truthy
@@ -1333,7 +1308,7 @@ describe Event, type: :model do
         expect(event.local_start_at.utc.strftime('%Y-%m-%d %H:%M:%S')).to eql event.read_attribute(:start_at).strftime('%Y-%m-%d %H:%M:%S')
       end
       Time.use_zone('America/Guatemala') do
-        event = Event.last
+        event = described_class.last
         event.local_start_at
         event.start_date = '01/22/2019'
         event.valid?  # this will trigger the after_validation call
@@ -1348,7 +1323,7 @@ describe Event, type: :model do
         expect(event.timezone).to eq('America/New_York')
       end
       Time.use_zone('America/Guatemala') do
-        event = Event.last
+        event = described_class.last
         event.end_date = '01/22/2019'
         event.valid?  # this will trigger the after_validation call
         expect(event.timezone).to eq('America/Guatemala')
@@ -1366,7 +1341,7 @@ describe Event, type: :model do
       # Then if later it's updated on a different timezone, the timezone should not be updated
       # if the dates are not modified
       Time.use_zone('America/Guatemala') do
-        event = Event.last
+        event = described_class.last
         expect(event.save).to be_truthy
         expect(event.timezone).to eq('America/New_York')
       end
@@ -1432,6 +1407,254 @@ describe Event, type: :model do
       event.save
       activity.reload
       expect(activity.campaign_id).to eql(new_campaign.id)
+    end
+  end
+
+  describe 'Phases' do
+    let(:campaign) { create(:campaign, company: company) }
+    let(:company) { create(:company) }
+
+    describe '#currrent_phase' do
+      it 'return plan for events in the future' do
+        event = create(:event, start_date: 3.days.from_now.to_s(:slashes),
+                               end_date: 3.days.from_now.to_s(:slashes), campaign: campaign)
+        expect(event.current_phase).to eql :plan
+      end
+      it 'returns execute for late events' do
+        event = create(:late_event, campaign: campaign)
+        expect(event.current_phase).to eql :execute
+      end
+
+      it 'returns execute for due events' do
+        event = create(:due_event, campaign: campaign)
+        expect(event.current_phase).to eql :execute
+      end
+
+      it 'returns execute for events happenning today' do
+        event = create(:event, start_date: Time.zone.now.to_s(:slashes),
+                               end_date: Time.zone.now.to_s(:slashes), campaign: campaign)
+        expect(event.current_phase).to eql :execute
+      end
+
+      it 'returns results for submitted events' do
+        field = create(:form_field_number, fieldable: campaign, required: true)
+        event = create(:submitted_event, start_date: Time.zone.now.to_s(:slashes),
+                               end_date: Time.zone.now.to_s(:slashes), campaign: campaign)
+        expect(event.current_phase).to eql :results
+      end
+    end
+
+    describe 'plan_phases' do
+      it 'return plan for events in the future' do
+        event = create(:event, campaign: campaign)
+        expect(event.plan_phases).to eql [
+          { id: :info, title: "Basic Info", complete: true, required: true },
+          { id: :contacts, title: "Contacts", complete: false, required: false },
+          { id: :tasks, title: "Tasks", complete: false, required: false },
+          { id: :documents, title: "Documents", complete: false, required: false }]
+      end
+    end
+
+    describe 'execute_phases' do
+      it 'includes the activities step if campaign have any activity type' do
+        event = create(:event, campaign: campaign)
+        campaign.activity_types << create(:activity_type, company: company)
+        expect(event.execute_phases.find { |s| s[:id] == :activities }).to include(
+          id: :activities, title: 'Activities', complete: false)
+      end
+
+      it 'does not include the activities step if campaign have no activity types' do
+        event = create(:event, campaign: campaign)
+        expect(event.execute_phases.find { |s| s[:id] == :activities }).to be_nil
+      end
+
+      it 'includes the attendance step if campaign have the module assigned' do
+        event = create(:event, campaign: campaign)
+        campaign.update_attribute(:modules, 'attendance' => {})
+        expect(event.execute_phases.find { |s| s[:id] == :attendance }).to include(
+          id: :attendance, title: 'Attendance', complete: false)
+      end
+
+      it 'does not include the attendance step if campaign does not have the module assigned' do
+        event = create(:event, campaign: campaign)
+        expect(event.execute_phases.find { |s| s[:id] == :attendance }).to be_nil
+      end
+
+      it 'includes the photos step if campaign have the module assigned' do
+        event = create(:event, campaign: campaign)
+        campaign.update_attribute(:modules, 'photos' => {})
+        expect(event.execute_phases.find { |s| s[:id] == :photos }).to include(
+          id: :photos, title: 'Photos', complete: false)
+      end
+
+      it 'does not include the photos step if campaign does not have the module assigned' do
+        event = create(:event, campaign: campaign)
+        expect(event.execute_phases.find { |s| s[:id] == :photos }).to be_nil
+      end
+
+      it 'includes the expenses step if campaign have the module assigned' do
+        event = create(:event, campaign: campaign)
+        campaign.update_attribute(:modules, 'expenses' => {})
+        expect(event.execute_phases.find { |s| s[:id] == :expenses }).to include(
+          id: :expenses, title: 'Expenses', complete: false)
+      end
+
+      it 'does not include the expenses step if campaign does not have the module assigned' do
+        event = create(:event, campaign: campaign)
+        expect(event.execute_phases.find { |s| s[:id] == :expenses }).to be_nil
+      end
+
+      it 'includes the comments step if campaign have the module assigned' do
+        event = create(:event, campaign: campaign)
+        campaign.update_attribute(:modules, 'comments' => {})
+        expect(event.execute_phases.find { |s| s[:id] == :comments }).to include(
+          id: :comments, title: 'Consumer Comments', complete: false)
+      end
+
+      it 'does not include the comments step if campaign does not have the module assigned' do
+        event = create(:event, campaign: campaign)
+        expect(event.execute_phases.find { |s| s[:id] == :comments }).to be_nil
+      end
+
+      it 'marks the comments module as completed if not range validation and at least one comment exists' do
+        event = create(:event, campaign: campaign)
+        campaign.update_attribute(:modules, 'comments' => {})
+        create(:comment, commentable: event)
+        expect(event.execute_phases.find { |s| s[:id] == :comments }[:complete]).to be_truthy
+      end
+
+      it 'does not mark the comments module as completed if not comments have been added' do
+        event = create(:event, campaign: campaign)
+        campaign.update_attribute(:modules, 'comments' => {})
+        expect(event.execute_phases.find { |s| s[:id] == :comments }[:complete]).to be_falsey
+      end
+
+      it 'does not mark the comments module as completed if does\'t meet the range validations' do
+        event = create(:event, campaign: campaign)
+        campaign.update_attribute(:modules, 'comments' => {'settings' => { 'range_max' => 4, 'range_min' => 2 }})
+        create(:comment, commentable: event)
+        expect(event.execute_phases.find { |s| s[:id] == :comments }[:complete]).to be_falsey
+      end
+
+      it 'marks the comments module as completed if meets the range validations' do
+        event = create(:event, campaign: campaign)
+        campaign.update_attribute(:modules, 'comments' => {'settings' => { 'range_max' => 4, 'range_min' => 2 }})
+        create(:comment, commentable: event)
+        create(:comment, commentable: event)
+        expect(event.execute_phases.find { |s| s[:id] == :comments }[:complete]).to be_truthy
+      end
+
+      it 'does not mark the comments module as completed only a max is specified and not comments have been created' do
+        event = create(:event, campaign: campaign)
+        campaign.update_attribute(:modules, 'comments' => {'settings' => { 'range_max' => 4, 'range_min' => nil }})
+        expect(event.execute_phases.find { |s| s[:id] == :comments }[:complete]).to be_falsey
+      end
+    end
+  end
+
+  describe '#first_event_expense_created_at' do
+    let!(:event) { create :approved_event, created_at: Time.parse("01/01/2010 08:00") }
+
+    context 'when event has no expense' do
+      before { expect(event.event_expenses.count).to eq 0 }
+
+      it 'should return event created_at time' do
+        expect(event.first_event_expense_created_at).to eql(event.created_at)
+      end
+    end
+
+    context 'when event has at least one expense' do
+      let!(:event_expense1) { create :event_expense, event: event, created_at: Time.parse("01/01/2010 10:00") }
+      let!(:event_expense2) { create :event_expense, event: event, created_at: Time.parse("02/01/2010 10:00") }
+
+      before { expect(event.event_expenses.count).to eq 2 }
+
+      it 'should return last event expense created_at time' do
+        expect(event.first_event_expense_created_at).to eql(event_expense1.created_at)
+      end
+    end
+  end
+
+  describe '#first_event_expense_created_by' do
+    let!(:user1) { create :user }
+    let!(:event) { create :approved_event, created_at: Time.parse("01/01/2010 08:00"), created_by: user1 }
+
+    context 'when event has no expense' do
+      before { expect(event.event_expenses.count).to eq 0 }
+
+      it 'should return event created_by' do
+        expect(event.first_event_expense_created_by.id).to eq user1.id
+      end
+    end
+
+    context 'when event has at least one expense' do
+      let!(:user2) { create :user }
+      let!(:event_expense1) { create :event_expense, event: event, created_at: Time.parse("01/01/2010 10:00"), created_by: user2  }
+      let!(:event_expense2) { create :event_expense, event: event, created_at: Time.parse("02/01/2010 10:00")}
+
+      before { expect(event.event_expenses.count).to eq 2 }
+
+      it 'should return last event expense created_by' do
+        expect(event.first_event_expense_created_by.id).to eq user2.id
+      end
+    end
+  end
+
+  describe '#last_event_expense_updated_at' do
+    let!(:event) { create :approved_event, updated_at: Time.parse("01/01/2010 08:00") }
+
+    context 'when event has no expense' do
+      before { expect(event.event_expenses.count).to eq 0 }
+
+      it 'should return event updated_at time' do
+        expect(event.last_event_expense_updated_at).to eql(event.updated_at)
+      end
+    end
+
+    context 'when event has at least one expense' do
+      let!(:event_expense1) { create :event_expense, event: event, updated_at: Time.parse("01/01/2010 10:00") }
+      let!(:event_expense2) { create :event_expense, event: event, updated_at: Time.parse("02/01/2010 10:00") }
+
+      before { expect(event.event_expenses.count).to eq 2 }
+
+      it 'should return last event expense updated_at time' do
+        expect(event.last_event_expense_updated_at).to eql(event_expense2.updated_at)
+      end
+    end
+  end
+
+  describe '#last_event_expense_updated_by' do
+    let!(:user1) { create :user }
+    let!(:event) { create :approved_event, updated_at: Time.parse("01/01/2010 08:00"), updated_by: user1 }
+
+    context 'when event has no expense' do
+      before { expect(event.event_expenses.count).to eq 0 }
+
+      it 'should return event updated_by' do
+        expect(event.last_event_expense_updated_by.id).to eq user1.id
+      end
+    end
+
+    context 'when event has at least one expense' do
+      let!(:user2) { create :user }
+      let!(:event_expense1) { create :event_expense, event: event, updated_at: Time.parse("01/01/2010 10:00") }
+      let!(:event_expense2) { create :event_expense, event: event, updated_at: Time.parse("02/01/2010 10:00"), updated_by: user2 }
+
+      before { expect(event.event_expenses.count).to eq 2 }
+
+      it 'should return last event expense updated_by' do
+        expect(event.last_event_expense_updated_by.id).to eq user2.id
+      end
+    end
+  end
+
+  describe '#update_active_photos_count' do
+    let!(:event) { create :approved_event, active_photos_count: 0}
+
+    before { allow(event).to receive_message_chain(:photos, :active, :count).and_return 10 }
+
+    it 'should update number of active photos' do
+      expect { event.update_active_photos_count }.to change { event.active_photos_count }.from(0).to 10
     end
   end
 end

@@ -1,6 +1,6 @@
 .form-builder-wrapper
   .form-wrapper.data-form-wrapper
-    .fields-wrapper.pull-right
+    #fields-wrapper-affix.fields-wrapper.pull-right data-offset-top="340" data-spy="affix"
       p.drag-field-title Drag fields to add
       #form-field-accordion.accordion
         .accordion-group
@@ -91,6 +91,10 @@
               br
               | Marque
 
+            .field data-type="Place"
+              span.icon-venue
+              br
+              | Place
 
         - if can?(:activate_kpis, resource)
           .accordion-group
@@ -126,15 +130,15 @@
               i.icon-chat
               | Comments
             - if jbb_feature_enabled?
-              .field.module data-type="Attendance" 
+              .field.module data-type="Attendance"
                 i.icon-attendance
                 | Attendance
 
     .form-fields-sections
       .form-fields.clearfix.form-section.pull-left
         div.empty-form-legend
-          b No Fields! You should add a field.
-          p This is a live preview of your form. Currently, you don't have any fields. Enable any KPI to add fields to your form.
+          b No fields have been added to this form.
+          p Click the panel to the right to drag, drop and rearrange fields.
 
       .clearfix
 
@@ -144,6 +148,7 @@ javascript:
       url: '#{campaign_path(resource, format: :json)}',
       exportUrl: '#{form_campaign_path(resource, format: :pdf)}',
       resourceName: 'campaign',
+      defaultExpensesCategories: #{current_company.expense_categories.split(/\s*\n\s*/).to_json.html_safe},
       canEdit: #{can?(:view_event_form, resource) ? 'true' : 'false'},
       canActivateKpis: #{can?(:activate_kpis, resource) ? 'true' : 'false'}
     });

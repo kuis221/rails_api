@@ -26,6 +26,11 @@ class Campaign < ActiveRecord::Base
   include AASM
   include GoalableModel
 
+  # Defines the method do_search
+  include SolrSearchable
+
+  has_paper_trail
+
   # Created_by_id and updated_by_id fields
   track_who_does_it
 
@@ -124,6 +129,9 @@ class Campaign < ActiveRecord::Base
   has_many :documents, -> { order('created_at DESC').where(asset_type: :document) },
            class_name: 'AttachedAsset', as: :attachable, inverse_of: :attachable
 
+  belongs_to :created_by, class_name: 'User'
+  delegate :full_name, to: :created_by, prefix: true, allow_nil: true
+
   accepts_nested_attributes_for :form_fields, allow_destroy: true
 
   aasm do
@@ -208,6 +216,14 @@ class Campaign < ActiveRecord::Base
         #{CompanyUser.active.where(company_id: company_id).joins(:brands).where(brands: { id: brand_ids }).to_sql} UNION
         #{CompanyUser.active.where(company_id: company_id).joins(:brand_portfolios).where(brand_portfolios: { id: brand_portfolio_ids }).to_sql}
       ")
+    end
+  end
+
+  def expense_categories
+    if enabled_modules.include?('expenses')
+      module_setting('expenses', 'categories')
+    else
+      []
     end
   end
 
@@ -331,6 +347,14 @@ class Campaign < ActiveRecord::Base
     end
   end
 
+  # Returns the setting for a module or nil if not setting is set
+  def module_setting(module_name, setting_name)
+    return unless modules && modules.key?(module_name) &&
+                  modules[module_name].key?('settings') &&
+                  modules[module_name]['settings']
+    modules[module_name]['settings'][setting_name]
+  end
+
   def enabled_modules_kpis
     (enabled_modules - ['attendance']).map { |m| Kpi.send(m) }
   end
@@ -431,32 +455,11 @@ class Campaign < ActiveRecord::Base
     clear_locations_cache(area)
   end
 
+  def campaign_brand_portfolios
+    self.brand_portfolios.pluck(:name).join(' ,')
+  end
+
   class << self
-    # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
-    def do_search(params, include_facets = false)
-      solr_search do
-        with(:company_id, params[:company_id])
-        with(:user_ids, params[:user]) if params.key?(:user) && params[:user].present?
-        with(:team_ids, params[:team]) if params.key?(:team) && params[:team].present?
-        with(:brand_ids, params[:brand]) if params.key?(:brand) && params[:brand].present?
-        with(:brand_portfolio_ids, params[:brand_portfolio]) if params.key?(:brand_portfolio) && params[:brand_portfolio].present?
-        with(:status, params[:status]) if params.key?(:status) && params[:status].present?
-        with(:id, params[:id]) if params.key?(:id) && params[:id].present?
-        with(:id, params[:campaign]) if params.key?(:campaign) && params[:campaign].present?
-
-        if include_facets
-          facet :user_ids
-          facet :team_ids
-          facet :brand_ids
-          facet :brand_portfolio_ids
-          facet :status
-        end
-
-        order_by(params[:sorting] || :name, params[:sorting_dir] || :asc)
-        paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
-      end
-    end
-
     def searchable_params
       [campaign: [], user: [], team: [], brand: [], status: [], venue: [],
        role: [], brand_portfolio: []]
@@ -526,6 +529,7 @@ class Campaign < ActiveRecord::Base
   end
 
   def range_module_settings?(module_name)
+    return false unless modules.present? && modules.key?(module_name) && modules[module_name].key?('settings')
     settings = modules[module_name]['settings']
     settings &&
     (

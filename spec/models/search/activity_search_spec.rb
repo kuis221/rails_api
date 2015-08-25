@@ -102,15 +102,15 @@ describe Activity, type: :model, search: true do
       .to match_array([activity1, activity2])
 
     # Search for Activities on a given date range
-    expect(search(company_id: company.id, start_date: '02/21/2013', end_date: '02/23/2013'))
+    expect(search(company_id: company.id, start_date: ['02/21/2013'], end_date: ['02/23/2013']))
       .to match_array([activity1])
-    expect(search(company_id: company.id, start_date: '02/22/2013'))
+    expect(search(company_id: company.id, start_date: ['02/22/2013']))
       .to match_array([activity1])
-    expect(search(company_id: company.id, start_date: '03/21/2013', end_date: '03/23/2013'))
+    expect(search(company_id: company.id, start_date: ['03/21/2013'], end_date: ['03/23/2013']))
       .to match_array([activity2])
-    expect(search(company_id: company.id, start_date: '03/22/2013'))
+    expect(search(company_id: company.id, start_date: ['03/22/2013']))
       .to match_array([activity2])
-    expect(search(company_id: company.id, start_date: '01/21/2013', end_date: '01/23/2013'))
+    expect(search(company_id: company.id, start_date: ['01/21/2013'], end_date: ['01/23/2013']))
       .to be_empty
 
     # Search for Activities on a given status

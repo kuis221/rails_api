@@ -11,7 +11,7 @@ class BrandsController < FilteredController
   has_scope :not_in_portfolio
 
   # This helper provide the methods to activate/deactivate the resource
-  include DeactivableHelper
+  include DeactivableController
 
   def create
     create! do |success, _|
@@ -32,6 +32,15 @@ class BrandsController < FilteredController
   end
 
   protected
+
+  def collection_to_csv
+    CSV.generate do |csv|
+      csv << ['NAME', 'ACTIVE STATE']
+      each_collection_item do |brand|
+        csv << [brand.name, brand.status]
+      end
+    end
+  end
 
   def permitted_params
     params.permit(brand: [:name, :marques_list])[:brand]

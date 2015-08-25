@@ -12,6 +12,7 @@
 #  last_activity_at        :datetime
 #  notifications_settings  :string(255)      default([]), is an Array
 #  last_activity_mobile_at :datetime
+#  tableau_username        :string(255)
 #
 
 require 'rails_helper'
@@ -140,10 +141,11 @@ describe CompanyUser, type: :model do
         expect(user.accessible_campaign_ids).to eq([campaign.id])
       end
 
-      it 'should return the ids of campaigns of a brand assigend to the user' do
+      it 'should not return campaigns for inactive brands' do
+        brand.update_attribute(:active, false)
         campaign.brands << brand
         user.brands << brand
-        expect(user.accessible_campaign_ids).to eq([campaign.id])
+        expect(user.accessible_campaign_ids).to be_empty
       end
 
       it 'should return the ids of campaigns of a brand portfolio assigned to the user' do
@@ -151,7 +153,15 @@ describe CompanyUser, type: :model do
         user.brand_portfolios << portfolio
         expect(user.accessible_campaign_ids).to eq([campaign.id])
       end
+
+      it 'should not return campaigns for inactive brand portfolios' do
+        portfolio.update_attribute(:active, false)
+        campaign.brand_portfolios << portfolio
+        user.brand_portfolios << portfolio
+        expect(user.accessible_campaign_ids).to be_empty
+      end
     end
+
     describe 'as an admin user' do
       let(:user)      { create(:company_user, company: create(:company)) }
 
@@ -366,6 +376,58 @@ describe CompanyUser, type: :model do
       expect(user.notifications_settings).not_to be_empty
       expect(user.notifications_settings.length).to eql CompanyUser::NOTIFICATION_SETTINGS_TYPES.length
       expect(user.notifications_settings).to include('event_recap_due_app')
+    end
+  end
+
+  describe '#accessible_brand_portfolios_brand_ids' do
+    let!(:company) { create :company }
+    let!(:company_user) { create :company_user, company: company }
+
+    let!(:brand1) { create :brand, company: company, active: true }
+    let!(:brand2) { create :brand, company: company, active: true }
+    let!(:brand_portfolio1) { create :brand_portfolio, company: company }
+    let!(:brand_portfolio2) { create :brand_portfolio, company: company }
+    let!(:brand_portfolios_brand1) { create :brand_portfolios_brand, brand: brand1, brand_portfolio: brand_portfolio1 }
+    let!(:brand_portfolios_brand2) { create :brand_portfolios_brand, brand: brand2, brand_portfolio: brand_portfolio2 }
+
+    before { create :membership, company_user: company_user, memberable: brand_portfolio1 }
+    before { create :membership, company_user: company_user, memberable: brand_portfolio2 }
+
+    it 'should return brand ids from brand portfolio brands' do
+      expect(company_user.accessible_brand_portfolios_brand_ids).to match_array([brand1.id, brand2.id])
+    end
+  end
+
+  describe '#accessible_brand_ids' do
+    let!(:company) { create :company }
+
+    let!(:company_user) { create :company_user, company: company }
+
+    let!(:brand1) { create :brand, company: company, active: true }
+    let!(:brand2) { create :brand, company: company, active: true }
+
+    context 'when user is an admin' do
+      before { allow(company_user).to receive(:is_admin?).and_return true }
+
+      it 'should return all brand ids' do
+        expect(company_user.accessible_brand_ids).to match_array([brand1.id, brand2.id])
+      end
+    end
+
+    context 'when user is not an admin' do
+      before { allow(company_user).to receive(:is_admin?).and_return false }
+
+      let!(:brand3) { create :brand, company: company, active: true }
+
+      before { company_user.brands << brand1 }
+      before { company_user.brands << brand2 }
+      before { company_user.brands << brand3 }
+
+      before { allow(company_user).to receive(:accessible_brand_portfolios_brand_ids).and_return([brand3.id, brand2.id]) }
+
+      it 'should return user brand ids and portfolio brand ids' do
+        expect(company_user.accessible_brand_ids).to match_array([brand1.id, brand2.id, brand3.id])
+      end
     end
   end
 end

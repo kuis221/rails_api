@@ -1,20 +1,20 @@
 
 #list-tools
   .pull-left
-    = button_to 'Create', new_task_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-task-btn'} if (params[:scope] == 'user' && can?(:create_my, Task)) || (params[:scope] == 'teams' && can?(:create_team, Task))
+    = button_to 'Add Task', new_task_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-task-btn'} if (params[:scope] == 'user' && can?(:create_my, Task)) || (params[:scope] == 'teams' && can?(:create_team, Task))
   .text-right
+    .tasks-progress-bar
     .dropdown.btn-download.task-download
       a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
         i.icon-download
         i.icon-arrow-down-small
       ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
         li
-          a#xls-export.xlsx-download-link href="#" role="menuitem" data-url="#{url_for(action: :index, scope: params[:scope], format: :xls)}"
-            | Download as XLS
+          a#xls-export.xlsx-download-link href="#" role="menuitem" data-url="#{url_for(action: :index, scope: params[:scope], format: :csv)}"
+            | Download as CSV
         li
           a#pdf-export.xlsx-download-link href="#" role="menuitem" data-url="#{url_for(action: :index, scope: params[:scope], format: :pdf)}"
             | Download as PDF
-    .tasks-progress-bar
 
 div#tasks-list.resource-list
 
@@ -31,10 +31,16 @@ javascript:
     'ytdDatesRange': '#{current_company.ytd_dates_range}',
     'includeSearchBox': false,
     'includeAutoComplete': true,
-    'autoCompletePath': '#{autocomplete_path(:events, format: :json)}',
+    'autoCompletePath': '#{autocomplete_path("#{params[:scope]}_tasks", format: :json)}',
     'defaultParams': '#{j default_params_for_view('status[]=Active')}',
     'applyTo': '#{controller_name}',
     'userFilters': #{user_saved_filters(controller_name).to_json.html_safe},
+    'emptyStateMessage': '#{j t("#{params[:scope]}_tasks.empty.line1", scope: :blank_states) }',
+    'emptyStateMessageLine2': '#{j t("#{params[:scope]}_tasks.empty.line2.with#{can?(:create, Event) ? '' : 'out'}_create_permissions", scope: :blank_states) }',
+    'emptyFilterResultsMessage': '#{j t("#{params[:scope]}_tasks.filters.line1", default: :filters_line1, scope: :blank_states) }',
+    'emptyFilterResultsMessageLine2': '#{j t("#{params[:scope]}_tasks.filters.line2", default: :filters_line2, scope: :blank_states) }',
+    'emptyStateImage': '#{asset_path('blank-tasks.png')}',
+    'canCreatePermission': #{can?(:create, Task)},
     'onItemsLoad': function(response, page){
       if (response.find('div[data-content="counters"]').length > 0){
         $('.tasks-progress-bar').html(response.find('div[data-content="counters"]'));
@@ -48,10 +54,10 @@ javascript:
     },
     'onPageLoaded' : function() {
       if ($("ul.task-navigation li.active").attr('id') === 'mine_tasks') {
-        $('#xls-export').data('url', '/tasks/mine.xls');
+        $('#xls-export').data('url', '/tasks/mine.csv');
         $('#pdf-export').data('url', '/tasks/mine.pdf');
       } else {
-        $('#xls-export').data('url', '/tasks/my_teams.xls');
+        $('#xls-export').data('url', '/tasks/my_teams.csv');
         $('#pdf-export').data('url', '/tasks/my_teams.pdf?scope=teams');
       }
     }

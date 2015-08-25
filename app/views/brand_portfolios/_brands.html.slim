@@ -1,9 +1,19 @@
-.row-fluid
-  - resource.brands.each do |brand|
-    .span3.brand.clearfix id="brand-#{brand.id}"
-      .pull-left
-        i.icon-wired-star
-        .brand-name
-          = brand.name
-      .pull-right
-        = link_to(content_tag(:i,'', class: 'icon-remove-circle'), delete_brand_brand_portfolio_path(resource, brand_id: brand.id), class: 'remove-brand-btn', title: 'Remove', remote: true, method: :delete)
+h5.module-title BRANDS
+- if resource.brands.any?
+  #brands-list
+    .row-fluid
+      - resource.brands.each do |brand|
+        .span3.brand.clearfix id="brand-#{brand.id}"
+          .pull-left
+            .rounded-icon.pull-left
+              i.icon-star
+            .module-item
+              .brand-name
+                = brand.name
+          .pull-right
+            = link_to(content_tag(:i,'', class: 'icon-remove-circle'), delete_brand_brand_portfolio_path(resource, brand_id: brand.id), class: 'remove-brand-btn', title: 'Remove', remote: true, method: :delete)
+  = button_to_add 'Add Brand', select_brands_brand_portfolio_path(resource) if can?(:edit, resource)
+
+- else
+  = blank_state_module('brand_portfolio.brands') do
+    = button_to 'Add Brand', select_brands_brand_portfolio_path(resource), remote: true, method: :get, class: 'btn btn-primary'  if can?(:edit, resource)

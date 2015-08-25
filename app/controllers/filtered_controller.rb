@@ -5,8 +5,8 @@
 class FilteredController < InheritedResources::Base
   include ExportableController
 
-  helper_method :collection_count, :facets, :page,
-                :total_pages, :return_path
+  helper_method :collection_count, :collection_total_count, :facets, :page,
+                :total_pages, :search_params
 
   respond_to :json, only: :index
 
@@ -15,14 +15,7 @@ class FilteredController < InheritedResources::Base
 
   before_action :authorize_actions, only: CUSTOM_VALIDATION_ACTIONS
 
-  after_action :remove_resource_new_notifications, only: :show
-
   custom_actions collection: [:filters, :items]
-
-  def return_path
-    url_to_return = params[:return] || request.env['HTTP_REFERER']
-    url_to_return if url_valid? url_to_return
-  end
 
   def filters
   end
@@ -40,6 +33,15 @@ class FilteredController < InheritedResources::Base
   end
 
   protected
+
+  def collection_to_csv
+    CSV.generate do |csv|
+      csv << ['NAME', 'DESCRIPTION', 'ACTIVE STATE']
+      each_collection_item do |item|
+        csv << [item.name, item.description, item.status]
+      end
+    end
+  end
 
   def build_resource_params
     [permitted_params || {}]
@@ -81,17 +83,24 @@ class FilteredController < InheritedResources::Base
   def search_params
     @search_params ||= params.permit(permitted_search_params).tap do |p|
       CustomFilter.where(id: params[:cfid]).each do |cf|
-        p.deep_merge!(Rack::Utils.parse_nested_query(cf.filters)) do |key, v1, v2| 
-          if ['start_date', 'end_date'].include?(key)
-            v2
+        p[:end_date] = params[:start_date] if params.key?('start_date') && !params.key?('end_date')
+        p.deep_merge!(Rack::Utils.parse_nested_query(cf.filters)) do |key, v1, v2|
+          if %w(start_date end_date).include?(key)
+            Array(v1) + Array(v2)
           else
             (Array(v1) + Array(v2)).uniq
           end
         end
-      end if params[:cfid].present? && params[:cfid].present?
-      p[:company_id] = current_company.id
-      p[:current_company_user] = current_company_user
+      end if params[:cfid].present?
+      p.merge!(base_search_params)
     end
+  end
+
+  def base_search_params
+    {
+      company_id: current_company.id,
+      current_company_user: current_company_user
+    }
   end
 
   def permitted_search_params
@@ -101,6 +110,16 @@ class FilteredController < InheritedResources::Base
   def collection_count
     collection
     @collection_count ||= @collection_count_scope.count
+  end
+
+  def collection_total_count
+    @collection_total_count ||= begin
+      if resource_class.respond_to?(:do_search)
+        resource_class.do_search(base_search_params).total
+      else
+        end_of_association_chain.accessible_by_user(current_user).count
+      end
+    end
   end
 
   def collection_search
@@ -119,44 +138,4 @@ class FilteredController < InheritedResources::Base
     c
   end
 
-  # Makes sure that the resource is immediate indexed.
-  # this can be used in any controller with:
-  #  after_action :force_resource_reindex, only: [:create]
-  def force_resource_reindex
-    with_immediate_indexing do
-      Sunspot.index resource if resource.persisted? && resource.errors.empty?
-    end
-  end
-
-  def with_immediate_indexing
-    old_session = Sunspot.session
-    if Sunspot.session.is_a?(Sunspot::Queue::SessionProxy)
-      Sunspot.session = Sunspot.session.session
-    end
-    yield
-    Sunspot.commit
-  ensure
-    Sunspot.session = old_session
-  end
-
-  def remove_resource_new_notifications
-    case resource.class.name
-    when 'Event'
-      # Remove the notifications related to new events (including for teams)
-      # and keep the notifications for new tasks associated to the event and user
-      current_company_user.notifications
-        .where('message = ? OR message = ?', 'new_event', 'new_team_event')
-        .where("params->'event_id' = (?)", resource.id.to_s).destroy_all
-    when 'Campaign'
-      current_company_user.notifications.new_campaigns
-        .where('params->? = (?)', 'campaign_id', resource.id.to_s).destroy_all
-    end
-  end
-
-  def url_valid?(url)
-    URI.parse(url)
-    true
-  rescue URI::InvalidURIError
-    false
-  end
 end

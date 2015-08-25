@@ -190,14 +190,18 @@ class TrendObject
       end
 
       if params[:start_date].present? && params[:end_date].present?
-        d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
-        d2 = Timeliness.parse(params[:end_date], zone: :current).end_of_day
+        params[:start_date] = Array(params[:start_date])
+        params[:end_date] = Array(params[:end_date])
         any_of do
-          with :start_at, d1..d2
-          with :end_at, d1..d2
+          params[:start_date].each_with_index do |start, index|
+            d1 = Timeliness.parse(start, zone: :current).beginning_of_day
+            d2 = Timeliness.parse(params[:end_date][index], zone: :current).end_of_day
+            with :start_at, d1..d2
+            with :end_at, d1..d2
+          end
         end
       elsif params[:start_date].present?
-        d = Timeliness.parse(params[:start_date], zone: :current)
+        d = Timeliness.parse(params[:start_date][0], zone: :current)
         all_of do
           with(:start_at).less_than(d.end_of_day)
           with(:end_at).greater_than(d.beginning_of_day)

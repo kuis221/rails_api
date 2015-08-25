@@ -34,10 +34,17 @@ Add ".compact to a select-list build a compact list of resources
 
 Styleguide 4.1.4
 */
+
+/*
+Add ".select-list-input to a select-list build a compact list of resources
+
+Styleguide 4.1.5
+*/
 .resource-list {
 	color: $text;
 	width: 100%;
 	margin-top: 20px;
+	overflow: hidden;
 	&.no-top-margin{ margin-top: 0; }
 	a, a:hover {
 		color: $text;
@@ -51,6 +58,11 @@ Styleguide 4.1.4
 		font-size: 12px;
 		// To prevent page breaks on PDF exports
 		page-break-inside: avoid !important;
+		&:after {
+			content: ' ';
+			display: table;
+			clear: both;
+		}
 		&:last-child {
 			margin-bottom: 0;
 		}
@@ -90,12 +102,6 @@ Styleguide 4.1.4
 				&:first-child {
 					margin-left: 0;
 				}
-				&.icon-receipt {
-					font-size: 26px;
-					position: relative;
-					top: 7px;
-					margin-right: 5px;
-				}
 			}
 			a, .button-with-icon {
 				color: $brand;
@@ -111,11 +117,11 @@ Styleguide 4.1.4
 			.resource-item-actions {
 				display: inline-block;
 			}
-			.checker{
+			.checker, .checker span {
 				background-color: $user_menu;
 			}
-			&.complete {
-				border-color: $gray-lighter;
+			label.radio div.radio span {
+				border-color: $brand;
 			}
 		}
 		&.inactive {
@@ -140,13 +146,13 @@ Styleguide 4.1.4
 			}
 		}
 
-		&.late {
-			border-left: 5px solid $late;
+		&.incomplete {
+			border-left: 5px solid $gray-light;
 		}
-		&.submitted {
+		&.submitted, &.unassigned {
 			border-left: 5px solid $submitted;
 		}
-		&.approved {
+		&.approved, &.complete {
 			border-left: 5px solid $approved;
 		}
 		&.rejected {
@@ -154,6 +160,9 @@ Styleguide 4.1.4
 		}
 		&.complete {
 			padding-left: ($resource-item-padding + 4);
+		}
+		&.late {
+			border-left: 5px solid $late;
 		}
 		.task-completed {
 			margin: 15px 10px 0 0;
@@ -246,7 +255,9 @@ Styleguide 4.1.4
 		}
 		&.single-line .resource-item {
 			.resource-item-link {
-				padding-top: 2px;
+				//font-size: 16px;
+				padding-left: 0;
+				padding-top: 4px;
 			}
 		}
 		&.max-items-3 {
@@ -290,6 +301,35 @@ Styleguide 4.1.4
 		}
 		&.max-items-5 {
 			@include max-resource-items-height($resource-item-height-single-line, 5);
+		}
+	}
+	&.select-list-input {
+		label.resource-item-link {
+			width: 100%;
+		}
+		div.radio {
+			float: right;
+			margin-right: 6px;
+			span {
+				background-color: #FFF;
+				border: 0;
+				width: 25px;
+				height: 25px;
+				&.checked {
+					background-color: $green;
+					&:after {
+						font-family: 'icons';
+						color: white;
+						content: "\e64e";
+						border: 0;
+						background-color: transparent;
+						font-size: 14px;
+						left: 6px;
+						top: 4px;
+						font-weight: bold;
+					}
+				}
+			}
 		}
 	}
 }

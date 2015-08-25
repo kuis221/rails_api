@@ -16,10 +16,11 @@ feature 'Results Event Status Page', js: true, search: true  do
     let(:place) { create(:place, name: 'Place 1') }
 
     before { Kpi.create_global_kpis }
-    before { company_user.role.permissions.create(action: :event_status, subject_class: 'Campaign', mode: 'campaigns') }
 
     scenario 'a user can play and dismiss the video tutorial' do
-      visit results_event_status_path
+      company_user.role.permissions.create(action: :event_status_campaigns, subject_class: 'Campaign', mode: 'campaigns')
+
+      visit analysis_event_status_path
 
       feature_name = 'GETTING STARTED: EVENT STATUS REPORT'
 
@@ -37,11 +38,15 @@ feature 'Results Event Status Page', js: true, search: true  do
       end
       wait_for_ajax
 
-      visit results_gva_path
+      visit analysis_gva_path
       expect(page).to have_no_content(feature_name)
     end
 
     scenario 'should display the event status report for selected campaign and grouping' do
+      company_user.role.permissions.create(action: :event_status_campaigns, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_places, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_users, subject_class: 'Campaign', mode: 'campaigns')
+
       area.places << place
       campaign.areas << area
       company_user.campaigns << campaign
@@ -66,7 +71,7 @@ feature 'Results Event Status Page', js: true, search: true  do
             user_ids: [company_user.id],
             start_time: '08:00AM', end_time: '10:00AM', start_date: '01/23/2020', end_date: '01/23/2020')
 
-      visit results_event_status_path
+      visit analysis_event_status_path
 
       choose_campaign('Test Campaign FY01')
 
@@ -122,7 +127,38 @@ feature 'Results Event Status Page', js: true, search: true  do
       end
     end
 
+    scenario 'should display the places Event Status for selected campaign whithout select group by when it is the unique permission' do
+      company_user.role.permissions.create(action: :event_status_places, subject_class: 'Campaign', mode: 'campaigns')
+
+      area.places << place
+      campaign.areas << area
+      company_user.campaigns << campaign
+      company_user.areas << area
+
+      create(:goal, goalable: campaign, kpi: Kpi.promo_hours, value: '77')
+      create(:goal, parent: campaign, goalable: company_user, kpi: Kpi.promo_hours, value: 100)
+      create(:goal, parent: campaign, goalable: company_user, kpi: Kpi.events, value: 10)
+      create(:goal, parent: campaign, goalable: area, kpi: Kpi.events, value: 3)
+      create(:goal, parent: campaign, goalable: area, kpi: Kpi.promo_hours, value: 14)
+
+      create(:approved_event, company: company, campaign: campaign, place: place,
+            user_ids: [company_user.id],
+            start_time: '08:00AM', end_time: '9:00AM', start_date: '01/23/2013', end_date: '01/23/2013')
+
+      visit analysis_event_status_path
+
+      choose_campaign('Test Campaign FY01')
+
+      within('#report-container') do
+        expect(page).to have_content('Area 1')
+      end
+    end
+
     scenario 'should export the overall campaign Event Status to Excel' do
+      company_user.role.permissions.create(action: :event_status_campaigns, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_places, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_users, subject_class: 'Campaign', mode: 'campaigns')
+
       campaign.places << place
       company_user.campaigns << campaign
       company_user.places << place
@@ -133,7 +169,7 @@ feature 'Results Event Status Page', js: true, search: true  do
       create(:approved_event, company: company, campaign: campaign, place: place)
       create(:submitted_event, company: company, campaign: campaign, place: place)
 
-      visit results_event_status_path
+      visit analysis_event_status_path
 
       choose_campaign('Test Campaign FY01')
 
@@ -142,12 +178,16 @@ feature 'Results Event Status Page', js: true, search: true  do
 
       expect(ListExport.last).to have_rows([
         ['METRIC', 'GOAL', 'EXECUTED', 'EXECUTED %', 'SCHEDULED', 'SCHEDULED %', 'REMAINING', 'REMAINING %'],
-        ['PROMO HOURS', '100', '2', '0.02', '2', '0.02', '96', '0.96'],
-        ['EVENTS', '2', '1', '0.5', '1', '0.5', '0', '0']
+        ['PROMO HOURS', '100', '2', '2.00%', '2', '2.00%', '96', '96.00%'],
+        ['EVENTS', '2', '1', '50.00%', '1', '50.00%', '0', '0.00%']
       ])
     end
 
     scenario 'should export the Event Status grouped by Place to Excel' do
+      company_user.role.permissions.create(action: :event_status_campaigns, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_places, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_users, subject_class: 'Campaign', mode: 'campaigns')
+
       area.places << place
       campaign.areas << area
       company_user.campaigns << campaign
@@ -159,7 +199,7 @@ feature 'Results Event Status Page', js: true, search: true  do
       create(:approved_event, company: company, campaign: campaign, place: place)
       create(:submitted_event, company: company, campaign: campaign, place: place)
 
-      visit results_event_status_path
+      visit analysis_event_status_path
 
       choose_campaign('Test Campaign FY01')
 
@@ -170,12 +210,16 @@ feature 'Results Event Status Page', js: true, search: true  do
 
       expect(ListExport.last).to have_rows([
         ['PLACE/AREA', 'METRIC', 'GOAL', 'EXECUTED', 'EXECUTED %', 'SCHEDULED', 'SCHEDULED %', 'REMAINING', 'REMAINING %'],
-        ['Area 1', 'EVENTS', '2', '1', '0.5', '1', '0.5', '0', '0'],
-        ['Area 1', 'PROMO HOURS', '10', '2', '0.2', '2', '0.2', '6', '0.6']
+        ['Area 1', 'EVENTS', '2', '1', '50.00%', '1', '50.00%', '0', '0.00%'],
+        ['Area 1', 'PROMO HOURS', '10', '2', '20.00%', '2', '20.00%', '6', '60.00%']
       ])
     end
 
     scenario 'should export the Event Status grouped by Staff to Excel' do
+      company_user.role.permissions.create(action: :event_status_campaigns, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_places, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_users, subject_class: 'Campaign', mode: 'campaigns')
+
       area.places << place
       campaign.areas << area
       company_user.campaigns << campaign
@@ -187,7 +231,7 @@ feature 'Results Event Status Page', js: true, search: true  do
       create(:approved_event, company: company, campaign: campaign, place: place, user_ids: [company_user.id])
       create(:submitted_event, company: company, campaign: campaign, place: place, user_ids: [company_user.id])
 
-      visit results_event_status_path
+      visit analysis_event_status_path
 
       choose_campaign('Test Campaign FY01')
 
@@ -198,12 +242,16 @@ feature 'Results Event Status Page', js: true, search: true  do
 
       expect(ListExport.last).to have_rows([
         ['USER/TEAM', 'METRIC', 'GOAL', 'EXECUTED', 'EXECUTED %', 'SCHEDULED', 'SCHEDULED %', 'REMAINING', 'REMAINING %'],
-        ['Juanito Bazooka', 'EVENTS', '2', '1', '0.5', '1', '0.5', '0', '0'],
-        ['Juanito Bazooka', 'PROMO HOURS', '10', '2', '0.2', '2', '0.2', '6', '0.6']
+        ['Juanito Bazooka', 'EVENTS', '2', '1', '50.00%', '1', '50.00%', '0', '0.00%'],
+        ['Juanito Bazooka', 'PROMO HOURS', '10', '2', '20.00%', '2', '20.00%', '6', '60.00%']
       ])
     end
 
     scenario 'should be able to export the overall campaign Event Status as PDF' do
+      company_user.role.permissions.create(action: :event_status_campaigns, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_places, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_users, subject_class: 'Campaign', mode: 'campaigns')
+
       campaign.places << place
       company_user.campaigns << campaign
       company_user.places << place
@@ -214,7 +262,7 @@ feature 'Results Event Status Page', js: true, search: true  do
       create(:approved_event, company: company, campaign: campaign, place: place)
       create(:submitted_event, company: company, campaign: campaign, place: place)
 
-      visit results_event_status_path
+      visit analysis_event_status_path
 
       choose_campaign('Test Campaign FY01')
 
@@ -245,6 +293,10 @@ feature 'Results Event Status Page', js: true, search: true  do
     end
 
     scenario 'should be able to export the campaign Event Status grouped by Place as PDF' do
+      company_user.role.permissions.create(action: :event_status_campaigns, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_places, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_users, subject_class: 'Campaign', mode: 'campaigns')
+
       area.places << place
       campaign.areas << area
       company_user.campaigns << campaign
@@ -256,7 +308,7 @@ feature 'Results Event Status Page', js: true, search: true  do
       create(:approved_event, company: company, campaign: campaign, place: place)
       create(:submitted_event, company: company, campaign: campaign, place: place)
 
-      visit results_event_status_path
+      visit analysis_event_status_path
 
       choose_campaign('Test Campaign FY01')
 
@@ -293,6 +345,10 @@ feature 'Results Event Status Page', js: true, search: true  do
     end
 
     scenario 'should be able to export the campaign Event Status grouped by Staff as PDF' do
+      company_user.role.permissions.create(action: :event_status_campaigns, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_places, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_users, subject_class: 'Campaign', mode: 'campaigns')
+
       area.places << place
       campaign.areas << area
       company_user.campaigns << campaign
@@ -304,7 +360,7 @@ feature 'Results Event Status Page', js: true, search: true  do
       create(:approved_event, company: company, campaign: campaign, place: place, user_ids: [company_user.id])
       create(:submitted_event, company: company, campaign: campaign, place: place, user_ids: [company_user.id])
 
-      visit results_event_status_path
+      visit analysis_event_status_path
 
       choose_campaign('Test Campaign FY01')
 
@@ -333,10 +389,10 @@ feature 'Results Event Status Page', js: true, search: true  do
         expect(text).to include 'JuanitoBazooka'
         expect(text).to include '2GOAL'
         expect(text).to include 'EVENTS'
-        expect(text).to match /0(EVENTS)?REMAINING11/
+        expect(text).to match(/0(EVENTS)?REMAINING11/)
         expect(text).to include '10GOAL'
         expect(text).to include 'PROMOHOURS'
-        expect(text).to match /6(PROMOHOURS)?REMAINING22/
+        expect(text).to match(/6(PROMOHOURS)?REMAINING22/)
       end
     end
   end
@@ -349,7 +405,7 @@ feature 'Results Event Status Page', js: true, search: true  do
     select_from_chosen(name, from: 'report[campaign_id]')
   end
 
-  def export_report(format = 'XLS')
+  def export_report(format = 'CSV')
     with_resque do
       expect do
         click_js_link('Download')

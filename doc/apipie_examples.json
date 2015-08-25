@@ -1,0 +1,4019 @@
+{
+  "activities#new": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/activities/new.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "activity_type_id=2",
+      "request_data": null,
+      "response_data": {
+        "activity_date": "2015-07-23T00:00:00.000-07:00",
+        "company_user": {
+          "id": 29,
+          "name": "Test User"
+        },
+        "activity_type": {
+          "id": 2,
+          "name": "Activity Type 2"
+        },
+        "data": [
+          {
+            "field_id": 20,
+            "name": "User/Date",
+            "type": "FormField::UserDate",
+            "value": null,
+            "ordering": 1,
+            "required": null
+          },
+          {
+            "field_id": 21,
+            "name": "Form Field Text 2",
+            "type": "FormField::Text",
+            "value": null,
+            "ordering": 2,
+            "required": null
+          },
+          {
+            "field_id": 22,
+            "name": "Attachment 2",
+            "type": "FormField::Attachment",
+            "value": null,
+            "ordering": 3,
+            "required": null
+          },
+          {
+            "field_id": 23,
+            "name": "Form Field Checkbox 2",
+            "type": "FormField::Checkbox",
+            "value": null,
+            "ordering": 4,
+            "required": null,
+            "segments": [
+              {
+                "id": 16,
+                "text": "Checkbox A",
+                "value": false
+              },
+              {
+                "id": 17,
+                "text": "Checkbox B",
+                "value": false
+              },
+              {
+                "id": 18,
+                "text": "Checkbox C",
+                "value": false
+              }
+            ]
+          },
+          {
+            "field_id": 24,
+            "name": "Form Field Brand 2",
+            "type": "FormField::Brand",
+            "value": null,
+            "ordering": 5,
+            "required": null,
+            "segments": [
+
+            ]
+          },
+          {
+            "field_id": 25,
+            "name": "Form Field Currency 2",
+            "type": "FormField::Currency",
+            "value": null,
+            "ordering": 6,
+            "required": null
+          },
+          {
+            "field_id": 26,
+            "name": "Form Field Date 2",
+            "type": "FormField::Date",
+            "value": null,
+            "ordering": 7,
+            "required": null
+          },
+          {
+            "field_id": 27,
+            "name": "Form Field Dropdown 2",
+            "type": "FormField::Dropdown",
+            "value": null,
+            "ordering": 8,
+            "required": null,
+            "segments": [
+              {
+                "id": 19,
+                "text": "Option A",
+                "value": false
+              },
+              {
+                "id": 20,
+                "text": "Option B",
+                "value": false
+              },
+              {
+                "id": 21,
+                "text": "Option C",
+                "value": false
+              }
+            ]
+          },
+          {
+            "field_id": 28,
+            "name": "Form Field Likert Scale 2",
+            "type": "FormField::LikertScale",
+            "value": null,
+            "ordering": 9,
+            "required": null,
+            "statements": [
+
+            ],
+            "segments": [
+              {
+                "id": 22,
+                "text": "Option 1"
+              },
+              {
+                "id": 23,
+                "text": "Option 2"
+              },
+              {
+                "id": 24,
+                "text": "Option 3"
+              },
+              {
+                "id": 25,
+                "text": "Statement A"
+              },
+              {
+                "id": 26,
+                "text": "Statement B"
+              },
+              {
+                "id": 27,
+                "text": "Statement C"
+              }
+            ]
+          },
+          {
+            "field_id": 29,
+            "name": "Form Field Marque 2",
+            "type": "FormField::Marque",
+            "value": null,
+            "ordering": 10,
+            "required": null,
+            "segments": [
+
+            ]
+          },
+          {
+            "field_id": 30,
+            "name": "Form Field Number 2",
+            "type": "FormField::Number",
+            "value": null,
+            "ordering": 11,
+            "required": null
+          },
+          {
+            "field_id": 31,
+            "name": "Form Field Percentage 2",
+            "type": "FormField::Percentage",
+            "value": null,
+            "ordering": 12,
+            "required": null,
+            "segments": [
+
+            ]
+          },
+          {
+            "field_id": 32,
+            "name": "Photo 2",
+            "type": "FormField::Photo",
+            "value": null,
+            "ordering": 13,
+            "required": null
+          },
+          {
+            "field_id": 33,
+            "name": "Place 2",
+            "type": "FormField::Place",
+            "value": null,
+            "ordering": 14,
+            "required": null
+          },
+          {
+            "field_id": 34,
+            "name": "Form Field Radio 2",
+            "type": "FormField::Radio",
+            "value": null,
+            "ordering": 15,
+            "required": null,
+            "segments": [
+              {
+                "id": 28,
+                "text": "Option A",
+                "value": false
+              },
+              {
+                "id": 29,
+                "text": "Option B",
+                "value": false
+              },
+              {
+                "id": 30,
+                "text": "Option C",
+                "value": false
+              }
+            ]
+          },
+          {
+            "field_id": 35,
+            "name": "Section 2",
+            "type": "FormField::Section",
+            "value": null,
+            "ordering": 16,
+            "required": null
+          },
+          {
+            "field_id": 36,
+            "name": "Form Field Summation 2",
+            "type": "FormField::Summation",
+            "value": null,
+            "ordering": 17,
+            "required": null,
+            "segments": [
+
+            ]
+          },
+          {
+            "field_id": 37,
+            "name": "Form Field TextArea 2",
+            "type": "FormField::TextArea",
+            "value": null,
+            "ordering": 18,
+            "required": null
+          },
+          {
+            "field_id": 38,
+            "name": "Form Field Time 2",
+            "type": "FormField::Time",
+            "value": null,
+            "ordering": 19,
+            "required": null
+          }
+        ]
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "activities#show": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/activities/1.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": {
+        "id": 1,
+        "activity_date": "2014-02-04T16:09:32.000-08:00",
+        "campaign": {
+          "id": 22,
+          "name": "Campaign 14"
+        },
+        "company_user": {
+          "id": 28,
+          "name": "Test User"
+        },
+        "activity_type": {
+          "id": 1,
+          "name": "Activity Type 1"
+        },
+        "activitable": {
+          "id": 19,
+          "type": "Event"
+        },
+        "data": [
+          {
+            "field_id": 1,
+            "name": "User/Date",
+            "type": "FormField::UserDate",
+            "value": [
+
+            ],
+            "ordering": 1,
+            "required": null,
+            "id": 4
+          },
+          {
+            "field_id": 2,
+            "name": "Form Field Text 1",
+            "type": "FormField::Text",
+            "value": "lorem ipsum dolor sit amet",
+            "ordering": 2,
+            "required": null,
+            "id": 1
+          },
+          {
+            "field_id": 3,
+            "name": "Attachment 1",
+            "type": "FormField::Attachment",
+            "value": [
+
+            ],
+            "ordering": 3,
+            "required": null,
+            "id": 5
+          },
+          {
+            "field_id": 4,
+            "name": "Form Field Checkbox 1",
+            "type": "FormField::Checkbox",
+            "value": [
+              1,
+              2
+            ],
+            "ordering": 4,
+            "required": null,
+            "segments": [
+              {
+                "id": 1,
+                "text": "Checkbox A",
+                "value": true
+              },
+              {
+                "id": 2,
+                "text": "Checkbox B",
+                "value": true
+              },
+              {
+                "id": 3,
+                "text": "Checkbox C",
+                "value": false
+              }
+            ],
+            "id": 2
+          },
+          {
+            "field_id": 5,
+            "name": "Form Field Brand 1",
+            "type": "FormField::Brand",
+            "value": 0,
+            "ordering": 5,
+            "required": null,
+            "segments": [
+
+            ],
+            "id": 6
+          },
+          {
+            "field_id": 6,
+            "name": "Form Field Currency 1",
+            "type": "FormField::Currency",
+            "value": [
+
+            ],
+            "ordering": 6,
+            "required": null,
+            "id": 7
+          },
+          {
+            "field_id": 7,
+            "name": "Form Field Date 1",
+            "type": "FormField::Date",
+            "value": [
+
+            ],
+            "ordering": 7,
+            "required": null,
+            "id": 8
+          },
+          {
+            "field_id": 8,
+            "name": "Form Field Dropdown 1",
+            "type": "FormField::Dropdown",
+            "value": [
+
+            ],
+            "ordering": 8,
+            "required": null,
+            "segments": [
+              {
+                "id": 4,
+                "text": "Option A",
+                "value": false
+              },
+              {
+                "id": 5,
+                "text": "Option B",
+                "value": false
+              },
+              {
+                "id": 6,
+                "text": "Option C",
+                "value": false
+              }
+            ],
+            "id": 9
+          },
+          {
+            "field_id": 9,
+            "name": "Form Field Likert Scale 1",
+            "type": "FormField::LikertScale",
+            "value": {
+            },
+            "ordering": 9,
+            "required": null,
+            "statements": [
+
+            ],
+            "segments": [
+              {
+                "id": 7,
+                "text": "Option 1"
+              },
+              {
+                "id": 8,
+                "text": "Option 2"
+              },
+              {
+                "id": 9,
+                "text": "Option 3"
+              },
+              {
+                "id": 10,
+                "text": "Statement A"
+              },
+              {
+                "id": 11,
+                "text": "Statement B"
+              },
+              {
+                "id": 12,
+                "text": "Statement C"
+              }
+            ],
+            "id": 10
+          },
+          {
+            "field_id": 10,
+            "name": "Form Field Marque 1",
+            "type": "FormField::Marque",
+            "value": 0,
+            "ordering": 10,
+            "required": null,
+            "segments": [
+
+            ],
+            "id": 11
+          },
+          {
+            "field_id": 11,
+            "name": "Form Field Number 1",
+            "type": "FormField::Number",
+            "value": [
+
+            ],
+            "ordering": 11,
+            "required": null,
+            "id": 12
+          },
+          {
+            "field_id": 12,
+            "name": "Form Field Percentage 1",
+            "type": "FormField::Percentage",
+            "value": {
+            },
+            "ordering": 12,
+            "required": null,
+            "segments": [
+
+            ],
+            "id": 13
+          },
+          {
+            "field_id": 13,
+            "name": "Photo 1",
+            "type": "FormField::Photo",
+            "value": null,
+            "ordering": 13,
+            "required": null,
+            "id": 14
+          },
+          {
+            "field_id": 14,
+            "name": "Place 1",
+            "type": "FormField::Place",
+            "value": "8",
+            "ordering": 14,
+            "required": null,
+            "display_value": "Parales, Curridabat",
+            "id": 3
+          },
+          {
+            "field_id": 15,
+            "name": "Form Field Radio 1",
+            "type": "FormField::Radio",
+            "value": [
+
+            ],
+            "ordering": 15,
+            "required": null,
+            "segments": [
+              {
+                "id": 13,
+                "text": "Option A",
+                "value": false
+              },
+              {
+                "id": 14,
+                "text": "Option B",
+                "value": false
+              },
+              {
+                "id": 15,
+                "text": "Option C",
+                "value": false
+              }
+            ],
+            "id": 15
+          },
+          {
+            "field_id": 16,
+            "name": "Section 1",
+            "type": "FormField::Section",
+            "value": [
+
+            ],
+            "ordering": 16,
+            "required": null,
+            "id": 16
+          },
+          {
+            "field_id": 17,
+            "name": "Form Field Summation 1",
+            "type": "FormField::Summation",
+            "value": 0,
+            "ordering": 17,
+            "required": null,
+            "segments": [
+
+            ],
+            "id": 17
+          },
+          {
+            "field_id": 18,
+            "name": "Form Field TextArea 1",
+            "type": "FormField::TextArea",
+            "value": [
+
+            ],
+            "ordering": 18,
+            "required": null,
+            "id": 18
+          },
+          {
+            "field_id": 19,
+            "name": "Form Field Time 1",
+            "type": "FormField::Time",
+            "value": [
+
+            ],
+            "ordering": 19,
+            "required": null,
+            "id": 19
+          }
+        ]
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "campaigns#expense_categories": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/campaigns/27/expense_categories.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": [
+        "Phone",
+        "Entertainment",
+        "Fuel",
+        "Other"
+      ],
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "comments#destroy": [
+    {
+      "verb": "DELETE",
+      "path": "/api/v1/events/4/comments/6.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": {
+        "success": true,
+        "info": "The comment was successfully deleted",
+        "data": {
+        }
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "comments#index": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/1/comments.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": [
+        {
+          "id": 1,
+          "content": "Comment #1",
+          "created_at": "2013-08-22T11:59:00.000-07:00",
+          "created_by": {
+            "id": 1,
+            "full_name": "Test User"
+          }
+        },
+        {
+          "id": 2,
+          "content": "Comment #2",
+          "created_at": "2013-08-23T09:15:00.000-07:00",
+          "created_by": {
+            "id": 1,
+            "full_name": "Test User"
+          }
+        }
+      ],
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    },
+    {
+      "verb": "GET",
+      "path": "/api/v1/tasks/1/comments.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": [
+        {
+          "id": 3,
+          "content": "Comment #1",
+          "created_at": "2013-08-22T11:59:00.000-07:00",
+          "created_by": {
+            "id": 2,
+            "full_name": "Test User"
+          }
+        },
+        {
+          "id": 4,
+          "content": "Comment #2",
+          "created_at": "2013-08-23T09:15:00.000-07:00",
+          "created_by": {
+            "id": 2,
+            "full_name": "Test User"
+          }
+        }
+      ],
+      "code": "200",
+      "show_in_doc": 0,
+      "recorded": true
+    }
+  ],
+  "comments#update": [
+    {
+      "verb": "PUT",
+      "path": "/api/v1/events/3/comments/5.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "comment": {
+          "content": "New comment content"
+        }
+      },
+      "response_data": {
+        "id": 5,
+        "content": "New comment content",
+        "created_at": "2015-07-23T11:36:20.507-07:00",
+        "created_by": {
+          "id": 3,
+          "full_name": "Test User"
+        }
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "contacts#create": [
+    {
+      "verb": "POST",
+      "path": "/api/v1/contacts.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "contact": {
+          "first_name": "Juanito",
+          "last_name": "Bazooka",
+          "title": "Prueba",
+          "email": "juanito@Bazooka.com",
+          "phone_number": "(123) 2322 2222",
+          "street1": "123 Felicidad St.",
+          "street2": "2nd floor, #5",
+          "city": "Miami",
+          "state": "CA",
+          "country": "US",
+          "zip_code": "12345"
+        }
+      },
+      "response_data": {
+        "id": 3,
+        "first_name": "Juanito",
+        "last_name": "Bazooka",
+        "full_name": "Juanito Bazooka",
+        "title": "Prueba",
+        "company_name": null,
+        "email": "juanito@Bazooka.com",
+        "phone_number": "(123) 2322 2222",
+        "street1": "123 Felicidad St.",
+        "street2": "2nd floor, #5",
+        "street_address": "123 Felicidad St., 2nd floor, #5",
+        "city": "Miami",
+        "state": "CA",
+        "zip_code": "12345",
+        "country": "US",
+        "country_name": "United States"
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "contacts#index": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/contacts.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": [
+        {
+          "id": 1,
+          "first_name": "Hellen",
+          "last_name": "Heathcote",
+          "full_name": "Hellen Heathcote",
+          "title": "Lead Operations Analyst",
+          "company_name": "Wiza Group",
+          "email": "garnet_tillman@christiansenwiza.info",
+          "phone_number": "344-23333",
+          "street1": "6167 Etha Burgs",
+          "street2": "",
+          "street_address": "6167 Etha Burgs",
+          "city": "South Dino",
+          "state": "IA",
+          "zip_code": "55581",
+          "country": "US",
+          "country_name": "United States"
+        },
+        {
+          "id": 2,
+          "first_name": "Tia",
+          "last_name": "Carroll",
+          "full_name": "Tia Carroll",
+          "title": "District Optimization Orchestrator",
+          "company_name": "Abshire-Dooley",
+          "email": "kathlyn.johns@donnellyrempel.com",
+          "phone_number": "344-23333",
+          "street1": "326 Arianna Spurs",
+          "street2": "",
+          "street_address": "326 Arianna Spurs",
+          "city": "Russelville",
+          "state": "UT",
+          "zip_code": "28981",
+          "country": "US",
+          "country_name": "United States"
+        }
+      ],
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "contacts#show": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/contacts/4.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": {
+        "id": 4,
+        "first_name": "Dorris",
+        "last_name": "Torphy",
+        "full_name": "Dorris Torphy",
+        "title": "Corporate Markets Supervisor",
+        "company_name": "Homenick-Rutherford",
+        "email": "tyler@keelingwilkinson.com",
+        "phone_number": "344-23333",
+        "street1": "346 Sandy Summit",
+        "street2": "",
+        "street_address": "346 Sandy Summit",
+        "city": "South Ludiestad",
+        "state": "NE",
+        "zip_code": "93355-5857",
+        "country": "US",
+        "country_name": "United States"
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "contacts#update": [
+    {
+      "verb": "PUT",
+      "path": "/api/v1/contacts/5.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "contact": {
+          "first_name": "William",
+          "last_name": "Blake",
+          "company_name": "ACME"
+        }
+      },
+      "response_data": {
+        "id": 5,
+        "first_name": "William",
+        "last_name": "Blake",
+        "full_name": "William Blake",
+        "title": "Global Response Manager",
+        "company_name": "ACME",
+        "email": "jeanette.auer@blick.name",
+        "phone_number": "344-23333",
+        "street1": "6276 Emmett Cove",
+        "street2": "",
+        "street_address": "6276 Emmett Cove",
+        "city": "South Lelaville",
+        "state": "AR",
+        "zip_code": "38399-8814",
+        "country": "US",
+        "country_name": "United States"
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "documents#create": [
+    {
+      "verb": "POST",
+      "path": "/api/v1/events/7/documents.json",
+      "versions": [
+
+      ],
+      "query": null,
+      "request_data": {
+        "attached_asset": {
+          "direct_upload_url": "https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg"
+        }
+      },
+      "response_data": {
+        "id": 6,
+        "file_file_name": "test.jpg",
+        "file_file_size": 100,
+        "file_content_type": "image/jpeg",
+        "created_at": "2015-07-23T11:36:21.430-07:00",
+        "active": true,
+        "file_small": null,
+        "file_thumbnail": null,
+        "file_medium": null,
+        "file_original": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/original/test.jpg?1437676581",
+        "processed": false
+      },
+      "code": "201",
+      "show_in_doc": 0,
+      "recorded": true
+    }
+  ],
+  "documents#form": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/6/documents/form.json",
+      "versions": [
+
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": {
+        "fields": {
+          "AWSAccessKeyId": "AKIAIDG2GYLK4WMVHGPA",
+          "key": null,
+          "policy": "eyJleHBpcmF0aW9uIjoiMjAxNS0wNy0yM1QxOTozNjoyMVoiLCJjb25kaXRpb25zIjpbWyJzdGFydHMtd2l0aCIsIiRrZXkiLCJ1cGxvYWRzLyJdLHsiYnVja2V0IjoiYnJhbmRzY29waWMtZGV2In0sWyJzdGFydHMtd2l0aCIsIiRrZXkiLCIiXSx7IlNlY3VyZSI6InRydWUifSx7ImFjbCI6InB1YmxpYy1yZWFkIn0seyJzdWNjZXNzX2FjdGlvbl9zdGF0dXMiOiIyMDEifV19",
+          "signature": "ZSLrHg9gtrQwvs4xomPY2Et9mjI=",
+          "Secure": "true",
+          "acl": "public-read",
+          "success_action_status": "201"
+        },
+        "url": "https://s3.amazonaws.com/brandscopic-dev/"
+      },
+      "code": "200",
+      "show_in_doc": 0,
+      "recorded": true
+    }
+  ],
+  "documents#index": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/5/documents.json",
+      "versions": [
+
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": [
+        {
+          "id": 3,
+          "name": "filetest",
+          "active": true,
+          "created_at": "2015-07-23T11:36:20.952-07:00",
+          "updated_at": "2015-07-23T11:36:20.952-07:00",
+          "type": "document",
+          "file_name": "filetest.jpg",
+          "file_size": 12345,
+          "content_type": "image/jpg",
+          "url": "https://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/003/original/filetest.jpg?AWSAccessKeyId=AKIAIDG2GYLK4WMVHGPA&Expires=1437762981&Signature=l1ruP4fCupE9JwwWd4aUb2HaoGo%3D&response-content-disposition=attachment%3B%20filename%3Dfiletest.jpg",
+          "thumbnail": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/003/small/filetest.jpg?1437676571",
+          "parent": "event"
+        },
+        {
+          "id": 2,
+          "name": "filetest",
+          "active": true,
+          "created_at": "2015-07-23T11:36:20.948-07:00",
+          "updated_at": "2015-07-23T11:36:20.948-07:00",
+          "type": "document",
+          "file_name": "filetest.jpg",
+          "file_size": 12345,
+          "content_type": "image/jpg",
+          "url": "https://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/002/original/filetest.jpg?AWSAccessKeyId=AKIAIDG2GYLK4WMVHGPA&Expires=1437762981&Signature=NrABvrwPwBSE3ROwqBA6bNoiaYk%3D&response-content-disposition=attachment%3B%20filename%3Dfiletest.jpg",
+          "thumbnail": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/002/small/filetest.jpg?1437676571",
+          "parent": "event"
+        },
+        {
+          "id": 1,
+          "name": "filetest",
+          "active": true,
+          "created_at": "2015-07-23T11:36:20.941-07:00",
+          "updated_at": "2015-07-23T11:36:20.941-07:00",
+          "type": "document",
+          "file_name": "filetest.jpg",
+          "file_size": 12345,
+          "content_type": "image/jpg",
+          "url": "https://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/001/original/filetest.jpg?AWSAccessKeyId=AKIAIDG2GYLK4WMVHGPA&Expires=1437762981&Signature=TOdMNjncS2GkWOSmYa36qNFDpZQ%3D&response-content-disposition=attachment%3B%20filename%3Dfiletest.jpg",
+          "thumbnail": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/001/small/filetest.jpg?1437676571",
+          "parent": "event"
+        },
+        {
+          "id": 5,
+          "name": "filetest",
+          "active": true,
+          "created_at": "2015-07-23T11:36:20.959-07:00",
+          "updated_at": "2015-07-23T11:36:20.959-07:00",
+          "type": "document",
+          "file_name": "filetest.jpg",
+          "file_size": 12345,
+          "content_type": "image/jpg",
+          "url": "https://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/005/original/filetest.jpg?AWSAccessKeyId=AKIAIDG2GYLK4WMVHGPA&Expires=1437762981&Signature=2gHlHDawOmzdHf05hXHyNFUnl0s%3D&response-content-disposition=attachment%3B%20filename%3Dfiletest.jpg",
+          "thumbnail": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/005/small/filetest.jpg?1437676571",
+          "parent": "campaign"
+        },
+        {
+          "id": 4,
+          "name": "filetest",
+          "active": true,
+          "created_at": "2015-07-23T11:36:20.955-07:00",
+          "updated_at": "2015-07-23T11:36:20.955-07:00",
+          "type": "document",
+          "file_name": "filetest.jpg",
+          "file_size": 12345,
+          "content_type": "image/jpg",
+          "url": "https://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/004/original/filetest.jpg?AWSAccessKeyId=AKIAIDG2GYLK4WMVHGPA&Expires=1437762981&Signature=WgD9yYIWxMfBQd82eayQp98Kv9U%3D&response-content-disposition=attachment%3B%20filename%3Dfiletest.jpg",
+          "thumbnail": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/004/small/filetest.jpg?1437676571",
+          "parent": "campaign"
+        }
+      ],
+      "code": "200",
+      "show_in_doc": 0,
+      "recorded": true
+    }
+  ],
+  "documents#update": [
+    {
+      "verb": "PUT",
+      "path": "/api/v1/events/8/documents/7.json",
+      "versions": [
+
+      ],
+      "query": null,
+      "request_data": {
+        "attached_asset": {
+          "active": "false"
+        }
+      },
+      "response_data": null,
+      "code": "204",
+      "show_in_doc": 0,
+      "recorded": true
+    }
+  ],
+  "event_expenses#create": [
+    {
+      "verb": "POST",
+      "path": "/api/v1/events/18/event_expenses.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "event_expense": {
+          "category": "Entertainment",
+          "amount": "350",
+          "expense_date": "01/01/2015",
+          "reimbursable": "true",
+          "billable": "true",
+          "description": "expense description",
+          "merchant": "merchant name",
+          "receipt_attributes": {
+            "direct_upload_url": "https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg"
+          }
+        }
+      },
+      "response_data": {
+        "id": 6,
+        "category": "Entertainment",
+        "amount": "350.0",
+        "expense_date": "01/01/2015",
+        "brand_id": null,
+        "reimbursable": true,
+        "billable": true,
+        "merchant": "merchant name",
+        "description": "expense description",
+        "receipt": {
+          "id": 10,
+          "file_file_name": "test.jpg",
+          "file_content_type": "image/jpeg",
+          "file_file_size": 100,
+          "created_at": "2015-07-23T11:36:31.875-07:00",
+          "active": true,
+          "file_small": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/original/test.jpg?1437676591",
+          "file_medium": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/original/test.jpg?1437676591",
+          "file_original": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/original/test.jpg?1437676591"
+        }
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "event_expenses#destroy": [
+    {
+      "verb": "DELETE",
+      "path": "/api/v1/events/17/event_expenses/5.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": {
+        "success": true,
+        "info": "The expense was successfully deleted",
+        "data": {
+        }
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "event_expenses#form": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/14/event_expenses/form.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": {
+        "fields": {
+          "AWSAccessKeyId": "AKIAIDG2GYLK4WMVHGPA",
+          "key": null,
+          "policy": "eyJleHBpcmF0aW9uIjoiMjAxNS0wNy0yM1QxOTozNjoyN1oiLCJjb25kaXRpb25zIjpbWyJzdGFydHMtd2l0aCIsIiRrZXkiLCJ1cGxvYWRzLyJdLFsic3RhcnRzLXdpdGgiLCIkQ29udGVudC1UeXBlIiwiIl0seyJidWNrZXQiOiJicmFuZHNjb3BpYy1kZXYifSxbInN0YXJ0cy13aXRoIiwiJGtleSIsIiJdLHsiU2VjdXJlIjoidHJ1ZSJ9LHsiYWNsIjoicHVibGljLXJlYWQifSx7InN1Y2Nlc3NfYWN0aW9uX3N0YXR1cyI6IjIwMSJ9XX0=",
+          "signature": "HrMgWOtt4fro9ikYoBECpKt1N/Q=",
+          "Secure": "true",
+          "acl": "public-read",
+          "success_action_status": "201"
+        },
+        "url": "https://s3.amazonaws.com/brandscopic-dev/"
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "event_expenses#index": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/13/event_expenses.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": [
+        {
+          "id": 1,
+          "category": "Entertainment",
+          "amount": "99.99",
+          "expense_date": "01/01/2015",
+          "brand_id": null,
+          "reimbursable": true,
+          "billable": false,
+          "merchant": null,
+          "description": null,
+          "receipt": {
+            "id": 8,
+            "file_file_name": "filetest.jpg",
+            "file_content_type": "image/jpg",
+            "file_file_size": 12345,
+            "created_at": "2013-08-22T11:59:00.000-07:00",
+            "active": true,
+            "file_small": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/008/small/filetest.jpg?1437676571",
+            "file_medium": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/008/medium/filetest.jpg?1437676571",
+            "file_original": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/008/original/filetest.jpg?1437676571"
+          }
+        },
+        {
+          "id": 2,
+          "category": "Fuel",
+          "amount": "159.15",
+          "expense_date": "01/01/2015",
+          "brand_id": null,
+          "reimbursable": false,
+          "billable": false,
+          "merchant": null,
+          "description": null,
+          "receipt": null
+        }
+      ],
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "event_expenses#update": [
+    {
+      "verb": "PUT",
+      "path": "/api/v1/events/15/event_expenses/3.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "event_expense": {
+          "category": "Transportation",
+          "expense_date": "01/02/2014"
+        }
+      },
+      "response_data": {
+        "id": 3,
+        "category": "Transportation",
+        "amount": "9.99",
+        "expense_date": "01/02/2014",
+        "brand_id": null,
+        "reimbursable": false,
+        "billable": false,
+        "merchant": null,
+        "description": null,
+        "receipt": null
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    },
+    {
+      "verb": "PUT",
+      "path": "/api/v1/events/16/event_expenses/4.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "event_expense": {
+          "receipt_attributes": {
+            "_destroy": "1"
+          }
+        }
+      },
+      "response_data": {
+        "id": 4,
+        "category": "Entertainment",
+        "amount": "9.99",
+        "expense_date": "01/01/2015",
+        "brand_id": null,
+        "reimbursable": false,
+        "billable": false,
+        "merchant": null,
+        "description": null,
+        "receipt": {
+          "id": 9,
+          "file_file_name": null,
+          "file_content_type": null,
+          "file_file_size": null,
+          "created_at": "2015-07-23T11:36:28.167-07:00",
+          "active": true,
+          "file_small": "/files/small/missing.png",
+          "file_medium": "/files/medium/missing.png",
+          "file_original": "/files/original/missing.png"
+        }
+      },
+      "code": "200",
+      "show_in_doc": 0,
+      "recorded": true
+    }
+  ],
+  "events#add_contact": [
+    {
+      "verb": "POST",
+      "path": "/api/v1/events/39/contacts.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "contactable_id": 6,
+        "contactable_type": "contact"
+      },
+      "response_data": {
+        "success": true,
+        "info": "Contact successfully added to event",
+        "data": {
+        }
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "events#add_member": [
+    {
+      "verb": "POST",
+      "path": "/api/v1/events/42/members.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "memberable_id": 8,
+        "memberable_type": "team"
+      },
+      "response_data": {
+        "success": true,
+        "info": "Member successfully added to event",
+        "data": {
+        }
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    },
+    {
+      "verb": "POST",
+      "path": "/api/v1/events/43/members.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "memberable_id": 49,
+        "memberable_type": "user"
+      },
+      "response_data": {
+        "success": true,
+        "info": "Member successfully added to event",
+        "data": {
+        }
+      },
+      "code": "200",
+      "show_in_doc": 0,
+      "recorded": true
+    }
+  ],
+  "events#assignable_contacts": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/55/assignable_contacts.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": [
+        {
+          "id": 69,
+          "full_name": "Test User",
+          "title": "Super Admin",
+          "type": "user"
+        },
+        {
+          "id": 10,
+          "full_name": "Luis Perez",
+          "title": "Field Ambassador",
+          "type": "contact"
+        },
+        {
+          "id": 11,
+          "full_name": "Pedro Guerra",
+          "title": "Coach",
+          "type": "contact"
+        }
+      ],
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "events#assignable_members": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/38/assignable_members.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": [
+        {
+          "id": "4",
+          "name": "Team A",
+          "description": "team 1 description",
+          "type": "team"
+        },
+        {
+          "id": "5",
+          "name": "Team B",
+          "description": "team 2 description",
+          "type": "team"
+        },
+        {
+          "id": "41",
+          "name": "Test User",
+          "description": "Super Admin",
+          "type": "user"
+        },
+        {
+          "id": "3",
+          "name": "Z Team",
+          "description": "team 3 description",
+          "type": "team"
+        }
+      ],
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "events#autocomplete": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/autocomplete.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "q=",
+      "request_data": null,
+      "response_data": [
+        {
+          "label": "Campaigns",
+          "value": [
+
+          ]
+        },
+        {
+          "label": "Brands",
+          "value": [
+
+          ]
+        },
+        {
+          "label": "Places",
+          "value": [
+
+          ]
+        },
+        {
+          "label": "People",
+          "value": [
+
+          ]
+        },
+        {
+          "label": "Active State",
+          "value": [
+            {
+              "label": "<i></i>A<i></i>c<i></i>t<i></i>i<i></i>v<i></i>e<i></i>",
+              "value": "Active",
+              "type": "status"
+            },
+            {
+              "label": "<i></i>I<i></i>n<i></i>a<i></i>c<i></i>t<i></i>i<i></i>v<i></i>e<i></i>",
+              "value": "Inactive",
+              "type": "status"
+            }
+          ]
+        },
+        {
+          "label": "Event Status",
+          "value": [
+            {
+              "label": "<i></i>S<i></i>u<i></i>b<i></i>m<i></i>i<i></i>t<i></i>t<i></i>e<i></i>d<i></i>",
+              "value": "Submitted",
+              "type": "event_status"
+            },
+            {
+              "label": "<i></i>L<i></i>a<i></i>t<i></i>e<i></i>",
+              "value": "Late",
+              "type": "event_status"
+            },
+            {
+              "label": "<i></i>D<i></i>u<i></i>e<i></i>",
+              "value": "Due",
+              "type": "event_status"
+            },
+            {
+              "label": "<i></i>A<i></i>p<i></i>p<i></i>r<i></i>o<i></i>v<i></i>e<i></i>d<i></i>",
+              "value": "Approved",
+              "type": "event_status"
+            },
+            {
+              "label": "<i></i>R<i></i>e<i></i>j<i></i>e<i></i>c<i></i>t<i></i>e<i></i>d<i></i>",
+              "value": "Rejected",
+              "type": "event_status"
+            }
+          ]
+        }
+      ],
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "events#contacts": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/48/contacts.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": [
+        {
+          "id": 62,
+          "first_name": "Albert",
+          "last_name": "Einstain",
+          "full_name": "Albert Einstain",
+          "role_name": "Physicist",
+          "email": "albert@einstain.com",
+          "phone_number": "+1000000000",
+          "street_address": "Street Address 123",
+          "unit_number": "Unit Number 456",
+          "city": "Ulm",
+          "state": "BW",
+          "zip_code": "90210",
+          "time_zone": "Pacific Time (US & Canada)",
+          "country": "Germany",
+          "type": "user"
+        },
+        {
+          "id": 8,
+          "first_name": "Luis",
+          "last_name": "Perez",
+          "full_name": "Luis Perez",
+          "title": "Field Ambassador",
+          "company_name": "Internet Inc",
+          "email": "luis@gmail.com",
+          "phone_number": "344-23333",
+          "street1": "ABC",
+          "street2": "1",
+          "street_address": "ABC, 1",
+          "city": "Hollywood",
+          "state": "CA",
+          "zip_code": "12345",
+          "country": "US",
+          "country_name": "United States",
+          "type": "contact"
+        },
+        {
+          "id": 9,
+          "first_name": "Pedro",
+          "last_name": "Guerra",
+          "full_name": "Pedro Guerra",
+          "title": "Coach",
+          "company_name": "Cable Inc",
+          "email": "pedro@gmail.com",
+          "phone_number": "344-23333",
+          "street1": "ABC",
+          "street2": "1",
+          "street_address": "ABC, 1",
+          "city": "Hollywood",
+          "state": "CA",
+          "zip_code": "12345",
+          "country": "US",
+          "country_name": "United States",
+          "type": "contact"
+        }
+      ],
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "events#delete_contact": [
+    {
+      "verb": "DELETE",
+      "path": "/api/v1/events/44/contacts.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "contactable_id=51&contactable_type=user",
+      "request_data": null,
+      "response_data": {
+        "success": true,
+        "info": "Contact successfully deleted from event",
+        "data": {
+        }
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "events#delete_member": [
+    {
+      "verb": "DELETE",
+      "path": "/api/v1/events/40/members.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "memberable_id=44&memberable_type=user",
+      "request_data": null,
+      "response_data": {
+        "success": true,
+        "info": "Member successfully deleted from event",
+        "data": {
+        }
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    },
+    {
+      "verb": "DELETE",
+      "path": "/api/v1/events/41/members.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "memberable_id=7&memberable_type=team",
+      "request_data": null,
+      "response_data": {
+        "success": true,
+        "info": "Member successfully deleted from event",
+        "data": {
+        }
+      },
+      "code": "200",
+      "show_in_doc": 0,
+      "recorded": true
+    }
+  ],
+  "events#index": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/filter.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "campaign%5B%5D=30&place%5B%5D=13",
+      "request_data": null,
+      "response_data": {
+        "page": 1,
+        "total_pages": 1,
+        "total": 3,
+        "filters": [
+          {
+            "label": "Campaign 21",
+            "name": "campaign:30",
+            "expandible": false
+          },
+          {
+            "label": "Place 12",
+            "name": "place:13",
+            "expandible": false
+          }
+        ],
+        "results": [
+          {
+            "id": 33,
+            "start_date": "01/23/2019",
+            "start_time": "10:00 AM",
+            "end_date": "01/23/2019",
+            "end_time": "12:00 PM",
+            "status": "Active",
+            "phases": {
+              "current_phase": "plan",
+              "next_step": {
+                "id": "contacts",
+                "title": "Contacts",
+                "complete": false,
+                "required": false
+              },
+              "phases": {
+                "plan": [
+                  {
+                    "id": "info",
+                    "title": "Basic Info",
+                    "complete": true,
+                    "required": true
+                  },
+                  {
+                    "id": "contacts",
+                    "title": "Contacts",
+                    "complete": false,
+                    "required": false
+                  },
+                  {
+                    "id": "tasks",
+                    "title": "Tasks",
+                    "complete": false,
+                    "required": false
+                  },
+                  {
+                    "id": "documents",
+                    "title": "Documents",
+                    "complete": false,
+                    "required": false
+                  }
+                ],
+                "execute": [
+
+                ],
+                "results": [
+                  {
+                    "id": "approve_per",
+                    "title": "Approve PER",
+                    "complete": false,
+                    "required": true
+                  }
+                ]
+              }
+            },
+            "event_status": "Scheduled",
+            "campaign": {
+              "id": 30,
+              "name": "Campaign 21"
+            },
+            "place": {
+              "id": 12,
+              "name": "Place 12",
+              "latitude": null,
+              "longitude": null,
+              "formatted_address": "123 My Street",
+              "country": "US",
+              "state": "NY",
+              "state_name": "NY",
+              "city": "New York City",
+              "zipcode": "12345"
+            }
+          },
+          {
+            "id": 34,
+            "start_date": "01/23/2019",
+            "start_time": "10:00 AM",
+            "end_date": "01/23/2019",
+            "end_time": "12:00 PM",
+            "status": "Active",
+            "phases": {
+              "current_phase": "plan",
+              "next_step": {
+                "id": "contacts",
+                "title": "Contacts",
+                "complete": false,
+                "required": false
+              },
+              "phases": {
+                "plan": [
+                  {
+                    "id": "info",
+                    "title": "Basic Info",
+                    "complete": true,
+                    "required": true
+                  },
+                  {
+                    "id": "contacts",
+                    "title": "Contacts",
+                    "complete": false,
+                    "required": false
+                  },
+                  {
+                    "id": "tasks",
+                    "title": "Tasks",
+                    "complete": false,
+                    "required": false
+                  },
+                  {
+                    "id": "documents",
+                    "title": "Documents",
+                    "complete": false,
+                    "required": false
+                  }
+                ],
+                "execute": [
+
+                ],
+                "results": [
+                  {
+                    "id": "approve_per",
+                    "title": "Approve PER",
+                    "complete": false,
+                    "required": true
+                  }
+                ]
+              }
+            },
+            "event_status": "Scheduled",
+            "campaign": {
+              "id": 30,
+              "name": "Campaign 21"
+            },
+            "place": {
+              "id": 12,
+              "name": "Place 12",
+              "latitude": null,
+              "longitude": null,
+              "formatted_address": "123 My Street",
+              "country": "US",
+              "state": "NY",
+              "state_name": "NY",
+              "city": "New York City",
+              "zipcode": "12345"
+            }
+          },
+          {
+            "id": 35,
+            "start_date": "01/23/2019",
+            "start_time": "10:00 AM",
+            "end_date": "01/23/2019",
+            "end_time": "12:00 PM",
+            "status": "Active",
+            "phases": {
+              "current_phase": "plan",
+              "next_step": {
+                "id": "contacts",
+                "title": "Contacts",
+                "complete": false,
+                "required": false
+              },
+              "phases": {
+                "plan": [
+                  {
+                    "id": "info",
+                    "title": "Basic Info",
+                    "complete": true,
+                    "required": true
+                  },
+                  {
+                    "id": "contacts",
+                    "title": "Contacts",
+                    "complete": false,
+                    "required": false
+                  },
+                  {
+                    "id": "tasks",
+                    "title": "Tasks",
+                    "complete": false,
+                    "required": false
+                  },
+                  {
+                    "id": "documents",
+                    "title": "Documents",
+                    "complete": false,
+                    "required": false
+                  }
+                ],
+                "execute": [
+
+                ],
+                "results": [
+                  {
+                    "id": "approve_per",
+                    "title": "Approve PER",
+                    "complete": false,
+                    "required": true
+                  }
+                ]
+              }
+            },
+            "event_status": "Scheduled",
+            "campaign": {
+              "id": 30,
+              "name": "Campaign 21"
+            },
+            "place": {
+              "id": 12,
+              "name": "Place 12",
+              "latitude": null,
+              "longitude": null,
+              "formatted_address": "123 My Street",
+              "country": "US",
+              "state": "NY",
+              "state_name": "NY",
+              "city": "New York City",
+              "zipcode": "12345"
+            }
+          }
+        ]
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "events#members": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/45/members.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": [
+        {
+          "id": 9,
+          "name": "A team",
+          "description": "team 1 description",
+          "type": "team"
+        },
+        {
+          "id": 53,
+          "first_name": "A",
+          "last_name": "User",
+          "full_name": "A User",
+          "role_name": "Field Ambassador",
+          "email": "luis@gmail.com",
+          "phone_number": "+1000000000",
+          "street_address": "ABC 1",
+          "unit_number": "#123 2nd floor",
+          "city": "Curridabat",
+          "state": "SJ",
+          "zip_code": "12345",
+          "time_zone": "Pacific Time (US & Canada)",
+          "country": "Costa Rica",
+          "type": "user"
+        },
+        {
+          "id": 10,
+          "name": "Team 2",
+          "description": "team 2 description",
+          "type": "team"
+        },
+        {
+          "id": 52,
+          "first_name": "Test",
+          "last_name": "User",
+          "full_name": "Test User",
+          "role_name": "Super Admin",
+          "email": "testadminuser45@brandscopic.com",
+          "phone_number": "+1000000000",
+          "street_address": "Street Address 123",
+          "unit_number": "Unit Number 456",
+          "city": "Curridabat",
+          "state": "SJ",
+          "zip_code": "90210",
+          "time_zone": "Pacific Time (US & Canada)",
+          "country": "Costa Rica",
+          "type": "user"
+        },
+        {
+          "id": 54,
+          "first_name": "User",
+          "last_name": "2",
+          "full_name": "User 2",
+          "role_name": "Coach",
+          "email": "pedro@gmail.com",
+          "phone_number": "+1000000000",
+          "street_address": "ABC 1",
+          "unit_number": "#123 2nd floor",
+          "city": "Curridabat",
+          "state": "SJ",
+          "zip_code": "12345",
+          "time_zone": "Pacific Time (US & Canada)",
+          "country": "Costa Rica",
+          "type": "user"
+        }
+      ],
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    },
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/46/members.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "type=team",
+      "request_data": null,
+      "response_data": [
+        {
+          "id": 11,
+          "name": "A team",
+          "description": "team 1 description",
+          "type": "team"
+        },
+        {
+          "id": 12,
+          "name": "Team 2",
+          "description": "team 2 description",
+          "type": "team"
+        }
+      ],
+      "code": "200",
+      "show_in_doc": 0,
+      "recorded": true
+    },
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/47/members.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "type=user",
+      "request_data": null,
+      "response_data": [
+        {
+          "id": 59,
+          "first_name": "A",
+          "last_name": "User",
+          "full_name": "A User",
+          "role_name": "Field Ambassador",
+          "email": "luis@gmail.com",
+          "phone_number": "+1000000000",
+          "street_address": "ABC 1",
+          "unit_number": "#123 2nd floor",
+          "city": "Curridabat",
+          "state": "SJ",
+          "zip_code": "12345",
+          "time_zone": "Pacific Time (US & Canada)",
+          "country": "Costa Rica",
+          "type": "user"
+        },
+        {
+          "id": 58,
+          "first_name": "Test",
+          "last_name": "User",
+          "full_name": "Test User",
+          "role_name": "Super Admin",
+          "email": "testadminuser47@brandscopic.com",
+          "phone_number": "+1000000000",
+          "street_address": "Street Address 123",
+          "unit_number": "Unit Number 456",
+          "city": "Curridabat",
+          "state": "SJ",
+          "zip_code": "90210",
+          "time_zone": "Pacific Time (US & Canada)",
+          "country": "Costa Rica",
+          "type": "user"
+        },
+        {
+          "id": 60,
+          "first_name": "User",
+          "last_name": "2",
+          "full_name": "User 2",
+          "role_name": "Coach",
+          "email": "pedro@gmail.com",
+          "phone_number": "+1000000000",
+          "street_address": "ABC 1",
+          "unit_number": "#123 2nd floor",
+          "city": "Curridabat",
+          "state": "SJ",
+          "zip_code": "12345",
+          "time_zone": "Pacific Time (US & Canada)",
+          "country": "Costa Rica",
+          "type": "user"
+        }
+      ],
+      "code": "200",
+      "show_in_doc": 0,
+      "recorded": true
+    }
+  ],
+  "events#requiring_attention": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/requiring_attention.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": [
+        {
+          "id": 24,
+          "start_date": "07/02/2015",
+          "start_time": "10:00 AM",
+          "end_date": "07/02/2015",
+          "end_time": "12:00 PM",
+          "status": "Active",
+          "phases": {
+            "current_phase": "execute",
+            "next_step": {
+              "id": "expenses",
+              "title": "Expenses",
+              "complete": false,
+              "required": false
+            },
+            "phases": {
+              "plan": [
+                {
+                  "id": "info",
+                  "title": "Basic Info",
+                  "complete": true,
+                  "required": true
+                },
+                {
+                  "id": "contacts",
+                  "title": "Contacts",
+                  "complete": false,
+                  "required": false
+                },
+                {
+                  "id": "tasks",
+                  "title": "Tasks",
+                  "complete": false,
+                  "required": false
+                },
+                {
+                  "id": "documents",
+                  "title": "Documents",
+                  "complete": false,
+                  "required": false
+                }
+              ],
+              "execute": [
+                {
+                  "id": "expenses",
+                  "title": "Expenses",
+                  "complete": false,
+                  "required": false
+                },
+                {
+                  "id": "photos",
+                  "title": "Photos",
+                  "complete": false,
+                  "required": false
+                },
+                {
+                  "id": "comments",
+                  "title": "Consumer Comments",
+                  "complete": false,
+                  "required": false
+                }
+              ],
+              "results": [
+                {
+                  "id": "approve_per",
+                  "title": "Approve PER",
+                  "complete": false,
+                  "required": true
+                }
+              ]
+            }
+          },
+          "event_status": "Late",
+          "campaign": {
+            "id": 28,
+            "name": "Campaign 19"
+          },
+          "place": {
+            "id": 10,
+            "name": "Place 10",
+            "latitude": null,
+            "longitude": null,
+            "formatted_address": "123 My Street",
+            "country": "US",
+            "state": "NY",
+            "state_name": "NY",
+            "city": "New York City",
+            "zipcode": "12345"
+          }
+        },
+        {
+          "id": 25,
+          "start_date": "07/22/2015",
+          "start_time": "12:00 PM",
+          "end_date": "07/22/2015",
+          "end_time": "1:00 PM",
+          "status": "Active",
+          "phases": {
+            "current_phase": "execute",
+            "next_step": {
+              "id": "expenses",
+              "title": "Expenses",
+              "complete": false,
+              "required": false
+            },
+            "phases": {
+              "plan": [
+                {
+                  "id": "info",
+                  "title": "Basic Info",
+                  "complete": true,
+                  "required": true
+                },
+                {
+                  "id": "contacts",
+                  "title": "Contacts",
+                  "complete": false,
+                  "required": false
+                },
+                {
+                  "id": "tasks",
+                  "title": "Tasks",
+                  "complete": false,
+                  "required": false
+                },
+                {
+                  "id": "documents",
+                  "title": "Documents",
+                  "complete": false,
+                  "required": false
+                }
+              ],
+              "execute": [
+                {
+                  "id": "expenses",
+                  "title": "Expenses",
+                  "complete": false,
+                  "required": false
+                },
+                {
+                  "id": "photos",
+                  "title": "Photos",
+                  "complete": false,
+                  "required": false
+                },
+                {
+                  "id": "comments",
+                  "title": "Consumer Comments",
+                  "complete": false,
+                  "required": false
+                }
+              ],
+              "results": [
+                {
+                  "id": "approve_per",
+                  "title": "Approve PER",
+                  "complete": false,
+                  "required": true
+                }
+              ]
+            }
+          },
+          "event_status": "Due",
+          "campaign": {
+            "id": 28,
+            "name": "Campaign 19"
+          },
+          "place": {
+            "id": 10,
+            "name": "Place 10",
+            "latitude": null,
+            "longitude": null,
+            "formatted_address": "123 My Street",
+            "country": "US",
+            "state": "NY",
+            "state_name": "NY",
+            "city": "New York City",
+            "zipcode": "12345"
+          }
+        },
+        {
+          "id": 26,
+          "start_date": "07/23/2015",
+          "start_time": "10:00 AM",
+          "end_date": "07/23/2015",
+          "end_time": "12:00 PM",
+          "status": "Active",
+          "phases": {
+            "current_phase": "execute",
+            "next_step": {
+              "id": "expenses",
+              "title": "Expenses",
+              "complete": false,
+              "required": false
+            },
+            "phases": {
+              "plan": [
+                {
+                  "id": "info",
+                  "title": "Basic Info",
+                  "complete": true,
+                  "required": true
+                },
+                {
+                  "id": "contacts",
+                  "title": "Contacts",
+                  "complete": false,
+                  "required": false
+                },
+                {
+                  "id": "tasks",
+                  "title": "Tasks",
+                  "complete": false,
+                  "required": false
+                },
+                {
+                  "id": "documents",
+                  "title": "Documents",
+                  "complete": false,
+                  "required": false
+                }
+              ],
+              "execute": [
+                {
+                  "id": "expenses",
+                  "title": "Expenses",
+                  "complete": false,
+                  "required": false
+                },
+                {
+                  "id": "photos",
+                  "title": "Photos",
+                  "complete": false,
+                  "required": false
+                },
+                {
+                  "id": "comments",
+                  "title": "Consumer Comments",
+                  "complete": false,
+                  "required": false
+                }
+              ],
+              "results": [
+                {
+                  "id": "approve_per",
+                  "title": "Approve PER",
+                  "complete": false,
+                  "required": true
+                }
+              ]
+            }
+          },
+          "event_status": "Scheduled",
+          "campaign": {
+            "id": 28,
+            "name": "Campaign 19"
+          },
+          "place": {
+            "id": 10,
+            "name": "Place 10",
+            "latitude": null,
+            "longitude": null,
+            "formatted_address": "123 My Street",
+            "country": "US",
+            "state": "NY",
+            "state_name": "NY",
+            "city": "New York City",
+            "zipcode": "12345"
+          }
+        }
+      ],
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "events#results": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/37/results.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": [
+        {
+          "module": "custom",
+          "fields": [
+            {
+              "name": "Form Field Time 3",
+              "ordering": 1,
+              "type": "FormField::Time",
+              "required": false,
+              "description": null,
+              "goal": null,
+              "module": "custom",
+              "id": 20,
+              "value": [
+
+              ]
+            },
+            {
+              "name": "Form Field TextArea 3",
+              "ordering": 1,
+              "type": "FormField::TextArea",
+              "required": false,
+              "description": null,
+              "goal": null,
+              "module": "custom",
+              "id": 21,
+              "value": [
+
+              ]
+            },
+            {
+              "name": "Form Field Text 4",
+              "ordering": 1,
+              "type": "FormField::Text",
+              "required": false,
+              "description": null,
+              "goal": null,
+              "module": "custom",
+              "id": 22,
+              "value": [
+
+              ]
+            },
+            {
+              "name": "Form Field Summation 3",
+              "ordering": 1,
+              "type": "FormField::Summation",
+              "required": false,
+              "description": null,
+              "module": "custom",
+              "id": 23,
+              "value": 0,
+              "segments": [
+
+              ]
+            },
+            {
+              "name": "Section 4",
+              "ordering": 1,
+              "type": "FormField::Section",
+              "required": false,
+              "description": null,
+              "goal": null,
+              "module": "custom",
+              "id": 24,
+              "value": [
+
+              ]
+            },
+            {
+              "name": "Form Field Radio 3",
+              "ordering": 1,
+              "type": "FormField::Radio",
+              "required": false,
+              "description": null,
+              "module": "custom",
+              "id": 25,
+              "segments": [
+
+              ],
+              "value": [
+
+              ]
+            },
+            {
+              "name": "Photo 3",
+              "ordering": 1,
+              "type": "FormField::Photo",
+              "required": false,
+              "description": null,
+              "goal": null,
+              "module": "custom",
+              "id": 26,
+              "value": [
+
+              ]
+            },
+            {
+              "name": "Form Field Percentage 3",
+              "ordering": 1,
+              "type": "FormField::Percentage",
+              "required": true,
+              "description": null,
+              "module": "custom",
+              "id": 27,
+              "segments": [
+                {
+                  "id": 40,
+                  "text": "Option 1",
+                  "value": null,
+                  "goal": null
+                },
+                {
+                  "id": 41,
+                  "text": "Option 2",
+                  "value": null,
+                  "goal": null
+                },
+                {
+                  "id": 42,
+                  "text": "Option 3",
+                  "value": null,
+                  "goal": null
+                }
+              ]
+            },
+            {
+              "name": "Form Field Likert Scale 3",
+              "ordering": 1,
+              "type": "FormField::LikertScale",
+              "required": false,
+              "description": null,
+              "module": "custom",
+              "id": 28,
+              "statements": [
+                {
+                  "id": 37,
+                  "text": "Statement 1",
+                  "value": null
+                },
+                {
+                  "id": 38,
+                  "text": "Statement 2",
+                  "value": null
+                },
+                {
+                  "id": 39,
+                  "text": "Statement 3",
+                  "value": null
+                }
+              ],
+              "segments": [
+                {
+                  "id": 34,
+                  "text": "Option 1"
+                },
+                {
+                  "id": 35,
+                  "text": "Option 2"
+                },
+                {
+                  "id": 36,
+                  "text": "Option 3"
+                }
+              ]
+            },
+            {
+              "name": "Form Field Text 3",
+              "ordering": 1,
+              "type": "FormField::Text",
+              "required": false,
+              "description": null,
+              "goal": null,
+              "module": "custom",
+              "id": 29,
+              "range": {
+                "format": "words",
+                "min": 20,
+                "max": null
+              },
+              "value": [
+
+              ]
+            },
+            {
+              "name": "Section 3",
+              "ordering": 1,
+              "type": "FormField::Section",
+              "required": false,
+              "description": "This is a section description",
+              "goal": null,
+              "module": "custom",
+              "id": 30,
+              "value": [
+
+              ]
+            },
+            {
+              "name": "Form Field Number 3",
+              "ordering": 1,
+              "type": "FormField::Number",
+              "required": true,
+              "description": null,
+              "goal": null,
+              "module": "custom",
+              "id": 31,
+              "range": {
+                "format": "value",
+                "min": 1,
+                "max": 100
+              },
+              "value": [
+
+              ]
+            },
+            {
+              "name": "Form Field Checkbox 3",
+              "ordering": 1,
+              "type": "FormField::Checkbox",
+              "required": false,
+              "description": null,
+              "module": "custom",
+              "id": 32,
+              "value": [
+
+              ],
+              "segments": [
+                {
+                  "id": 31,
+                  "text": "Option 1",
+                  "value": false
+                },
+                {
+                  "id": 32,
+                  "text": "Option 2",
+                  "value": false
+                },
+                {
+                  "id": 33,
+                  "text": "Option 3",
+                  "value": false
+                }
+              ]
+            },
+            {
+              "name": "Form Field Brand 3",
+              "ordering": 1,
+              "type": "FormField::Brand",
+              "required": false,
+              "description": null,
+              "goal": null,
+              "module": "custom",
+              "id": 33,
+              "value": 0,
+              "segments": [
+
+              ]
+            },
+            {
+              "name": "Attachment 3",
+              "ordering": 1,
+              "type": "FormField::Attachment",
+              "required": false,
+              "description": null,
+              "goal": null,
+              "module": "custom",
+              "id": 34,
+              "value": [
+
+              ]
+            }
+          ],
+          "label": "Custom"
+        }
+      ],
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "events#show": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/36.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": {
+        "id": 36,
+        "start_date": "01/23/2019",
+        "start_time": "10:00 AM",
+        "end_date": "01/23/2019",
+        "end_time": "12:00 PM",
+        "status": "Active",
+        "description": null,
+        "phases": {
+          "current_phase": "plan",
+          "next_step": {
+            "id": "contacts",
+            "title": "Contacts",
+            "complete": false,
+            "required": false
+          },
+          "phases": {
+            "plan": [
+              {
+                "id": "info",
+                "title": "Basic Info",
+                "complete": true,
+                "required": true
+              },
+              {
+                "id": "contacts",
+                "title": "Contacts",
+                "complete": false,
+                "required": false
+              },
+              {
+                "id": "tasks",
+                "title": "Tasks",
+                "complete": false,
+                "required": false
+              },
+              {
+                "id": "documents",
+                "title": "Documents",
+                "complete": false,
+                "required": false
+              }
+            ],
+            "execute": [
+
+            ],
+            "results": [
+              {
+                "id": "approve_per",
+                "title": "Approve PER",
+                "complete": false,
+                "required": true
+              }
+            ]
+          }
+        },
+        "event_status": "Scheduled",
+        "rejected_info": {
+          "rejected_at": "about 0 minutes ago",
+          "rejected_reason": null
+        },
+        "have_data": false,
+        "actions": [
+          "enter post event data"
+        ],
+        "tasks_late_count": 0,
+        "tasks_due_today_count": 0,
+        "place": {
+          "id": 14,
+          "venue_id": 13,
+          "state": "NY",
+          "name": "Place 13",
+          "latitude": null,
+          "longitude": null,
+          "formatted_address": "123 My Street",
+          "country": "US",
+          "state_name": "New York",
+          "city": "New York City",
+          "zipcode": "12345"
+        },
+        "campaign": {
+          "id": 31,
+          "name": "Campaign 22",
+          "enabled_modules": [
+
+          ],
+          "modules": null
+        }
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "events#status_facets": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/status_facets.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": {
+        "facets": [
+          {
+            "id": "Late",
+            "name": "event_status",
+            "count": 1,
+            "label": "Late"
+          },
+          {
+            "id": "Due",
+            "name": "event_status",
+            "count": 1,
+            "label": "Due"
+          },
+          {
+            "id": "Rejected",
+            "name": "event_status",
+            "count": 1,
+            "label": "Rejected"
+          },
+          {
+            "id": "Submitted",
+            "name": "event_status",
+            "count": 1,
+            "label": "Submitted"
+          },
+          {
+            "id": "Approved",
+            "name": "event_status",
+            "count": 1,
+            "label": "Approved"
+          }
+        ]
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "events#update": [
+    {
+      "verb": "PUT",
+      "path": "/api/v1/events/49.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "event": {
+          "results_attributes": [
+            {
+              "id": "35",
+              "value": {
+                "9": 50,
+                "10": 50
+              }
+            }
+          ]
+        }
+      },
+      "response_data": {
+        "id": 49,
+        "start_date": "01/23/2019",
+        "start_time": "10:00 AM",
+        "end_date": "01/23/2019",
+        "end_time": "12:00 PM",
+        "status": "Active",
+        "description": null,
+        "phases": {
+          "current_phase": "plan",
+          "next_step": {
+            "id": "contacts",
+            "title": "Contacts",
+            "complete": false,
+            "required": false
+          },
+          "phases": {
+            "plan": [
+              {
+                "id": "info",
+                "title": "Basic Info",
+                "complete": true,
+                "required": true
+              },
+              {
+                "id": "contacts",
+                "title": "Contacts",
+                "complete": false,
+                "required": false
+              },
+              {
+                "id": "tasks",
+                "title": "Tasks",
+                "complete": false,
+                "required": false
+              },
+              {
+                "id": "documents",
+                "title": "Documents",
+                "complete": false,
+                "required": false
+              }
+            ],
+            "execute": [
+              {
+                "id": "per",
+                "title": "Post Event Recap",
+                "complete": true,
+                "required": true
+              },
+              {
+                "id": "expenses",
+                "title": "Expenses",
+                "complete": false,
+                "required": false
+              },
+              {
+                "id": "photos",
+                "title": "Photos",
+                "complete": false,
+                "required": false
+              },
+              {
+                "id": "comments",
+                "title": "Consumer Comments",
+                "complete": false,
+                "required": false
+              }
+            ],
+            "results": [
+              {
+                "id": "approve_per",
+                "title": "Approve PER",
+                "complete": false,
+                "required": true
+              }
+            ]
+          }
+        },
+        "event_status": "Scheduled",
+        "rejected_info": {
+          "rejected_at": "about 0 minutes ago",
+          "rejected_reason": null
+        },
+        "have_data": true,
+        "data": {
+          "spent_by_impression": "0.0",
+          "spent_by_interaction": "0.0",
+          "spent_by_sample": "0.0"
+        },
+        "actions": [
+          "enter post event data",
+          "upload photos",
+          "conduct surveys",
+          "enter expenses",
+          "gather comments"
+        ],
+        "tasks_late_count": 0,
+        "tasks_due_today_count": 0,
+        "place": null,
+        "campaign": {
+          "id": 44,
+          "name": "Campaign 35",
+          "enabled_modules": [
+            "expenses",
+            "photos",
+            "surveys",
+            "videos",
+            "comments"
+          ],
+          "modules": {
+            "expenses": {
+            },
+            "photos": {
+            },
+            "surveys": {
+            },
+            "videos": {
+            },
+            "comments": {
+            }
+          }
+        }
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    },
+    {
+      "verb": "PUT",
+      "path": "/api/v1/events/50.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "event": {
+          "campaign_id": 45,
+          "start_date": "05/21/2020",
+          "start_time": "12:00pm",
+          "end_date": "05/22/2020",
+          "end_time": "01:00pm",
+          "place_id": 15,
+          "description": "this is the test description"
+        }
+      },
+      "response_data": {
+        "id": 50,
+        "start_date": "05/21/2020",
+        "start_time": "12:00pm",
+        "end_date": "05/22/2020",
+        "end_time": "01:00pm",
+        "status": "Active",
+        "description": "this is the test description",
+        "phases": {
+          "current_phase": "plan",
+          "next_step": {
+            "id": "contacts",
+            "title": "Contacts",
+            "complete": false,
+            "required": false
+          },
+          "phases": {
+            "plan": [
+              {
+                "id": "info",
+                "title": "Basic Info",
+                "complete": true,
+                "required": true
+              },
+              {
+                "id": "contacts",
+                "title": "Contacts",
+                "complete": false,
+                "required": false
+              },
+              {
+                "id": "tasks",
+                "title": "Tasks",
+                "complete": false,
+                "required": false
+              },
+              {
+                "id": "documents",
+                "title": "Documents",
+                "complete": false,
+                "required": false
+              }
+            ],
+            "execute": [
+
+            ],
+            "results": [
+              {
+                "id": "approve_per",
+                "title": "Approve PER",
+                "complete": false,
+                "required": true
+              }
+            ]
+          }
+        },
+        "event_status": "Scheduled",
+        "rejected_info": {
+          "rejected_at": "about 0 minutes ago",
+          "rejected_reason": null
+        },
+        "have_data": false,
+        "actions": [
+          "enter post event data"
+        ],
+        "tasks_late_count": 0,
+        "tasks_due_today_count": 0,
+        "place": {
+          "id": 15,
+          "venue_id": 14,
+          "state": "NY",
+          "name": "Place 14",
+          "latitude": null,
+          "longitude": null,
+          "formatted_address": "123 My Street",
+          "country": "US",
+          "state_name": "NY",
+          "city": "New York City",
+          "zipcode": "12345"
+        },
+        "campaign": {
+          "id": 45,
+          "name": "Campaign 36",
+          "enabled_modules": [
+
+          ],
+          "modules": null
+        }
+      },
+      "code": "200",
+      "show_in_doc": 0,
+      "recorded": true
+    },
+    {
+      "verb": "PUT",
+      "path": "/api/v1/events/51.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "event": {
+          "results_attributes": [
+            {
+              "id": "36",
+              "value": {
+                "24": 5,
+                "25": 5
+              }
+            }
+          ]
+        }
+      },
+      "response_data": {
+        "results.value": [
+          "is invalid"
+        ]
+      },
+      "code": "422",
+      "show_in_doc": 0,
+      "recorded": true
+    },
+    {
+      "verb": "PUT",
+      "path": "/api/v1/events/52.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "partial": "event_data",
+        "event": {
+          "campaign_id": "49",
+          "start_date": "05/21/2020",
+          "start_time": "12:00pm",
+          "end_date": "05/22/2020",
+          "end_time": "01:00pm",
+          "place_id": 16
+        }
+      },
+      "response_data": {
+        "id": 52,
+        "start_date": "05/21/2020",
+        "start_time": "12:00pm",
+        "end_date": "05/22/2020",
+        "end_time": "01:00pm",
+        "status": "Active",
+        "description": null,
+        "phases": {
+          "current_phase": "plan",
+          "next_step": {
+            "id": "contacts",
+            "title": "Contacts",
+            "complete": false,
+            "required": false
+          },
+          "phases": {
+            "plan": [
+              {
+                "id": "info",
+                "title": "Basic Info",
+                "complete": true,
+                "required": true
+              },
+              {
+                "id": "contacts",
+                "title": "Contacts",
+                "complete": false,
+                "required": false
+              },
+              {
+                "id": "tasks",
+                "title": "Tasks",
+                "complete": false,
+                "required": false
+              },
+              {
+                "id": "documents",
+                "title": "Documents",
+                "complete": false,
+                "required": false
+              }
+            ],
+            "execute": [
+
+            ],
+            "results": [
+              {
+                "id": "approve_per",
+                "title": "Approve PER",
+                "complete": false,
+                "required": true
+              }
+            ]
+          }
+        },
+        "event_status": "Scheduled",
+        "rejected_info": {
+          "rejected_at": "about 0 minutes ago",
+          "rejected_reason": null
+        },
+        "have_data": false,
+        "actions": [
+          "enter post event data"
+        ],
+        "tasks_late_count": 0,
+        "tasks_due_today_count": 0,
+        "place": {
+          "id": 16,
+          "venue_id": 15,
+          "state": "NY",
+          "name": "Place 15",
+          "latitude": null,
+          "longitude": null,
+          "formatted_address": "123 My Street",
+          "country": "US",
+          "state_name": "NY",
+          "city": "New York City",
+          "zipcode": "12345"
+        },
+        "campaign": {
+          "id": 49,
+          "name": "Campaign 40",
+          "enabled_modules": [
+
+          ],
+          "modules": null
+        }
+      },
+      "code": "200",
+      "show_in_doc": 0,
+      "recorded": true
+    },
+    {
+      "verb": "PUT",
+      "path": "/api/v1/events/53.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "event": {
+          "results_attributes": [
+            {
+              "id": "37",
+              "value": "987"
+            }
+          ]
+        }
+      },
+      "response_data": {
+        "id": 53,
+        "start_date": "01/23/2019",
+        "start_time": "10:00 AM",
+        "end_date": "01/23/2019",
+        "end_time": "12:00 PM",
+        "status": "Active",
+        "description": null,
+        "phases": {
+          "current_phase": "plan",
+          "next_step": {
+            "id": "contacts",
+            "title": "Contacts",
+            "complete": false,
+            "required": false
+          },
+          "phases": {
+            "plan": [
+              {
+                "id": "info",
+                "title": "Basic Info",
+                "complete": true,
+                "required": true
+              },
+              {
+                "id": "contacts",
+                "title": "Contacts",
+                "complete": false,
+                "required": false
+              },
+              {
+                "id": "tasks",
+                "title": "Tasks",
+                "complete": false,
+                "required": false
+              },
+              {
+                "id": "documents",
+                "title": "Documents",
+                "complete": false,
+                "required": false
+              }
+            ],
+            "execute": [
+              {
+                "id": "per",
+                "title": "Post Event Recap",
+                "complete": true,
+                "required": true
+              },
+              {
+                "id": "expenses",
+                "title": "Expenses",
+                "complete": false,
+                "required": false
+              },
+              {
+                "id": "photos",
+                "title": "Photos",
+                "complete": false,
+                "required": false
+              },
+              {
+                "id": "comments",
+                "title": "Consumer Comments",
+                "complete": false,
+                "required": false
+              }
+            ],
+            "results": [
+              {
+                "id": "approve_per",
+                "title": "Approve PER",
+                "complete": false,
+                "required": true
+              }
+            ]
+          }
+        },
+        "event_status": "Scheduled",
+        "rejected_info": {
+          "rejected_at": "about 0 minutes ago",
+          "rejected_reason": null
+        },
+        "have_data": true,
+        "data": {
+          "spent_by_impression": "0.0",
+          "spent_by_interaction": "0.0",
+          "spent_by_sample": "0.0"
+        },
+        "actions": [
+          "enter post event data",
+          "upload photos",
+          "conduct surveys",
+          "enter expenses",
+          "gather comments"
+        ],
+        "tasks_late_count": 0,
+        "tasks_due_today_count": 0,
+        "place": null,
+        "campaign": {
+          "id": 50,
+          "name": "Campaign 41",
+          "enabled_modules": [
+            "expenses",
+            "photos",
+            "surveys",
+            "videos",
+            "comments"
+          ],
+          "modules": {
+            "expenses": {
+            },
+            "photos": {
+            },
+            "surveys": {
+            },
+            "videos": {
+            },
+            "comments": {
+            }
+          }
+        }
+      },
+      "code": "200",
+      "show_in_doc": 0,
+      "recorded": true
+    },
+    {
+      "verb": "PUT",
+      "path": "/api/v1/events/54.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "event": {
+          "active": "false"
+        }
+      },
+      "response_data": {
+        "id": 54,
+        "start_date": "01/23/2019",
+        "start_time": "10:00 AM",
+        "end_date": "01/23/2019",
+        "end_time": "12:00 PM",
+        "status": "Inactive",
+        "description": null,
+        "phases": {
+          "current_phase": "plan",
+          "next_step": {
+            "id": "contacts",
+            "title": "Contacts",
+            "complete": false,
+            "required": false
+          },
+          "phases": {
+            "plan": [
+              {
+                "id": "info",
+                "title": "Basic Info",
+                "complete": true,
+                "required": true
+              },
+              {
+                "id": "contacts",
+                "title": "Contacts",
+                "complete": false,
+                "required": false
+              },
+              {
+                "id": "tasks",
+                "title": "Tasks",
+                "complete": false,
+                "required": false
+              },
+              {
+                "id": "documents",
+                "title": "Documents",
+                "complete": false,
+                "required": false
+              }
+            ],
+            "execute": [
+
+            ],
+            "results": [
+              {
+                "id": "approve_per",
+                "title": "Approve PER",
+                "complete": false,
+                "required": true
+              }
+            ]
+          }
+        },
+        "event_status": "Scheduled",
+        "rejected_info": {
+          "rejected_at": "about 0 minutes ago",
+          "rejected_reason": null
+        },
+        "have_data": false,
+        "actions": [
+          "enter post event data"
+        ],
+        "tasks_late_count": 0,
+        "tasks_due_today_count": 0,
+        "place": null,
+        "campaign": {
+          "id": 51,
+          "name": "Campaign 42",
+          "enabled_modules": [
+
+          ],
+          "modules": null
+        }
+      },
+      "code": "200",
+      "show_in_doc": 0,
+      "recorded": true
+    }
+  ],
+  "filters#show": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/filters/events.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": {
+        "filters": [
+          {
+            "label": "Campaigns",
+            "items": [
+              {
+                "id": 10,
+                "label": "Campaign 8",
+                "value": 10,
+                "name": "campaign",
+                "selected": false
+              },
+              {
+                "id": 11,
+                "label": "Campaign 9",
+                "value": 11,
+                "name": "campaign",
+                "selected": false
+              }
+            ]
+          },
+          {
+            "label": "Brands",
+            "items": [
+              {
+                "id": 1,
+                "label": "Test Brand 1",
+                "value": 1,
+                "name": "brand",
+                "selected": false
+              },
+              {
+                "id": 2,
+                "label": "Test Brand 2",
+                "value": 2,
+                "name": "brand",
+                "selected": false
+              }
+            ]
+          },
+          {
+            "label": "Areas",
+            "items": [
+              {
+                "id": 1,
+                "label": "Area 1",
+                "value": 1,
+                "name": "area",
+                "selected": false
+              },
+              {
+                "id": 2,
+                "label": "Area 2",
+                "value": 2,
+                "name": "area",
+                "selected": false
+              }
+            ]
+          },
+          {
+            "label": "People",
+            "items": [
+              {
+                "id": 13,
+                "label": "Test User",
+                "value": 13,
+                "name": "user",
+                "selected": false
+              },
+              {
+                "id": 1,
+                "label": "Team 1",
+                "value": 1,
+                "name": "team",
+                "selected": false
+              },
+              {
+                "id": 2,
+                "label": "Team 2",
+                "value": 2,
+                "name": "team",
+                "selected": false
+              }
+            ]
+          },
+          {
+            "label": "Event Status",
+            "items": [
+              {
+                "id": "Submitted",
+                "label": "Submitted",
+                "value": "Submitted",
+                "name": "event_status",
+                "selected": false
+              },
+              {
+                "id": "Late",
+                "label": "Late",
+                "value": "Late",
+                "name": "event_status",
+                "selected": false
+              },
+              {
+                "id": "Due",
+                "label": "Due",
+                "value": "Due",
+                "name": "event_status",
+                "selected": false
+              },
+              {
+                "id": "Approved",
+                "label": "Approved",
+                "value": "Approved",
+                "name": "event_status",
+                "selected": false
+              },
+              {
+                "id": "Rejected",
+                "label": "Rejected",
+                "value": "Rejected",
+                "name": "event_status",
+                "selected": false
+              }
+            ]
+          },
+          {
+            "label": "Active State",
+            "items": [
+              {
+                "id": "Active",
+                "label": "Active",
+                "value": "Active",
+                "name": "status",
+                "selected": false
+              },
+              {
+                "id": "Inactive",
+                "label": "Inactive",
+                "value": "Inactive",
+                "name": "status",
+                "selected": false
+              }
+            ]
+          },
+          {
+            "label": "Saved Filters",
+            "items": [
+
+            ]
+          }
+        ]
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "photos#create": [
+    {
+      "verb": "POST",
+      "path": "/api/v1/events/22/photos.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "attached_asset": {
+          "direct_upload_url": "https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg"
+        }
+      },
+      "response_data": {
+        "id": 14,
+        "file_file_name": "test.jpg",
+        "file_file_size": 100,
+        "file_content_type": "image/jpeg",
+        "created_at": "2015-07-23T11:36:35.277-07:00",
+        "active": true,
+        "file_small": null,
+        "file_thumbnail": null,
+        "file_medium": null,
+        "file_original": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/original/test.jpg?1437676595",
+        "processed": false
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "photos#form": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/21/photos/form.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": {
+        "fields": {
+          "AWSAccessKeyId": "AKIAIDG2GYLK4WMVHGPA",
+          "key": null,
+          "policy": "eyJleHBpcmF0aW9uIjoiMjAxNS0wNy0yM1QxOTozNjozNVoiLCJjb25kaXRpb25zIjpbWyJzdGFydHMtd2l0aCIsIiRrZXkiLCJ1cGxvYWRzLyJdLHsiYnVja2V0IjoiYnJhbmRzY29waWMtZGV2In0sWyJzdGFydHMtd2l0aCIsIiRrZXkiLCIiXSx7IlNlY3VyZSI6InRydWUifSx7ImFjbCI6InB1YmxpYy1yZWFkIn0seyJzdWNjZXNzX2FjdGlvbl9zdGF0dXMiOiIyMDEifV19",
+          "signature": "EPW9DRgVSnTT67perAQzTDbRmFs=",
+          "Secure": "true",
+          "acl": "public-read",
+          "success_action_status": "201"
+        },
+        "url": "https://s3.amazonaws.com/brandscopic-dev/"
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "photos#index": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/20/photos.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": {
+        "page": 1,
+        "total": 3,
+        "results": [
+          {
+            "id": 11,
+            "file_file_name": "filetest.jpg",
+            "file_file_size": 12345,
+            "file_content_type": "image/jpg",
+            "created_at": "2015-07-23T11:36:34.721-07:00",
+            "active": true,
+            "file_small": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/011/small/filetest.jpg?1437676571",
+            "file_thumbnail": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/011/thumbnail/filetest.jpg?1437676571",
+            "file_medium": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/011/medium/filetest.jpg?1437676571",
+            "file_original": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/011/original/filetest.jpg?1437676571",
+            "processed": true
+          },
+          {
+            "id": 12,
+            "file_file_name": "filetest.jpg",
+            "file_file_size": 12345,
+            "file_content_type": "image/jpg",
+            "created_at": "2015-07-23T11:36:34.757-07:00",
+            "active": true,
+            "file_small": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/012/small/filetest.jpg?1437676571",
+            "file_thumbnail": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/012/thumbnail/filetest.jpg?1437676571",
+            "file_medium": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/012/medium/filetest.jpg?1437676571",
+            "file_original": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/012/original/filetest.jpg?1437676571",
+            "processed": true
+          },
+          {
+            "id": 13,
+            "file_file_name": "filetest.jpg",
+            "file_file_size": 12345,
+            "file_content_type": "image/jpg",
+            "created_at": "2015-07-23T11:36:34.774-07:00",
+            "active": true,
+            "file_small": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/013/small/filetest.jpg?1437676571",
+            "file_thumbnail": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/013/thumbnail/filetest.jpg?1437676571",
+            "file_medium": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/013/medium/filetest.jpg?1437676571",
+            "file_original": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/013/original/filetest.jpg?1437676571",
+            "processed": true
+          }
+        ]
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "photos#update": [
+    {
+      "verb": "PUT",
+      "path": "/api/v1/events/23/photos/15.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "attached_asset": {
+          "active": "false"
+        }
+      },
+      "response_data": null,
+      "code": "204",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "tasks#create": [
+    {
+      "verb": "POST",
+      "path": "/api/v1/events/12/tasks.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "task": {
+          "title": "Some test task",
+          "due_at": "05/12/2020",
+          "active": "false",
+          "company_user_id": "16"
+        }
+      },
+      "response_data": {
+        "id": 7,
+        "event_id": 12,
+        "title": "Some test task",
+        "due_at": "05/12/2020",
+        "completed": false,
+        "active": false,
+        "status": [
+          "Inactive",
+          "Assigned",
+          "Incomplete"
+        ],
+        "user": {
+          "id": 16,
+          "full_name": "Test User"
+        }
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "tasks#index": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/9/tasks.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": {
+        "page": 1,
+        "total": 2,
+        "results": [
+          {
+            "id": 2,
+            "event_id": 9,
+            "title": "MyString",
+            "due_at": "05/02/2013",
+            "completed": false,
+            "active": true,
+            "status": [
+              "Active",
+              "Unassigned",
+              "Incomplete",
+              "Late"
+            ],
+            "user": null
+          },
+          {
+            "id": 3,
+            "event_id": 9,
+            "title": "MyString",
+            "due_at": "05/02/2013",
+            "completed": false,
+            "active": true,
+            "status": [
+              "Active",
+              "Unassigned",
+              "Incomplete",
+              "Late"
+            ],
+            "user": null
+          }
+        ]
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "tasks#show": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/tasks/6.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": {
+        "id": 6,
+        "event_id": 11,
+        "title": "MyString",
+        "due_at": "05/02/2013",
+        "completed": false,
+        "active": true,
+        "status": [
+          "Active",
+          "Assigned",
+          "Incomplete",
+          "Late"
+        ],
+        "user": {
+          "id": 15,
+          "full_name": "Test User"
+        }
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "tasks#update": [
+    {
+      "verb": "POST",
+      "path": "/api/v1/tasks/8.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "task": {
+          "title": "My new title",
+          "due_at": "05/12/2020",
+          "active": false,
+          "company_user_id": "17"
+        }
+      },
+      "response_data": {
+        "id": 8,
+        "event_id": 1,
+        "title": "My new title",
+        "due_at": "05/12/2020",
+        "completed": false,
+        "active": false,
+        "status": [
+          "Inactive",
+          "Assigned",
+          "Incomplete"
+        ],
+        "user": {
+          "id": 17,
+          "full_name": "Test User"
+        }
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "visits#index": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/brand_ambassadors/visits.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": {
+        "page": 1,
+        "total_pages": 1,
+        "total": 3,
+        "facets": [
+          {
+            "label": "Brand Ambassadors",
+            "items": [
+              {
+                "label": "Test User",
+                "id": 9,
+                "name": "user",
+                "selected": false
+              }
+            ]
+          },
+          {
+            "label": "Campaigns",
+            "items": [
+              {
+                "id": 9,
+                "label": "Campaign 7",
+                "value": 9,
+                "name": "campaign",
+                "selected": false
+              }
+            ]
+          },
+          {
+            "label": "Areas",
+            "items": [
+
+            ]
+          },
+          {
+            "label": "Cities",
+            "items": [
+              {
+                "label": "Test City",
+                "id": "Test City",
+                "name": "city",
+                "selected": false
+              }
+            ]
+          },
+          {
+            "label": "Saved Filters",
+            "items": [
+
+            ]
+          }
+        ],
+        "results": [
+          {
+            "id": 1,
+            "visit_type": "brand_program",
+            "visit_type_name": "Brand Program",
+            "start_date": "2015-07-23",
+            "end_date": "2015-07-23",
+            "area_id": 1,
+            "campaign_id": 9,
+            "city": "Test City",
+            "description": "Visit description",
+            "status": "Active",
+            "campaign": {
+              "id": 9,
+              "name": "Campaign 7"
+            },
+            "area": {
+              "id": 1,
+              "name": null
+            },
+            "user": {
+              "id": 10,
+              "full_name": "Test User"
+            }
+          },
+          {
+            "id": 2,
+            "visit_type": "brand_program",
+            "visit_type_name": "Brand Program",
+            "start_date": "2015-07-23",
+            "end_date": "2015-07-23",
+            "area_id": 1,
+            "campaign_id": 9,
+            "city": "Test City",
+            "description": "Visit description",
+            "status": "Active",
+            "campaign": {
+              "id": 9,
+              "name": "Campaign 7"
+            },
+            "area": {
+              "id": 1,
+              "name": null
+            },
+            "user": {
+              "id": 11,
+              "full_name": "Test User"
+            }
+          },
+          {
+            "id": 3,
+            "visit_type": "brand_program",
+            "visit_type_name": "Brand Program",
+            "start_date": "2015-07-23",
+            "end_date": "2015-07-23",
+            "area_id": 1,
+            "campaign_id": 9,
+            "city": "Test City",
+            "description": "Visit description",
+            "status": "Active",
+            "campaign": {
+              "id": 9,
+              "name": "Campaign 7"
+            },
+            "area": {
+              "id": 1,
+              "name": null
+            },
+            "user": {
+              "id": 12,
+              "full_name": "Test User"
+            }
+          }
+        ]
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ]
+}

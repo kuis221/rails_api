@@ -5,7 +5,7 @@
 = user_new_feature('results_photos') do
   h5 Getting Started: Photos Report
   a.close.btn-dismiss-alert.icon.icon-close href="#" title="Dismiss"
-  a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/qDh7f0KYCRo?rel=0" data-width="640" data-height="360"
+  a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/JJSy2PDxY5U?rel=0" data-width="640" data-height="360"
     img src="#{image_path('video_arrow.png')}" width="70" height="70" /
   .feature-description
     p
@@ -45,7 +45,12 @@ javascript:
     'applyTo': 'results_photos',
     'userFilters': #{user_saved_filters('results_photos').to_json.html_safe},
     'autoCompletePath': '#{autocomplete_url('results_photos', format: :json)}',
-    'defaultParams': '#{j default_params_for_view('status[]=Active')}'
+    'defaultParams': '#{j default_params_for_view('status[]=Active')}',
+    'emptyStateMessage': '#{j t("results_photos.empty.line1", scope: :blank_states) }',
+    'emptyStateMessageLine2': '#{j t("results_photos.empty.line2", scope: :blank_states) }',
+    'emptyFilterResultsMessage': '#{j t("results_photos.filters.line1", default: :filters_line1, scope: :blank_states) }',
+    'emptyFilterResultsMessageLine2': '#{j t("results_photos.filters.line2", default: :filters_line2, scope: :blank_states) }',
+    'emptyStateImage': '#{asset_path('blank-photos.png')}'
   });
 
   $(document).delegate('#photo-download-add', 'click', function(e) {

@@ -6,6 +6,7 @@
 #  event_id                  :integer
 #  impressions               :integer          default(0)
 #  interactions              :integer          default(0)
+#  photos_count              :integer          default(0)
 #  samples                   :integer          default(0)
 #  gender_female             :decimal(5, 2)    default(0.0)
 #  gender_male               :decimal(5, 2)    default(0.0)
@@ -28,12 +29,12 @@ class EventData < ActiveRecord::Base
   }
 
   belongs_to :event
-  scope :scoped_by_place_id_and_company_id, lambda { |places, companies| joins(:event).where(events: { place_id: places, company_id: companies }) }
+  scope :scoped_by_place_id_and_company_id, ->(places, companies) { joins(:event).where(events: { place_id: places, company_id: companies }) }
 
-  scope :scoped_by_company_id, lambda { |companies| joins(:event).where(events: { company_id: companies }) }
-  scope :scoped_by_campaign_id, lambda { |campaigns| joins(:event).where(events: { campaign_id: campaigns }) }
-  scope :for_approved_events, lambda { joins(:event).where(events: { aasm_state: 'approved' }) }
-  scope :for_active_events, lambda { joins(:event).where(events: { active: true }) }
+  scope :scoped_by_company_id, ->(companies) { joins(:event).where(events: { company_id: companies }) }
+  scope :scoped_by_campaign_id, ->(campaigns) { joins(:event).where(events: { campaign_id: campaigns }) }
+  scope :for_approved_events, -> { joins(:event).where(events: { aasm_state: 'approved' }) }
+  scope :for_active_events, -> { joins(:event).where(events: { active: true }) }
 
   def update_data
     e = Event.find(event_id)

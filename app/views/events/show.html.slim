@@ -1,132 +1,44 @@
-- can_edit = can?(:update, resource)
-- can_tasks = can?(:tasks, resource)
+= user_new_feature 'event_details_scheduled'
 
-- if resource.approved?
-  = user_new_feature('event_details_approved') do
-    h5 Getting Started: Event Details
-    a.close.btn-dismiss-alert.icon.icon-close href="#" title="Dismiss"
-    a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/plxyWGK0LCU?rel=0" data-width="640" data-height="360"
-      img src="#{image_path('video_arrow.png')}" width="70" height="70" /
-    .feature-description
-      p
-        'You are viewing the Event Details page for an executed event. Scroll down the page to view post event data, check out pictures and review comments. Click on the video to the left for a quick overview or visit our
-        a> href="http://support.brandscopic.com" target="_blank" support site
-        | for more information about this section.
-- else
-  = user_new_feature('event_details_scheduled') do
-    h5 Getting Started: Event Details
-    a.close.btn-dismiss-alert.icon.icon-close href="#" title="Dismiss"
-    a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/IFqNZ4r14Uo?rel=0" data-width="640" data-height="360"
-      img src="#{image_path('video_arrow.png')}" width="70" height="70" /
-    .feature-description
-      p
-        'Welcome to the Event Details page. On this page you can edit event information, fill out Post Event data, as well as submit, approve, or reject reports. Click on the video to the left for a quick overview or visit our
-        a> href="http://support.brandscopic.com" target="_blank" support site
-        | for more information about this section.
-
-.row-fluid.with-details-close-bar
-  = resource_details_bar("You are viewing event details. Click to close.")
-
-  .details_box class="#{(resource.place.nil? or resource.place.latitude.nil?) ?  'padding-top-close-bar' : ''}"
-    - unless resource.place.nil? || resource.place.latitude.nil? || resource.place.latitude == 1.0
-      #venue-map-canvas.google-map data-latitude="#{resource.place.latitude}" data-longitude="#{resource.place.longitude}"
-          b= resource.campaign_name
-          br>/
-          = event_date(resource, :start_at).to_s
-          br>/
-          = place_address(resource.place)
-
-    = render 'alerts'
-
-    h2.special = resource.campaign_name
-
-    .calendar-data
-      i.icon-calendar
-      span
-        = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at))
-    - unless resource.place.nil?
-      .place-data
-        i.icon-wired-venue
-        span
-          = place_address(resource.place, true, ', ') if resource.place
-
-    - unless resource.description.nil? || resource.description.empty?
-      .description-data
-        i.icon-wired-description
-        span= simple_format resource.description
-
-    .links-data
-      = button_to_edit resource if can_edit
-      = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
-
-    // The is info will be displayed on the fixed bar when the window is scolled down to this position
-    .details-bar-info
-      h3= resource.campaign_name
-      = button_to_edit resource if can_edit
-      = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
-      br>/
-      = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at), date_separator: ' ')
-
-
-  - if can?(:view_members, resource)
-    #event-members.details_box
-      h5.module-title EVENT STAFF
-      #event-team-members
-        = render partial: 'team_member_list', locals: {can_delete: can?(:delete_member, resource)}
-      = button_to_add 'Add Team Member', new_member_event_path(resource) if can?(:add_members, resource)
-
-
-  - if can?(:view_contacts, resource)
-    #event-contacts.details_box
-      h5.module-title CONTACTS
-      #event-contacts-list
-        = render 'contacts'
-      = button_to_add 'Add Contact', add_event_contact_events_path(resource) if can?(:create_contacts, resource)
-
-  - resource.results.each { |r| r.errors.clear }
-  - if resource.event_data? && !resource.rejected?
-    = render 'show_results'
-  - elsif resource.happens_today? || resource.in_past?
-    = render 'edit_results'
-
-  - if can_tasks
-    #event-tasks.details_box
-
-      .pull-left
-        = button_to 'Create Task', new_event_task_path(resource), method: :get, remote: true, class: 'btn btn-primary' if can? :create_task, resource
-      #event-tasks-counters.pull-right
-        = render partial: 'tasks_counters', locals: {tasks: resource.tasks.active}
-
-      #event-tasks-container
-        = render partial: 'tasks', locals: {tasks: resource.tasks.active}
-
-  - if can? :documents, resource
-    #event-documents.details_box
-
-      h5.module-title DOCUMENTS
-      .documents-list
-        #documents-list.resource-list
-          = render :partial => "documents/document", :collection => resource.documents.active + resource.campaign.documents, :locals => { parent: resource }
-      = button_to_add 'Add Document', new_event_document_path(resource) if can?(:create_document, resource)
+.row-fluid
+  = render 'details_bar'
+  = render "events/phases/#{presenter.current_phase}"
 
 = render partial: 'help_tutorial'
-- content_for :footer do
-  - unless resource.place.nil?
-    javascript:
-      $(document).ready(function() {
-        $(this).scrollTop(400);
-      });
 
-  - if can_tasks
-    javascript:
-      if (#{can_tasks}){
-        $(document).on('tasks:change', function(){
-          $.get('#{tasks_event_path(resource)}', function(response){
-            $response = $('<div>').append(response);
-            $('#event-tasks-container').html($response.find('[data-content="tasks"]').html());
-            $('#event-tasks-counters').html($response.find('[data-content="counters"]').html());
-          })
-        });
-      }
+- reload_page_on_edit_resource
 
-  - reload_page_on_edit_resource
+- content_for :footer
+  javascript:
+    jQuery(function(){
+      $('.event-phase-step .step').tooltip({
+        html: true,
+        container: this.element,
+        delay: 0,
+        animation: false,
+        title: function(a, b) {
+          return $(this).data('title');
+        },
+        placement: function(tooltip, field) {        
+          window.setTimeout(function() {
+            return $(tooltip).css({
+              top: (parseInt($(field).position().top - 22)) + 'px',
+            });
+          });
+          10;
+          return 'top';
+        }
+      })
+      $(window).bind('scroll', function() {
+        if (($(window).scrollTop() + $('header').outerHeight()) >  ($('header').outerHeight() + ($('.new-feature').outerHeight() || 0)) ) {
+          $('.details-bar').addClass('fixed');
+        }
+        else {
+          $('.details-bar').removeClass('fixed');
+        }
+      })
+
+      #{create_scrollmultispy_js}
+
+      #{presenter.initial_message_js}
+    });

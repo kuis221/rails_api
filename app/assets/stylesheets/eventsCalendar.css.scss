@@ -5,25 +5,31 @@
 
 	.calendar-table {
 		width: 100%;
-		border-collapse: collapse;
+		border-collapse: separate;
 		border: 1px solid #CCC;
+		border-radius: 10px 10px 0 0;
 		td, th {
 			width: 14.28571428571429%;
 		}
 		th {
-			background-color: $brand;
-			color: $white;
+			color: $text;
 			text-transform:uppercase;
 			text-align: left;
-			padding: 5px 0 5px 10px;
+			font-weight: bold;
+			padding: 8px 0 8px 10px;
 		}
 		td.calendar-day {
 			border: 1px solid #CCC;
+			border-right:0;
+			border-bottom:0;
 			height: 130px;
 			.calendar-cell-wrapper {
 				position: relative;
 				width: 100%;
 				height: 100%;
+			}
+			&:first-child{
+				border-left:0;
 			}
 
 			.calendar-day-events-container {
@@ -32,7 +38,7 @@
 				width: 95%;
 				overflow: hidden;
 				top: 0;
-				padding: 3px 3px 6px 6px;
+				padding: 16px 3px 6px 6px;
 				color: $brand;
 				font-size: 11px;
 				line-height: 17px;
@@ -44,6 +50,7 @@
 				.calendar-event-name{
 					display: block;
 					margin-left: 15px;
+					margin-right: 22px;
 					margin-top: -19px;
 					overflow: hidden;
 					white-space: nowrap;
@@ -58,8 +65,8 @@
 			}
 			.calendar-month-day{
 				position: absolute;
-				bottom: 0;
 				right: 0;
+				top: 0;
 				height: 20px;
 			}
 			.calendar-view-more {
@@ -128,6 +135,7 @@
 	}
 	.calendar-controls {
 		height: 30px;
+		margin-bottom: 14px;
 		.calendar-month-name{
 			display: inline-block;
 			font-weight: bold;

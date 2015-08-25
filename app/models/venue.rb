@@ -22,16 +22,25 @@
 #  score_dirty          :boolean          default(FALSE)
 #  jameson_locals       :boolean          default(FALSE)
 #  top_venue            :boolean          default(FALSE)
+#  web_address          :string
+#  created_by_id        :integer
+#  updated_by_id        :integer
 #
 
 require 'normdist'
 
 class Venue < ActiveRecord::Base
+  # Created_by_id and updated_by_id fields
+  track_who_does_it
+
   scoped_to_company
 
   belongs_to :place
 
   validates :place, presence: true, uniqueness: { scope: :company_id }
+
+  before_validation :smart_add_url_protocol
+  validates_format_of :web_address, :with => URI::regexp, allow_blank: true
 
   has_many :events, through: :place
   has_many :activities, -> { order('activity_date ASC') }, as: :activitable do
@@ -46,20 +55,33 @@ class Venue < ActiveRecord::Base
   end
 
   has_many :invites, dependent: :destroy, inverse_of: :venue
+  has_many :hours_fields, dependent: :destroy, inverse_of: :venue
+
+  accepts_nested_attributes_for :hours_fields, reject_if: proc { |attributes| attributes['_destroy'].blank? }, allow_destroy: true
+
+  def entity_form
+    @entity_form ||= EntityForm.find_by(entity: self.class.name, company_id: company_id)
+  end
+  delegate :form_fields, to: :entity_form
+  has_many :form_fields, through: :entity_form
 
   include Normdist
+  include Resultable
 
-  delegate :name, :types, :formatted_address, :formatted_phone_number, :website, :price_level,
-           :city, :street, :state, :state_name, :country, :country_name, :zipcode, :reference,
-           :latitude, :longitude, :opening_hours, :td_linx_code,
+  delegate :name, :types, :formatted_address, :formatted_phone_number, :website,
+           :price_level, :city, :street, :state, :state_name, :country,
+           :country_name, :zipcode, :reference, :latitude, :longitude,
+           :opening_hours, :td_linx_code, :merged_with_place_id, :state_code,
            to: :place
 
   scope :top_venue, ->{ where(top_venue: true) }
   scope :jameson_locals, ->{ where(jameson_locals: true) }
+  scope :accessible_by_user, ->(user) { in_company(user.company_id) }
+  scope :filters_between_dates, ->(start_date, end_date) { where(created_at: DateTime.parse(start_date)..DateTime.parse(end_date))}
 
   before_destroy :check_for_associations
 
-  searchable do
+  searchable if: ->(v) { v.merged_with_place_id.blank? } do
     integer :id
     integer :place_id
     integer :company_id
@@ -137,14 +159,14 @@ class Venue < ActiveRecord::Base
     if reindex_neighbors_venues && neighbors_establishments_search
       Venue.where(
         id: neighbors_establishments_search.hits.map(&:primary_key)
-      ).update_all(score_dirty: true)
+      ).where.not(id: self.id).update_all(score_dirty: true)
     end
 
     true
   end
 
+  # Calculates the scoring for the venue
   def compute_scoring
-    # Calculates the scoring for the venue
     self.score = nil
     if neighbors_establishments_search && neighbors_establishments_search.respond_to?(:stat_response)
       unless neighbors_establishments_search.stat_response['stats_fields']['avg_impressions_hour_es'].nil?
@@ -184,6 +206,14 @@ class Venue < ActiveRecord::Base
         stat(:avg_impressions_cost, type: 'mean')
       end
     end
+  end
+
+  def website
+    self.web_address || place.website
+  end
+
+  def opening_hours
+    venue_opening_hours || place.opening_hours
   end
 
   def photos
@@ -261,9 +291,20 @@ class Venue < ActiveRecord::Base
     @overall_graphs_data
   end
 
-  def self.do_search(params, include_facets = false)
-    ss = solr_search(include: [:place]) do
+  def self.in_campaign_scope(campaign)
+    subquery = Place.connection.unprepared_statement { Place.in_campaign_scope(campaign).to_sql }
+    joins("INNER JOIN (#{subquery}) campaign_places ON campaign_places.id=venues.place_id")
+      .where(company_id: campaign.company_id)
+  end
 
+  def self.in_campaign_areas(campaign, areas)
+    subquery = Place.connection.unprepared_statement { Place.in_campaign_areas(campaign, areas).to_sql }
+    joins("INNER JOIN (#{subquery}) campaign_places ON campaign_places.id=venues.place_id")
+      .where(company_id: campaign.company_id)
+  end
+
+  def self.do_search(params, include_facets = false)
+    solr_search(include: [:place]) do
       with :company_id, params[:company_id] if params.key?(:company_id) && params[:company_id].present?
       with :id, params[:venue] if params.key?(:venue) && params[:venue].present?
 
@@ -286,12 +327,16 @@ class Venue < ActiveRecord::Base
         radius = params.key?(:radius) ? params[:radius] : 50
         (lat, lng) = params[:location].split(',')
         with(:location).in_radius(lat, lng, radius, bbox: true)
+        order_by_geodist(:location, lat, lng) unless params[:q]
       end
 
       if params[:q].present?
         fulltext params[:q] do
-          fields(:types, name: 5.0)
+          fields(:types, :name)
+          boost_fields name: 5.0
           phrase_fields name: 5.0
+          phrase_slop 1
+          minimum_match 1
           fields(address: 2.0) if params[:search_address]
         end
       end
@@ -325,14 +370,14 @@ class Venue < ActiveRecord::Base
         end
       end
 
-      start_date = params[:start_date]
-      end_date = params[:end_date]
-      if start_date.present? && end_date.present?
-        d1 = Timeliness.parse(start_date, zone: :current).beginning_of_day
-        d2 = Timeliness.parse(end_date, zone: :current).end_of_day
+      if params[:start_date].present? && params[:end_date].present?
+        params[:start_date] = Array(params[:start_date])
+        params[:end_date] = Array(params[:end_date])
+        d1 = Timeliness.parse(params[:start_date][0], zone: :current).beginning_of_day
+        d2 = Timeliness.parse(params[:end_date][0], zone: :current).end_of_day
         with Venue.search_start_date_field, d1..d2
-      elsif start_date.present?
-        d = Timeliness.parse(start_date, zone: :current).beginning_of_day
+      elsif params[:start_date].present?
+        d = Timeliness.parse(params[:start_date][0], zone: :current).beginning_of_day
         with Venue.search_start_date_field, d..d.end_of_day
       end
 
@@ -349,14 +394,20 @@ class Venue < ActiveRecord::Base
         facet :campaign_ids
       end
 
-      order_by(params[:sorting] || :venue_score, params[:sorting_dir] || :desc)
+      unless params[:location]
+        if params[:q]
+          order_by(:score, :desc)
+        else
+          order_by(params[:sorting] || :venue_score, params[:sorting_dir] || :desc)
+        end
+      end
       paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
-
     end
   end
 
   def self.searchable_params
-    [:location, :q, events_count: [:min, :max],
+    [:location, :q,
+     events_count: [:min, :max],
      promo_hours: [:min, :max], impressions: [:min, :max],
      interactions: [:min, :max], sampled: [:min, :max], spent: [:min, :max],
      venue_score: [:min, :max], price: [], area: [], campaign: [], brand: []]
@@ -389,5 +440,26 @@ class Venue < ActiveRecord::Base
       errors.add(:base, "cannot delete venue because it have events, invites or activites associated")
       return false
     end
+  end
+
+  def venue_opening_hours
+    return nil if hours_fields.blank?
+    periods = hours_fields.inject([]) do |memo, hour|
+                if hour.day.present? && hour.hour_open.present? || hour.hour_close.present?
+                  hash = {}
+                  hash.merge!('open' => { 'day' => hour.day, 'time' => hour.hour_open }) if hour.hour_open.present?
+                  hash.merge!('close' => { 'day' => hour.day, 'time' => hour.hour_close }) if hour.hour_close.present? && hour.hour_open.present?
+                  memo << hash unless hash.blank?
+                end
+                memo
+              end
+    { 'periods' => periods }
+  end
+
+  protected
+
+  def smart_add_url_protocol
+    return true if web_address.nil? || web_address[/\Ahttp:\/\//] || web_address[/\Ahttps:\/\//]
+    self.web_address = "http://#{self.web_address}"
   end
 end

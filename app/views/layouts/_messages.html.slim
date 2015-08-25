@@ -1,5 +1,5 @@
 - flash.each do |name, msg|
-  - if msg.is_a?(String) && msg.present?
+  - if msg.is_a?(String) && msg.present? && (!name.include? 'event_message_')
     div class="alert alert-#{name == :notice ? 'success' : name}"
       a.close.icon.icon-close data-dismiss="alert"
       = content_tag :div, msg.html_safe, :id => "flash_#{name}"

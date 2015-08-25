@@ -7,29 +7,12 @@ RSpec.describe BrandAmbassadors::DocumentsController, type: :controller do
 
   before { sign_in_as_user user }
 
-  describe "GET 'new'" do
-    it 'returns http success' do
-      xhr :get, 'new', format: :js
-      expect(response).to be_success
-      expect(response).to render_template('new')
-      expect(response).to render_template('_form')
-    end
-
-    it 'returns http success for a visit' do
-      ba_visit = create(:brand_ambassadors_visit,
-                                    company: company, company_user: user)
-      xhr :get, 'new', visit_id: ba_visit.id, format: :js
-      expect(response).to be_success
-      expect(response).to render_template('new')
-      expect(response).to render_template('_form')
-    end
-  end
-
   describe "POST 'create'" do
     describe 'with valid data' do
       before do
         s3object = double
         allow(s3object).to receive(:copy_from).and_return(true)
+        allow(s3object).to receive(:exists?).at_least(:once).and_return(true)
         expect_any_instance_of(AWS::S3).to receive(:buckets).at_least(:once).and_return(
           'brandscopic-dev' => double(objects: {
                                         'uploads/dummy/test.jpg' => double(head: double(content_length: 100, content_type: 'image/jpeg', last_modified: Time.now)),
@@ -90,12 +73,11 @@ RSpec.describe BrandAmbassadors::DocumentsController, type: :controller do
       end
     end
 
-    it 'should render the form_dialog template if errors' do
+    it 'should render the create template if errors' do
       expect do
         xhr :post, 'create', format: :js
       end.not_to change(BrandAmbassadors::Document, :count)
       expect(response).to render_template(:create)
-      expect(response).to render_template('_form_dialog')
       assigns(:document).errors.count > 0
     end
   end

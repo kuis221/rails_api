@@ -546,12 +546,17 @@ disabled look for disabled choices in the results dropdown
 }
 
 .select2-search-choice-close {
-		display: block;
-		position: absolute;
-		right: 6px;
-		top: 7px;
-		font-size: 10px;
-		outline: none;
+	color: $white;
+	display: block;
+	position: absolute;
+	right: 6px;
+	top: 7px;
+	font-size: 9px;
+	outline: none;
+	&:hover{
+		text-decoration: none;
+		color: $white;
+	}
 }
 
 .select2-search-choice-close a{
@@ -559,7 +564,7 @@ disabled look for disabled choices in the results dropdown
 }
 
 .select2-search-choice-close:after {
-	content: "\e019";
+	content: "\e616";
 	font-family: 'icons';
 }
 
@@ -618,4 +623,39 @@ disabled look for disabled choices in the results dropdown
 	.select2-search input {
 			background-position: 100% -21px !important;
 	}
+}
+
+
+// Brandscopic overrides
+.select2-container:focus{
+	outline: none !important;
+}
+.select2-container-multi .select2-choices{
+	background-image: none !important;
+	border: 1px solid #c0c0c0 !important;
+	border-radius: 4px !important;
+	box-shadow: none !important;
+	height: 34px !important;
+	padding-top: 5px !important;
+	//width: 398px !important;
+	.select2-search-choice{
+		background-color: $brand !important;
+		background-image: none !important;
+		border-radius: 12px;
+		border: 0;
+		box-shadow: none;
+		color: white;
+		padding: 5px 20px 6px 10px;
+	}
+	.select2-search-field{
+		input[type="text"]{
+			border:0 !important;
+		}
+	}
+	.select2-search-choice{
+		margin-top: 2px !important;
+	}
+}
+.select2-results{
+	width: 394px;
 }

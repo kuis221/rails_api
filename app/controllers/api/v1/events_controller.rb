@@ -1,6 +1,11 @@
 class Api::V1::EventsController < Api::V1::FilteredController
   extend TeamMembersHelper
 
+  # Handle the notifications for new events
+  include NotificableController
+
+  notifications_scope -> { current_company_user.notifications.events }
+
   skip_load_and_authorize_resource only: :update
   skip_authorization_check only: :update
   before_action :authorize_update, only: :update
@@ -51,6 +56,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   end
 
   api :GET, '/api/v1/events', 'Search for a list of events'
+  api :POST, '/api/v1/events/filter', 'Search for a list of events. This is an alias method for events#index to allow sending params by POST'
   param_group :search_params
   see 'users#companies', 'User companies'
 
@@ -60,99 +66,27 @@ class Api::V1::EventsController < Api::V1::FilteredController
     All the times and dates are returned on the user's timezone.
 
   EOS
-  example <<-EOS
-  {
-      "page": 1,
-      "total": 7238,
-      "facets": [
-          <HERE GOES THE LIST FACETS DESCRIBED ABOVE>
-      ],
-      "results": [
-          {
-              "id": 5486,
-              "start_date": "05/24/2014",
-              "start_time": " 9:00 PM",
-              "end_date": "05/24/2014",
-              "end_time": "10:00 PM",
-              "status": "Active",
-              "event_status": "Unsent",
-              "place": {
-                  "id": 2624,
-                  "name": "Kelly's Pub Too",
-                  "latitude": 39.7924104,
-                  "longitude": -86.2514126,
-                  "formatted_address": "5341 W. 10th Street, Indianapolis, IN 46224",
-                  "country": "US",
-                  "state": "Indiana",
-                  "state_name": "Indiana",
-                  "city": "Indianapolis",
-                  "route": "5341 W. 10th Street",
-                  "street_number": null,
-                  "zipcode": "46224"
-              },
-              "campaign": {
-                  "id": 33,
-                  "name": "Kahlua Midnight FY14"
-              }
-          },
-          {
-              "id": 5199,
-              "start_date": "05/03/2014",
-              "start_time": " 7:30 PM",
-              "end_date": "05/03/2014",
-              "end_time": " 8:30 PM",
-              "status": "Active",
-              "event_status": "Unsent",
-              "place": {
-                  "id": 2587,
-                  "name": "8 Seconds Saloon",
-                  "latitude": 39.767723,
-                  "longitude": -86.24897,
-                  "formatted_address": "111 North Lynhurst Drive, Indianapolis, IN, United States",
-                  "country": "US",
-                  "state": "Indiana",
-                  "state_name": "Indiana",
-                  "city": "Indianapolis",
-                  "route": "North Lynhurst Drive",
-                  "street_number": "111",
-                  "zipcode": "46224"
-              },
-              "campaign": {
-                  "id": 33,
-                  "name": "Kahlua Midnight FY14"
-              }
-          },
-          ....
-      ]
-  }
-  EOS
   def index
+    @filter_tags = FilterTags.new(params, current_company_user).tags
     collection
   end
 
-  api :GET, '/api/v1/events/status_facets', 'Returns the facets for the event status'
+  api :GET, '/api/v1/events/status_facets', 'Returns count of the different status given a filtering criteria'
   param_group :search_params
   description <<-EOS
+    This is useful to display a counter of events for each event status
+
     The API returns the facets on the following format:
 
-      [
-        {
-          label: String,            # Any of: Campaigns, Brands, Location, People, Active State, Event Status
-          items: [                  # List of items for the facet sorted by relevance
-            {
-              "label": String,      # The name of the item
-              "id": String,         # The id of the item, this should be used to filter the list by this items
-              "name": String,       # The param name to be use for filtering the list (campaign, user, team, place, area, status, event_status)
-              "count": Number,      # The number of results for this item
-              "selected": Boolean   # True if the list is being filtered by this item
-            },
-            ....
-          ],
-          top_items: [              # Some facets will return this as a list of items that have the greater number of results
-            <other list of items>
-          ]
-        }
-      ]
+        facets: [                  # List of items for the facet sorted by relevance
+          {
+            "id": String,         # The id of the item, this should be used to filter the list by this items
+            "name": String,       # The param name to be use for filtering the list (campaign, user, team, place, area, status, event_status)
+            "count": Number,      # The number of results for this item
+            "label": String,      # The name of the item
+          },
+          ....
+        ]
   EOS
   def status_facets
     authorize! :index, Event
@@ -178,64 +112,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
   * *Places*: Includes venues and areas
   * *Peope*: Includes users and teams
   EOS
-  example <<-EOS
-  GET: /api/v1/events/autocomplete.json?q=jam
-  [
-      {
-          "label": "Campaigns",
-          "value": []
-      },
-      {
-          "label": "Brands",
-          "value": [
-              {
-                  "label": "<i>Jam</i>eson LOCALS",
-                  "value": "13",
-                  "type": "brand"
-              },
-              {
-                  "label": "<i>Jam</i>eson Whiskey",
-                  "value": "8",
-                  "type": "brand"
-              }
-          ]
-      },
-      {
-          "label": "Places",
-          "value": [
-              {
-                  "label": "<i>Jam</i>es' Beach",
-                  "value": "2386",
-                  "type": "venue"
-              },
-              {
-                  "label": "<i>Jam</i>es' Beach",
-                  "value": "374",
-                  "type": "venue"
-              },
-              {
-                  "label": "The <i>Jam</i>es Joyce",
-                  "value": "377",
-                  "type": "venue"
-              },
-              {
-                  "label": "The <i>Jam</i>es Royal Palm",
-                  "value": "825",
-                  "type": "venue"
-              },
-              {
-                  "label": "The <i>Jam</i>es Chicago",
-                  "value": "2203",
-                  "type": "venue"
-              }
-          ]
-      },
-      {
-          "label": "People",
-          "value": []
-      }
-  ]
-  EOS
   def autocomplete
     authorize! :index, Event
     autocomplete = Autocomplete.new('events', current_company_user, params)
@@ -257,6 +133,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   * *end_time*: the event's end time in 12 hours format
   * *description*: the event's description
   * *status*: the event's active state, can be Active or Inactive
+  * *phases*: indicate the different phases and steps applicable for the event an they current status
   * *event_status*: the event's status, can be any of ['Late', 'Due', 'Submitted', 'Unsent', 'Approved', 'Rejected']
   * *have_data*: returns true if data have been entered for the event, otherwise, returns false
   * *data*: Calculated data based on event results, returned only when have_data is true
@@ -271,7 +148,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
     * *longitude*: the venue's longitude
     * *formatted_address*: the venue's formatted address
     * *country*: the venue's country
-    * *state*: the venue's state
+    * *state*: the venue's state code
+    * *state_name*: the venue's state name
     * *city*: the venue's city
     * *route*: the venue's route
     * *street_number*: the venue's street_number
@@ -279,63 +157,11 @@ class Api::V1::EventsController < Api::V1::FilteredController
   * *campaign*: On object with the event's campaign information with the following attributes
     * *id*: the campaign's id
     * *name*: the campaign's name
-  EOS
-
-  example <<-EOS
-  {
-      "id": 5486,
-      "start_date": "05/24/2014",
-      "start_time": " 9:00 PM",
-      "end_date": "05/24/2014",
-      "end_time": "10:00 PM",
-      "status": "Active",
-      "event_status": "Unsent",
-      "description": "This is the events description",
-      "have_data": true,
-      "data": {
-        spent_by_impression: "6.0"
-        spent_by_interaction: "6.857142857"
-        spent_by_sample: "6.857142857"
-      },
-      "actions": [
-          "enter post event data",
-          "upload photos",
-          "conduct surveys",
-          "enter expenses",
-          "gather comments"
-      ],
-      "place": {
-          "id": 2624,
-          "venue_id": 2154,
-          "name": "Kelly's Pub Too",
-          "latitude": 39.7924104,
-          "longitude": -86.2514126,
-          "formatted_address": "5341 W. 10th Street, Indianapolis, IN 46224",
-          "country": "US",
-          "state": "Indiana",
-          "state_name": "Indiana",
-          "city": "Indianapolis",
-          "route": "5341 W. 10th Street",
-          "street_number": null,
-          "zipcode": "46224"
-      },
-      "campaign": {
-          "id": 33,
-          "name": "Kahlua Midnight FY14",
-          "enabled_modules": [
-             "expenses",
-             "photos",
-             "videos",
-             "comments",
-             "attendance"
-          ]
-      }
-  }
+    * *enabled_modules*: names of module that are enabled for the event's campaign
+    * *modules*: details for modules that are enabled for the event's campaign
   EOS
   def show
-    if resource.present?
-      render
-    end
+    render if resource.present?
   end
 
   api :POST, '/api/v1/events', 'Create a new event'
@@ -581,376 +407,17 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
     * *required:* indicates whether this field is required or not
 
-  EOS
-  example <<-EOS
-    A response with all the different kind of fields
-    GET /api/v1/events/123/results.json
-    [
-        {
-            "module": "demographics",
-            "fields": [
-                {
-                    "name": "Gender",
-                    "ordering": 0,
-                    "field_type": "percentage",
-                    "options": {
-                        "capture_mechanism": "integer",
-                        "predefined_value": ""
-                    },
-                    "description": "Number of consumers who try a product sample",
-                    "module": "demographics",
-                    "segments": [
-                        {
-                            "id": 160068,
-                            "text": "Female",
-                            "value": 60
-                        },
-                        {
-                            "id": 160069,
-                            "text": "Male",
-                            "value": 40
-                        }
-                    ]
-                },
-                {
-                    "name": "Age",
-                    "ordering": 26,
-                    "field_type": "percentage",
-                    "options": {
-                        "capture_mechanism": "integer"
-                    },
-                    "description": "Percentage of attendees who are within a certain age range",
-                    "module": "demographics",
-                    "segments": [
-                        {
-                            "id": 160070,
-                            "text": "< 12",
-                            "value": null
-                        },
-                        {
-                            "id": 160071,
-                            "text": "12 – 17",
-                            "value": null
-                        },
-                        {
-                            "id": 331155,
-                            "text": "18 – 20",
-                            "value": null
-                        },
-                        {
-                            "id": 160072,
-                            "text": "21 – 24",
-                            "value": 0
-                        },
-                        {
-                            "id": 160073,
-                            "text": "25 – 34",
-                            "value": 0
-                        },
-                        {
-                            "id": 160074,
-                            "text": "35 – 44",
-                            "value": 0
-                        },
-                        {
-                            "id": 160075,
-                            "text": "45 – 54",
-                            "value": 0
-                        },
-                        {
-                            "id": 160076,
-                            "text": "55 – 64",
-                            "value": 0
-                        },
-                        {
-                            "id": 160077,
-                            "text": "65+",
-                            "value": null
-                        }
-                    ]
-                },
-                {
-                    "name": "Ethnicity/Race",
-                    "ordering": 27,
-                    "field_type": "percentage",
-                    "options": {
-                        "capture_mechanism": "integer"
-                    },
-                    "description": "Percentage of attendees who are of a certain ethnicity or race",
-                    "module": "demographics",
-                    "segments": [
-                        {
-                            "id": 160078,
-                            "text": "Asian",
-                            "value": 0
-                        },
-                        {
-                            "id": 160079,
-                            "text": "Black / African American",
-                            "value": 0
-                        },
-                        {
-                            "id": 160080,
-                            "text": "Hispanic / Latino",
-                            "value": 0
-                        },
-                        {
-                            "id": 160081,
-                            "text": "Native American",
-                            "value": null
-                        },
-                        {
-                            "id": 160082,
-                            "text": "White",
-                            "value": 0
-                        }
-                    ]
-                }
-            ],
-            "label": "Demographics"
-        },
-        {
-            "module": "consumer_reach",
-            "fields": [
-                {
-                    "name": "Impressions",
-                    "ordering": 7,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "",
-                        "predefined_value": ""
-                    },
-                    "description": "Total number of consumers who come in contact with an event",
-                    "module": "consumer_reach",
-                    "id": 160065,
-                    "value": 40
-                },
-                {
-                    "name": "Interactions",
-                    "ordering": 8,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "",
-                        "predefined_value": ""
-                    },
-                    "description": "Total number of consumers who directly interact with an event",
-                    "module": "consumer_reach",
-                    "id": 160067,
-                    "value": 35
-                },
-                {
-                    "name": "Samples",
-                    "ordering": 9,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "",
-                        "predefined_value": ""
-                    },
-                    "description": "Number of consumers who try a product sample",
-                    "module": "consumer_reach",
-                    "id": 160066,
-                    "value": 35
-                }
-            ],
-            "label": "Consumer Reach"
-        },
-        {
-            "module": "custom",
-            "fields": [
-                {
-                    "name": "$ Discretionary Funds (New Jersey Only)",
-                    "ordering": 11,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "integer"
-                    },
-                    "description": null,
-                    "module": "custom",
-                    "id": 160083,
-                    "value": 0
-                },
-                {
-                    "name": "# Drink Coupons Distributed",
-                    "ordering": 14,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "integer"
-                    },
-                    "description": null,
-                    "module": "custom",
-                    "id": 160086,
-                    "value": 0
-                },
-                {
-                    "name": "# T-Shirts Distributed",
-                    "ordering": 15,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "integer"
-                    },
-                    "description": "",
-                    "module": "custom",
-                    "id": 160087,
-                    "value": 5
-                },
-                {
-                    "name": "Name Of Bloody recipe submitted",
-                    "ordering": 15,
-                    "field_type": "text",
-                    "options": {
-                        "capture_mechanism": null
-                    },
-                    "description": null,
-                    "module": "custom",
-                    "id": 160088,
-                    "value": "Surf n' Turf"
-                },
-                {
-                    "name": "Point of Sale Presence (describe, do not list)",
-                    "ordering": 15,
-                    "field_type": "textarea",
-                    "options": {
-                        "capture_mechanism": null
-                    },
-                    "description": null,
-                    "module": "custom",
-                    "id": 160089,
-                    "value": "Banner was placed at the entrance of venue. FA' wore uniforms while sampling along with Absolut table. Table tents with Bloody recipe placed throughout the venue. Patrons were handed bloody samples in Absolut branded sample cups "
-                },
-                {
-                    "name": "ABSOLUT Bloody on Drink Menu",
-                    "ordering": 16,
-                    "field_type": "count",
-                    "options": {
-                        "capture_mechanism": "radio"
-                    },
-                    "description": null,
-                    "module": "custom",
-                    "segments": [
-                        {
-                            "id": 302,
-                            "text": "Yes"
-                        },
-                        {
-                            "id": 303,
-                            "text": "No"
-                        }
-                    ],
-                    "id": 160090,
-                    "value": 302
-                },
-                {
-                    "name": "ABSOLUT Bloody Regular Price",
-                    "ordering": 17,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "currency"
-                    },
-                    "description": null,
-                    "module": "custom",
-                    "id": 160091,
-                    "value": "0.0"
-                },
-                {
-                    "name": "ABSOLUT Bloody Featured",
-                    "ordering": 18,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "currency"
-                    },
-                    "description": null,
-                    "module": "custom",
-                    "id": 160092,
-                    "value": null
-                },
-                {
-                    "name": "% Consumers Age 21-29",
-                    "ordering": 19,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "integer"
-                    },
-                    "description": null,
-                    "module": "custom",
-                    "id": 160093,
-                    "value": 75
-                },
-                {
-                    "name": "% General Market",
-                    "ordering": 20,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "integer"
-                    },
-                    "description": null,
-                    "module": "custom",
-                    "id": 160094,
-                    "value": 100
-                },
-                {
-                    "name": "# Trade Interactions",
-                    "ordering": 21,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "integer"
-                    },
-                    "description": "Number of members of the trade with whom you interacted during execution.",
-                    "module": "custom",
-                    "id": 160095,
-                    "value": 10
-                },
-                {
-                    "name": "# Bottles Depleted",
-                    "ordering": 22,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "decimal"
-                    },
-                    "description": "The number of bottles depleted during execution. This includes bottles we use for sampling in addition to any bottles the bar pours through while we are there.",
-                    "module": "custom",
-                    "id": 160096,
-                    "value": "1.5"
-                },
-                {
-                    "name": "# FA Hours",
-                    "ordering": 23,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "decimal"
-                    },
-                    "description": "Total number of FA hours for which we will be invoiced. Time should include travel and set-up time for all FAs working the event.",
-                    "module": "custom",
-                    "id": 160098,
-                    "value": "1.5"
-                },
-                {
-                    "name": " # Table Tents Dist.",
-                    "ordering": 24,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "integer"
-                    },
-                    "description": "",
-                    "module": "custom",
-                    "id": 251164,
-                    "value": 10
-                },
-                {
-                    "name": "# Posters",
-                    "ordering": 25,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "integer"
-                    },
-                    "description": "Number of posters displayed during execution.",
-                    "module": "custom",
-                    "id": 251841,
-                    "value": 1
-                }
-            ],
-            "label": "Custom"
-        }
-    ]
+  * *range:* contains the range constraints for the field if any. This will be provided with the following info:
+
+    * *format:* either digits or value for numeric fields or words, characters for text fields
+    * *min:* the mininum number of chars/words/digits/value accepted by this field
+    * *max:* the max number of chars/words/digits/value accepted by this field
+
+    A field can include both min or max, or only a min or a max and it validates the info based in the following rules:
+
+    * min and max: the value must be between `min` and `max`
+    * min only: the value must be greater than `min`
+    * max only: the value must be smaller than `max`
   EOS
   def results
     authorize! :view_or_edit_data, resource
@@ -968,7 +435,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
       result[:id] = r.id
       if field.type == 'FormField::Percentage'
         result.merge!(segments: field.options_for_input.map do|s|
-                                  { id: s[1], text: s[0], value: r.value[s[1].to_s], goal: (resource.kpi_goals.key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][s[1]] : nil) }
+                                  { id: s[1], text: s[0], value: r.present? && r.value.present? ? r.value[s[1].to_s].to_i : nil, goal: (resource.kpi_goals.key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][s[1]] : nil) }
                                 end)
       elsif field.type == 'FormField::Checkbox'
         result.merge!(value: r.value || [],
@@ -976,7 +443,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
       elsif field.type == 'FormField::Brand' || field.type == 'FormField::Marque'
         result.merge!(value: r.value.to_i,
                       segments: field.options_for_field(r).map do|s|
-                                  { id: s[:id], text: s[:name] }
+                                  { id: s[1], text: s[0] }
                                 end)
       elsif field.type == 'FormField::Summation'
         result.merge!(value: r.value.map { |s| s[1].to_f }.reduce(0, :+),
@@ -988,14 +455,17 @@ class Api::V1::EventsController < Api::V1::FilteredController
         if field.is_optionable?
           result.merge!(segments: field.options_for_input.map { |s| { id: s[1], text: s[0], goal: (field.kpi_id.present? && resource.kpi_goals.key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][s[1]] : nil) } })
         end
-        v = field.value_is_numeric?(r.value) ? r.value.to_f : r.value
-        if field.settings && field.settings['range_format'] && field.settings['range_min'].to_s != '' && field.settings['range_max'].to_s != ''
-          result[:range] = { format: field.settings['range_format'], min: field.settings['range_min'], max: field.settings['range_max'] }
+        v = field.string_to_value(r.value)
+        if field.settings && field.settings.key?('range_format') && (!field.settings['range_min'].blank? || !field.settings['range_max'].blank?)
+          result[:range] = { format: field.settings['range_format'],
+                             min: field.settings['range_min'].present? ? field.settings['range_min'].to_i : nil,
+                             max: field.settings['range_max'].present? ? field.settings['range_max'].to_i : nil }
         end
         result.merge!(value: v)
       end
 
       result.merge!(description: field.kpi.description) if field.kpi.present?
+      result.merge!(description: field.settings['description']) if field.settings && field.settings.key?('description')
 
       result
     end
@@ -1054,78 +524,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
       * *type*: the type of the current item (team)
 
   EOS
-
-  example <<-EOS
-    An example with a event with both, users and teams
-    GET: /api/v1/events/8383/members.json
-    [
-        {
-            "id": 22,
-            "name": "Northerners", "description": "he people from the north",
-            "type": "team"
-        },
-        {
-            "id": 268,
-            "first_name": "Trinity",
-            "last_name": "Ruiz",
-            "full_name": "Trinity Ruiz",
-            "role_name": "MBN Supervisor",
-            "email": "trinity.ruiz@gmail.com",
-            "phone_number": "+1 233 245 4332",
-            "street_address": "1st Young st.,",
-            "city": "Toronto",
-            "state": "ON",
-            "country": "Canada",
-            "zip_code": "Canada",
-            "type": "user"
-        },
-        {
-            "id":  1,
-            "name": "Southerners",
-            "description": "The people from the south",
-            "type": "team"
-        }
-    ]
-  EOS
-
-  example <<-EOS
-    An example with a event with only users and no teams
-    GET: /api/v1/events/8383/members.json
-    [
-        {
-            "id": 268,
-            "first_name": "Trinity",
-            "last_name": "Ruiz",
-            "full_name": "Trinity Ruiz",
-            "role_name": "MBN Supervisor",
-            "phone_number": "+1 233 245 4332",
-            "street_address": "1st Young st.,",
-            "city": "Toronto",
-            "state": "ON",
-            "country": "Canada",
-            "zip_code": "12345",
-            "type": "user"
-        }
-    ]
-  EOS
-
-  example <<-EOS
-    An example requesting only the teams and not the users
-    GET: /api/v1/events/8383/members.json?type=team
-    [
-        {
-            "id": 22,
-            "name": "Northerners", "description": "he people from the north",
-            "type": "team"
-        },
-        {
-            "id":  1,
-            "name": "Southerners",
-            "description": "The people from the south",
-            "type": "team"
-        }
-    ]
-  EOS
   def members
     authorize! :view_members, resource
     @users = @teams = []
@@ -1148,24 +546,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
     * *type*: indicates if the current item is a user or a team
   EOS
   see 'events#add_member'
-
-  example <<-EOS
-    An example with a user and a contact in the response
-    GET: /api/v1/events/8383/assignable_members.json
-    [
-      {
-          "id": 268,
-          "name": "Trinity Ruiz",
-          "description": "Bartender",
-          "type": "user"
-      },{
-          "id": 268,
-          "name": "San Francisco MBN Team",
-          "description": "Field Ambassador",
-          "type": "team"
-      }
-    ]
-  EOS
   def assignable_members
     authorize! :add_members, resource
     respond_to do |format|
@@ -1184,40 +564,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
   param :memberable_id, :number, required: true, desc: 'The ID of team/user to be added as a member'
   param :memberable_type, %w(user team), required: true, desc: 'The type of element to be added as a member'
   see 'events#assignable_members'
-
-  example <<-EOS
-    Adding an user to the event members
-    POST: /api/v1/events/8383/members.json
-    DATA:
-    {
-      'memberable_id': 1,
-      'memberable_type': 'user'
-    }
-
-    RESPONSE:
-    {
-      'success': true,
-      'info': "Member successfully added to event",
-      'data': {}
-    }
-  EOS
-
-  example <<-EOS
-    Adding a team to the event members
-    POST: /api/v1/events/8383/members.json
-    DATA:
-    {
-      'memberable_id': 1,
-      'memberable_type': 'team'
-    }
-
-    RESPONSE:
-    {
-      'success': true,
-      'info': "Member successfully added to event",
-      'data': {}
-    }
-  EOS
   def add_member
     authorize! :add_members, resource
     memberable = build_memberable_from_request
@@ -1247,39 +593,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
   api :DELETE, '/api/v1/events/:id/members', 'Delete an user or team from the event\'s team'
   param :memberable_id, :number, required: true, desc: 'The ID of team/user to be deleted as a member'
   param :memberable_type, %w(user team), required: true, desc: 'The type of element to be deleted as a member'
-  example <<-EOS
-    Deleting an user from the event members
-    DELETE: /api/v1/events/8383/members.json
-    DATA:
-    {
-      'memberable_id': 1,
-      'memberable_type': 'user'
-    }
-
-    RESPONSE:
-    {
-      'success': true,
-      'info': "Member successfully deleted from event",
-      'data': {}
-    }
-  EOS
-
-  example <<-EOS
-    Deleting a team from the event members
-    DELETE: /api/v1/events/8383/members.json
-    DATA:
-    {
-      'memberable_id': 1,
-      'memberable_type': 'team'
-    }
-
-    RESPONSE:
-    {
-      'success': true,
-      'info': "Member successfully deleted from event",
-      'data': {}
-    }
-  EOS
   def delete_member
     authorize! :delete_member, resource
     memberable = find_memberable_from_request
@@ -1410,42 +723,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
     * *type*: indicates if the current item is a user or contact
   EOS
   see 'events#add_contact'
-
-  example <<-EOS
-    An example with a user and a contact in the response
-    GET: /api/v1/events/8383/assignable_contacts.json
-    [
-      {
-          "id": 268,
-          "full_name": "Trinity Ruiz",
-          "title": "Bartender",
-          "type": "contact"
-      },{
-          "id": 268,
-          "full_name": "Jonh Connor",
-          "title": "Human Soldier",
-          "type": "user"
-      }
-    ]
-  EOS
-
-  example <<-EOS
-    An example with a term search
-    GET: /api/v1/events/8383/assignable_contacts.json?term=ruiz
-    [
-      {
-          "id": 268,
-          "full_name": "Trinity Ruiz",
-          "title": "Bartender",
-          "type": "contact"
-      },{
-          "id": 268,
-          "full_name": "Bryan Ruiz",
-          "title": "Field Ambassador",
-          "type": "user"
-      }
-    ]
-  EOS
   def assignable_contacts
     authorize! :add, ContactEvent
     @contacts =  ContactEvent.contactables_for_event(resource, params[:term])
@@ -1455,40 +732,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
   param :contactable_id, :number, required: true, desc: 'The ID of contact/user to be added as a contact'
   param :contactable_type, %w(user contact), required: true, desc: 'The type of element to be added as a contact'
   see 'events#assignable_contacts'
-
-  example <<-EOS
-    Adding a user to the event contacts
-    POST: /api/v1/events/8383/contacts.json
-    DATA:
-    {
-      'contactable_id': 1,
-      'contactable_type': 'user'
-    }
-
-    RESPONSE:
-    {
-      'success': true,
-      'info': "Contact successfully added to event",
-      'data': {}
-    }
-  EOS
-
-  example <<-EOS
-    Adding a contact to the event contacts
-    POST: /api/v1/events/8383/contacts.json
-    DATA:
-    {
-      'contactable_id': 1,
-      'contactable_type': 'contact'
-    }
-
-    RESPONSE:
-    {
-      'success': true,
-      'info': "Contact successfully added to event",
-      'data': {}
-    }
-  EOS
   def add_contact
     authorize! :create_contacts, resource
     contact = resource.contact_events.build(contactable: load_contactable_from_request)
@@ -1498,12 +741,10 @@ class Api::V1::EventsController < Api::V1::FilteredController
                  data: {} }
       respond_to do |format|
         format.json do
-          render status: 200,
-                 json: result
+          render status: 200, json: result
         end
         format.xml do
-          render status: 200,
-                 xml: result.to_xml(root: 'result')
+          render status: 200, xml: result.to_xml(root: 'result')
         end
       end
     else
@@ -1517,39 +758,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
   api :DELETE, '/api/v1/events/:id/contacts', 'Delete a contact from the event'
   param :contactable_id, :number, required: true, desc: 'The ID of contact/user to be deleted as a contact'
   param :contactable_type, %w(user contact), required: true, desc: 'The type of element to be deleted as a contact'
-  example <<-EOS
-    Deleting an user from the event contacts
-    DELETE: /api/v1/events/8383/contacts.json
-    DATA:
-    {
-      'contactable_id': 1,
-      'contactable_type': 'user'
-    }
-
-    RESPONSE:
-    {
-      'success': true,
-      'info': "Contact successfully deleted from event",
-      'data': {}
-    }
-  EOS
-
-  example <<-EOS
-    Deleting a contact from the event contacts
-    DELETE: /api/v1/events/8383/contacts.json
-    DATA:
-    {
-      'contactable_id': 1,
-      'contactable_type': 'contact'
-    }
-
-    RESPONSE:
-    {
-      'success': true,
-      'info': "Contact successfully deleted from event",
-      'data': {}
-    }
-  EOS
   def delete_contact
     authorize! :delete_contact, resource
     contact = find_contactable_from_request
@@ -1569,31 +777,30 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
   end
 
-  protected
-
-  def facets
-    @facets ||= Array.new.tap do |f|
-      f.push build_campaign_bucket
-      f.push build_brands_bucket
-      f.push build_areas_bucket
-      f.push build_people_bucket
-
-      f.push build_status_bucket
-      f.push build_state_bucket
-    end
+  api :GET, '/api/v1/events/requiring_attention', 'Return a list of events requiring the users attention'
+  def requiring_attention
+    authorize! :index, Event
+    @events = events_requiring_attention
   end
 
+  api :GET, '/api/v1/events/details_counters', 'Return a list of counters for each event component'
+  def details_counters
+    authorize! :show, resource
+    render if resource.present?
+  end
+
+  protected
+
   def permitted_params
-    parameters = {}
     allowed = []
     allowed += [:end_date, :end_time, :start_date, :start_time, :campaign_id, :place_id,
                 :place_reference, :description, :visit_id] if can?(:update, Event) || can?(:create, Event)
     allowed += [{ results_attributes: [:value, :id, { value: [] }] }] if can?(:edit_data, Event)
     allowed += [:active] if can?(:deactivate, Event)
     parameters = params.require(:event).permit(*allowed)
-    parameters.tap do |whielisted|
-      unless whielisted.nil? || whielisted[:results_attributes].nil?
-        whielisted[:results_attributes].each_with_index do |value, i|
+    parameters.tap do |whitelisted|
+      unless whitelisted.nil? || whitelisted[:results_attributes].nil?
+        whitelisted[:results_attributes].each_with_index do |value, i|
           value[:value] = params[:event][:results_attributes][i][:value]
         end
       end
@@ -1601,9 +808,10 @@ class Api::V1::EventsController < Api::V1::FilteredController
   end
 
   def permitted_search_params
-    params.permit(:page, :start_date, :end_date, { campaign: [] }, { place: [] }, { area: [] }, { venue: [] },
-                  { user: [] }, { team: [] }, { brand: [] }, { brand_porfolio: [] }, { status: [] }, event_status: []).tap do |p|
-      p[:sorting] ||= 'start_at'
+    params.permit(:page, campaign: [], place: [], area: [], venue: [],
+                         start_date: [], end_date: [], user: [], team: [],
+                         brand: [], brand_porfolio: [], status: [], event_status: []).tap do |p|
+      p[:sorting] ||= Event.search_start_date_field
       p[:sorting_dir] ||= 'asc'
     end
   end
@@ -1641,5 +849,14 @@ class Api::V1::EventsController < Api::V1::FilteredController
     return unless cannot?(:update, resource) && cannot?(:edit_data, resource)
 
     fail CanCan::AccessDenied, unauthorized_message(:update, resource)
+  end
+
+  def events_requiring_attention
+    Event.do_search(
+      company_id: current_company.id,
+      current_company_user: current_company_user,
+      start_date: '01/01/1900',
+      end_date: Time.zone.now.to_s(:slashes),
+      event_status: %w(Late Due Rejected Unsent)).results
   end
 end

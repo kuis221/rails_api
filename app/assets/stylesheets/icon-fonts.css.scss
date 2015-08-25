@@ -74,6 +74,10 @@
   content:"\e62b";
 }
 
+.icon-brands:before{
+  content:"\e65d";
+}
+
 .icon-chat:before{
 	content: "\e60e";
 }
@@ -84,6 +88,26 @@
 
 .icon-close:before{
 	content: "\e616";
+}
+
+.icon-rounded-minus:before{
+  content: "\e65a";
+}
+
+.icon-lock:before{
+  content: "\e659";
+}
+
+.icon-sort-asc:before{
+	content: "\e656";
+}
+
+.icon-sort-desc:before{
+	content: "\e657";
+}
+
+.icon-visibility-off:before{
+	content: "\e658";
 }
 
 .icon-expanded:before, .icon-angle-up:before{
@@ -131,7 +155,7 @@
 }
 
 .icon-receipt:before{
-	content:"\e614";
+	content:"\e661";
 }
 
 .icon-results:before{
@@ -193,19 +217,19 @@
 }
 
 .icon-help-arrow-up:before{
-	content: "\e026";
+	content: "\e620";
 }
 
 .icon-help-arrow-right:before{
-	content: "\e027";
+	content: "\e621";
 }
 
 .icon-help-arrow-left:before{
-	content:"\e028";
+	content:"\e622";
 }
 
 .icon-help-arrow-down:before{
-	content: "\e607";
+	content: "\e623";
 }
 
 .icon-eye:before{
@@ -220,10 +244,6 @@
 	content: "\e601";
 }
 
-.icon-wired-phone:before{
-	content: "\e02d";
-}
-
 .icon-wired-map:before{
 	content: "\e627";
 }
@@ -236,12 +256,16 @@
 	content: "\e628";
 }
 
+.icon-hamburguer:before{
+  content: "\e660";
+}
+
 .icon-grid:before{
 	content: "\e629";
 }
 
 .icon-normal-screen:before{
-	content:"\e040";
+	content:"\e65f";
 }
 
 .icon-tag:before{
@@ -337,6 +361,10 @@
 	content:"\e644";
 }
 
+.icon-minus-rounded:before{
+  content: "\e65e";
+}
+
 .icon-section:before{
 	content:"\e645";
 }
@@ -359,6 +387,18 @@
 
 .icon-checked:before{
 	content: "\e64e";
+}
+
+.icon-check:before{
+  content: "\e65a";
+}
+
+.icon-check-circle:before{
+  content: "\e65b";
+}
+
+.icon-circle:before{
+  content: "\e65c";
 }
 
 .icon-trash:before{

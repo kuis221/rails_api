@@ -115,15 +115,15 @@ describe Event, type: :model, search: true do
       .to match_array([event, event2])
 
     # Search for Events on a given date range
-    expect(search(company_id: company.id, start_date: '02/21/2013', end_date: '02/23/2013'))
+    expect(search(company_id: company.id, start_date: ['02/21/2013'], end_date: ['02/23/2013']))
       .to match_array([event])
-    expect(search(company_id: company.id, start_date: '02/22/2013'))
+    expect(search(company_id: company.id, start_date: ['02/22/2013']))
       .to match_array([event])
-    expect(search(company_id: company.id, start_date: '03/21/2013', end_date: '03/23/2013'))
+    expect(search(company_id: company.id, start_date: ['03/21/2013'], end_date: ['03/23/2013']))
       .to match_array([event2])
-    expect(search(company_id: company.id, start_date: '03/22/2013'))
+    expect(search(company_id: company.id, start_date: ['03/22/2013']))
       .to match_array([event2])
-    expect(search(company_id: company.id, start_date: '01/21/2013', end_date: '01/23/2013'))
+    expect(search(company_id: company.id, start_date: ['01/21/2013'], end_date: ['01/23/2013']))
       .to be_empty
 
     # Search for Events on a given status
@@ -152,6 +152,7 @@ describe Event, type: :model, search: true do
 
       expect(search(company_id: dummy_event.company_id, event_status: ['Due']))
         .to match_array([dummy_event])
+
     end
 
     # Search for Events with stats
@@ -159,9 +160,50 @@ describe Event, type: :model, search: true do
       .to match_array([event, event2])
   end
 
+  it 'search retricted by users permissions' do
+    # First populate the Database with some data
+    campaign = create(:campaign, company: company)
+    campaign2 = create(:campaign, company: company)
+
+    user = create(:company_user, company: company, role: create(:non_admin_role, company: company))
+    user.role.permissions.create(action: 'view_list', subject_class: 'Event', mode: 'campaigns')
+
+    place = create(:place, city: 'Los Angeles', state: 'California')
+    place2 = create(:place, city: 'Chicago', state: 'Illinois')
+
+    event = create(:event, campaign: campaign, place: place,
+                           start_date: '02/22/2013', end_date: '02/23/2013')
+    event2 = create(:event, campaign: campaign2, place: place2,
+                            start_date: '03/22/2013', end_date: '03/22/2013')
+
+
+    area = create(:area, company: company)
+    area.places << create(:city, name: 'Los Angeles', state: 'California', country: 'US')
+
+    user.areas << area
+    user.campaigns << [campaign, campaign2]
+
+    # Make some test searches
+    expect(search(company_id: company.id, current_company_user: user))
+      .to match_array([event])
+
+    expect(search(company_id: company.id, current_company_user: user,
+                                          start_date: ['02/21/2013'], end_date: ['02/23/2013']))
+      .to match_array([event])
+
+    expect(search(company_id: company.id, current_company_user: user,
+                                          start_date: ['02/21/2015'], end_date: ['02/23/2015']))
+      .to match_array([])
+
+    expect(search(company_id: company.id, current_company_user: user, campaign: [campaign.id],
+                                          start_date: ['02/21/2013'], end_date: ['02/23/2013']))
+      .to match_array([event])
+
+  end
+
   it 'correctly search on the localized date fields', search: false, sunspot_matcher: true do
     Company.current = company
-    described_class.do_search(company_id: company.id, start_date: '01/01/2014')
+    described_class.do_search(company_id: company.id, start_date: ['01/01/2014'])
     d = Timeliness.parse('01/01/2014', zone: :current)
     expect(Sunspot.session).to have_search_params(:with) {
       all_of do
@@ -171,7 +213,7 @@ describe Event, type: :model, search: true do
     }
 
     company.update_attribute :timezone_support, true
-    described_class.do_search(company_id: company.id, start_date: '01/01/2014')
+    described_class.do_search(company_id: company.id, start_date: ['01/01/2014'])
     d = Timeliness.parse('01/01/2014', zone: 'UTC')
     expect(Sunspot.session).to have_search_params(:with) {
       all_of do
@@ -200,7 +242,7 @@ describe Event, type: :model, search: true do
     expect(search(company_id: company.id, with_comments_only: true)).to match_array([event1])
   end
 
-  describe "area customizations searches" do
+  describe 'area customizations searches' do
     it 'should return events inside cities included to areas in campaigns' do
       place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
       area_la = create(:area, company: company)

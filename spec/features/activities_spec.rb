@@ -22,13 +22,13 @@ feature 'Activities management' do
   shared_examples_for 'a user that view the activiy details' do
     let(:activity) do
       create(:activity,
-             company_user: company_user, activitable: event,
+             company_user: company_user, activitable: event, activity_date: '08/21/2014',
              activity_type: create(:activity_type, name: 'Test ActivityType', company: company, campaign_ids: [campaign.id]))
     end
 
     scenario 'can see all the activity info', js: true do
       visit activity_path(activity)
-      expect(page).to have_selector('h2.special', text: 'Test ActivityType')
+      expect(page).to have_selector('h2', text: 'Test ActivityType')
       expect(current_path).to eql activity_path(activity)
     end
 
@@ -39,16 +39,51 @@ feature 'Activities management' do
     end
 
     scenario "can see all the info of a venue's activity", js: true do
-      venue = create(:venue, place: place)
+      venue = create(:venue, company: company, place: place)
       venue_activity = create(:activity,
                               company_user: company_user, activitable: venue,
-                              campaign: campaign,
-                              activity_type: create(:activity_type, name: 'Test ActivityType', company: company, campaign_ids: [campaign.id]))
-      visit activity_path(activity)
-      expect(page).to have_selector('h2.special', text: 'Test ActivityType')
+                              campaign: campaign, activity_type: create(:activity_type,
+                                                                        name: 'Test ActivityType',
+                                                                        company: company,
+                                                                        campaign_ids: [campaign.id]))
+      visit activity_path(venue_activity)
+      expect(page).to have_selector('h2', text: 'Test ActivityType')
       expect(page).to have_link(venue.name)
-      expect(page).to have_content("#{place.street} #{place.city}, #{place.state_code}, #{place.zipcode}")
-      expect(current_path).to eql activity_path(activity)
+      expect(page).to have_content("#{place.street}, #{place.city}, #{place.state_code}, #{place.zipcode}")
+      expect(current_path).to eql activity_path(venue_activity)
+    end
+
+    scenario 'can see the info of activities in the event details', js: true do
+      campaign.activity_types << create(:activity_type, company: company)
+      activity
+
+      visit event_path(event)
+
+      within("#activity_#{activity.id}") do
+        expect(page).to have_content('Test ActivityType')
+        expect(page).to have_content('THU Aug 21, 2014')
+        expect(page).to have_content(company_user.full_name)
+      end
+    end
+
+    scenario 'can see the info of activities in the venues details', js: true do
+      venue = create(:venue, company: company, place: place)
+      venue_activity = create(:activity,
+                              company_user: company_user, activitable: venue, activity_date: '08/21/2014',
+                              campaign: campaign, activity_type: create(:activity_type,
+                                                                        name: 'Test ActivityType',
+                                                                        company: company,
+                                                                        campaign_ids: [campaign.id]))
+      campaign.activity_types << create(:activity_type, company: company)
+
+      visit venue_path(venue)
+
+      within("#activity_#{venue_activity.id}") do
+        expect(page).to have_content('Test ActivityType')
+        expect(page).to have_content('THU Aug 21, 2014')
+        expect(page).to have_content(company_user.full_name)
+        expect(page).to have_content(venue_activity.campaign.name)
+      end
     end
   end
 
@@ -68,6 +103,23 @@ feature 'Activities management' do
     end
 
     scenario 'allows the user to add an activity to an Event, see it displayed in the Activities list and then deactivate it' do
+      expect_any_instance_of(CombinedSearch).to receive(:open).and_return(double(read: { results:
+        [
+          { reference: 'xxxxx', place_id: '1111', name: 'Walt Disney World Dolphin',
+            formatted_address: '1500 Epcot Resorts Blvd, Lake Buena Vista, Florida, United States' }
+        ]
+      }.to_json))
+      expect_any_instance_of(GooglePlaces::Client).to receive(:spot).with('xxxxx').and_return(double(
+        name: 'Walt Disney World Dolphin', formatted_address: '1500 Epcot Resorts Blvd',
+        lat: '1.1111', lng: '2.2222', types: ['establishment'], reference: 'xxxxx', id: '1111',
+        address_components: [
+          { 'types' => ['country'], 'short_name' => 'US' },
+          { 'types' => ['administrative_area_level_1'], 'short_name' => 'FL', 'long_name' => 'Florida' },
+          { 'types' => ['locality'], 'long_name' => 'Lake Buena Vista' },
+          { 'types' => ['route'], 'long_name' => '1500 Epcot Resorts Blvd' }
+        ]
+      ))
+
       create(:user, company: company, first_name: 'Juanito', last_name: 'Bazooka')
       brand1 = create(:brand, name: 'Brand #1', company: company)
       brand2 = create(:brand, name: 'Brand #2', company: company)
@@ -84,6 +136,7 @@ feature 'Activities management' do
       dropdown_field = create(:form_field, name: 'Form Field #2', type: 'FormField::Dropdown', fieldable: activity_type, ordering: 4)
       create(:form_field_option, name: 'Dropdown option #1', form_field: dropdown_field, ordering: 1)
       create(:form_field_option, name: 'Dropdown option #2', form_field: dropdown_field, ordering: 2)
+      create(:form_field, name: 'Place Field', type: 'FormField::Place', fieldable: activity_type, ordering: 5)
 
       campaign.activity_types << activity_type
 
@@ -91,21 +144,47 @@ feature 'Activities management' do
 
       expect(page).to_not have_content('Activity Type #1')
 
-      click_js_button 'New Activity'
+      click_js_button 'Add Activity'
 
       within visible_modal do
-        select_from_chosen('Activity Type #1', from: 'Activity type')
-        select_from_chosen('Brand #2', from: 'Brand')
-        wait_for_ajax
-        select_from_chosen('Marque #1 for Brand #2', from: 'Marque')
-        fill_in 'Form Field #1', with: '122'
-        select_from_chosen('Dropdown option #2', from: 'Form Field #2')
-        select_from_chosen('Juanito Bazooka', from: 'User')
-        fill_in 'Date', with: '05/16/2013'
+        choose('Activity Type #1')
         click_js_button 'Create'
       end
 
-      ensure_modal_was_closed
+      within('.survey-header') do
+        expect(page).to have_content 'Activity Type #1'
+      end
+
+      select_from_chosen('Brand #2', from: 'Brand')
+      wait_for_ajax
+      select_from_chosen('Marque #1 for Brand #2', from: 'Marque')
+      fill_in 'Form Field #1', with: '122'
+      select_from_chosen('Dropdown option #2', from: 'Form Field #2')
+      select_from_chosen('Juanito Bazooka', from: 'User')
+      fill_in 'Date', with: '05/16/2013'
+      select_from_autocomplete 'Search for a place', 'Walt Disney World Dolphin'
+
+      click_button 'Submit'
+
+      expect(page).to have_content('Thank You!')
+      click_link 'Finish'
+      expect(page).to have_content 'Nice work. One Activity Type #1 activity has been added.'
+
+      within resource_item do
+        expect(page).to have_content('Juanito Bazooka')
+        expect(page).to have_content('THU May 16')
+        expect(page).to have_content('Activity Type #1')
+        click_js_link('Activity Details')
+      end
+
+      # Test the activity details page
+      expect(page).to have_selector('.details-main-title', text: 'Activity Type #1')
+      expect(page).to have_content('Juanito Bazooka')
+      expect(page).to have_content('THU May 16')
+      expect(page).to have_content('Activity Type #1')
+      expect(page).to have_content('Walt Disney World Dolphin, 1500 Epcot Resorts Blvd')
+
+      visit event_path(event)
 
       within resource_item do
         expect(page).to have_content('Juanito Bazooka')
@@ -115,7 +194,7 @@ feature 'Activities management' do
       end
 
       confirm_prompt 'Are you sure you want to deactivate this activity?'
-
+      expect(page).to have_content 'Your Activity Type #1 activity has been deactivated'
       within('#activities-list') do
         expect(page).to have_no_selector('li')
       end
@@ -132,24 +211,17 @@ feature 'Activities management' do
       campaign.activity_types << activity_type
 
       activity = create(:activity,
-                        activity_type: activity_type,
-                        activitable: event,
-                        campaign: campaign,
-                        company_user: company_user,
-                        activity_date: '08/21/2014'
-      )
+                        activity_type: activity_type, activitable: event,
+                        campaign: campaign, company_user: company_user,
+                        activity_date: '08/21/2014')
 
       visit event_path(event)
 
-      hover_and_click("#activities-list #activity_#{activity.id}", 'Edit')
+      hover_and_click(resource_item(activity), 'Edit')
 
-      within visible_modal do
-        select_from_chosen('Juanito Bazooka', from: 'User')
-        fill_in 'Date', with: '05/16/2013'
-        click_js_button 'Save'
-      end
-
-      ensure_modal_was_closed
+      select_from_chosen('Juanito Bazooka', from: 'User')
+      fill_in 'Date', with: '05/16/2013'
+      click_button 'Save'
 
       within resource_item do
         expect(page).to have_content('Juanito Bazooka')
@@ -185,21 +257,31 @@ feature 'Activities management' do
 
       expect(page).to_not have_content 'Activity Type #1'
 
-      click_js_button 'New Activity'
+      click_js_button 'Add Activity'
 
       within visible_modal do
-        select_from_chosen('Activity Type #1', from: 'Activity type')
-        select_from_chosen('Campaign #1', from: 'Campaign')
-        select_from_chosen('Brand #2', from: 'Brand')
-        select_from_chosen('Marque #1 for Brand #2', from: 'Marque')
-        fill_in 'Form Field #1', with: '122'
-        select_from_chosen('Dropdown option #2', from: 'Form Field #2')
-        select_from_chosen('Juanito Bazooka', from: 'User')
-        fill_in 'Date', with: '05/16/2013'
+        choose('Activity Type #1')
         click_js_button 'Create'
       end
+      ensure_modal_was_closed
+
+      within('.survey-header') do
+        expect(page).to have_content 'Activity Type #1'
+      end
+
+      select_from_chosen('Campaign #1', from: 'Campaign')
+      select_from_chosen('Brand #2', from: 'Brand')
+      select_from_chosen('Marque #1 for Brand #2', from: 'Marque')
+      fill_in 'Form Field #1', with: '122'
+      select_from_chosen('Dropdown option #2', from: 'Form Field #2')
+      select_from_chosen('Juanito Bazooka', from: 'User')
+      fill_in 'Date', with: '05/16/2013'
+      click_button 'Submit'
 
       ensure_modal_was_closed
+
+      expect(page).to have_content('Thank You!')
+      click_link 'Finish'
 
       within resource_item do
         expect(page).to have_content('Juanito Bazooka')
@@ -228,29 +310,35 @@ feature 'Activities management' do
 
       visit event_path(event)
 
-      click_js_button('New Activity')
+      click_js_button('Add Activity')
 
       within visible_modal do
-        select_from_chosen('Activity Type #1', from: 'Activity type')
-        fill_in 'Option 1', with: '10'
-        fill_in 'Option 2', with: '90'
-        select_from_chosen(user.name, from: 'User')
-        fill_in 'Date', with: '05/16/2013'
+        choose('Activity Type #1')
         click_js_button 'Create'
       end
-      ensure_modal_was_closed
+
+      within('.survey-header') do
+        expect(page).to have_content 'Activity Type #1'
+      end
+
+      fill_in 'Option 1', with: '10'
+      fill_in 'Option 2', with: '90'
+      select_from_chosen(user.name, from: 'User')
+      fill_in 'Date', with: '05/16/2013'
+      click_button 'Submit'
+
+      expect(page).to have_content('Thank You!')
+      click_link 'Finish'
 
       within resource_item do
         expect(page).to have_content(user.name)
         expect(page).to have_content('THU May 16')
         expect(page).to have_content('Activity Type #1')
-        click_js_link('Edit')
       end
+      hover_and_click resource_item, 'Edit'
 
-      within visible_modal do
-        expect(find_field('Option 1').value).to eql '10'
-        expect(find_field('Option 2').value).to eql '90'
-      end
+      expect(find_field('Option 1').value).to eql '10'
+      expect(find_field('Option 2').value).to eql '90'
     end
 
     scenario 'user can attach a photo to an activity' do
@@ -262,28 +350,41 @@ feature 'Activities management' do
       with_resque do # So the image is processed
         visit event_path(event)
 
-        click_js_button('New Activity')
+        click_js_button('Add Activity')
 
         within visible_modal do
-          select_from_chosen('Activity Type #1', from: 'Activity type')
-
-          # Should validate the type of the image
-          attach_file 'file', 'spec/fixtures/file.pdf'
-          expect(page).to have_content('is not a valid file')
-
-          attach_file 'file', 'spec/fixtures/photo.jpg'
-          expect(page).to have_content('Uploading photo.jpg....')
-          expect(page).to have_no_content('is not a valid file')
-          wait_for_ajax(30) # For the image to upload to S3
-          expect(page).to have_content('File attached: photo.jpg')
-
-          select_from_chosen(user.name, from: 'User')
-          fill_in 'Date', with: '05/16/2013'
-          wait_for_photo_to_process 30 do
-            click_js_button 'Create'
-          end
+          choose('Activity Type #1')
+          click_js_button 'Create'
         end
-        ensure_modal_was_closed
+
+        within('.survey-header') do
+          expect(page).to have_content 'Activity Type #1'
+        end
+
+        expect(page).to have_content('DRAG & DROP')
+
+        # Should validate the type of the image
+        attach_file 'file', 'spec/fixtures/file.pdf'
+        expect(page).to have_content('is not a valid file')
+
+        attach_file 'file', 'spec/fixtures/photo.jpg'
+        expect(page).to have_no_content('is not a valid file')
+        wait_for_ajax(30) # For the image to upload to S3
+        expect(page).to_not have_content('DRAG & DROP')
+        find('.attachment-attached-view').hover
+        within '.attachment-attached-view' do
+          expect(page).to have_link('Remove')
+          expect(page).to_not have_link('Download')
+        end
+
+        select_from_chosen(user.name, from: 'User')
+        fill_in 'Date', with: '05/16/2013'
+        wait_for_photo_to_process 30 do
+          click_button 'Submit'
+        end
+
+        expect(page).to have_content('Thank You!')
+        click_link 'Finish'
 
         within resource_item do
           expect(page).to have_content(user.name)
@@ -296,31 +397,23 @@ feature 'Activities management' do
         expect(photo.attachable).to be_a FormFieldResult
         expect(photo.file_file_name).to eql 'photo.jpg'
 
-        # Change the photo
-        within resource_item do
-          click_js_link('Edit')
-        end
-        within visible_modal do
-          expect(page).to have_content('File attached: photo.jpg')
-          click_js_link('Change')
-          attach_file 'file', 'spec/fixtures/photo2.jpg'
-          expect(page).to have_content('Uploading photo2.jpg....')
-          wait_for_ajax(30) # For the image to upload to S3
-          expect(page).to have_content('File attached: photo2.jpg')
-          wait_for_photo_to_process 30 do
-            click_js_button 'Save'
-          end
-        end
-        ensure_modal_was_closed
+        # Remove the file
+        hover_and_click resource_item, 'Edit'
 
-        within resource_item do
-          click_js_link('Activity Details')
-        end
-        expect(page).to have_selector('h2', text: 'Activity Type #1')
-        expect(current_path).to eql activity_path(activity)
-        photo = AttachedAsset.last
-        src = photo.reload.file.url(:thumbnail, timestamp: false)
-        expect(page).to have_xpath("//img[starts-with(@src, \"#{src}\")]")
+        expect do
+          expect(page).to_not have_content('DRAG & DROP')
+          find('.attachment-attached-view').hover
+          within '.attachment-attached-view' do
+            expect(page).to have_link('Remove')
+            expect(page).to have_link('Download')
+            click_js_link('Remove')
+          end
+          expect(page).to have_content('DRAG & DROP')
+          click_button 'Save'
+          within resource_item do
+            expect(page).to have_content('Activity Type #1')
+          end
+        end.to change(AttachedAsset, :count).by(-1)
       end
     end
 
@@ -333,24 +426,30 @@ feature 'Activities management' do
       with_resque do # So the document is processed
         visit event_path(event)
 
-        click_js_button('New Activity')
+        click_js_button('Add Activity')
 
         within visible_modal do
-          select_from_chosen('Activity Type #1', from: 'Activity type')
-
-          attach_file 'file', 'spec/fixtures/file.pdf'
-          expect(page).to have_content('Uploading file.pdf....')
-          expect(page).to have_no_content('is not a valid file')
-          wait_for_ajax(30) # For the file to upload to S3
-          expect(page).to have_content('File attached: file.pdf')
-
-          select_from_chosen(user.name, from: 'User')
-          fill_in 'Date', with: '05/16/2013'
-          wait_for_photo_to_process 30 do
-            click_js_button 'Create'
-          end
+          choose('Activity Type #1')
+          click_js_button 'Create'
         end
         ensure_modal_was_closed
+
+        expect(page).to have_content('DRAG & DROP')
+        attach_file 'file', 'spec/fixtures/file.pdf'
+        expect(page).to have_no_content('is not a valid file')
+        wait_for_ajax(30) # For the file to upload to S3
+        expect(page).to_not have_content('DRAG & DROP')
+        expect(page).to have_content('file.pdf')
+        expect(page).to have_link('Remove')
+
+        select_from_chosen(user.name, from: 'User')
+        fill_in 'Date', with: '05/16/2013'
+        wait_for_photo_to_process 30 do
+          click_js_button 'Submit'
+        end
+
+        expect(page).to have_content('Thank You!')
+        click_link 'Finish'
 
         within resource_item do
           expect(page).to have_content(user.name)
@@ -363,9 +462,8 @@ feature 'Activities management' do
         expect(photo.attachable).to be_a FormFieldResult
         expect(photo.file_file_name).to eql 'file.pdf'
 
-        within resource_item do
-          click_js_link('Activity Details')
-        end
+        hover_and_click resource_item, 'Activity Details'
+
         expect(page).to have_selector('h2', text: 'Activity Type #1')
         expect(current_path).to eql activity_path(activity)
         file = AttachedAsset.last
@@ -375,20 +473,17 @@ feature 'Activities management' do
         visit event_path(event)
 
         # Remove the file
-        within resource_item do
-          click_js_link('Edit')
-        end
-        expect do
-          within visible_modal do
-            expect(page).to have_content('File attached: file.pdf')
-            click_js_link('Remove')
-            expect(page).to have_no_content('File attached')
-            click_js_button 'Save'
-            wait_for_ajax(30) # To wait for the file being deleted from S3
-          end
-          ensure_modal_was_closed
-        end.to change(AttachedAsset, :count).by(-1)
+        hover_and_click resource_item, 'Edit'
 
+        expect do
+          expect(page).to_not have_content('DRAG & DROP')
+          click_js_link('Remove')
+          expect(page).to have_content('DRAG & DROP')
+          click_button 'Save'
+          within resource_item do
+            expect(page).to have_content('Activity Type #1')
+          end
+        end.to change(AttachedAsset, :count).by(-1)
       end
     end
 
@@ -423,17 +518,11 @@ feature 'Activities management' do
 
       visit venue_path(venue)
 
-      within resource_item do
-        click_js_link 'Edit'
-      end
+      hover_and_click resource_item, 'Edit'
 
-      within visible_modal do
-        select_from_chosen('Juanito Bazooka', from: 'User')
-        fill_in 'Date', with: '05/16/2013'
-        click_js_button 'Save'
-      end
-
-      ensure_modal_was_closed
+      select_from_chosen('Juanito Bazooka', from: 'User')
+      fill_in 'Date', with: '05/16/2013'
+      click_button 'Save'
 
       within resource_item do
         expect(page).to have_content('Juanito Bazooka')
@@ -449,7 +538,7 @@ feature 'Activities management' do
     it_should_behave_like 'a user that view the activiy details' do
       before { company_user.campaigns << campaign }
       before { company_user.places << place }
-      let(:permissions) { [[:show, 'Activity'], [:show, 'Event']] }
+      let(:permissions) { [[:show, 'Activity'], [:show, 'Event'], [:show, 'Venue']] }
     end
   end
 end

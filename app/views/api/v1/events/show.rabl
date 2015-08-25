@@ -2,6 +2,10 @@ object @event
 
 attributes :id, :start_date, :start_time, :end_date, :end_time, :status, :description
 
+node :phases do |event|
+  event_phases_and_steps_for_api(event)
+end
+
 node :event_status do |event|
   if event.unsent?
     if event.late?
@@ -14,6 +18,13 @@ node :event_status do |event|
   else
     event.event_status
   end
+end
+
+node :rejected_info do |event|
+  data = {}
+  data[:rejected_at] = time_ago_in_words(event.rejected_at || event.updated_at)
+  data[:rejected_reason] = event.reject_reason
+  data
 end
 
 node :have_data do |event|
@@ -32,12 +43,12 @@ if resource.event_data? && resource.event_data.present?
 end
 
 child(venue: :place) do
-  attributes place_id: :id, id: :venue_id
-  attributes :name, :latitude, :longitude, :formatted_address, :country, :state, :state_name, :city, :route, :street_number, :zipcode
+  attributes place_id: :id, id: :venue_id, state_code: :state
+  attributes :name, :latitude, :longitude, :formatted_address, :country, :state_name, :city, :route, :street_number, :zipcode
 end
 
 child :campaign do
-  attributes :id, :name, :enabled_modules
+  attributes :id, :name, :enabled_modules, :modules
 end
 
 node :actions do |event|

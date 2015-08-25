@@ -252,7 +252,7 @@ RSpec.describe FiltersController, type: :controller do
       expect(response).to be_success
 
       expect(json['filters'].map { |b| b['label'] }).to eq([
-        'Campaigns', 'Brands', 'Areas', 'Tags', 'Star Rating', 'Active State', 'Saved Filters'])
+        'Campaigns', 'Brands', 'Areas', 'People', 'Tags', 'Star Rating', 'Active State', 'Saved Filters'])
     end
   end
 

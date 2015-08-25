@@ -1,13 +1,12 @@
 require 'rails_helper'
 
 describe CampaignsController, type: :controller do
-  before(:each) do
-    @user = sign_in_as_user
-    @company = @user.current_company
-    @company_user = @user.current_company_user
-  end
+  let(:user) { sign_in_as_user }
+  let(:company) { user.companies.first }
+  let(:company_user) { user.current_company_user }
+  let(:campaign) { create(:campaign, company: company) }
 
-  let(:campaign) { create(:campaign, company: @company) }
+  before { user }
 
   describe "GET 'edit'" do
     it 'returns http success' do
@@ -29,14 +28,14 @@ describe CampaignsController, type: :controller do
       expect(response).to be_success
     end
 
-    it 'queue the job for export the list to XLS' do
+    it 'queue the job for export the list to CSV' do
       expect do
-        xhr :get, :index, format: :xls
+        xhr :get, :index, format: :csv
       end.to change(ListExport, :count).by(1)
       export = ListExport.last
       expect(ListExportWorker).to have_queued(export.id)
       expect(export.controller).to eql('CampaignsController')
-      expect(export.export_format).to eql('xls')
+      expect(export.export_format).to eql('csv')
     end
 
     it 'queue the job for export the list to PDF' do
@@ -59,8 +58,8 @@ describe CampaignsController, type: :controller do
 
   describe "GET 'new_date_range'" do
     it 'returns http success' do
-      date_range = create(:date_range, company: @company)
-      other_date_range = create(:date_range, company_id: @company.id + 1)
+      date_range = create(:date_range, company: company)
+      create(:date_range, company_id: company.id + 1)
       xhr :get, 'new_date_range', id: campaign.to_param, format: :js
       expect(response).to be_success
       expect(response).to render_template(:new_date_range)
@@ -68,8 +67,8 @@ describe CampaignsController, type: :controller do
     end
 
     it 'should not include the date ranges that are already assigned to the campaign' do
-      date_range = create(:date_range, company: @company)
-      assigned_range = create(:date_range, company: @company)
+      date_range = create(:date_range, company: company)
+      assigned_range = create(:date_range, company: company)
       campaign.date_ranges << assigned_range
       xhr :get, 'new_date_range', id: campaign.to_param, format: :js
       expect(response).to be_success
@@ -80,7 +79,7 @@ describe CampaignsController, type: :controller do
 
   describe "POST 'add_date_range'" do
     it 'adds the date range to the campaign' do
-      date_range = create(:date_range, company: @company)
+      date_range = create(:date_range, company: company)
       expect do
         xhr :post, 'add_date_range', id: campaign.to_param, date_range_id: date_range.to_param, format: :js
       end.to change(campaign.date_ranges, :count).by(1)
@@ -90,7 +89,7 @@ describe CampaignsController, type: :controller do
     end
 
     it 'adds the date range to the campaign' do
-      date_range = create(:date_range, company: @company)
+      date_range = create(:date_range, company: company)
       campaign.date_ranges << date_range
       expect(campaign.reload.date_ranges).to eq([date_range])
       expect do
@@ -104,7 +103,7 @@ describe CampaignsController, type: :controller do
 
   describe "DELETE 'delete_date_range'" do
     it 'should delete the date range from the campaign' do
-      date_range = create(:date_range, company: @company)
+      date_range = create(:date_range, company: company)
       campaign.date_ranges << date_range
 
       create(:goal, goalable: date_range, parent: campaign, kpi: create(:kpi))
@@ -127,8 +126,8 @@ describe CampaignsController, type: :controller do
 
   describe "GET 'new_day_part'" do
     it 'returns http success' do
-      day_part = create(:day_part, company: @company)
-      other_date_range = create(:day_part, company_id: @company.id + 1)
+      day_part = create(:day_part, company: company)
+      create(:day_part, company_id: company.id + 1)
       xhr :get, 'new_day_part', id: campaign.to_param, format: :js
       expect(response).to be_success
       expect(response).to render_template(:new_day_part)
@@ -136,8 +135,8 @@ describe CampaignsController, type: :controller do
     end
 
     it 'should not include the day parts that are already assigned to the campaign' do
-      day_part = create(:day_part, company: @company)
-      assigned_part = create(:day_part, company: @company)
+      day_part = create(:day_part, company: company)
+      assigned_part = create(:day_part, company: company)
       campaign.day_parts << assigned_part
       xhr :get, 'new_day_part', id: campaign.to_param, format: :js
       expect(response).to be_success
@@ -148,7 +147,7 @@ describe CampaignsController, type: :controller do
 
   describe "POST 'add_day_part'" do
     it 'adds the day part to the campaign' do
-      day_part = create(:day_part, company: @company)
+      day_part = create(:day_part, company: company)
       expect do
         xhr :post, 'add_day_part', id: campaign.to_param, day_part_id: day_part.to_param, format: :js
       end.to change(campaign.day_parts, :count).by(1)
@@ -158,7 +157,7 @@ describe CampaignsController, type: :controller do
     end
 
     it 'doesn\'t add the day part if it already exists ' do
-      day_part = create(:day_part, company: @company)
+      day_part = create(:day_part, company: company)
       campaign.day_parts << day_part
       expect(campaign.reload.day_parts).to eq([day_part])
       expect do
@@ -172,7 +171,7 @@ describe CampaignsController, type: :controller do
 
   describe "DELETE 'delete_day_part'" do
     it 'should delete the day part from the campaign' do
-      day_part = create(:day_part, company: @company)
+      day_part = create(:day_part, company: company)
       campaign.day_parts << day_part
 
       create(:goal, goalable: day_part, parent: campaign, kpi: create(:kpi))
@@ -200,11 +199,15 @@ describe CampaignsController, type: :controller do
     end
 
     it 'should successfully create the new record' do
-      portfolios = create_list(:brand_portfolio, 2, company: @company)
-      create(:brand, name: 'Cacique', company: @company)
+      portfolios = create_list(:brand_portfolio, 2, company: company)
+      create(:brand, name: 'Cacique', company: company)
       expect do
         expect do
-          xhr :post, 'create', campaign: { name: 'Test Campaign', description: 'Test Campaign description', brand_portfolio_ids: portfolios.map(&:id), brands_list: 'Anchor Steam,Jack Daniels,Cacique' }, format: :js
+          xhr :post, 'create', campaign: {
+            name: 'Test Campaign', description: 'Test Campaign description',
+            brand_portfolio_ids: portfolios.map(&:id),
+            brands_list: 'Anchor Steam,Jack Daniels,Cacique'
+          }, format: :js
         end.to change(Campaign, :count).by(1)
       end.to change(Brand, :count).by(2)
       campaign = Campaign.last
@@ -244,7 +247,6 @@ describe CampaignsController, type: :controller do
   end
 
   describe "GET 'deactivate'" do
-
     it 'deactivates an active campaign' do
       campaign.update_attribute(:aasm_state, 'active')
       xhr :get, 'deactivate', id: campaign.to_param, format: :js
@@ -254,7 +256,7 @@ describe CampaignsController, type: :controller do
   end
 
   describe "GET 'activate'" do
-    let(:campaign) { create(:campaign, company: @company, aasm_state: 'inactive') }
+    let(:campaign) { create(:campaign, company: company, aasm_state: 'inactive') }
 
     it 'activates an inactive campaign' do
       expect(campaign.active?).to be_falsey
@@ -266,7 +268,6 @@ describe CampaignsController, type: :controller do
 
   describe "PUT 'update'" do
     it 'must update the campaign attributes' do
-      t = create(:campaign, company: @company)
       put 'update', id: campaign.to_param, campaign: { name: 'Test Campaign', description: 'Test Campaign description' }
       expect(assigns(:campaign)).to eq(campaign)
       expect(response).to redirect_to(campaign_path(campaign))
@@ -279,10 +280,11 @@ describe CampaignsController, type: :controller do
       campaign.save
       expect do
         expect do
-          put 'update', id: campaign.to_param,
-              campaign: { form_fields_attributes:
-                { id: nil, field_type: 'FormField::Text', name: 'Test Field', ordering: 0, required: true }
-              }, format: :json
+          put 'update',
+              id: campaign.to_param,
+              campaign: { form_fields_attributes: {
+                id: nil, field_type: 'FormField::Text', name: 'Test Field', ordering: 0, required: true } },
+              format: :json
         end.to change(FormField, :count).by(1)
       end.to_not change(ActivityType, :count)
       field = FormField.last
@@ -295,16 +297,17 @@ describe CampaignsController, type: :controller do
     it 'must allow update form fields' do
       campaign.save
       field = create(:form_field, fieldable: campaign,
-        type: 'FormField::Text', name: 'Test Field',
-        ordering: 0, required: true)
+                                  type: 'FormField::Text', name: 'Test Field',
+                                  ordering: 0, required: true)
       expect do
         expect do
-          put 'update', id: campaign.to_param,
-              campaign: { form_fields_attributes:
-                { id: field.id, field_type: 'FormField::Text',
-                  name: 'New name', ordering: 0, required: false,
-                  settings: { description: 'some example', range_min: '100', range_max: '200', range_format: 'characters' } }
-              }, format: :json
+          put 'update',
+              id: campaign.to_param,
+              campaign: { form_fields_attributes: {
+                id: field.id, field_type: 'FormField::Text', name: 'New name', ordering: 0,
+                required: false, settings: { description: 'some example', range_min: '100',
+                                             range_max: '200', range_format: 'characters' } } },
+              format: :json
         end.to_not change(FormField, :count)
       end.to_not change(Campaign, :count)
       field = FormField.last
@@ -323,11 +326,13 @@ describe CampaignsController, type: :controller do
       expect do
         expect do
           expect do
-            put 'update', id: campaign.to_param,
-                campaign: { form_fields_attributes:
-                  { id: nil, field_type: 'FormField::Radio', name: 'Radio Field', ordering: 0, required: true,
-                    options_attributes: [{ name: 'One Option', ordering: 0 }, { name: 'Other Option', ordering: 1 }] }
-                }, format: :json
+            put 'update',
+                id: campaign.to_param,
+                campaign: {
+                  form_fields_attributes: {
+                    id: nil, field_type: 'FormField::Radio', name: 'Radio Field', ordering: 0, required: true,
+                    options_attributes: [{ name: 'One Option', ordering: 0 }, { name: 'Other Option', ordering: 1 }] } },
+                format: :json
           end.to change(FormField, :count).by(1)
         end.to change(FormFieldOption, :count).by(2)
       end.to_not change(Campaign, :count)
@@ -338,26 +343,28 @@ describe CampaignsController, type: :controller do
     it 'must allow remove form fields' do
       campaign.save
       field = create(:form_field, fieldable: campaign,
-        type: 'FormField::Text', name: 'Test Field',
-        ordering: 0, required: true)
+                                  type: 'FormField::Text', name: 'Test Field',
+                                  ordering: 0, required: true)
       expect do
         expect do
-          put 'update', id: campaign.to_param,
-              campaign: { form_fields_attributes:
-                { id: field.id, _destroy: true }
-              }, format: :json
+          put 'update',
+              id: campaign.to_param,
+              campaign: {
+                form_fields_attributes: { id: field.id, _destroy: true } },
+              format: :json
         end.to change(FormField, :count).by(-1)
       end.to_not change(Campaign, :count)
     end
 
     it 'should normalize survey brands' do
       Kpi.create_global_kpis
-      brand = create(:brand, company: @company, name: 'A brand')
+      brand = create(:brand, company: company, name: 'A brand')
       expect do
-        put 'update', id: campaign.to_param, campaign: {
-          modules: { 'surveys' => { 'name' => 'Surveys' } },
-          survey_brand_ids: ['A brand', 'Another brand']
-        }, format: :json
+        put 'update',
+            id: campaign.to_param, campaign: {
+              modules: { 'surveys' => { 'name' => 'Surveys' } },
+              survey_brand_ids: ['A brand', 'Another brand'] },
+            format: :json
       end.to change(Brand, :count).by(1)
 
       expect(campaign.reload.enabled_modules.count).to eql 1
@@ -369,11 +376,11 @@ describe CampaignsController, type: :controller do
 
     it 'should accept empty modules' do
       Kpi.create_global_kpis
-      brand = create(:brand, company: @company, name: 'A brand')
       campaign.update_attribute :modules, 'surveys' => {}
-      put 'update', id: campaign.to_param, campaign: {
-        modules: { 'empty' => true }
-      }, format: :json
+      put 'update',
+          id: campaign.to_param, campaign: {
+            modules: { 'empty' => true } },
+          format: :json
 
       expect(campaign.reload.enabled_modules.count).to eql 0
       expect(response).to be_success
@@ -382,18 +389,18 @@ describe CampaignsController, type: :controller do
 
   describe "DELETE 'delete_member'" do
     it 'should remove the team member from the campaign and remove any goal' do
-      create(:goal, goalable: @company_user, parent: campaign, kpi: create(:kpi))
-      create(:goal, goalable: @company_user, parent: campaign, kpi: create(:kpi))
+      create(:goal, goalable: company_user, parent: campaign, kpi: create(:kpi))
+      create(:goal, goalable: company_user, parent: campaign, kpi: create(:kpi))
 
       # this should not be deleted
-      goal = create(:goal, goalable: @company_user, kpi: create(:kpi))
+      goal = create(:goal, goalable: company_user, kpi: create(:kpi))
 
-      campaign.users << @company_user
-      expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{@company_user.id}")
-      expect(Rails.cache).to receive(:delete).with("user_notifications_#{@company_user.id}").at_least(:once)
+      campaign.users << company_user
+      expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{company_user.id}")
+      expect(Rails.cache).to receive(:delete).with("user_notifications_#{company_user.id}").at_least(:once)
       expect do
         expect do
-          delete 'delete_member', id: campaign.id, member_id: @company_user.id, format: :js
+          delete 'delete_member', id: campaign.id, member_id: company_user.id, format: :js
           expect(response).to be_success
           expect(assigns(:campaign)).to eq(campaign)
           campaign.reload
@@ -403,7 +410,7 @@ describe CampaignsController, type: :controller do
     end
 
     it 'should remove the team  from the campaign and remove any goal' do
-      team = create(:team, company: @company)
+      team = create(:team, company: company)
       create(:goal, goalable: team, parent: campaign, kpi: create(:kpi))
       create(:goal, goalable: team, parent: campaign, kpi: create(:kpi))
 
@@ -423,7 +430,7 @@ describe CampaignsController, type: :controller do
     end
 
     it "should not raise error if the user doesn't belongs to the campaign" do
-      delete 'delete_member', id: campaign.id, member_id: @user.id, format: :js
+      delete 'delete_member', id: campaign.id, member_id: user.id, format: :js
       campaign.reload
       expect(response).to be_success
       expect(assigns(:campaign)).to eq(campaign)
@@ -431,7 +438,7 @@ describe CampaignsController, type: :controller do
   end
 
   describe "DELETE 'delete_member' with a team" do
-    let(:team) { create(:team, company: @company) }
+    let(:team) { create(:team, company: company) }
     it 'should remove the team from the campaign' do
       campaign.teams << team
       expect do
@@ -451,17 +458,17 @@ describe CampaignsController, type: :controller do
   end
 
   describe "GET 'new_member" do
-    it 'should load all the company\'s users into @staff' do
-      create(:user, company_id: @company.id + 1)
+    it 'should load all the company\'s users into staff' do
+      create(:user, company_id: company.id + 1)
       xhr :get, 'new_member', id: campaign.id, format: :js
       expect(response).to be_success
       expect(assigns(:campaign)).to eq(campaign)
-      expect(assigns(:staff).to_a).to eq([{ 'id' => @company_user.id.to_s, 'name' => 'Test User', 'description' => 'Super Admin', 'type' => 'user' }])
+      expect(assigns(:staff).to_a).to eq([{ 'id' => company_user.id.to_s, 'name' => 'Test User', 'description' => 'Super Admin', 'type' => 'user' }])
     end
 
     it 'should not load the users that are already assigned to the campaign' do
-      another_user = create(:company_user, company_id: @company.id, role_id: @company_user.role_id)
-      campaign.users << @company_user
+      another_user = create(:company_user, company_id: company.id, role_id: company_user.role_id)
+      campaign.users << company_user
       xhr :get, 'new_member', id: campaign.id, format: :js
       expect(response).to be_success
       expect(assigns(:campaign)).to eq(campaign)
@@ -469,19 +476,19 @@ describe CampaignsController, type: :controller do
     end
 
     it 'should load teams with active users' do
-      team = create(:team, name: 'ABC', description: 'A sample team', company_id: @company.id)
-      team.users << @company_user
+      team = create(:team, name: 'ABC', description: 'A sample team', company_id: company.id)
+      team.users << company_user
       xhr :get, 'new_member', id: campaign.id, format: :js
       expect(assigns(:assignable_teams)).to eq([team])
       expect(assigns(:staff).to_a).to eq([
         { 'id' => team.id.to_s, 'name' => 'ABC', 'description' => 'A sample team', 'type' => 'team' },
-        { 'id' => @company_user.id.to_s, 'name' => 'Test User', 'description' => 'Super Admin', 'type' => 'user' }
+        { 'id' => company_user.id.to_s, 'name' => 'Test User', 'description' => 'Super Admin', 'type' => 'user' }
       ])
     end
 
     it 'should not load teams without assignable users' do
-      team = create(:team, company_id: @company.id)
-      campaign.users << @company_user
+      create(:team, company_id: company.id)
+      campaign.users << company_user
       xhr :get, 'new_member', id: campaign.id, format: :js
       expect(assigns(:assignable_teams)).to eq([])
       expect(assigns(:staff).to_a).to eq([])
@@ -491,28 +498,28 @@ describe CampaignsController, type: :controller do
   describe "POST 'add_members" do
     it 'should assign the user to the campaign' do
       with_resque do
-        @company_user.update_attributes(
+        company_user.update_attributes(
           notifications_settings: %w(new_campaign_sms new_campaign_email),
           user_attributes: { phone_number_verified: true }
         )
         message = "You have a new campaign http://localhost:5100/campaigns/#{campaign.id}"
-        expect(UserMailer).to receive(:notification).with(@company_user.id, 'New Campaign', message).and_return(double(deliver: true))
-        expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{@company_user.id}")
-        expect(Rails.cache).to receive(:delete).with("user_notifications_#{@company_user.id}").at_least(:once)
+        expect(UserMailer).to receive(:notification).with(company_user.id, 'New Campaign', message).and_return(double(deliver: true))
+        expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{company_user.id}")
+        expect(Rails.cache).to receive(:delete).with("user_notifications_#{company_user.id}").at_least(:once)
         expect do
-          xhr :post, 'add_members', id: campaign.id, member_id: @company_user.to_param, format: :js
+          xhr :post, 'add_members', id: campaign.id, member_id: company_user.to_param, format: :js
           expect(response).to be_success
           expect(assigns(:campaign)).to eq(campaign)
           campaign.reload
         end.to change(campaign.users, :count).by(1)
-        expect(campaign.users).to eq([@company_user])
-        open_last_text_message_for @user.phone_number
+        expect(campaign.users).to eq([company_user])
+        open_last_text_message_for user.phone_number
         expect(current_text_message).to have_body message
       end
     end
 
     it 'should assign all the team\'s users to the campaign' do
-      team = create(:team, company_id: @company.id)
+      team = create(:team, company_id: company.id)
       expect do
         xhr :post, 'add_members', id: campaign.id, team_id: team.to_param, format: :js
         expect(response).to be_success
@@ -524,9 +531,9 @@ describe CampaignsController, type: :controller do
     end
 
     it 'should not assign users to the campaign if they are already part of the campaign' do
-      campaign.users << @company_user
+      campaign.users << company_user
       expect do
-        xhr :post, 'add_members', id: campaign.id, member_id: @company_user.to_param, format: :js
+        xhr :post, 'add_members', id: campaign.id, member_id: company_user.to_param, format: :js
         expect(response).to be_success
         expect(assigns(:campaign)).to eq(campaign)
         campaign.reload
@@ -534,7 +541,7 @@ describe CampaignsController, type: :controller do
     end
 
     it 'should not assign teams to the campaign if they are already part of the campaign' do
-      team = create(:team, company_id: @company.id)
+      team = create(:team, company_id: company.id)
       campaign.teams << team
       expect do
         xhr :post, 'add_members', id: campaign.id, team_id: team.to_param, format: :js
@@ -550,8 +557,8 @@ describe CampaignsController, type: :controller do
       Kpi.create_global_kpis
     end
     it 'loads the staff tab' do
-      campaign.users << @company_user
-      campaign.teams << create(:team, company: @company)
+      campaign.users << company_user
+      campaign.teams << create(:team, company: company)
       get 'tab', id: campaign.id, tab: 'staff'
       expect(assigns(:campaign)).to eq(campaign)
       expect(response).to render_template('_staff')
@@ -560,7 +567,7 @@ describe CampaignsController, type: :controller do
 
     it 'loads the places tab' do
       campaign.places << create(:place, is_custom_place: true, reference: nil)
-      campaign.areas << create(:area, company: @company)
+      campaign.areas << create(:area, company: company)
       get 'tab', id: campaign.id, tab: 'places'
       expect(assigns(:campaign)).to eq(campaign)
       expect(response).to render_template('_places')
@@ -568,7 +575,7 @@ describe CampaignsController, type: :controller do
     end
 
     it 'loads the date_ranges tab' do
-      campaign.date_ranges << create(:date_range, company: @company)
+      campaign.date_ranges << create(:date_range, company: company)
       get 'tab', id: campaign.id, tab: 'date_ranges'
       expect(assigns(:campaign)).to eq(campaign)
       expect(response).to render_template('_date_ranges')
@@ -576,7 +583,7 @@ describe CampaignsController, type: :controller do
     end
 
     it 'loads the day_parts tab' do
-      campaign.day_parts << create(:day_part, company: @company)
+      campaign.day_parts << create(:day_part, company: company)
       get 'tab', id: campaign.id, tab: 'day_parts'
       expect(assigns(:campaign)).to eq(campaign)
       expect(response).to render_template('_day_parts')
@@ -592,7 +599,7 @@ describe CampaignsController, type: :controller do
   end
 
   describe "POST 'add_kpi'" do
-    let(:kpi) { create(:kpi, company: @company, name: 'custom tes kpi', kpi_type: 'number', capture_mechanism: 'integer') }
+    let(:kpi) { create(:kpi, company: company, name: 'custom tes kpi', kpi_type: 'number', capture_mechanism: 'integer') }
 
     it 'should associate the kpi to the campaign' do
       expect do
@@ -627,7 +634,7 @@ describe CampaignsController, type: :controller do
   end
 
   describe "POST 'activity_type'" do
-    let(:activity_type) { create(:activity_type, company: @company) }
+    let(:activity_type) { create(:activity_type, company: company) }
 
     it 'should associate the kpi to the campaign' do
       expect do
@@ -643,7 +650,7 @@ describe CampaignsController, type: :controller do
   end
 
   describe "DELETE 'remove_activity_type'" do
-    let(:activity_type) { create(:activity_type, company: @company) }
+    let(:activity_type) { create(:activity_type, company: company) }
     it 'should disassociate the activity_type from the campaign' do
       campaign.activity_types << activity_type
       expect do
@@ -654,7 +661,7 @@ describe CampaignsController, type: :controller do
   end
 
   describe "DELETE 'remove_kpi'" do
-    let(:kpi) { create(:kpi, company: @company, name: 'custom tes kpi', kpi_type: 'number', capture_mechanism: 'integer') }
+    let(:kpi) { create(:kpi, company: company, name: 'custom tes kpi', kpi_type: 'number', capture_mechanism: 'integer') }
 
     it 'should disassociate the kpi from the campaign' do
       create(:form_field_number, fieldable: campaign, kpi_id: kpi.id, ordering: 1, name: 'impressions')
@@ -667,7 +674,7 @@ describe CampaignsController, type: :controller do
 
   describe "GET 'list_export'", search: true do
     it 'should return an empty book with the correct headers' do
-      expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+      expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['NAME', 'DESCRIPTION', 'FIRST EVENT', 'LAST EVENT', 'ACTIVE STATE']
@@ -676,19 +683,19 @@ describe CampaignsController, type: :controller do
 
     it 'should include the results' do
       cacique = create(:campaign, name: 'Cacique FY13',
-                        description: 'Test campaign for guaro Cacique', company: @company)
+                                  description: 'Test campaign for guaro Cacique', company: company)
       create(:event, start_date: '08/21/2013', end_date: '08/21/2013',
-             start_time: '10:00am', end_time: '11:00am', campaign: cacique)
+                     start_time: '10:00am', end_time: '11:00am', campaign: cacique)
       create(:event, start_date: '08/28/2013', end_date: '08/29/2013',
-             start_time: '11:00am', end_time: '12:00pm', campaign: cacique)
+                     start_time: '11:00am', end_time: '12:00pm', campaign: cacique)
       Sunspot.commit
 
-      expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+      expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
       expect(ListExportWorker).to have_queued(ListExport.last.id)
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['NAME', 'DESCRIPTION', 'FIRST EVENT', 'LAST EVENT', 'ACTIVE STATE'],
-        ['Cacique FY13', 'Test campaign for guaro Cacique', '2013-08-21T10:00', '2013-08-28T11:00', 'Active']
+        ['Cacique FY13', 'Test campaign for guaro Cacique', '08/21/2013 10:00', '08/28/2013 11:00', 'Active']
       ])
     end
   end

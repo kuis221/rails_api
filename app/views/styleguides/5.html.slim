@@ -1,0 +1,59 @@
+// This is an example markup for a KSS section.
+// The definition for `1.1` can be found in your app/assets/stylesheets/ folder.
+= kss_block '5.1' do |modifier_class|
+  .example
+    .blank-state
+      h5.text-center There aren't any contacts for this event
+      input.btn.btn-primary value="Add Contact" type="submit"
+
+= kss_block '5.2' do |modifier_class|
+  .example
+    .blank-state
+      .blank-state-arrow
+        = image_tag 'blank-states-arrow.png'
+
+      h5.text-center Something that tells there is nothing here
+      p.text-center
+        | Here goes a second (more descriptive) line of the copy. This can be even a paragraph of copy. We can even have some
+        a.underlined href="#"  Link Here
+      .blank-state-icon
+        = image_tag 'blank-search.png'
+
+      .blank-state-icon
+        = image_tag 'blank-tasks.png'
+
+      .blank-state-icon
+        = image_tag 'blank-venues.png'
+
+      .blank-state-icon
+        = image_tag 'blank-results.png'
+
+      .blank-state-icon
+        = image_tag 'blank-events.png'
+
+      .blank-state-icon
+        = image_tag 'blank-activity.png'
+
+      .blank-state-icon
+        = image_tag 'blank-attendance.png'
+
+      .blank-state-icon
+        = image_tag 'blank-comments.png'
+
+      .blank-state-icon
+        = image_tag 'blank-gva.png'
+
+      .blank-state-icon
+        = image_tag 'blank-expenses.png'
+
+      .blank-state-icon
+        = image_tag 'blank-eventdata.png'
+
+      .blank-state-icon
+        = image_tag 'blank-photos.png'
+
+      .blank-state-icon
+        = image_tag 'blank-surveys.png'
+
+
+

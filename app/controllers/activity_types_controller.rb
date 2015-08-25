@@ -9,10 +9,10 @@ class ActivityTypesController < FilteredController
   belongs_to :company, :campaign, optional: true
 
   # This helper provide the methods to activate/deactivate the resource
-  include DeactivableHelper
+  include DeactivableController
 
   # This helper provide the methods to export HTML to PDF
-  extend ExportableFormHelper
+  include ExportableForm
 
   def load_campaign
     @campaign = current_company.campaigns.find(params[:campaign_id])
@@ -61,7 +61,7 @@ class ActivityTypesController < FilteredController
     params.permit(activity_type: [
       :name, :description,
       { form_fields_attributes: [
-        :id, :name, :field_type, :ordering, :required, :_destroy,
+        :id, :name, :field_type, :ordering, :required, :capture_mechanism, :_destroy,
         { settings: [:description, :range_min, :range_max, :range_format] },
         { options_attributes: [:id, :name, :_destroy, :ordering] },
         { statements_attributes: [:id, :name, :_destroy, :ordering] }] },

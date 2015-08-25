@@ -1,0 +1,5 @@
+span.form-result-label= form_field.name
+- data = result.to_chart_data
+- if data.present?
+  #gender-graph.chart-area
+    = gender_graph(data)

@@ -1,0 +1,51 @@
+- brands = parent.campaign.brands
+.split-expense-form
+  = simple_nested_form_for(parent, url: split_event_event_expenses_path(parent), method: :post, remote: true) do |f|
+    = button_tag 'Split Evenly', class: 'btn btn-default split-evenly-btn'
+    = f.error_notification
+    = hidden_field_tag :id, resource.id
+    - if resource.receipt.present?
+      = hidden_field_tag :expense_id, resource.receipt.id if resource.receipt.persisted?
+      = hidden_field_tag :expense_direct_upload_url, resource.receipt.direct_upload_url unless resource.receipt.persisted?
+    .expenses-list
+      = f.fields_for :event_expenses, [resource, resource.dup] do |ef|
+        = ef.hidden_field :reimbursable
+        = ef.hidden_field :billable
+        = ef.hidden_field :merchant
+        = ef.hidden_field :description
+
+        .form-inputs
+          .expense-item
+            = ef.input :expense_date, as: :date_picker
+            = ef.input :category, collection: expense_categories, input_html: { class: 'chosen-enabled category-chosen' }
+            = ef.input :brand_id, as: :select, collection: brands, input_html: { class: 'chosen-enabled brand-chosen' }
+            = ef.input :amount, as: :currency, input_html: { class: 'amount-currency', value: '0.00', data: { 'rule-greaterthan' => 0 } }
+            .control-group
+              .controls
+                = label_tag 'event_expense_percentage', 'Percent', class: 'control-label'
+                .input-append
+                  = text_field_tag 'event_expense_percentage', nil, class: 'amount-percentage'
+                  span.add-on %
+            .control-group.remove-expense
+              = ef.link_to_remove '', class: 'icon icon-minus-rounded', title: 'Remove Expense'
+    = f.link_to_add '', :event_expenses, class: 'icon icon-rounded-add', title: 'Add Expense', data: { target: ".expenses-list" }
+
+    .expense-total
+      .row-fluid
+        .span1.offset8.total-label TOTAL:
+        .span2.total-amount
+            b= "$<span>0</span>".html_safe
+      .row-fluid
+        .span1.offset8.total-label
+        .span2.left-amount
+
+
+    .form-actions
+      = f.submit 'Create Expenses', id: 'save-expense-btn', class: 'btn btn-primary', data: { disable_with: 'Please wait...' }
+      = "&nbsp;".html_safe
+      = f.button :button, 'Cancel', class: 'btn btn-cancel'
+
+javascript:
+  $('.split-expense-form form').splitExpenseForm({
+    expenseAmount: '#{j resource.amount.to_s}'
+  });

@@ -3,7 +3,6 @@
 
 form.button_to {
 	display: inline-block;
-	margin-right: 10px;
 	border-width: 0;
 	border-image-width: 0;
 	div {
@@ -16,6 +15,13 @@ form.button_to {
 		background: none;
 		outline: none;
 		line-height: normal;
+	}
+	.button-with-icon-and-text {
+		font-size: 12px;
+		line-height: 17px;
+		text-decoration: underline;
+		vertical-align: top;
+		color: $brand;
 	}
 }
 
@@ -65,11 +71,20 @@ form{
 			}
 		}
 	}
+	.simple-checkbox {
+		.checkbox {
+			padding-left: 0;
+			.optional {
+				display: none;
+			}
+		}
+	}
 }
 
 .select2-container-multi {
 	.select2-choices {
 		background: none;
+		background-color: white;
 		background-image: none;
 	}
 }
@@ -78,53 +93,42 @@ form{
 	color: $user_menu;
 }
 
-// Input styles
-
-input:-moz-placeholder,
-textarea:-moz-placeholder {
-	color: white;
-}
-
-input:-ms-input-placeholder,
-textarea:-ms-input-placeholder {
-	color: white;
-}
-
-input::-webkit-input-placeholder,
-textarea::-webkit-input-placeholder {
-	color: white;
-}
-
 /* Checkboxes */
 .checker {
-	background-color: $gray-lighter;
 	display: inline-block;
 	float:left;
 	height: 20px;
 	margin: 0px 10px 0 0px;
 	padding: 0;
 	width:20px;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
+	@include border-radius (5px);
+	
 	input[type="checkbox"] {
 		margin: 0;
 		width: 12px;
 		margin: 0;
 		padding: 0;
 		line-height: 12px;
+		/* hide it but make it "accessible" for the browser with tab */
+		position:absolute;
+		left: -10000px;
+	}
+	&>span {
+		display: block;
+		height: 20px;
+		padding:0;
+		width: 20px;
+		line-height: 11px;
+		border: 1px solid transparent;
+		@include border-radius (5px);
+		background-color: $gray-lighter;
+	}
+	&.focus > span {
+		border: 1px solid $brand; /* Do not remove, we need a way to let the user know where the focus is */
 	}
 	span.checked{
 		background-color: $brand;
-		display: block;
-		height: 20px;
-		margin: 0 15px 0 0;
-		padding:0;
-		width: 20px;
-		-webkit-border-radius: 5px;
-		-moz-border-radius: 5px;
-		border-radius: 5px;
-		line-height: 11px;
+		border: 1px solid transparent;
 	}
 	span.checked:after{
 		line-height: 11px;
@@ -141,10 +145,7 @@ textarea::-webkit-input-placeholder {
 		text-shadow:none;
 		-webkit-font-smoothing: antialiased;
 		font-weight: bold;
-		top:-7px;
-	}
-	input[type=checkbox]{
-		visibility: hidden;
+		top:5px;
 	}
 }
 
@@ -159,8 +160,7 @@ textarea::-webkit-input-placeholder {
 }
 
 .radio, .checkbox{
-	min-height: auto;
-	height: 22px;
+	min-height: 22px;
 }
 
 label.radio div.radio {
@@ -198,8 +198,8 @@ label.radio div.radio {
 		float: right;
 		margin-left: 0;
 		opacity:0;
-		height: 25px;
-		width: 25px;
+		height: 15px;
+		width: 15px;
 	}
 }
 .radio-group{
@@ -210,7 +210,6 @@ label.radio div.radio {
 .radio span{
 	background-image: none !important;
 	@extend .radio-style;
-	position: absolute;
 	&.checked{
 		border-color: $brand;
 		&:after{
@@ -237,3 +236,11 @@ label.radio div.radio {
 		display: none;
 	}
 }
+
+.controls >{
+	.radio:first-child, .checkbox:first-child{
+		padding-top: 4px;
+	}
+}
+
+

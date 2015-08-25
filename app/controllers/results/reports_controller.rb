@@ -10,10 +10,11 @@ class Results::ReportsController < InheritedResources::Base
   helper_method :return_path
 
   # This helper provide the methods to activate/deactivate the resource
-  include DeactivableHelper
+  include DeactivableController
 
   def index
     @reports = current_company.reports.active.accessible_by_user(current_company_user).order('reports.name ASC')
+    @data_extracts = current_company.data_extracts.active.order('data_extracts.name ASC')
   end
 
   def preview
@@ -65,8 +66,12 @@ class Results::ReportsController < InheritedResources::Base
 
   private
 
-  def export_list(export)
-    render_to_string(text: resource.to_csv { |total, i| export.update_column(:progress, (i * 100 / total).round) })
+  def export_list(export, path)
+    File.open(path, 'w') do |f|
+      f.write render_to_string(
+        text: resource.to_csv { |total, i| export.update_column(:progress, (i * 100 / total).round) }
+      )
+    end
   end
 
   def build_resource_params

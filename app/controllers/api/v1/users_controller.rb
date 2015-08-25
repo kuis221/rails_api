@@ -4,7 +4,10 @@ class Api::V1::UsersController < Api::V1::FilteredController
   skip_before_action :verify_authenticity_token,
                      if: proc { |c| c.request.format == 'application/json' }
 
-  skip_authorization_check only: [:new_password, :index, :companies, :permissions, :notifications]
+  skip_authorization_check only: [:new_password, :index, :companies, :permissions, :notifications, :show]
+  skip_authorize_resource only: [:index]
+
+  skip_load_and_authorize_resource only: [:show, :index]
 
   defaults resource_class: CompanyUser
 
@@ -353,17 +356,15 @@ class Api::V1::UsersController < Api::V1::FilteredController
   EOS
   def notifications
     if current_user.present?
-      notifications = notifications_for_company_user(current_company_user).map { |n| n.delete(:url); n.delete(:unread); n }
+      notifications = notifications_for_company_user(current_company_user).map do |n|
+        n.delete(:url)
+        n.delete(:unread)
+        n
+      end
 
-      companies = current_user.companies_active_role.map { |c| { name: c.name, id: c.id } }
       respond_to do |format|
         format.json do
-          render status: 200,
-                 json: notifications
-        end
-        format.xml do
-          render status: 200,
-                 xml: notifications.to_xml(root: 'notifications')
+          render status: 200, json: notifications
         end
       end
     else
@@ -516,8 +517,8 @@ class Api::V1::UsersController < Api::V1::FilteredController
     permissions.push 'events_edit_approved_data' if can?(:events_edit_approved_data, Event)
     permissions.push 'events_edit_rejected_data' if can?(:events_edit_rejected_data, Event)
     permissions.push 'events_submit' if can?(:submit, Event)
-    permissions.push 'events_approve' if can?(:approve, Event)
-    permissions.push 'events_reject' if can?(:reject, Event)
+    permissions.push 'events_approve' if current_company_user.role.has_permission?(:approve, Event)
+    permissions.push 'events_reject' if current_company_user.role.has_permission?(:approve, Event)
     permissions.push 'events_team_members' if current_company_user.role.has_permission?(:view_members, Event)
     permissions.push 'events_add_team_members' if current_company_user.role.has_permission?(:add_members, Event)
     permissions.push 'events_delete_team_members' if current_company_user.role.has_permission?(:delete_member, Event)
@@ -546,6 +547,7 @@ class Api::V1::UsersController < Api::V1::FilteredController
     permissions.push 'events_create_comments' if can?(:create_comment, Event)
     permissions.push 'events_edit_comments' if can?(:edit_comment, Event)
     permissions.push 'events_deactivate_comments' if can?(:deactivate_comment, Event)
+    permissions.push 'events_create_activities' if can?(:create, Activity)
     if jbb_feature_enabled?
       permissions.push 'events_invites' if can?(:index_invites, Event)
       permissions.push 'events_create_invites' if can?(:create_invite, Event)
@@ -590,4 +592,5 @@ class Api::V1::UsersController < Api::V1::FilteredController
 
     permissions
   end
+
 end

@@ -1,3 +1,4 @@
+
 class Results::EventDataController < FilteredController
   defaults resource_class: ::Event
 
@@ -5,11 +6,26 @@ class Results::EventDataController < FilteredController
 
   private
 
-  def search_params
-    @search_params || (super.tap do |p|
-      p[:with_event_data_only] = true unless p.key?(:user) && !p[:user].empty?
-      p[:event_data_stats] = true
-    end)
+  def collection_to_csv
+    exporter = FormFieldDataExporter.new(current_company_user, search_params, resource_class)
+    expense_exporter = EventExpensesExporter.new(current_company_user, search_params)
+    CSV.generate do |csv|
+      csv << [
+        'CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'COUNTRY',
+        'CITY', 'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS',
+        'CONTACTS', 'URL', 'START', 'END', 'SUBMITTED AT', 'APPROVED AT', 'PROMO HOURS'
+      ].concat(expense_exporter.expenses_columns + exporter.custom_fields_to_export_headers)
+      each_collection_item do |event|
+        csv << [
+          event.campaign_name, exporter.area_for_event(event),
+          event.place_td_linx_code, event.place_name, event.place_address, event.country,
+          event.place_city, event.place_state, event.place_zipcode, event.status,
+          event.event_status, event.team_members, event.contacts, event.url,
+          event.start_date, event.end_date, event.submitted_date, event.approved_date, event.promo_hours].concat(
+            expense_exporter.event_expenses(event).concat(
+              exporter.custom_fields_to_export_values(event)))
+      end
+    end
   end
 
   def data_totals
@@ -18,6 +34,7 @@ class Results::EventDataController < FilteredController
       totals['promo_hours'] = collection_search.stat_response['stats_fields']['promo_hours_es']['sum'] rescue 0
       totals['impressions'] = collection_search.stat_response['stats_fields']['impressions_es']['sum'] rescue 0
       totals['interactions'] = collection_search.stat_response['stats_fields']['interactions_es']['sum'] rescue 0
+      totals['active_photos_count'] = collection_search.stat_response['stats_fields']['active_photos_count_es']['sum'] rescue 0
       totals['samples'] = collection_search.stat_response['stats_fields']['samples_es']['sum'] rescue 0
       totals['spent'] = collection_search.stat_response['stats_fields']['spent_es']['sum'] rescue 0
       totals['gender_female'] = collection_search.stat_response['stats_fields']['gender_female_es']['mean'] rescue 0

@@ -17,6 +17,8 @@ class Brand < ActiveRecord::Base
 
   scoped_to_company
 
+  has_paper_trail
+
   # Required fields
   validates :name, presence: true, uniqueness: { scope: :company_id, case_sensitive: false }
 
@@ -28,7 +30,9 @@ class Brand < ActiveRecord::Base
   has_many :marques, -> { order 'marques.name ASC' }, autosave: true, dependent: :destroy
 
   scope :not_in_portfolio, ->(portfolio) { where("brands.id not in (#{BrandPortfoliosBrand.where(brand_portfolio_id: portfolio).select('brand_id').to_sql})") }
-  scope :accessible_by_user, ->(user) { in_company(user.company_id) }
+  scope :accessible_by_user, ->(user) do
+    user.is_admin? ? in_company(user.company_id) : in_company(user.company_id).where(id: user.accessible_brand_ids)
+  end
 
   scope :active, -> { where(active: true) }
 

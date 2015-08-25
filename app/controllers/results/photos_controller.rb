@@ -1,7 +1,7 @@
 class Results::PhotosController < FilteredController
   belongs_to :event, optional: true
 
-  include DeactivableHelper
+  include DeactivableController
   include PhotosHelper
 
   defaults resource_class: AttachedAsset
@@ -31,8 +31,8 @@ class Results::PhotosController < FilteredController
 
   def search_params
     @search_params || (super.tap do |p|
-      p[:search_permission] = :index_results
-      p[:search_permission_class] = EventData
+      p[:search_permission] = :index_photos
+      p[:search_permission_class] = Event
       p[:asset_type] = 'photo'
     end)
   end

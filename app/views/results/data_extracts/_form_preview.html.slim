@@ -1,0 +1,89 @@
+- content_for :alerts
+  div.collection-list-description
+    .filter-label
+
+.sidebar.collapsed#resource-filter-column
+  #collection-list-filters
+
+.main.data-extract
+  = simple_form_for resource, as: :data_extract, url: save_results_data_extracts_path, method: :get, name: "data_source_form", remote: true do |f|
+    = hidden_field_tag :step, 4
+    = f.input :source, as: :hidden
+    = f.input :default_sort_by, as: :hidden, wrapper: false
+    = f.input :default_sort_dir, as: :hidden, wrapper: false
+
+    - if resource.params && resource.params['campaign_id']
+      - list = Array(resource.params['campaign_id'])
+      - list.each do |id|
+        = hidden_field_tag 'data_extract[params][campaign_id][]', id
+
+    - if resource.params && resource.params['activity_type_id']
+      - list = Array(resource.params['activity_type_id'])
+      - list.each do |id|
+        = hidden_field_tag 'data_extract[params][activity_type_id][]', id
+
+    - f.object.columns.each do |col|
+      = hidden_field_tag 'data_extract[columns][]', col
+    .data-extract-buttons
+      = submit_tag 'Save', class: 'btn btn-primary btn-data-extract'
+      = link_to 'Exit', results_reports_path, id: 'exit-new-report', class: 'btn btn-cancel btn-data-extract'
+      .export-xls.pull-right
+        .dropdown.btn-download
+          a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+            i.icon-download
+            i.icon-arrow-down-small
+          ul#download-status-btn.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+            li
+              a.xlsx-download-link href="#" role="menuitem" data-url="#{new_results_data_extract_path(format: :csv)}"
+                | Download as CSV
+    .data-extract-box
+      table#extract-table.data-extract-table
+        = render_table_cols resource.columns_with_names, process_step, resource.default_sort_by, resource.default_sort_dir
+        tbody
+
+
+javascript:
+  $('.data-extract-box').jScrollPane();
+
+  var scrollerApi = $('.data-extract-box').data('jsp'),
+      resizePreviewZone = function() {
+        var maxHeight = $(window).height() - $('.data-extract-box').offset().top;
+        var diff = ($('#main-left-nav ul.nav').offset().top + $('#main-left-nav ul.nav').outerHeight() + $('footer').outerHeight()) -  $(window).height();
+        maxHeight -= (90 - Math.max(diff, 0));
+        $('.data-extract-box').css({'height': maxHeight+'px'});
+        scrollerApi.reinitialise();
+      };
+
+  $('.data-extract-box').on('scroll', function(e){
+    $(window).trigger('scroll');
+    return true;
+  });
+
+  $('#collection-list-filters').filteredList({
+    'source': '#{items_results_data_extracts_path(resource.to_hash).html_safe}',
+    'filtersUrl': '#{filter_url(resource.filters_scope)}',
+    'listContainer' : '#extract-table tbody',
+    'includeCalendars': #{resource.filters_include_calendar},
+    'selectDefaultDate': false,
+    'selectDefaultDateRange': false,
+    'ytdDatesRange': '#{current_company.ytd_dates_range}',
+    'includeAutoComplete': true,
+    'includeSaveFilters': false,
+    'allowCustomizeFilters': false,
+    'autoCompletePath': '#{autocomplete_path(resource.filters_scope, format: :json)}',
+    'onPageLoaded': function() {
+      resizePreviewZone();
+    },
+    spinnerElement: function() {
+      spinner = $('<div class="loading-spinner" style="height: 60px; width: 100%"></div>')
+          .insertAfter($('table#extract-table'));
+      scrollerApi.reinitialise();
+      return spinner;
+    },
+    placeholderElement: function(message) {
+      $('<tr><td></td></tr>').appendTo($('table#extract-table tbody')).find('td').attr('colspan', $('table#extract-table thead th').length).addClass('placeholder-empty-state').html(message);
+    }
+  });
+
+
+  $(window).on('resize', resizePreviewZone);

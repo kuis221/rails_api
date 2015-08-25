@@ -1,0 +1,2 @@
+- if @campaign.form_fields.any?
+  | $('#analysis-campaign').html('#{j render partial: 'form_fields_campaign', locals: { form_fields: @campaign.form_fields } }');

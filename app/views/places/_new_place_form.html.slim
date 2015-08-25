@@ -4,14 +4,13 @@
       It looks like we couldn't find the place you were looking for.
       Just enter the place's information below and we'll add it to the campaign.
   br>/
-
-= simple_form_for([parent, resource], remote: true) do |f|
+= simple_nested_form_for([parent, resource], remote: true) do |f|
   = f.error_notification
   = f.error :base
 
   .form-inputs
     .row-fluid
-      = f.input :name, input_html: {class: 'input-xxlarge'}, required: true, :autofocus => true
+      = f.input :name, input_html: {class: 'input-xxlarge'}, required: true
     .row-fluid
       = f.input :types, collection: t('venue_types').map{|k,v| [v, k]}, input_html: {class: 'input-xxlarge chosen-enabled'}, required: true
     .row-fluid
@@ -28,9 +27,36 @@
         = f.input :state, collection: (resource.country.present? && Country[resource.country] ? Country.new(resource.country).states.map{|k, info| [info['name'],info['name']]} : []), input_html: {class: 'input-large chosen-enabled'}, required: true
       .span6
         = f.input :zipcode, label: 'ZIP Code', input_html: {class: 'input-large'}, required: true
+      = f.simple_fields_for :venues, resource.venues.find { |v| v.company_id == current_company.id } || resource.venues.build(company_id: current_company.id) do |vf|
+        .row-fluid
+        = vf.input :web_address, label: 'Website', input_html: {class: 'input-xxlarge'}, required: false, :autofocus => true
+        .hours-list
+          = label_tag :hours_fields, '', class: 'control-label' do
+              = 'Hours'
+              span.venues-optional-field
+                = '(optional)'
+          = vf.fields_for :hours_fields do |hf|
+            .row-fluid.hours-chosen
+              .span3
+                = hf.input :day, collection: select_days, input_html: {class: 'input-large chosen-enabled'}
+              .span3
+                = hf.input :hour_open, label: 'Open', collection: select_hours, input_html: {class: 'input-large chosen-enabled'}
+              .span3
+                = hf.input :hour_close, label: 'Close', collection: select_hours, input_html: {class: 'input-large chosen-enabled'}
+              .span3
+                = hf.link_to_remove '', class: 'icon icon-minus-rounded', title: 'Remove Hours'
+        .add-hours
+          = vf.link_to_add '', :hours_fields, class: 'icon icon-rounded-add', title: 'Add Hours', data: { target: ".hours-list" }, id: 'add-hours'
+        - if vf.object.entity_form.present?
+          .venues-custom-fields.data-form-wrapper
+            - vf.object.form_field_results.each do |result|
+              = vf.simple_fields_for :results, result do |rf|
+                = vf.hidden_field :company_id
+                .large-inputs class="#{result.form_field.css_class}"
+                  = rf.input :value, result.form_field.field_options(result)
+                  = rf.hidden_field :form_field_id
 
     = hidden_field_tag :add_new_place, 'true'
-
   .form-actions
     = f.button :submit, 'Add place', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
     = "&nbsp;".html_safe
@@ -49,3 +75,10 @@ coffee:
             option.attr('selected', 'selected')
           states.append(option)
       states.trigger('liszt:updated')
+
+  if $(".hours-list .fields").length == 0
+    $("#add-hours").trigger( "click" )
+  $(".remove_nested_fields").first().hide()
+
+  $(document).on 'nested:fieldAdded', (e) =>
+    $('.hours-chosen:last .chosen-enabled').chosen()

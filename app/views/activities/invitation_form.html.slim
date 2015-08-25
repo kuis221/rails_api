@@ -1,26 +1,34 @@
-#form-container
-  .activity-form
-    = simple_form_for [parent, @invite], remote: true do |f|
-      .control-group
-        .large-inputs class="form_field_dropdown"
-          = label_tag 'Activity Type'
-          = select_tag 'activity_activity_type_id', options_for_select(activity_types, 'attendance'), class: 'chosen-enabled', disabled: (f.object.new_record? ? false : true)
+.survey-mode-wrapper
+  .survey-header
+    a href="#" Exit
+    h5 New Invitation
 
-      .control-group.required
-        - if parent.is_a?(Event)
-          .row-fluid.google-places
-            = f.error :place
-            = f.input :place_reference, :as => :location, required: true, label: 'Venue', input_html: { display_value: params[:place_reference_display_name] || f.object.place_name_with_location, placeholder: 'Choose a venue' }
-        - elsif parent.is_a?(Venue)
-          = f.input :venue_id, as: :hidden, value: parent.id
-          .row-fluid = label_tag :venue_invite_campaign, 'Event', class: 'control-label required'
-          .row-fluid
-            .span7= select_tag 'venue_invite_campaign', options_for_select([[nil, '']] + allowed_campaigns(parent), @invite.campaign_id), class: 'required chosen-enabled', 'data-placeholder' => 'Select a Campaign'
-            .span5= f.input :event_id, as: :select, collection: [], input_html: { class: 'required chosen-enabled', 'data-placeholder' => 'Event Date' }, label: false
+  .survey-form
+    #form-container
+      .activity-form
+        = simple_form_for [parent, @invite] do |f|
+          .control-group.required
+            - if parent.is_a?(Event)
+              - if parent.campaign.enabled_modules.include?('attendance') && Invite::ATTENDANCE_DISPLAY_BY_TYPES.try(:[], parent.campaign.module_setting('attendance', 'attendance_display')) == 'market'
+                .row-fluid
+                  = f.association :area, collection: parent.campaign.areas.accessible_by_user(current_company_user), required: true, label: 'Market', input_html: {class: 'chosen-enabled', data: { placeholder: "Choose an area" } }
+              - else
+                .row-fluid.google-places
+                  = f.error :place
+                  = f.input :place_reference, :as => :location, required: true, label: 'Venue', input_html: { display_value: params[:place_reference_display_name] || f.object.place_name_with_location, placeholder: 'Search for venues' }
+            - elsif parent.is_a?(Venue)
+              = f.input :venue_id, as: :hidden, value: parent.id
+              .row-fluid = label_tag :venue_invite_campaign, 'Event', class: 'control-label required'
+              .row-fluid
+                .span7= select_tag 'venue_invite_campaign', options_for_select([[nil, '']] + allowed_campaigns(parent), @invite.campaign_id), class: 'required chosen-enabled', 'data-placeholder' => 'Select a Campaign'
+                .span5= f.input :event_id, as: :select, collection: [], input_html: { class: 'required chosen-enabled', 'data-placeholder' => 'Event Date' }, label: false
 
-      = f.input :invitees, input_html: { placeholder: 'Number of invitees', value: nil }
+          = f.input :invitees, input_html: { placeholder: 'Number of invitees', value: nil }
 
-      .form-actions
-        = f.button :submit, class: 'btn btn-primary', data: { disable_with: 'Please wait...' }
-        = "&nbsp;".html_safe
-        = f.button :button, 'Cancel', class: 'btn btn-cancel'
+          .form-actions
+            = f.button :submit, 'Submit', class: 'btn btn-primary', data: { disable_with: 'Please wait...' }
+            = "&nbsp;".html_safe
+            = f.button :button, 'Cancel', class: 'btn btn-cancel'
+javascript:
+  $('#form-container .places-autocomplete').placesAutocomplete();
+  $('#form-container').activityForm();

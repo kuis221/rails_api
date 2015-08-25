@@ -17,7 +17,7 @@ class AssetsUploadWorker
   rescue Resque::TermException, Resque::DirtyExit
     # if the worker gets killed, (when deploying for example)
     # re-enqueue the job so it will be processed when worker is restarted
-    Resque.enqueue(AssetsUploadWorker, asset_id, asset_class)
+    asset.queued!
 
   # AWS connections sometimes fail, so let's retry it a few times before raising the error
   rescue Errno::ECONNRESET, Net::ReadTimeout, Net::OpenTimeout => e
@@ -26,6 +26,7 @@ class AssetsUploadWorker
       sleep(3)
       retry
     else
+      asset.failed! if asset
       raise e
     end
   end

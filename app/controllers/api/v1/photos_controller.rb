@@ -1,14 +1,18 @@
 class Api::V1::PhotosController < Api::V1::FilteredController
+  include SunspotIndexing
+
   belongs_to :event, optional: true
 
   defaults resource_class: AttachedAsset
 
-  authorize_resource class: AttachedAsset, only: [:show, :update, :destroy]
+  after_action :force_resource_reindex, only: [:create, :update]
+
+  authorize_resource class: AttachedAsset, only: [:show, :destroy]
 
   resource_description do
     short 'Photos'
     formats %w(json xml)
-    error 400, 'Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.'
+    error 400, 'Bad Request. The server cannot or will not process the request due to something that is perceived to be a client error.'
     error 404, 'Missing'
     error 401, 'Unauthorized access'
     error 500, 'Server crashed for some reason'
@@ -23,43 +27,10 @@ class Api::V1::PhotosController < Api::V1::FilteredController
   param :place, Array, desc: 'A list of places to filter the results'
   param :status, Array, desc: 'A list of photo status to filter the results. Options: Active, Inactive'
   param :page, :number, desc: 'The number of the page, Default: 1'
-  example <<-EOS
-  GET /api/v1/events/1223/photos
-  {
-      "page": 1,
-      "total": 5,
-      "results": [
-          {
-              "id": 45554,
-              "file_file_name": "SV-T101-P005-111413.JPG",
-              "file_content_type": "image/jpeg",
-              "file_file_size": 611320,
-              "created_at": "2013-11-19T00:49:24-08:00",
-              "active": true,
-              "file_small": "http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/554/small/SV-T101-P005-111413.JPG?1384851148",
-              "file_thumbnail": "http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/554/thumbnail/SV-T101-P005-111413.JPG?1384851148",
-              "file_medium": "http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/554/medium/SV-T101-P005-111413.JPG?1384851148",
-              "file_original": "http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/554/original/SV-T101-P005-111413.JPG?1384851148"
-          },
-          {
-              "id": 45553,
-              "file_file_name": "SV-T101-P001-111413.JPG",
-              "file_content_type": "image/jpeg",
-              "file_file_size": 651591,
-              "created_at": "2013-11-19T00:49:16-08:00",
-              "active": true,
-              "file_small": "http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/553/small/SV-T101-P001-111413.JPG?1384851145",
-              "file_thumbnail": "http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/553/thumbnail/SV-T101-P001-111413.JPG?1384851145",
-              "file_medium": "http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/553/medium/SV-T101-P001-111413.JPG?1384851145",
-              "file_original": "http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/553/original/SV-T101-P001-111413.JPG?1384851145"
-          }
-          ...
-      ]
-  }
-  EOS
+
   def index
     authorize!(:photos, parent)
-    collection
+    render json: paginated_result
   end
 
   api :POST, '/api/v1/events/:event_id/photos', 'Adds a new photo to a event'
@@ -78,32 +49,27 @@ class Api::V1::PhotosController < Api::V1::FilteredController
   * *bucket_name*: brandscopic-stage
   * *folder*: the folder name where the photo was uploaded to
   EOS
-  example <<-EOS
-  POST /api/v1/events/192/photos.json
-  DATA:
-  {
-    attached_asset: {
-      direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/12390bs-25632sj-2-83KjsH984sd/SV-T101-P005-111413.jpg'
-    }
-  }
-
-  RESPONSE:
-  {
-      "id": 45554,
-      "file_file_name": "SV-T101-P005-111413.JPG",
-      "file_content_type": "image/jpeg",
-      "file_file_size": 611320,
-      "created_at": "2013-11-19T00:49:24-08:00",
-      "active": true
-  }
-  EOS
   def create
     authorize!(:create_photo, parent)
     create! do |success, failure|
-      success.json { render :show }
-      success.xml { render :show }
+      success.json { render json: resource }
       failure.json { render json: resource.errors, status: :unprocessable_entity }
-      failure.xml { render xml: resource.errors, status: :unprocessable_entity }
+    end
+  end
+
+  api :PUT, '/api/v1/events/:event_id/photos/:id', 'Updates a photo'
+  param :event_id, :number, required: true, desc: 'Event ID'
+  param :id, :number, required: true, desc: 'Photo ID'
+  param :attached_asset, Hash, required: true, action_aware: true do
+    param :active, %w(true false), required: true, desc: 'Photo status'
+  end
+  def update
+    authorize! :deactivate_photo, Event
+    update! do |success, failure|
+      success.json { render :show }
+      success.xml  { render :show }
+      failure.json { render json: resource.errors, status: :unprocessable_entity }
+      failure.xml  { render xml: resource.errors, status: :unprocessable_entity }
     end
   end
 
@@ -114,19 +80,6 @@ class Api::V1::PhotosController < Api::V1::FilteredController
   /uploads/9afa6775-2c8e-44f8-9cda-280e80446ced/My file.jpg
 
   The signature will expire 1 hour after it's generated, therefore, it's recommended to not cache these fields for long time.
-  EOS
-  example <<-EOS
-  GET /api/v1/events/123/photos/form.json
-  {
-      "fields": {
-          "AWSAccessKeyId": "AKIAIJSENKEXXZNMLW3VQ",
-          "key": null,
-          "policy": "ioJleHBpcmF0S0zMVQyMTo0NToyNFoiLCJjb25kaXRpb25zIjsoOHYLSSdHMtd2l0aCIsIiRrZXkiLCJ1cGxvYWRzLyJdLHsiYnVja2V0IjoiYnJhbmRzY29waWMtZGV2In0sWyJzdGFydHMtd2l0aCIsIiRrZXkiLCIiXSx7IlNlY3VyZSI6InRydWTYosS",
-          "signature": "Q8TG16PD850JapPweQGAaK/o4NE=",
-          "Secure": "true"
-      },
-      "url": "https://bucket-name.s3.amazonaws.com/"
-  }
   EOS
   def form
     authorize!(:create_photo, parent)
@@ -155,13 +108,13 @@ class Api::V1::PhotosController < Api::V1::FilteredController
   end
 
   def permitted_params
-    params.permit(attached_asset: [:direct_upload_url])[:attached_asset]
+    params.permit(attached_asset: [:direct_upload_url, :active])[:attached_asset]
   end
 
   def search_params
     @search_params ||= begin
       super
-      @search_params.merge(event_id: parent.id, asset_type: 'photo')
+      @search_params.merge(event_id: parent.id, asset_type: 'photo', search_permission_class: 'Event', search_permission: :index_photos)
     end
   end
 

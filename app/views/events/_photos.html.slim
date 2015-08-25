@@ -1,9 +1,4 @@
 - allow_upload ||= false
 
 h5.module-title GALLERY
-- if allow_upload && can?(:create_photo, resource)
-  = button_to_add 'Add Photos', new_event_photo_path(resource), class: 'dialogue-photos' if allow_upload && can?(:create_photo, resource)
-
-.gallery
-  ul#photos-thumbs
-    = render partial: 'results/photos/photo', collection: resource.active_photos.includes(:tags).map{|a| a.attachable = resource; a }
+= render partial: 'attach_photos', locals: { close_button_class: 'hide', allow_upload: allow_upload }

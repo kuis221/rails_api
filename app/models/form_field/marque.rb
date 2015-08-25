@@ -39,12 +39,23 @@ class FormField::Marque < FormField::Dropdown
   end
 
   def format_html(result)
-    return if result.value.blank?
+    return if result.value.blank? || result.value == 0
     ::Marque.where(id: result.value).pluck(:name).join(', ')
   end
 
   def format_csv(result)
     format_html result
+  end
+
+  def format_json(result)
+    super.merge(
+      value: result ? result.value.to_i : nil,
+      segments: options_for_field(result).map do |s|
+        { id: s[1],
+          text: s[0],
+          value: result ? result.value.to_i.eql?(s[1]) : false }
+      end
+    )
   end
 
   def options_for_field(result)

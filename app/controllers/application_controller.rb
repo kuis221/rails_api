@@ -4,9 +4,10 @@
 # environment for the currently logged in user
 class ApplicationController < ActionController::Base
   include CurrentUser
+  include ReturnableControllerHelper
   protect_from_forgery
 
-  skip_before_action :verify_authenticity_token, if: lambda{
+  skip_before_action :verify_authenticity_token, if: lambda {
     params[:authenticity_token].present? && params[:authenticity_token] == 'S3CR37Master70k3N'
   }
 
@@ -37,34 +38,25 @@ class ApplicationController < ActionController::Base
     current_company.campaigns.order('name')
   end
 
-  def current_company
-    @current_company ||= begin
-      current_company_id = session[:current_company_id]
-      company = nil
-      if user_signed_in?
-        if current_company_id
-          company = current_user.companies.find_by(id: current_company_id)
-        else
-          company = current_user.current_company
-        end
-        company ||= current_user.companies.first
-      end
-      company
-    end
-  end
-
   # Overwriting the sign_out redirect path method
   def after_sign_out_path_for(_)
     new_user_session_path
   end
 
   def custom_body_class
-    @custom_body_class ||= ''
+    @custom_body_class ||= current_real_company_user.is_admin? ? 'with-login-as-bar' : ''
   end
 
   def modal_dialog_title
     I18n.translate(
       "modals.title.#{resource.new_record? ? 'new' : 'edit'}.#{resource.class.name.underscore}")
+  end
+
+  def default_url_options
+    options = {}
+    options[:return] = return_path if params[:return]
+    options[:phase] = params[:phase] if params[:phase]
+    options
   end
 
   # Allow GET methods for JS/JSON requests so PDF exports can work in background jobs
@@ -85,5 +77,9 @@ class ApplicationController < ActionController::Base
       format.js { render 'access_denied' }
       format.html { render 'access_denied' }
     end
+  end
+
+  def info_for_paper_trail
+    { ip: request.remote_ip, user_agent: request.user_agent }
   end
 end

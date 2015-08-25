@@ -25,7 +25,7 @@ javascript:
         },
         fixedWeekCount: false,
         eventLimit: false,
-        defaultDate: "#{(params[:start_date] && params[:end_date] ? Timeliness.parse(params[:start_date]) + 15.days : Date.today).to_s(:full_calendar) }",
+        defaultDate: "#{(params[:start_date] && params[:end_date] ? Timeliness.parse(Array(params[:start_date]).first) + 15.days : Date.today).to_s(:full_calendar) }",
         events: {
           events: function(start, end, timezone, callback){
             window.loadingVisits = true;
@@ -96,12 +96,16 @@ javascript:
     $('#toggle-visits-view a').click(function(e){
       if (e.currentTarget.getAttribute('href') === '#calendar-view' && document.location.pathname.indexOf('/calendar') < 0){
         $('#collection-list-filters').filteredList('disableScrolling');
-        history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname.replace('/calendar', '') + '/calendar' + document.location.search);
+        if (history.pushState) {
+          history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname.replace('/calendar', '') + '/calendar' + document.location.search);
+        }
         $('.collection-list-description').find('[data-filter="date"]').closest('.filter-item').hide()
       } else if (e.currentTarget.getAttribute('href') !== '#calendar-view' && document.location.pathname.indexOf('/calendar') >= 0) {
         $('.collection-list-description').find('[data-filter="date"]').closest('.filter-item').show()
         $('#collection-list-filters').filteredList('enableScrolling');
-        history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname.replace('/calendar', '') + document.location.search);
+        if (history.pushState) {
+          history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname.replace('/calendar', '') + document.location.search);
+        }
       }
     });
     $('#toggle-visits-view a').on('shown', function(e){

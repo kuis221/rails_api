@@ -3,8 +3,11 @@
 ENV['RAILS_ENV'] ||= 'test'
 require 'spec_helper'
 require 'simplecov'
-SimpleCov.start 'rails' do
-  add_filter 'lib/legacy'
+
+unless ENV['CI']
+  SimpleCov.start 'rails' do
+    add_filter 'lib/legacy'
+  end
 end
 
 require File.expand_path('../../config/environment', __FILE__)
@@ -46,6 +49,8 @@ RSpec.configure do |config|
 
   config.render_views
 
+  config.filter_run show_in_doc: true if ENV['APIPIE_RECORD']
+
   # If true, the base class of anonymous controllers will be inferred
   # automatically. This will be the default behavior in future versions of
   # rspec-rails.
@@ -54,6 +59,11 @@ RSpec.configure do |config|
   # config.include Capybara::DSL, :type => :request
   config.include SignHelper, type: :feature
   config.include RequestsHelper, type: :feature
+
+  config.before(:suite) do
+    ActiveRecord::Base.connection.execute(IO.read("db/functions.sql"))
+    ActiveRecord::Base.connection.execute(IO.read("db/views.sql"))
+  end
 
   config.before(:each) do |example|
     allow(Resque::Worker).to receive_messages(working: [])

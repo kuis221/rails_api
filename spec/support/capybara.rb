@@ -1,9 +1,13 @@
+
+Capybara.register_driver :poltergeist_debug do |app|
+  Capybara::Poltergeist::Driver.new(app, inspector: true, debug: true)
+end
+
 # Capybara.javascript_driver = :webkit
 # Capybara.javascript_driver = :selenium
 Capybara.javascript_driver = :poltergeist
 Capybara.default_wait_time = 5
 Capybara.server_port = 9887 + ENV['TEST_ENV_NUMBER'].to_i
-
 
 # Capybara.server_port = 7000
 # Capybara.app_host = "http://localhost:#{Capybara.server_port}"

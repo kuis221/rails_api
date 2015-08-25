@@ -1,0 +1,17 @@
+= render 'export_basic_info'
+
+.details_box.form-results-box
+  = render partial: 'shared/form_field_results', locals: { form_fields: form_fields }, formats: [:html]
+
+- content_for :pdf_scripts
+  javascript:
+    jQuery(function(){
+      $("input:checkbox, input:radio").not('[data-no-uniform="true"], #uniform-is-ajax, .bs-checkbox').uniform();
+    });
+    Highcharts.setOptions({
+        plotOptions: {
+            series: {
+                animation: false
+            }
+        }
+    });

@@ -2,35 +2,29 @@
   = resource_details_bar("You are viewing area details. Click to close.")
 
   .details_box.padding-top-close-bar
-    h2= resource.name
+    .details-main-title
+      h2.pull-left= resource.name
+      .edition-links
+        = button_to_edit resource if can?(:edit, resource)
+        = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
 
     - if resource.description.present?
       .description-data
-        i.icon-wired-description
         span
           = resource.description
 
-    .links-data
-      = button_to_edit resource if can?(:edit, resource)
-      = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
-
     // This info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
-      h3= resource.name
+      span.primary-info
+        = resource.name
       = button_to_edit resource if can?(:edit, resource)
       = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
 
   #area-places.details_box
-    h5.results-title PLACES
-    #area-places-list
-      = render partial: 'places', locals: { places: resource.places.order(:name) }
-    = link_to "", new_area_place_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Place' if can?(:edit, resource)
+    = render 'places'
 
   #area-campaigns.details_box
-    h5.results-title CAMPAIGNS
-
-    #area-campaigns-list.resource-list.without-actions
-      = render partial: 'campaigns/campaign', collection: resource.campaigns, locals: { hide_actions: true }
+    = render 'campaigns'
 
 
 = render partial: 'help_tutorial'

@@ -135,13 +135,13 @@ feature 'Campaigns', js: true do
     scenario 'allows the user to activate/deactivate a campaign' do
       campaign = create(:campaign, name: 'Some Campaign', description: 'a campaign description', company: company)
       visit campaign_path(campaign)
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button('Deactivate Campaign')
       end
 
       confirm_prompt 'Are you sure you want to deactivate this campaign?'
 
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button('Activate Campaign')
         expect(page).to have_button('Deactivate Campaign') # test the link have changed
       end
@@ -150,7 +150,7 @@ feature 'Campaigns', js: true do
     scenario 'allows the user to edit the campaign' do
       visit campaign_path(campaign)
 
-      within('.links-data') { click_js_button 'Edit Campaign' }
+      within('.edition-links') { click_js_button 'Edit Campaign' }
 
       within("form#edit_campaign_#{campaign.id}") do
         fill_in 'Name', with: 'edited campaign name'
@@ -172,7 +172,7 @@ feature 'Campaigns', js: true do
 
       tab = open_tab('Places')
 
-      click_js_link 'Add Places'
+      click_js_button 'Add Places'
 
       within visible_modal do
         fill_in 'place-search-box', with: 'San'
@@ -184,7 +184,7 @@ feature 'Campaigns', js: true do
       close_modal
 
       # Re-open the modal to make sure it's not added again to the list
-      click_js_link 'Add Places'
+      click_js_button 'Add Places'
 
       within visible_modal do
         expect(page).to have_no_selector("#area-#{area.id}") # The area does not longer appear on the list after it was added to the campaign
@@ -233,14 +233,14 @@ feature 'Campaigns', js: true do
     end
 
     scenario 'should be able to include places to areas assigned to the campaign' do
-      expect(Place).to receive(:open).and_return(double(read: { results:
+      expect_any_instance_of(CombinedSearch).to receive(:open).and_return(double(read: { results:
         [
           { reference: 'xxxxx', place_id: '1111', name: 'Walt Disney World Dolphin', formatted_address: '123 Blvr' }
         ]
       }.to_json))
       expect_any_instance_of(GooglePlaces::Client).to receive(:spot).with('xxxxx').and_return(double(
         name: 'Walt Disney World Dolphin', formatted_address: '123 Blvr', address_components: nil,
-        lat: '1.1111', lng: '2.2222', types: []
+        lat: '1.1111', lng: '2.2222', types: ['establishment']
       ))
       Kpi.create_global_kpis
       area = create(:area, name: 'Orlando', company: company)
@@ -266,7 +266,8 @@ feature 'Campaigns', js: true do
         click_js_button 'Add'
       end
 
-      wait_for_ajax
+      expect(page).to_not have_selector('h3', text: 'New Place')
+      expect(page).to have_selector('h3', text: 'Customize Orlando Area')
       new_place_id = Place.last.id
       expect(campaign.areas_campaigns.find_by(area_id: area.id).inclusions).to eql [new_place_id]
 
@@ -281,6 +282,67 @@ feature 'Campaigns', js: true do
 
       within tab do
         find('a[data-original-title="Customize area"]').click # tooltip changes the title
+      end
+
+      within visible_modal do
+        expect(page).to have_content('Customize Orlando Area')
+        expect(page).to have_no_content('Walt Disney World Dolphin')
+      end
+    end
+
+    scenario 'confirm from user to include existing places to areas assigned to the campaign' do
+      expect_any_instance_of(CombinedSearch).to receive(:open).and_return(double(read: { results:
+        [
+          { reference: '1111', place_id: '1111', name: 'Walt Disney World Dolphin', formatted_address: '123 Blvr' }
+        ]
+      }.to_json))
+      Kpi.create_global_kpis
+
+      area = create(:area, name: 'Orlando', company: company)
+      another_area = create(:area, name: 'Florida', company: company)
+      another_area.places << create(:place, place_id: '1111', reference: '1111', name: 'Walt Disney World Dolphin')
+
+      campaign.areas << [area, another_area]
+      visit campaign_path(campaign)
+
+      tab = open_tab('Places')
+
+      within tab do
+        expect(page).to have_content('Orlando')
+        find("a#customize_area_#{area.id}").click # tooltip changes the title
+      end
+
+      within visible_modal do
+        expect(page).to have_content('Customize Orlando Area')
+        click_js_link('Add new place')
+      end
+
+      within visible_modal do
+        expect(page).to have_content('New Place')
+        select_from_autocomplete 'Search for a place', 'Walt Disney World Dolphin'
+        click_js_button 'Add'
+      end
+
+      within visible_modal do
+        expect(page).to have_content('Are you sure you want to add this Place? This Place has already been added to the following Area(s): Florida')
+        click_js_link('OK')
+      end
+
+      wait_for_ajax
+      new_place_id = Place.last.id
+      expect(campaign.areas_campaigns.find_by(area_id: area.id).inclusions).to eql [new_place_id]
+
+      within visible_modal do
+        expect(page).to have_content('Customize Orlando Area')
+        expect(page).to have_content('Walt Disney World Dolphin')
+        within(resource_item("#area-campaign-place-#{new_place_id}")) { click_js_link 'Deactivate' }
+        expect(page).to have_selector("#area-campaign-place-#{new_place_id}.inactive")
+        click_js_button('Done')
+      end
+      ensure_modal_was_closed
+
+      within tab do
+        find("a#customize_area_#{area.id}").click # tooltip changes the title
       end
 
       within visible_modal do
@@ -623,14 +685,65 @@ feature 'Campaigns', js: true do
         end
       end
     end
+
+    feature 'Documents' do
+      scenario 'A user can upload a document to the Campaign' do
+        with_resque do
+          visit campaign_path(campaign)
+          click_js_link 'Documents'
+
+          within '#documents_upload_form' do
+            attach_file 'file', 'spec/fixtures/file.pdf'
+            wait_for_ajax(30) # For the file to upload to S3
+          end
+          expect(page).to_not have_content('DRAG & DROP')
+
+          document = AttachedAsset.last
+
+          # Check that the document appears is in the document list
+          within '#documents-list' do
+            src = document.file.url(:original, timestamp: false).gsub(/\Ahttp(s)?/, 'https')
+            expect(page).to have_xpath("//a[starts-with(@href, \"#{src}\")]", wait: 10)
+          end
+
+          expect(document.attachable).to eql(campaign)
+
+          # Make sure the document is still there after reloading page
+          visit current_path
+          click_js_link 'Documents'
+
+          # Check that the image appears on the page
+          within '#documents-list' do
+            src = document.file.url(:original, timestamp: false).gsub(/\Ahttp(s)?/, 'https')
+            expect(page).to have_xpath("//a[starts-with(@href, \"#{src}\")]", wait: 10)
+          end
+
+          # Delete the document
+          within '#documents-list' do
+            hover_and_click '.resource-item', 'Delete'
+          end
+          confirm_prompt 'Are you sure you want to delete this document?'
+
+          # Check that the document was removed
+          within '#documents-list' do
+            expect(page).not_to have_selector '.resource-item'
+          end
+        end
+      end
+    end
   end
 
   feature 'custom filters', search: true, js: true do
     it_behaves_like 'a list that allow saving custom filters' do
+      let!(:brand1) { create(:brand, name: 'Brand 1', company: company) }
+      let!(:brand2) { create(:brand, name: 'Brand 2', company: company) }
+
       before do
         campaign = create(:campaign, company: company)
-        campaign.brands << create(:brand, name: 'Brand 1', company: company)
-        campaign.brands << create(:brand, name: 'Brand 2', company: company)
+        campaign.brands << brand1
+        campaign.brands << brand2
+        company_user.brands << brand1
+        company_user.brands << brand2
         company_user.campaigns << campaign
 
         create(:brand_portfolio, name: 'A Vinos Ticos', description: 'Algunos vinos de Costa Rica', company: company)
@@ -665,11 +778,11 @@ feature 'Campaigns', js: true do
       Sunspot.commit
     end
 
-    scenario 'should be able to export as XLS' do
+    scenario 'should be able to export as CSV' do
       visit campaigns_path
 
       click_js_link 'Download'
-      click_js_link 'Download as XLS'
+      click_js_link 'Download as CSV'
 
       within visible_modal do
         expect(page).to have_content('We are processing your request, the download will start soon...')
@@ -680,8 +793,8 @@ feature 'Campaigns', js: true do
 
       expect(ListExport.last).to have_rows([
         ['NAME', 'DESCRIPTION', 'FIRST EVENT', 'LAST EVENT', 'ACTIVE STATE'],
-        ['Cacique FY13', 'Test campaign for guaro Cacique', '2013-08-21T10:00', '2013-08-28T11:00', 'Active'],
-        ['New Brand Campaign', 'Campaign for another brand', '2013-09-18T11:00', '2013-09-18T11:00', 'Active']
+        ['Cacique FY13', 'Test campaign for guaro Cacique', '08/21/2013 10:00', '08/28/2013 11:00', 'Active'],
+        ['New Brand Campaign', 'Campaign for another brand', '09/18/2013 11:00', '09/18/2013 11:00', 'Active']
       ])
     end
 

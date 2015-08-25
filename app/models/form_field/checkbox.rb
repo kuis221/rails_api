@@ -15,7 +15,7 @@
 #  kpi_id         :integer
 #
 
-class FormField::Checkbox < FormField
+class FormField::Checkbox < FormField::Hashed
   def field_options(result)
     {
       as: :check_boxes,
@@ -40,12 +40,22 @@ class FormField::Checkbox < FormField
   end
 
   def format_csv(result)
-    unless result.value.nil? || result.value.empty?
-      selected = result.value.map(&:to_i)
-      options_for_input.select { |r| selected.include?(r[1].to_i) }.map do |v|
-        v[0]
-      end.join(',')
-    end
+    return if result.value.nil? || result.value.empty?
+    selected = result.value.map(&:to_i)
+    options_for_input.select { |r| selected.include?(r[1].to_i) }.map do |v|
+      v[0]
+    end.join(',')
+  end
+
+  def format_json(result)
+    super.merge!(
+      value: result ? result.value || [] : nil,
+      segments: options_for_input.map do |s|
+                  { id: s[1],
+                    text: s[0],
+                    value: result ? result.value.include?(s[1]) : false }
+                end
+    )
   end
 
   def is_hashed_value?
@@ -76,5 +86,11 @@ class FormField::Checkbox < FormField
         result.errors.add :value, :invalid  # If a invalid key was given
       end
     end
+  end
+
+  def grouped_results(campaign, event_scope)
+    events = form_field_results.for_event_campaign(campaign).merge(event_scope)
+    result = events.map { |event| event.hash_value }.compact
+    results_for_percentage_chart_for_hash(result)
   end
 end

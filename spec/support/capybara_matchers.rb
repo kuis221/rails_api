@@ -221,6 +221,8 @@ RSpec::Matchers.define :have_notification do |text, filter = {}|
       @errors.push "#{filter[:count]} #{filter[:count] == 1 ? 'notification' : 'notifications'} with text \"#{text}\" but have #{notifications.count}"
     end
 
+    page.find('header li#notifications a.dropdown-toggle').trigger('click') # Close it
+
     @errors.empty?
   end
 

@@ -15,7 +15,7 @@
 #  kpi_id         :integer
 #
 
-class FormField::Summation < FormField
+class FormField::Summation < FormField::Hashed
   MIN_OPTIONS_ALLOWED = 2
   def field_options(result)
     {
@@ -46,18 +46,53 @@ class FormField::Summation < FormField
   end
 
   def format_html(result)
-    if result.value
-      total = 0
-      (options.map do |option|
-        total += (result.value[option.id.to_s].to_i || 0)
-        "<span>#{result.value[option.id.to_s] || 0}</span> #{option.name}"
-      end.join('<br /> ') +
-      "<br/><span>#{total}</span> TOTAL"
-      ).html_safe
-    end
+    return unless result.value
+    total = 0
+    (options.map do |option|
+      total += (result.value[option.id.to_s].to_i || 0)
+      "<span>#{result.value[option.id.to_s] || 0}</span> #{option.name}"
+    end.join('<br /> ') +
+    "<br/><span>#{total}</span> TOTAL"
+    ).html_safe
+  end
+
+  def format_json(result)
+    super.merge(
+      value: result ? result.value.map { |s| s[1].to_f }.reduce(0, :+) : nil,
+      segments: options_for_input(result).map do |s|
+        { id: s[1],
+          text: s[0],
+          value: result ? result.value[s[1].to_s] : nil }
+      end
+    )
   end
 
   def min_options_allowed
     MIN_OPTIONS_ALLOWED
+  end
+
+  def grouped_results(campaign, event_scope)
+    events = form_field_results.for_event_campaign(campaign).merge(event_scope)
+    result = events.map { |event| event.hash_value }.compact
+    results_for_hash_values(result)
+  end
+
+  def csv_results(campaign, event_scope, hash_result)
+    events = form_field_results.for_event_campaign(campaign).merge(event_scope)
+    options.each do |field_option|
+      hash_result[:titles] << "#{name} - #{field_option.name}"
+    end
+    events.each do |event|
+      value = event.hash_value.nil? ? "" : event.hash_value
+      hash_result[event.resultable_id].concat(values_by_option(value)) unless hash_result[event.resultable_id].nil?
+    end
+    hash_result
+  end
+
+  def values_by_option(hash_values)
+    options.inject([]) do |memo, field_option|
+      memo << hash_values[field_option.id.to_s]
+      memo
+    end
   end
 end

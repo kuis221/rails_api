@@ -9,6 +9,8 @@ class ContactEventsController < InheritedResources::Base
 
   custom_actions collection: [:add, :list]
 
+  before_action :copy_of_destroyed, only: [:destroy]
+
   defaults resource_class: ContactEvent
 
   load_and_authorize_resource
@@ -22,12 +24,25 @@ class ContactEventsController < InheritedResources::Base
   def add
   end
 
+  def create
+    create! do |success, failure|
+      success.js do
+        session["create_count_#{params[:form_id]}"] ||= 0
+        @count = session["create_count_#{params[:form_id]}"] += 1
+      end
+    end
+  end
+
   def list
     @contacts = ContactEvent.contactables_for_event(parent, params[:term])
     render layout: false
   end
 
   protected
+
+  def copy_of_destroyed
+    @contact = resource
+  end
 
   def build_resource(*args)
     @contact_event ||= super
@@ -45,7 +60,7 @@ class ContactEventsController < InheritedResources::Base
         :id, :contactable_id, :contactable_type,
         { contactable_attributes: [
           :id, :street1, :street2, :city, :company_id, :country, :email, :first_name,
-          :last_name, :phone_number, :state, :title, :zip_code] }])[:contact_event]
+          :last_name, :phone_number, :state, :company_name, :title, :zip_code] }])[:contact_event]
   end
 
   def modal_dialog_title

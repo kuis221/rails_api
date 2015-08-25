@@ -2,9 +2,9 @@ require 'rails_helper'
 require 'sunspot_test/rspec'
 
 describe VenuesController, type: :controller do
-  let(:user){ sign_in_as_user }
-  let(:company){ user.companies.first }
-  let(:company_user){ user.current_company_user }
+  let(:user) { sign_in_as_user }
+  let(:company) { user.companies.first }
+  let(:company_user) { user.current_company_user }
 
   before { user }
 
@@ -87,13 +87,47 @@ describe VenuesController, type: :controller do
   end
 
   describe "GET 'index'" do
-    it 'queue the job for export the list' do
+    it 'queue the job for export the list to CSV' do
       expect do
-        xhr :get, :index, format: :xls
+        xhr :get, :index, format: :csv
       end.to change(ListExport, :count).by(1)
       export = ListExport.last
       expect(ListExportWorker).to have_queued(export.id)
+      expect(export.controller).to eql('VenuesController')
+      expect(export.export_format).to eql('csv')
+    end
+
+    it 'queue the job for export the list to PDF' do
+      expect do
+        xhr :get, :index, format: :pdf
+      end.to change(ListExport, :count).by(1)
+      export = ListExport.last
+      expect(ListExportWorker).to have_queued(export.id)
+      expect(export.controller).to eql('VenuesController')
+      expect(export.export_format).to eql('pdf')
     end
   end
 
+  describe "GET 'list_export'", search: true do
+    it 'should return an empty book with the correct headers' do
+      expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
+      ResqueSpec.perform_all(:export)
+      expect(ListExport.last).to have_rows([
+        ['VENUE NAME', 'TD LINX CODE', 'ADDRESS', 'CITY', 'STATE', 'SCORE', 'EVENTS COUNT', 'PROMO HOURS COUNT', 'TOTAL $ SPENT']
+      ])
+    end
+
+    it 'should include the results' do
+      venue = create(:venue, company: company, place: create(:place, is_custom_place: true, td_linx_code: '5155520', reference: nil))
+      Sunspot.commit
+
+      expect { xhr :get, 'index', scope: 'user', format: :csv }.to change(ListExport, :count).by(1)
+      expect(ListExportWorker).to have_queued(ListExport.last.id)
+      ResqueSpec.perform_all(:export)
+      expect(ListExport.last).to have_rows([
+        ['VENUE NAME', 'TD LINX CODE', 'ADDRESS', 'CITY', 'STATE', 'SCORE', 'EVENTS COUNT', 'PROMO HOURS COUNT', 'TOTAL $ SPENT'],
+        [venue.place.name, '5155520', '123 My Street', 'New York City', 'NY', '90', '1', '9.5', '$1,000.00']
+      ])
+    end
+  end
 end

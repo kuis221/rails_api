@@ -572,7 +572,7 @@ describe AutocompleteController, type: :controller, search: true do
       get 'show', id: 'results_photos', format: :json
       expect(response).to be_success
 
-      expect(json.map { |b| b['label'] }).to eq(['Campaigns', 'Brands', 'Places', 'Active State'])
+      expect(json.map { |b| b['label'] }).to eq(['Campaigns', 'Brands', 'Places', 'People', 'Active State'])
     end
 
     it 'returns the campaigns in the Campaigns Bucket' do

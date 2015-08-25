@@ -1,14 +1,18 @@
+require 'net/ftp'
+
 module JbbFile
   class Base
     COMPANY_ID = 2
 
     attr_accessor :ftp_username, :ftp_password, :ftp_server, :ftp_folder,
-                  :mailer, :invalid_files
+                  :mailer, :invalid_files, :invalid_columns
 
     def valid_format?(file)
       valid = false
       each_sheet(file) do |sheet|
         unless (self.class::VALID_COLUMNS - sheet.row(1)).empty?
+          @invalid_columns = sheet.row(1) - self.class::VALID_COLUMNS
+          Rails.logger.info "Invalid columns: #{self.class::VALID_COLUMNS - sheet.row(1)}"
           return false
         end
         valid = true
@@ -17,8 +21,10 @@ module JbbFile
     end
 
     def download_files(dir)
+      puts "Downloading files"
       files = find_files
       unless files.any?
+        puts "No files found #{files}"
         file_not_fould
         return files
       end
@@ -32,7 +38,7 @@ module JbbFile
         end
       end.compact
     ensure
-      p "closing connection"
+      p 'closing connection'
       close_connection
     end
 
@@ -40,9 +46,29 @@ module JbbFile
       begin
         ftp_connecion.mkdir('OLD') unless ftp_connecion.list("*").any? { |dir| dir.match(/\sOLD$/) }
       rescue Net::FTPPermError
-        p "Archive directory already exists"
+        p 'Archive directory already exists'
       end
-      ftp_connecion.rename(file, "OLD/#{file}")
+      dest_file = "OLD/#{file}"
+      i = 0
+      begin
+        ftp_connecion.rename(file, dest_file)
+      rescue Net::FTPPermError => e
+        i += 1
+        dest_file = "OLD/#{File.basename(file, '.xlsx')}-#{i}.xlsx"
+        if i < 100
+          retry
+        else
+          raise e
+        end
+      end
+
+    rescue Errno::ECONNRESET, Errno::ENOTCONN
+      puts "Archive file #{file} failed, retrying..."
+      close_connection
+      sleep 1
+      retry
+    ensure
+      close_connection
     end
 
     def get_file(dir, file)
@@ -70,12 +96,12 @@ module JbbFile
 
     def close_connection
       return unless @ftp_connecion
-      @ftp_connecion.close
+      @ftp_connecion.close rescue true
       @ftp_connecion = nil
     end
 
     def invalid_format
-      mailer.invalid_format(self.invalid_files).deliver
+      mailer.invalid_format(self.invalid_files, self::class::VALID_COLUMNS, @invalid_columns).deliver
       false
     end
 
@@ -84,16 +110,28 @@ module JbbFile
       @ftp_connecion ||= Net::FTP.new(ftp_server).tap do |ftp|
         ftp.passive = true
         ftp.login(ftp_username, ftp_password)
-        ftp.chdir(ftp_folder) if ftp_folder
+        puts "Changing directory to #{self.ftp_folder}" if self.ftp_folder
+        Rails.logger.info "Changing directory to #{self.ftp_folder}" if self.ftp_folder
+        ftp.chdir(self.ftp_folder) if self.ftp_folder
         ftp.binary = true
         ftp
       end
+    rescue Errno::ECONNRESET
+      @ftp_connecion = nil
+      sleep 1
+      retry
     end
 
     def find_files
-      file = ftp_connecion.list('*xlsx').map do |l|
-        l.split(/\s+/, 4)
-      end.map{ |f| f[3] }
+      puts "Getting list of file from #{ftp_connecion.pwd}"
+      Rails.logger.info "Getting list of file from #{ftp_connecion.pwd}"
+      ftp_connecion.nlst('*xlsx')
+    rescue
+      []
+    end
+
+    def company
+      @company ||= Company.find(COMPANY_ID)
     end
   end
 end

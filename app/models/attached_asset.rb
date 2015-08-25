@@ -2,26 +2,31 @@
 #
 # Table name: attached_assets
 #
-#  id                :integer          not null, primary key
-#  file_file_name    :string(255)
-#  file_content_type :string(255)
-#  file_file_size    :integer
-#  file_updated_at   :datetime
-#  asset_type        :string(255)
-#  attachable_id     :integer
-#  attachable_type   :string(255)
-#  created_by_id     :integer
-#  updated_by_id     :integer
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
-#  active            :boolean          default(TRUE)
-#  direct_upload_url :string(255)
-#  processed         :boolean          default(FALSE), not null
-#  rating            :integer          default(0)
-#  folder_id         :integer
+#  id                    :integer          not null, primary key
+#  file_file_name        :string(255)
+#  file_content_type     :string(255)
+#  file_file_size        :integer
+#  file_updated_at       :datetime
+#  asset_type            :string(255)
+#  attachable_id         :integer
+#  attachable_type       :string(255)
+#  created_by_id         :integer
+#  updated_by_id         :integer
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  active                :boolean          default(TRUE)
+#  direct_upload_url     :string(255)
+#  rating                :integer          default(0)
+#  folder_id             :integer
+#  status                :integer          default(0)
+#  processing_percentage :integer          default(0)
 #
 
 class AttachedAsset < ActiveRecord::Base
+  # Defines the method do_search
+  include SolrSearchable
+  include EventBaseSolrSearchable
+
   track_who_does_it
   has_and_belongs_to_many :tags, -> { order 'name ASC' },
                           autosave: true,
@@ -32,6 +37,8 @@ class AttachedAsset < ActiveRecord::Base
   belongs_to :folder, class_name: 'DocumentFolder'
 
   attr_accessor :new_name
+
+  enum status: { queued: 0, processing: 1, processed: 2,  failed: 3 }
 
   has_attached_file :file,
       PAPERCLIP_SETTINGS.merge(
@@ -64,30 +71,36 @@ class AttachedAsset < ActiveRecord::Base
   before_validation :set_upload_attributes
 
   after_commit :queue_processing
+  after_save    :update_active_photos_count, if: -> { self.attachable.is_a?(Event) && self.photo? }
+  after_destroy :update_active_photos_count, if: -> { self.attachable.is_a?(Event) && self.photo? }
   after_update :rename_existing_file, if: :processed?
   before_post_process :post_process_required?
 
-  before_validation :check_if_file_updated
-
   validates :attachable, presence: true
 
-  validates :direct_upload_url, allow_nil: true,
+  validates :direct_upload_url, allow_nil: true, on: :create,
                                 uniqueness: true,
                                 format: { with: DIRECT_UPLOAD_URL_FORMAT }
   validates :direct_upload_url, presence: true, unless: :file_file_name
 
-  delegate :company_id, to: :attachable
+  validate :max_event_photos, on: :create, if: proc { |a| a.attachable.is_a?(Event) && a.photo? }
 
-  searchable if: :processed? do
+  delegate :company_id, :update_active_photos_count, to: :attachable
+
+  searchable if: proc { |asset| asset.attachable_type == 'Event' }  do
     string :status
     string :asset_type
     string :attachable_type
 
     string :file_file_name
     integer :file_file_size
-    boolean :processed
+    boolean :processed do
+      processed?
+    end
 
-    integer :attachable_id
+    integer :event_id do
+      attachable_id
+    end
 
     boolean :active
 
@@ -96,41 +109,17 @@ class AttachedAsset < ActiveRecord::Base
     end
     integer :rating
     time :created_at
-    time :start_at, trie: true do
-      attachable.start_at if attachable_type == 'Event'
-    end
-    time :end_at, trie: true do
-      attachable.end_at if attachable_type == 'Event'
-    end
 
-    integer :company_id do
-      attachable.company_id if attachable.present?
-    end
-
-    integer :place_id do
-      attachable.place_id if attachable_type == 'Event'
-    end
-    string :place_name do
-      attachable.place_name if attachable_type == 'Event'
-    end
-
-    integer :campaign_id do
-      attachable.campaign_id if attachable_type == 'Event'
-    end
-    string :campaign do
-      attachable.campaign_id.to_s + '||' + attachable.campaign_name.to_s if attachable_type == 'Event' && attachable.campaign_id
-    end
-    string :campaign_name do
-      attachable.campaign_name if attachable_type == 'Event'
-    end
-
-    latlon(:location) do
-      Sunspot::Util::Coordinates.new(attachable.place_latitude, attachable.place_latitude) if attachable_type == 'Event' && attachable.place_id
-    end
-
-    integer :location, multiple: true do
-      attachable.locations_for_index if attachable_type == 'Event'
-    end
+    join(:location, target: Event, type: :integer, join: { from: :id, to: :event_id }, as: :location_im)
+    join(:place_id, target: Event, type: :integer, join: { from: :id, to: :event_id }, as: :place_id_i)
+    join(:company_id, target: Event, type: :integer, join: { from: :id, to: :event_id }, as: :company_id_i)
+    join(:user_ids, target: Event, type: :integer, join: { from: :id, to: :event_id }, as: :user_ids_im)
+    join(:team_ids, target: Event, type: :integer, join: { from: :id, to: :event_id }, as: :team_ids_im)
+    join(:campaign_id, target: Event, type: :integer, join: { from: :id, to: :event_id }, as: :campaign_id_is)
+    join(:start_at, target: Event, type: :time, join: { from: :id, to: :event_id }, as: :start_at_dts)
+    join(:end_at, target: Event, type: :time, join: { from: :id, to: :event_id }, as: :end_at_dts)
+    join(:local_start_at, target: Event, type: :time, join: { from: :id, to: :event_id }, as: :local_start_at_dts)
+    join(:local_end_at, target: Event, type: :time, join: { from: :id, to: :event_id }, as: :local_end_at_dts)
   end
 
   def activate!
@@ -150,7 +139,7 @@ class AttachedAsset < ActiveRecord::Base
   end
 
   def file_extension
-    File.extname(file_file_name)[1..-1]
+    File.extname(file_file_name)[1..-1] if file_file_name
   end
 
   # Store an unescaped version of the escaped URL that Amazon returns from direct upload.
@@ -184,69 +173,6 @@ class AttachedAsset < ActiveRecord::Base
   end
 
   class << self
-    # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
-    def do_search(params, include_facets = false)
-      options = { include: [{ attachable: [:campaign, :place] }, :tags] }
-      solr_search(options) do
-        with :company_id, params[:company_id]
-        with :processed, true
-
-        company_user = params[:current_company_user]
-        if company_user.present?
-          unless company_user.role.is_admin?
-            case company_user.role.permission_for(params[:search_permission] || :index_photos, params[:search_permission_class] || Event).mode
-            when 'campaigns'
-              with :campaign_id, company_user.accessible_campaign_ids + [0]
-            when 'none'
-              with :campaign_id, 0
-            end
-
-            any_of do
-              locations = company_user.accessible_locations
-              places_ids = company_user.accessible_places
-              with(:place_id, places_ids + [0])
-              with(:location, locations + [0])
-            end
-          end
-        end
-
-        if params[:start_date].present? && params[:end_date].present?
-          d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
-          d2 = Timeliness.parse(params[:end_date], zone: :current).end_of_day
-          with :start_at, d1..d2
-        elsif params[:start_date].present?
-          d = Timeliness.parse(params[:start_date], zone: :current)
-          with :start_at, d.beginning_of_day..d.end_of_day
-        end
-        if params[:event_id].present?
-          with(:attachable_id, params[:event_id])
-          with(:attachable_type, 'Event')
-        end
-        with(:tag, params[:tag]) if params.key?(:tag) && params[:tag].present?
-        with(:rating, params[:rating]) if params.key?(:rating) && params[:rating].present?
-        with(:campaign_id, params[:campaign]) if params.key?(:campaign) && params[:campaign].present?
-        with(:place_id, params[:place_id]) if params.key?(:place_id) && params[:place_id].present?
-        with(:asset_type, params[:asset_type]) if params.key?(:asset_type) && params[:asset_type].present?
-        with(:status, params[:status]) if params.key?(:status) && params[:status].present?
-        if params.key?(:brand) && params[:brand].present?
-          with 'campaign_id', Campaign.select('campaigns.id').joins(:brands).where(brands: { id: params[:brand] }).map(&:id)
-        end
-
-        with(:location, params[:location]) if params.key?(:location) && params[:location].present?
-
-        with(:location, Area.where(id: params[:area]).map { |a| a.locations.map(&:id) }.flatten + [0]) if params[:area].present?
-
-        if include_facets
-          facet :campaign
-          facet :place_id
-          facet :status
-        end
-
-        order_by(params[:sorting] || :created_at, params[:sorting_dir] || :desc)
-        paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
-      end
-    end
-
     def compress(ids)
       assets_ids = ids.sort.map(&:to_i)
       download = AssetDownload.find_or_create_by_assets_ids(assets_ids, assets_ids: assets_ids)
@@ -259,8 +185,20 @@ class AttachedAsset < ActiveRecord::Base
   def move_uploaded_file
     direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
     paperclip_file_path = file.path(:original).sub(/\A\//, '')
+    return if file.s3_bucket.objects[paperclip_file_path].exists? ||
+              !file.s3_bucket.objects[direct_upload_url_data[:path]].exists?
     file.s3_bucket.objects[paperclip_file_path].copy_from(
       direct_upload_url_data[:path], acl: :public_read)
+  end
+
+  def self.copy_file_to_uploads_folder(url)
+    path = CGI.unescape(URI.parse(URI.encode(url)).path.gsub("/#{ENV['S3_BUCKET_NAME']}/", ''))
+    paperclip_file_path = "uploads/#{Time.now.to_i}-#{rand(5000)}/#{File.basename(path)}"
+    AWS::S3.new.buckets[ENV['S3_BUCKET_NAME']].objects[paperclip_file_path].copy_from(
+      path, acl: :public_read)
+    "https://s3.amazonaws.com/#{ENV['S3_BUCKET_NAME']}/#{paperclip_file_path}"
+  rescue AWS::S3::Errors::NoSuchKey
+    nil
   end
 
   # Rename existing file in S3
@@ -280,15 +218,19 @@ class AttachedAsset < ActiveRecord::Base
 
   # Final upload processing step
   def transfer_and_cleanup
-    @processing = true
+    processing!
     if post_process_required?
       file.reprocess!
     end
-    self.processed = true
+    self.processing_percentage = 100
 
     direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
     file.s3_bucket.objects[direct_upload_url_data[:path]].delete if save
-    @processing = false
+    processed!
+  end
+
+  def photo?
+    asset_type == 'photo'
   end
 
   protected
@@ -298,13 +240,6 @@ class AttachedAsset < ActiveRecord::Base
     if /\A(image|(x-)?application)\/(bmp|gif|jpeg|jpg|pjpeg|png|x-png)\z/.match(file_content_type).nil?
       errors.add(:file, 'is not valid format')
     end
-  end
-
-  def check_if_file_updated
-    if direct_upload_url.present? && self.direct_upload_url_changed?
-      self.processed = false
-    end
-    true
   end
 
   # Determines if file requires post-processing (image resizing, etc)
@@ -335,6 +270,7 @@ class AttachedAsset < ActiveRecord::Base
       sleep(1)
       retry
     else
+      self.fail!
       raise e
     end
   rescue AWS::S3::Errors::NoSuchKey
@@ -342,7 +278,7 @@ class AttachedAsset < ActiveRecord::Base
 
   # Queue file processing
   def queue_processing
-    return if processed? || @processing || direct_upload_url.nil?
+    return if !queued? || direct_upload_url.nil?
 
     move_uploaded_file
     if post_process_required?
@@ -350,5 +286,13 @@ class AttachedAsset < ActiveRecord::Base
     else
       transfer_and_cleanup
     end
+    true
+  end
+
+  def max_event_photos
+    return true unless attachable.campaign.range_module_settings?('photos')
+    max = attachable.campaign.module_setting('photos', 'range_max')
+    return true if max.blank? || attachable.photos.active.count < max.to_i
+    errors.add(:base, I18n.translate('instructive_messages.execute.photo.add_exceeded', count: max.to_i))
   end
 end

@@ -23,10 +23,16 @@ class FormField::TextArea < FormField
       field_id: id,
       options: settings,
       required: required,
+      hint: range_message,
+      hint_html: {
+        id: "hint-#{id}",
+        class: 'range-help-block'
+      },
       input_html: {
         value: result.value,
         class: field_classes,
         data: field_data,
+        placeholder: 'Type your text here...',
         required: (self.required? ? 'required' : nil)
       }
     }
@@ -42,6 +48,7 @@ class FormField::TextArea < FormField
       data['range-format'] = settings['range_format'] if settings['range_format'].present?
       data['range-min'] = settings['range_min'] if settings['range_min'].present?
       data['range-max'] = settings['range_max'] if settings['range_max'].present?
+      data['field-id'] = id
     end
     data
   end

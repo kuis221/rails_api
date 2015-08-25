@@ -358,7 +358,7 @@ class Api::V1::VenuesController < Api::V1::FilteredController
   EOS
   def photos
     authorize! :view_photos, resource
-    @photos = resource.photos
+    render json: resource.photos
   end
 
   api :GET, '/api/v1/venues/:id/comments', 'Get a list of comments for a Venue'
@@ -407,6 +407,7 @@ class Api::V1::VenuesController < Api::V1::FilteredController
 
   api :GET, '/api/v1/venues/search', 'Search for a list of venues matching a term'
   param :term, String, desc: 'The search term', required: true
+  param :location, String, desc: 'The user location to sort results by proximity. Should be in the format "latitude,longitude"', required: false
   description <<-EOS
     Returns a list of venues matching the search +term+ ordered by relevance limited to 10 results.
 
@@ -428,8 +429,10 @@ class Api::V1::VenuesController < Api::V1::FilteredController
     }]
   EOS
   def search
-    authorize! :index, Venue
-    @venues = Place.combined_search(company_id: current_company.id, q: params[:term], search_address: true)
+    authorize! :search, Place
+    @venues = Place.combined_search(
+      company_id: current_company.id, location: params[:location],
+      q: params[:term], search_address: true)
 
     render json: @venues.first(10)
   end
@@ -490,7 +493,8 @@ class Api::V1::VenuesController < Api::V1::FilteredController
   protected
 
   def permitted_params
-    params.permit(venue: [:name, :types, :street_number, :route, :city, :state, :zipcode, :country])[:venue]
+    params.permit(venue: [:name, :types, :street_number, :route, :city,
+                          :state, :zipcode, :country])[:venue]
   end
 
   def permitted_search_params

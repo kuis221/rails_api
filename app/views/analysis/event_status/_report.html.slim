@@ -1,0 +1,16 @@
+#kpis-trends-module
+  .details_box
+    - if @data.count > 0
+      = render 'report_event_status'
+    - else
+      .blank-state
+        h5.text-center
+          - if params['report'].try(:[], 'group_by') == 'place'
+            = I18n.translate(:'blank_states.results_event_status.filters.line3')
+          - elsif params['report'].try(:[], 'group_by') == 'staff'
+            = I18n.translate(:'blank_states.results_event_status.filters.line4')
+          - else
+           = I18n.translate(:'blank_states.results_event_status.filters.line1')
+        p.text-center = I18n.translate(:'blank_states.results_event_status.filters.line2')
+        .blank-state-icon
+          = image_tag 'blank-search.png'

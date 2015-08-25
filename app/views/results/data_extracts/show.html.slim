@@ -1,0 +1,47 @@
+.data_extract_top_details
+  .details_box
+    .pull-left
+      h4.new-report-title = resource.name.upcase + ' REPORT: ' + resource.description
+- content_for :alerts
+  div.collection-list-description
+    .filter-label
+.sidebar.collapsed#resource-filter-column
+  #collection-list-filters
+.main.data-extract
+  .data-extract-buttons
+    .export-xls.pull-right.data-extract-margin-bottom
+      .dropdown.btn-download
+        a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+          i.icon-download
+          i.icon-arrow-down-small
+        ul#download-status-btn.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+          li
+            a.xlsx-download-link href="#" role="menuitem" data-url="#{results_data_extract_path(resource, format: :csv)}"
+              | Download as CSV
+  .data-extract-box
+    table#extract-table.data-extract-table
+      = render_table_cols resource.columns_with_names, 3, resource.default_sort_by, resource.default_sort_dir
+      tbody
+      
+javascript:
+  $('#collection-list-filters').filteredList({
+    'source': '#{items_results_data_extracts_path(id: resource.id).html_safe}',
+    'filtersUrl': '#{filter_url(resource.filters_scope)}',
+    'listContainer' : '#extract-table tbody',
+    'includeCalendars': true,
+    'selectDefaultDate': false,
+    'selectDefaultDateRange': false,
+    'ytdDatesRange': '#{current_company.ytd_dates_range}',
+    'includeAutoComplete': true,
+    'autoCompletePath': '#{autocomplete_path(resource.filters_scope, format: :json)}',
+    'onPageLoaded': function() {
+      scrollerApi = $('.data-extract-box').data('jsp')
+      scrollerApi.destroy();
+      $('.data-extract-box').jScrollPane();
+    },
+    placeholderElement: function(message) {
+      $('<tr><td></td></tr>').appendTo($('table#extract-table tbody')).find('td').attr('colspan', $('table#extract-table thead th').length).addClass('placeholder-empty-state').html(message);
+    }
+  });
+
+  $('.data-extract-box').jScrollPane();

@@ -32,18 +32,20 @@ feature 'Brand Ambassadors Visits' do
 
     before do
       create(:brand_ambassadors_visit, company: company,
-        start_date: today, end_date: (today + 1.day).to_s(:slashes),
-        city: 'New York', area: area, campaign: campaign,
-        visit_type: 'market_visit', company_user: company_user,
-        description: 'The first visit description', active: true)
+                                       start_date: today, end_date: (today + 1.day).to_s(:slashes),
+                                       city: 'New York', area: area, campaign: campaign,
+                                       visit_type: 'market_visit', company_user: company_user,
+                                       description: 'The first visit description', active: true)
       create(:brand_ambassadors_visit, company: company,
-        start_date: (today + 2.days).to_s(:slashes), end_date: (today + 3.days).to_s(:slashes),
-        city: 'New York', area: area, campaign: campaign,
-        visit_type: 'brand_program', company_user: company_user, active: true)
+                                       start_date: (today + 2.days).to_s(:slashes),
+                                       end_date: (today + 3.days).to_s(:slashes),
+                                       city: 'New York', area: area, campaign: campaign,
+                                       visit_type: 'brand_program', company_user: company_user, active: true)
       create(:brand_ambassadors_visit, company: company,
-        start_date: (today + 4.days).to_s(:slashes), end_date: (today + 5.days).to_s(:slashes),
-        city: nil, area: nil, campaign: campaign,
-        visit_type: 'pto', company_user: company_user, active: true)
+                                       start_date: (today + 4.days).to_s(:slashes),
+                                       end_date: (today + 5.days).to_s(:slashes),
+                                       city: nil, area: nil, campaign: campaign,
+                                       visit_type: 'pto', company_user: company_user, active: true)
       Sunspot.commit
     end
 
@@ -54,7 +56,7 @@ feature 'Brand Ambassadors Visits' do
 
       # First Row
       within resource_item 1 do
-        expect(page).to have_content('Market Visit')
+        expect(page).to have_content('Formal Market Visit')
         expect(page).to have_content('My Area (New York)')
         expect(page).to have_content(company_user.full_name)
         expect(page).to have_content("#{month_name} 18")
@@ -77,12 +79,12 @@ feature 'Brand Ambassadors Visits' do
       end
     end
 
-    scenario 'should be able to export as xls' do
+    scenario 'should be able to export as CSV' do
       visit brand_ambassadors_root_path
       choose_predefined_date_range 'Current month'
 
       click_js_link 'Download'
-      click_js_link 'Download as XLS'
+      click_js_link 'Download as CSV'
 
       within visible_modal do
         expect(page).to have_content('We are processing your request, the download will start soon...')
@@ -93,9 +95,13 @@ feature 'Brand Ambassadors Visits' do
 
       expect(ListExport.last).to have_rows([
         ['START DATE', 'END DATE', 'EMPLOYEE', 'AREA', 'CITY', 'CAMPAIGN', 'TYPE', 'DESCRIPTION'],
-        ["#{year_number}-#{month_number}-18T00:00", "#{year_number}-#{month_number}-19T00:00", 'Test User', 'My Area', 'New York', 'My Campaign', 'Market Visit', 'The first visit description'],
-        ["#{year_number}-#{month_number}-20T00:00", "#{year_number}-#{month_number}-21T00:00", 'Test User', 'My Area', 'New York', 'My Campaign', 'Brand Program', 'Visit description'],
-        ["#{year_number}-#{month_number}-22T00:00", "#{year_number}-#{month_number}-23T00:00", 'Test User', nil, nil, 'My Campaign', 'PTO', 'Visit description']
+        ["#{month_number}/18/#{year_number}", "#{month_number}/19/#{year_number}",
+         'Test User', 'My Area', 'New York', 'My Campaign', 'Formal Market Visit',
+         'The first visit description'],
+        ["#{month_number}/20/#{year_number}", "#{month_number}/21/#{year_number}",
+         'Test User', 'My Area', 'New York', 'My Campaign', 'Brand Program', 'Visit description'],
+        ["#{month_number}/22/#{year_number}", "#{month_number}/23/#{year_number}",
+         'Test User', nil, nil, 'My Campaign', 'PTO', 'Visit description']
       ])
     end
 
@@ -118,11 +124,11 @@ feature 'Brand Ambassadors Visits' do
       export = ListExport.last
       # Test the generated PDF...
       reader = PDF::Reader.new(open(export.file.url))
-      reader.pages.each do |page|
+      reader.pages.each do |pdf_page|
         # PDF to text seems to not always return the same results
         # with white spaces, so, remove them and look for strings
         # without whitespaces
-        text = page.text.gsub(/[\s\n]/, '')
+        text = pdf_page.text.gsub(/[\s\n]/, '')
         expect(text).to include '3visits'
         expect(text).to include 'MarketVisit'
         expect(text).to include 'BrandProgram'
@@ -153,37 +159,38 @@ feature 'Brand Ambassadors Visits' do
   end
 
   shared_examples_for 'a user that can filter the list of visits' do
-    let(:today) { Time.zone.local(Time.now.year, Time.now.month, 18, 12, 00) }
+    let(:today) { Time.zone.local(2015, 7, 18, 12, 00) }
     let(:another_user) { create(:company_user, user: create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: company) }
     let(:area1) { create(:area, name: 'California', company: company) }
     let(:area2) { create(:area, name: 'Texas', company: company) }
-    let(:place1) { create(:place, name: 'Place 1', city: 'Los Angeles', state: 'CA', country: 'US', types: %w(political locality)) }
-    let(:place2) { create(:place, name: 'Place 2', city: 'Austin', state: 'TX', country: 'US', types: %w(political locality)) }
+    let(:place1) { create(:place, name: 'Place 1', city: 'Los Angeles', state: 'California', country: 'US') }
+    let(:place2) { create(:place, name: 'Place 2', city: 'Austin', state: 'Texas', country: 'US') }
     let(:campaign1) { create(:campaign, name: 'Campaign FY2012', company: company) }
     let(:campaign2) { create(:campaign, name: 'Another Campaign April 03', company: company) }
     let(:ba_visit1) do
-      create(:brand_ambassadors_visit, company: company,
-                      start_date: today, end_date: (today + 1.day).to_s(:slashes),
-                      city: 'Los Angeles', area: area1, campaign: campaign,
-                      visit_type: 'brand_program', description: 'Visit1 description',
-                      company_user: company_user, active: true)
+      create(:brand_ambassadors_visit,
+             company: company,
+             start_date: today, end_date: (today + 1.day).to_s(:slashes),
+             city: 'Los Angeles', area: area1, campaign: campaign,
+             visit_type: 'brand_program', description: 'Visit1 description',
+             company_user: company_user, active: true)
     end
     let(:ba_visit2) do
-      create(:brand_ambassadors_visit, company: company,
-                      start_date: (today + 1.day).to_s(:slashes), end_date: (today + 4.day).to_s(:slashes),
-                      city: 'Austin', area: area2, campaign: campaign,
-                      visit_type: 'market_visit', description: 'Visit2 description',
-                      company_user: another_user, active: true)
+      create(:brand_ambassadors_visit,
+             company: company, city: 'Austin', area: area2, campaign: campaign,
+             start_date: (today + 1.day).to_s(:slashes), end_date: (today + 4.day).to_s(:slashes),
+             visit_type: 'market_visit', description: 'Visit2 description',
+             company_user: another_user, active: true)
     end
     let(:event1) do
       create(:event, start_date: today.to_s(:slashes), company: company, active: true,
-                      end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
-                      campaign: campaign1, place: place1)
+                     end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
+                     campaign: campaign1, place: place1)
     end
     let(:event2) do
       create(:event, start_date: (today + 1.day).to_s(:slashes), company: company, active: true,
-                      end_date: (today + 2.day).to_s(:slashes), start_time: '11:00am',  end_time: '12:00pm',
-                      campaign: campaign2, place: place2)
+                     end_date: (today + 2.day).to_s(:slashes), start_time: '11:00am',
+                     end_time: '12:00pm', campaign: campaign2, place: place2)
     end
 
     scenario 'should allow filter visits and see the correct message' do
@@ -192,11 +199,10 @@ feature 'Brand Ambassadors Visits' do
         au = create(:city, name: 'Austin', state: 'Texas', country: 'US')
         area1.places << [la, au]
         area2.places << [la, au]
+        Sunspot.index [area1, area2]
         company_user.areas << [area1, area2]
-        company_user.places << place1
-        company_user.places << place2
-        company_user.campaigns << campaign1
-        company_user.campaigns << campaign2
+        company_user.places << [place1, place2]
+        company_user.campaigns << [campaign1, campaign2]
         event1.users << another_user
         ba_visit1
         ba_visit2
@@ -209,7 +215,7 @@ feature 'Brand Ambassadors Visits' do
 
         within '#visits-list' do
           expect(page).to have_content('Brand Program')
-          expect(page).to have_content('Market Visit')
+          expect(page).to have_content('Formal Market Visit')
         end
 
         add_filter 'CAMPAIGNS', 'My Campaign'
@@ -231,14 +237,14 @@ feature 'Brand Ambassadors Visits' do
 
         within '#visits-list' do
           expect(page).to have_content('Brand Program')
-          expect(page).to have_no_content('Market Visit')
+          expect(page).to have_no_content('Formal Market Visit')
         end
 
         add_filter 'BRAND AMBASSADORS', 'Roberto Gomez'
 
         within '#visits-list' do
           expect(page).to have_content('Brand Program')
-          expect(page).to have_content('Market Visit')
+          expect(page).to have_content('Formal Market Visit')
         end
 
         expect(page).to have_content('2 visits found for: Today To The Future Roberto Gomez Test User')
@@ -247,7 +253,7 @@ feature 'Brand Ambassadors Visits' do
 
         within '#visits-list' do
           expect(page).to have_content('Brand Program')
-          expect(page).to have_no_content('Market Visit')
+          expect(page).to have_no_content('Formal Market Visit')
         end
 
         expect(page).to have_content('1 visit found for: Today To The Future California Roberto Gomez Test User')
@@ -256,7 +262,7 @@ feature 'Brand Ambassadors Visits' do
 
         within '#visits-list' do
           expect(page).to have_content('Brand Program')
-          expect(page).to have_content('Market Visit')
+          expect(page).to have_content('Formal Market Visit')
         end
 
         expect(page).to have_content('2 visits found for: Today To The Future California Texas Roberto Gomez Test User')
@@ -267,7 +273,7 @@ feature 'Brand Ambassadors Visits' do
 
         within '#visits-list' do
           expect(page).to have_content('Brand Program')
-          expect(page).to have_no_content('Market Visit')
+          expect(page).to have_no_content('Formal Market Visit')
         end
 
         expect(page).to have_content('1 visit found for: Today To The Future Los Angeles Roberto Gomez Test User')
@@ -276,7 +282,7 @@ feature 'Brand Ambassadors Visits' do
 
         within '#visits-list' do
           expect(page).to have_content('Brand Program')
-          expect(page).to have_content('Market Visit')
+          expect(page).to have_content('Formal Market Visit')
         end
 
         expect(page).to have_content('2 visits found for: Today To The Future Austin Los Angeles Roberto Gomez Test User')
@@ -284,7 +290,7 @@ feature 'Brand Ambassadors Visits' do
         select_filter_calendar_day('18')
         within '#visits-list' do
           expect(page).to have_content('Brand Program')
-          expect(page).to have_no_content('Market Visit')
+          expect(page).to have_no_content('Formal Market Visit')
         end
 
         expect(page).to have_content('1 visit found for: Today Austin Los Angeles Roberto Gomez Test User')
@@ -292,7 +298,7 @@ feature 'Brand Ambassadors Visits' do
         select_filter_calendar_day('18', '19')
         within '#visits-list' do
           expect(page).to have_content('Brand Program')
-          expect(page).to have_content('Market Visit')
+          expect(page).to have_content('Formal Market Visit')
         end
 
         expect(page).to have_content('2 visits found for: Today - Tomorrow Austin Los Angeles Roberto Gomez Test User')
@@ -324,13 +330,13 @@ feature 'Brand Ambassadors Visits' do
       within('div#calendar-view') do
         expect(find('.fc-toolbar .fc-left h2')).to have_content("#{month_name}, #{year}")
         expect(page).to have_content 'Brand Program - My Campaign Test User - New York'
-        expect(page).to have_content 'Market Visit - My Campaign Test User - New York'
+        expect(page).to have_content 'Formal Market Visit - My Campaign Test User - New York'
 
-        click_link 'Market Visit'
+        click_link 'Formal Market Visit'
       end
 
       expect(current_path).to eql brand_ambassadors_visit_path(ba_visit1)
-      expect(page).to have_selector('h2', text: 'Market Visit')
+      expect(page).to have_selector('h2', text: 'Formal Market Visit')
       expect(page).to have_content 'Test User'
       expect(page).to have_content 'Visit1 description'
 
@@ -344,19 +350,19 @@ feature 'Brand Ambassadors Visits' do
     scenario 'should be able to export the calendar view as PDF' do
       month_number = Time.now.strftime('%m')
       year = Time.now.strftime('%Y')
-      create(:brand_ambassadors_visit, company: company,
-            start_date: "#{month_number}/15/#{year}", end_date: "#{month_number}/16/#{year}",
-            city: 'New York', area: area,
-            visit_type: 'market_visit', company_user: company_user, active: true, campaign: campaign)
-      create(:brand_ambassadors_visit, company: company,
-            start_date: "#{month_number}/16/#{year}", end_date: "#{month_number}/18/#{year}",
-            city: 'New York', area: area,
-            visit_type: 'brand_program', company_user: company_user, active: true, campaign: campaign)
+      create(:brand_ambassadors_visit,
+             company: company, city: 'New York', area: area, campaign: campaign,
+             start_date: "#{month_number}/15/#{year}", end_date: "#{month_number}/16/#{year}",
+             visit_type: 'market_visit', company_user: company_user, active: true)
+      create(:brand_ambassadors_visit,
+             company: company, city: 'New York', area: area, campaign: campaign,
+             start_date: "#{month_number}/16/#{year}", end_date: "#{month_number}/18/#{year}",
+             visit_type: 'brand_program', company_user: company_user, active: true)
       Sunspot.commit
       visit brand_ambassadors_root_path
 
       click_link 'Calendar View'
-      expect(page).to have_content('Market Visit')
+      expect(page).to have_content('Formal Market Visit')
       expect(page).to have_content('Brand Program')
 
       click_js_link 'Download'
@@ -376,11 +382,11 @@ feature 'Brand Ambassadors Visits' do
       # Test the generated PDF...
       require 'open-uri'
       reader = PDF::Reader.new(open(export.file.url))
-      reader.pages.each do |page|
+      reader.pages.each do |pdf_page|
         # PDF to text seems to not always return the same results
         # with white spaces, so, remove them and look for strings
         # without whitespaces
-        text = page.text.gsub(/[\s\n]/, '')
+        text = pdf_page.text.gsub(/[\s\n]/, '')
         expect(text).to include '2visits'
         expect(text).to include Date.today.strftime('%B,%Y')
         expect(text).to include 'MarketVisit'
@@ -402,7 +408,7 @@ feature 'Brand Ambassadors Visits' do
         fill_in 'Start date', with: '01/23/2014'
         fill_in 'End date', with: '01/24/2014'
         select_from_chosen company_user.name, from: 'Employee'
-        select_from_chosen 'Market Visit', from: 'Visit type'
+        select_from_chosen 'Formal Market Visit', from: 'Visit type'
         select_from_chosen 'My Area', from: 'Area'
         select_from_chosen 'My Campaign', from: 'Campaign'
         select_from_chosen 'My City', from: 'City'
@@ -411,8 +417,8 @@ feature 'Brand Ambassadors Visits' do
       end
       ensure_modal_was_closed
 
-      find('h2', text: 'Market Visit') # Wait for the page to load
-      expect(page).to have_selector('h2', text: 'Market Visit')
+      find('h2', text: 'Formal Market Visit') # Wait for the page to load
+      expect(page).to have_selector('h2', text: 'Formal Market Visit')
       expect(page).to have_content('new visit description')
       expect(page).to have_content(company_user.name)
       expect(page).to have_content('My Campaign')
@@ -421,9 +427,10 @@ feature 'Brand Ambassadors Visits' do
 
   shared_examples_for 'a user that can edit visits' do
     let(:ba_visit) do
-      create(:brand_ambassadors_visit, company: company, campaign: campaign,
-        visit_type: 'market_visit', description: 'Visit1 description',
-        area: area, city: 'New York', company_user: company_user, active: true)
+      create(:brand_ambassadors_visit,
+             company: company, campaign: campaign,
+             visit_type: 'market_visit', description: 'Visit1 description',
+             area: area, city: 'New York', company_user: company_user, active: true)
     end
     before do
       ba_visit.save
@@ -469,7 +476,7 @@ feature 'Brand Ambassadors Visits' do
       end
       expect(current_path).to eql brand_ambassadors_visit_path(ba_visit)
 
-      within('.links-data') { click_js_button 'Edit Visit' }
+      within('.edition-links') { click_js_button 'Edit Visit' }
       within visible_modal do
         fill_in 'Description', with: 'Some description'
         click_js_button 'Save'
@@ -485,10 +492,10 @@ feature 'Brand Ambassadors Visits' do
   shared_examples_for 'a user that can deactivate visits' do
     scenario "can deactivate a visit and it's removed from the view" do
       today = Time.zone.local(Time.now.strftime('%Y'), Time.now.strftime('%m'), 18, 12, 00)
-      create(:brand_ambassadors_visit, company: company,
-        campaign: campaign, area: area, city: 'New York',
-        start_date: today, end_date: (today + 1.day).to_s(:slashes),
-        company_user: company_user, active: true)
+      create(:brand_ambassadors_visit,
+             company: company, campaign: campaign, area: area, city: 'New York',
+             start_date: today, end_date: (today + 1.day).to_s(:slashes),
+             company_user: company_user, active: true)
       Sunspot.commit
       visit brand_ambassadors_root_path
 
@@ -510,15 +517,15 @@ feature 'Brand Ambassadors Visits' do
     let(:campaign) { create(:campaign, company: company, name: 'ABSOLUT Vodka') }
     let(:ba_visit)do
       create(:brand_ambassadors_visit, company: company,
-                      start_date: '02/01/2014', end_date: '02/02/2014',
-                      visit_type: 'market_visit', description: 'Visit1 description',
-                      campaign: campaign, area: area,
-                      company_user: company_user, active: true)
+                                       start_date: '02/01/2014', end_date: '02/02/2014',
+                                       visit_type: 'market_visit', description: 'Visit1 description',
+                                       campaign: campaign, area: area,
+                                       company_user: company_user, active: true)
     end
 
     scenario 'should display the visit details page' do
       visit brand_ambassadors_visit_path(ba_visit)
-      expect(page).to have_selector('h2', text: 'Market Visit')
+      expect(page).to have_selector('h2', text: 'Formal Market Visit')
       expect(page).to have_content('Visit1 description')
       expect(page).to have_content(company_user.full_name)
     end
@@ -604,7 +611,7 @@ feature 'Brand Ambassadors Visits' do
                place: create(:place, name: 'My Place 3', city: 'New York', state: 'NY'))
       end
 
-      ba_visit = create(:brand_ambassadors_visit,
+      ba_visit1 = create(:brand_ambassadors_visit,
                         company: company,
                         start_date: '02/01/2014', end_date: '02/02/2014',
                         visit_type: 'market_visit', description: 'Visit1 description',
@@ -612,7 +619,7 @@ feature 'Brand Ambassadors Visits' do
                         company_user: company_user, active: true)
 
       Sunspot.commit
-      visit brand_ambassadors_visit_path(ba_visit)
+      visit brand_ambassadors_visit_path(ba_visit1)
 
       within '#events-list' do
         expect(page).to have_content('My Place 1')
@@ -621,7 +628,7 @@ feature 'Brand Ambassadors Visits' do
       end
     end
 
-    scenario 'should be able to export as xls' do
+    scenario 'should be able to export as CSV' do
       cities = [
         create(:city, name: 'San Francisco', state: 'CA'),
         create(:city, name: 'New York', state: 'NY')
@@ -635,10 +642,10 @@ feature 'Brand Ambassadors Visits' do
                               users: [company_user],
                               place: create(:place, name: 'My Place 1', city: 'New York', state: 'NY'))
 
-      event2 = create(:event, start_date: '02/01/2014', end_date: '02/01/2014',
-                              start_time: '09:00am', end_time: '11:00am',
-                              campaign: campaign,
-                              place: create(:place, name: 'My Place 2', city: 'San Francisco', state: 'CA'))
+      create(:event, start_date: '02/01/2014', end_date: '02/01/2014',
+                     start_time: '09:00am', end_time: '11:00am',
+                     campaign: campaign,
+                     place: create(:place, name: 'My Place 2', city: 'San Francisco', state: 'CA'))
 
       event3 = create(:event, start_date: '02/01/2014', end_date: '02/01/2014',
                               start_time: '09:00am', end_time: '11:00am',
@@ -650,7 +657,7 @@ feature 'Brand Ambassadors Visits' do
       visit brand_ambassadors_visit_path(ba_visit)
 
       click_js_link 'Download'
-      click_js_link 'Download as XLS'
+      click_js_link 'Download as CSV'
 
       within visible_modal do
         expect(page).to have_content('We are processing your request, the download will start soon...')
@@ -661,12 +668,12 @@ feature 'Brand Ambassadors Visits' do
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'DURATION', 'VENUE NAME', 'ADDRESS', 'CITY',
          'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL'],
-        ['ABSOLUT Vodka', nil, "2014-02-01T09:00","2014-02-01T11:00", '2.0', 'My Place 3',
+        ['ABSOLUT Vodka', '', "2014-02-01 09:00","2014-02-01 11:00", '2.00', 'My Place 3',
          'My Place 3, 11 Main St., New York, NY, 12345', 'New York', 'NY', '12345', 'Active', 'Unsent',
-         "Test User", nil, "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event3.id}"],
-        ['ABSOLUT Vodka', nil, "2014-02-01T10:00","2014-02-01T11:00", '1.0', 'My Place 1',
+         'Test User', '', "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event3.id}"],
+        ['ABSOLUT Vodka', '', "2014-02-01 10:00","2014-02-01 11:00", '1.00', 'My Place 1',
          'My Place 1, 11 Main St., New York, NY, 12345', 'New York', 'NY', '12345', 'Active', 'Unsent',
-         "Test User", nil, "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event1.id}"]
+         'Test User', '', "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event1.id}"]
       ])
     end
 
@@ -678,22 +685,18 @@ feature 'Brand Ambassadors Visits' do
       company_user.places << cities
       campaign.places << cities
 
-      event1 = create(:event, start_date: '02/01/2014', end_date: '02/01/2014',
-                              start_time: '10:00am', end_time: '11:00am',
-                              campaign: campaign,
-                              users: [company_user],
-                              place: create(:place, name: 'My Place 1', city: 'New York', state: 'NY'))
+      create(:event, start_date: '02/01/2014', end_date: '02/01/2014',
+                     start_time: '10:00am', end_time: '11:00am',
+                     campaign: campaign, users: [company_user],
+                     place: create(:place, name: 'My Place 1', city: 'New York', state: 'NY'))
 
-      event2 = create(:event, start_date: '02/01/2014', end_date: '02/01/2014',
-                              start_time: '09:00am', end_time: '11:00am',
-                              campaign: campaign,
-                              place: create(:place, name: 'My Place 2', city: 'San Francisco', state: 'CA'))
+      create(:event, start_date: '02/01/2014', end_date: '02/01/2014', start_time: '09:00am',
+                     end_time: '11:00am', campaign: campaign,
+                     place: create(:place, name: 'My Place 2', city: 'San Francisco', state: 'CA'))
 
-      event3 = create(:event, start_date: '02/01/2014', end_date: '02/01/2014',
-                              start_time: '09:00am', end_time: '11:00am',
-                              campaign: campaign,
-                              users: [company_user],
-                              place: create(:place, name: 'My Place 3', city: 'New York', state: 'NY'))
+      create(:event, start_date: '02/01/2014', end_date: '02/01/2014', start_time: '09:00am',
+                     end_time: '11:00am', campaign: campaign, users: [company_user],
+                     place: create(:place, name: 'My Place 3', city: 'New York', state: 'NY'))
       Sunspot.commit
 
       visit brand_ambassadors_visit_path(ba_visit)
@@ -727,10 +730,10 @@ feature 'Brand Ambassadors Visits' do
       end
     end
 
-
     scenario 'can create a new event' do
       today = Time.zone.local(Time.now.strftime('%Y'), Time.now.strftime('%m'), 18, 12, 00)
-      expect(Place).to receive(:open).and_return(double(read: '{}')) # So we don't search in google places
+      # So we don't search in google places
+      expect_any_instance_of(CombinedSearch).to receive(:open).and_return(double(read: '{}'))
 
       Venue.create(place_id: place.id, company: company)
       create(:company_user, company: company,
@@ -746,7 +749,7 @@ feature 'Brand Ambassadors Visits' do
       visit brand_ambassadors_visit_path(ba_visit)
 
       within '#visit-events' do
-        click_button 'Create'
+        click_button 'Add Event'
       end
 
       within visible_modal do
@@ -766,7 +769,7 @@ feature 'Brand Ambassadors Visits' do
       expect(page).to have_content('ABSOLUT Vodka')
       expect(page).to have_content('some event description')
 
-      click_link 'You are viewing event details. Click to close.'
+      click_link 'Close Event'
 
       expect(current_path).to eq(brand_ambassadors_visit_path(ba_visit))
       within '#visit-events' do
@@ -782,13 +785,13 @@ feature 'Brand Ambassadors Visits' do
 
       visit brand_ambassadors_visit_path(ba_visit)
 
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button 'Deactivate Visit'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this visit?'
 
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button 'Activate Visit'
         expect(page).to have_button 'Deactivate Visit' # test the link have changed
       end

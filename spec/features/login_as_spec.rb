@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 feature 'As a Super Admin, I want to login as another system user' do
-  let(:company) { create(:company) }
+  let(:company) { create(:company, name: 'JUSTICE INC') }
   let(:campaign) { create(:campaign, company: company) }
   let(:user) { create(:user, company: company, role_id: role.id) }
   let(:company_user) { user.company_users.first }
@@ -53,7 +53,7 @@ feature 'As a Super Admin, I want to login as another system user' do
 
       click_button 'Login as specific user'
 
-      expect(page).to have_selector('#login_as_user_id_chzn', count: 1)
+      expect(page).to have_content('Choose a user that you want to login as')
       select_from_chosen 'Roberto Gomez', from: 'Choose a user that you want to login as'
 
       click_button 'Login'
@@ -83,6 +83,33 @@ feature 'As a Super Admin, I want to login as another system user' do
 
       expect(page).to_not have_selector('#cancel-login-specific-user')
       expect(page).to have_button('Login as specific user')
+    end
+
+    scenario 'user cannot switch to companies that are not accesible by him' do
+      create(:company_user, user: create(:user, first_name: 'Roberto', last_name: 'Gomez'),
+                            company: company, role_id: role2.id)
+
+      # A user in two companies
+      company2 = create(:company, name: 'FOBAR INC')
+      user = create(:user, first_name: 'Mario', last_name: 'Cantinflas')
+      create(:company_user, user: user, company: company)
+      create(:company_user, user: user, company: company2)
+      user.current_company = company2
+      user.save
+
+      Sunspot.commit
+
+      visit root_path
+
+      click_button 'Login as specific user'
+
+      select_from_chosen 'Mario Cantinflas', from: 'Choose a user that you want to login as'
+      click_button 'Login'
+
+      expect(page).to have_content('You are logged in as Mario Cantinflas')
+      expect(page).to_not have_content('FOBAR INC')
+      expect(page).to have_content('JUSTICE INC')
+      expect(page).to_not have_selector('.dropdown-toggle.current-company-title')
     end
   end
 

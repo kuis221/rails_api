@@ -3,7 +3,7 @@
 # This class handle the requests for managing the Company Users
 #
 class CompanyUsersController < FilteredController
-  include DeactivableHelper
+  include DeactivableController
   include UsersHelper
 
   respond_to :js, only: [:new, :create, :edit, :update, :time_zone_change, :time_zone_update]
@@ -187,7 +187,7 @@ class CompanyUsersController < FilteredController
 
   def export_status
     url = nil
-    export = ListExport.find_by(id: params[:download_id], company_user_id: current_company_user.id)
+    export = ListExport.find_by!(id: params[:download_id], company_user_id: current_company_user.id)
     url = export.download_url if export.completed? && export.file_file_name
     respond_to do |format|
       format.json do
@@ -216,6 +216,18 @@ class CompanyUsersController < FilteredController
   end
 
   protected
+
+  def collection_to_csv
+    CSV.generate do |csv|
+      csv << ['FIRST NAME', 'LAST NAME', 'EMAIL', 'PHONE NUMBER', 'ROLE', 'ADDRESS 1', 'ADDRESS 2',
+              'CITY', 'STATE', 'ZIP CODE', 'COUNTRY', 'TIME ZONE', 'LAST LOGIN', 'ACTIVE STATE']
+      each_collection_item do |user|
+        csv << [user.first_name, user.last_name, user.email, user.phone_number, user.role_name,
+                user.street_address, user.unit_number, user.city, user.state, user.zip_code,
+                [user.country_name].join(', '), user.time_zone, user.last_activity_at, user.active_status]
+      end
+    end
+  end
 
   def permitted_params
     allowed = {

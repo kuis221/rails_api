@@ -43,7 +43,7 @@ feature 'Dashboard', search: true, js: true do
       Sunspot.commit
 
       visit root_path
-      page.execute_script 'window.scrollBy(0,10000)' # Scrolls down to the bottom of the page
+      page.execute_script 'window.scrollBy(0,10000);' # Scrolls down to the bottom of the page
 
       within recent_photos_module do
         expect(page).to have_selector('ul#photos-thumbs li', count: 12)
@@ -125,7 +125,6 @@ feature 'Dashboard', search: true, js: true do
       scenario "should start with today's day and show 2 weeks" do
         # Today is Tuesday, Jan 11
         Timecop.travel(Time.zone.local(2014, 01, 14, 12, 00)) do
-
           visit root_path
 
           within upcoming_events_module do
@@ -162,13 +161,11 @@ feature 'Dashboard', search: true, js: true do
       end
 
       scenario 'clicking on the day should take the user to the event list for that day' do
-
         Timecop.travel(Time.zone.local(2014, 01, 14, 12, 00)) do
           visit root_path
 
           within upcoming_events_module do
             click_link 'Calendar View'
-
             click_link '14'
           end
 
@@ -178,7 +175,7 @@ feature 'Dashboard', search: true, js: true do
           expect(page).to have_selector('a.datepick-event.datepick-selected', text: 14)
 
           within('#events-list') do
-            expect(all('.resource-item').count).to be 2
+            expect(all('.resource-item').count).to eql 2
             expect(page).to have_content('Jameson + Kahlua Rum Campaign')
             expect(page).to have_content('Paddy Irish Whiskey Campaign')
           end
@@ -240,7 +237,6 @@ feature 'Dashboard', search: true, js: true do
     it_behaves_like 'a user that can view the recent comments module'
 
     it_behaves_like 'a user that can view the recent photos module'
-
   end
 
   feature 'Non Admin User', js: true, search: true do

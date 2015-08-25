@@ -1,7 +1,7 @@
 = user_new_feature('results_expenses') do
   h5 Getting Started: Expenses Report
   a.close.btn-dismiss-alert.icon.icon-close href="#" title="Dismiss"
-  a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/UruoA9fB86M?rel=0" data-width="640" data-height="360"
+  a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/AgR291ULLmw?rel=0" data-width="640" data-height="360"
     img src="#{image_path('video_arrow.png')}" width="70" height="70" /
   .feature-description
     p
@@ -22,7 +22,7 @@
     #list-view.tab-pane.active
       #list-tools.row-fluid
         .pull-right
-          button.btn.download.xlsx-download-link data-url="#{results_expenses_path(format: "xls")}" title="Download" data-disable-with="..."
+          button.btn.download.xlsx-download-link data-url="#{results_expenses_path(format: "csv")}" title="Download" data-disable-with="..."
            span.icon-download
       #expenses-totals
       #expenses-list.resource-list.no-top-margin.without-actions
@@ -45,6 +45,11 @@ javascript:
     'userFilters': #{user_saved_filters('results_expenses').to_json.html_safe},
     'autoCompletePath': '#{autocomplete_path(:events, format: :json)}',
     'defaultParams': '#{j default_params_for_view('status[]=Active', scope: 'results_expenses')}',
+    'emptyStateMessage': '#{j t("results_expenses.empty.line1", scope: :blank_states) }',
+    'emptyStateMessageLine2': '#{j t("results_expenses.empty.line2", scope: :blank_states) }',
+    'emptyFilterResultsMessage': '#{j t("results_expenses.filters.line1", default: :filters_line1, scope: :blank_states) }',
+    'emptyFilterResultsMessageLine2': '#{j t("results_expenses.filters.line2", default: :filters_line2, scope: :blank_states) }',
+    'emptyStateImage': '#{asset_path('blank-expenses.png')}',
     'onChange': function(filterBox){
       $(document).trigger('expenses-filter:changed');
     },

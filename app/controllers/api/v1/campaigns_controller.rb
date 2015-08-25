@@ -1,5 +1,5 @@
 class Api::V1::CampaignsController < Api::V1::FilteredController
-  skip_authorization_check only: [:all, :overall_stats, :events]
+  skip_authorization_check only: [:all, :overall_stats, :events, :expense_categories]
 
   resource_description do
     short 'Campaigns'
@@ -295,5 +295,10 @@ class Api::V1::CampaignsController < Api::V1::FilteredController
   def events
     date_field = current_company.timezone_support? ? :local_start_at : :end_at
     render json: resource.events.active.pluck(:id, date_field)
+  end
+
+  api :GET, '/api/v1/campaigns/:id/expense_categories', 'Returns a list of available categories for expenses.'
+  def expense_categories
+    render json: current_company.campaigns.accessible_by_user(current_company_user).find(params[:id]).expense_categories
   end
 end

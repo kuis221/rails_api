@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>API documentation</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/bootstrap.min.css'/>
+<link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/prettify.css'/>
+<link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/bootstrap-responsive.min.css'/>
+  <link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/application.css'/>
+  <!-- IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div id='container'>
+        <ul class='breadcrumb'>
+  <li>
+    <a href='../../apidoc.html'>Brandscopic 1.0</a>
+    <span class='divider'>/</span>
+  </li>
+  <li>
+    <a href='../../apidoc/visits.html'>
+      Brand Ambassadors Visits
+      
+    </a>
+    <span class='divider'>/</span>
+  </li>
+  <li class='active'>events</li>
+  
+
+</ul>
+
+  <div class='page-header'>
+    <h1>
+      GET /api/v1/brand_ambassadors/visits/:id/events
+      <br>
+      <small>Get a list of events for a visit</small>
+    </h1>
+  </div>
+
+<div>
+
+  
+<p>Returns a list of the events for a visit.</p>
+
+<p>Each event item have the following attributes:</p>
+<ul><li>
+<p><strong>id</strong>: the event&#39;s ID</p>
+</li><li>
+<p><strong>start_date</strong>: the event&#39;s start date</p>
+</li><li>
+<p><strong>start_time</strong>: the event&#39;s start time</p>
+</li><li>
+<p><strong>end_date</strong>: the event&#39;s end date</p>
+</li><li>
+<p><strong>end_time</strong>: the event&#39;s end time</p>
+</li><li>
+<p><strong>status</strong>: the event&#39;s active state</p>
+</li><li>
+<p><strong>event_status</strong>: the event&#39;s PER status</p>
+</li><li>
+<p><strong>campaign</strong>:</p>
+<ul><li>
+<p><strong>id</strong>: the campaign id</p>
+</li><li>
+<p><strong>name</strong>: the campaign name associated to the event</p>
+</li></ul>
+</li><li>
+<p><strong>place</strong>:</p>
+<ul><li>
+<p><strong>id</strong>: the place id</p>
+</li><li>
+<p><strong>name</strong>: the name of the place associated to the event</p>
+</li><li>
+<p><strong>formatted_address</strong>: full address of the place</p>
+</li><li>
+<p><strong>country</strong>: country code of the place</p>
+</li><li>
+<p><strong>state_name</strong>: state name of the place</p>
+</li><li>
+<p><strong>city</strong>: city name of the place</p>
+</li><li>
+<p><strong>zipcode</strong>: zip code of the place</p>
+</li></ul>
+</li></ul>
+
+
+  <h2>Supported Formats</h2>
+  json, xml
+
+  <h2>Errors</h2>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
+    401
+    Unauthorized access
+    <br>
+    404
+    The requested resource was not found
+    <br>
+    406
+    The server cannot return data in the requested format
+    <br>
+    422
+    Unprocessable Entity: The change could not be processed because of errors on the data
+    <br>
+    500
+    Server crashed for some reason. Possible because of missing required params or wrong parameters
+    <br>
+
+
+  <h2>Examples</h2>
+    <pre class="prettyprint">GET /api/v1/brand_ambassadors/visits/361/events.json
+[
+  {
+    id: 42397,
+    start_date: &quot;11/09/2014&quot;,
+    start_time: &quot;2:45 PM&quot;,
+    end_date: &quot;11/10/2014&quot;,
+    end_time: &quot;3:45 PM&quot;,
+    campaign: {
+      id: 115,
+      name: &quot;Absolut BA FY15&quot;
+    },
+    place: {
+      id: 6754,
+      name: &quot;Atlanta&quot;,
+      formatted_address: &quot;Atlanta, GA, USA&quot;,
+      country: &quot;US&quot;,
+      state_name: &quot;Georgia&quot;,
+      city: &quot;Atlanta&quot;,
+      zipcode: null
+    }
+  },
+  {
+    id: 42398,
+    start_date: &quot;11/10/2014&quot;,
+    start_time: &quot;11:00 AM&quot;,
+    end_date: &quot;11/10/2014&quot;,
+    end_time: &quot;12:00 PM&quot;,
+    campaign: {
+      id: 14,
+      name: &quot;Absolut BA FY14&quot;
+    },
+    place: {
+      id: 6401,
+      name: &quot;Fado Irish Pub&quot;,
+      formatted_address: &quot;Atlanta, GA, United States&quot;,
+      country: &quot;US&quot;,
+      state_name: &quot;Georgia&quot;,
+      city: &quot;Atlanta&quot;,
+      zipcode: null
+    }
+  },
+  ...
+]
+</pre>
+
+  <h2>Params</h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>The visit&#39;s ID.</p>
+
+        <br>
+        Value: 
+<p>Must be Integer.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+
+
+</div>
+
+
+        
+      </div>
+    </div>
+    <hr>
+    <footer></footer>
+  </div>
+  <script type='text/javascript' src='../../apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/bundled/bootstrap-collapse.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/bundled/prettify.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/apipie.js'></script>
+</body>
+</html>

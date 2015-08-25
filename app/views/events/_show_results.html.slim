@@ -1,5 +1,6 @@
 - enabled_modules = resource.campaign.enabled_modules
-- if can?(:view_data, resource)
+= resource.campaign.form_fields.inspect
+- if can?(:view_data, resource) && resource.campaign.form_fields.any?
   #event-results-form
     #event-results-container.details_box.box_event_data
       = render 'results_event_data'
@@ -12,13 +13,13 @@
 - if can?(:index_invites, Event) && resource.campaign.enabled_modules.include?('attendance')
   = render 'attendance'
 
-- if can?(:photos, resource) && enabled_modules.include?('photos')
-  #event-photos.details_box.box_photos
-    = render partial: 'photos', locals: {allow_upload: true}
-
 - if can?(:expenses, resource) && enabled_modules.include?('expenses')
   #event-expenses.details_box
     = render 'expenses'
+
+- if can?(:photos, resource) && enabled_modules.include?('photos')
+  #event-photos.details_box.box_photos
+    = render partial: 'photos', locals: { allow_upload: true }
 
 - if can?(:surveys, resource) && enabled_modules.include?('surveys')
   #event-surveys.details_box

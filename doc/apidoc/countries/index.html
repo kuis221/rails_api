@@ -59,6 +59,9 @@ dropdowns.</p>
   json, xml
 
   <h2>Errors</h2>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     404
     Missing
     <br>
@@ -68,7 +71,7 @@ dropdowns.</p>
 
 
   <h2>Examples</h2>
-    <pre class="prettyprint">GET /api/v1/countries.json?auth_token=XXXXXYYYYYZZZZZ
+    <pre class="prettyprint">GET /api/v1/countries.json
 [
   {
       &quot;id&quot;: &quot;AD&quot;,
@@ -90,39 +93,8 @@ dropdowns.</p>
 ]
 </pre>
 
-  <h2>Params</h2>
-  <table class='table'>
-    <thead>
-      <tr>
-        <th>Param name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
 
 
-    </td>
-
-  </tr>
-
-  
-
-    </tbody>
-  </table>
 
 </div>
 

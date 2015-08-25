@@ -1,14 +1,17 @@
 class Api::V1::ActivitiesController < Api::V1::ApiController
   inherit_resources
-
+  skip_authorization_check only: [:index]
+  skip_authorize_resource only: [:index]
   belongs_to :event, :venue, optional: true
+
+  before_action :authorize_parent, except: [:new, :show]
 
   respond_to :json
 
   def_param_group :activity do
     param :activity, Hash, required: true, action_aware: true do
       param :activity_type_id, :number, required: true, desc: 'Activity Type ID'
-      param :activity_date, %r{\A\d{1,2}/\d{1,2}/\d{4}\z}, required: true, desc: "Activity date. Should be in format MM/DD/YYYY."
+      param :activity_date, %r{\A\d{1,2}/\d{1,2}/\d{4}\z}, required: true, desc: 'Activity date. Should be in format MM/DD/YYYY.'
       param :results_attributes, :event_result, required: false, desc: "A list of activity results with the id and value. Eg: results_attributes: [{id: 1, value:'Some value'}, {id: 2, value: '123'}]"
       param :company_user_id, :number, desc: 'Company user ID'
       param :campaign_id, :number, desc: 'Campaign ID'
@@ -17,18 +20,20 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
     end
   end
 
-  api :POST, '/api/v1/events/:event_id/activities', 'Create a new activity'
+  api :POST, '/api/v1/events/:event_id/activities', 'Create a new activity for a event'
+  api :POST, '/api/v1/events/:venue_id/activities', 'Create a new activity for a venue'
   param_group :activity
   def create
     create! do |success, failure|
       success.json { render :show }
       success.xml { render :show }
-      failure.json { p resource.inspect; render json: resource.errors, status: :unprocessable_entity }
+      failure.json { render json: resource.errors, status: :unprocessable_entity }
       failure.xml { render xml: resource.errors, status: :unprocessable_entity }
     end
   end
 
-  api :PUT, '/api/v1/events/:event_id/activities/:id', 'Update a activity\'s details'
+  api :PUT, '/api/v1/events/:event_id/activities/:id', 'Update a event\'s activity details'
+  api :PUT, '/api/v1/events/:venue_id/activities/:id', 'Update a venue\'s activity details'
   param :event_id, :number, required: false, desc: 'Event ID'
   param :venue_id, :number, required: false, desc: 'Venue ID'
   param :id, :number, required: true, desc: 'Activity ID'
@@ -42,7 +47,8 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
     end
   end
 
-  api :GET, '/api/v1/events/:id/activities/:id/deactivate', 'Deactivate activity'
+  api :GET, '/api/v1/events/:event_id/activities/:id/deactivate', 'Deactivate a event\'s activity'
+  api :GET, '/api/v1/events/:venue_id/activities/:id/deactivate', 'Deactivate a venue\'s activity'
   param :event_id, :number, required: false, desc: 'Event ID'
   param :venue_id, :number, required: false, desc: 'Venue ID'
   param :id, :number, required: true, desc: 'Activity ID'
@@ -50,10 +56,11 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
   def deactivate
     authorize! :deactivate, Activity
     resource.deactivate!
-    render json: "ok"
+    render json: 'ok'
   end
 
-  api :GET, '/api/v1/events/:event_id/activities', 'Get a list of activities for an Event or Venue'
+  api :GET, '/api/v1/events/:event_id/activities', 'Get a list of activities for an Event'
+  api :GET, '/api/v1/events/:venue_id/activities', 'Get a list of activities for an Venue'
   param :event_id, :number, required: false, desc: 'Event ID'
   param :venue_id, :number, required: false, desc: 'Venue ID'
   description <<-EOS
@@ -73,6 +80,7 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
   }
   EOS
   def index
+    authorize!(:show, Activity)
     collection
   end
 
@@ -80,257 +88,6 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
   param :activity_type_id, :number, required: true, desc: 'The activity type id'
   description <<-EOS
     Returns a full list of the associated activity types for a campaign
-  EOS
-  example <<-EOS
-  {
-    "id":2021,
-    "activity_date":"2014-06-25T01:00:00.000-06:00",
-    "campaign":{
-      "id":5,
-      "name":"Jameson Locals FY14"
-    },
-    "company_user":{
-      "id":990,
-      "name":"Adam Kost"
-    },
-    "activity_type":{
-      "id":1,
-      "name":"POS Drop"
-    },
-    "activitable":{
-      "id":28205,
-      "type":"Event"
-    },
-    "data":[
-      {
-        "field_id":17,
-        "name":"User/Date",
-        "value":null,
-        "type":"FormField::UserDate",
-        "settings":null,
-        "ordering":0,
-        "required":null,
-        "kpi_id":null,
-        "id":822768
-      },
-      {
-        "field_id":3461,
-        "name":"POS Drop Date",
-        "value":"01/21/2015",
-        "type":"FormField::Date",
-        "settings":null,
-        "ordering":1,
-        "required":true,
-        "kpi_id":null,
-        "id":822764
-      },
-      {
-        "field_id":3462,
-        "name":"POS Removal Date",
-        "value":"01/14/2015",
-        "type":"FormField::Date",
-        "settings":null,
-        "ordering":2,
-        "required":false,
-        "kpi_id":null,
-        "id":822765
-      },
-      {
-        "field_id":1,
-        "name":"Brand",
-        "value":"8",
-        "type":"FormField::Brand",
-        "settings":null,
-        "ordering":4,
-        "required":true,
-        "kpi_id":null,
-        "segments":[
-          {
-            "id":8,
-            "text":"Jameson Irish Whiskey"
-          }
-        ],
-        "id":10923
-      },
-      {
-        "field_id":2,
-        "name":"Marque",
-        "value":"2",
-        "type":"FormField::Marque",
-        "settings":{
-
-        },
-        "ordering":5,
-        "required":false,
-        "kpi_id":null,
-        "segments":[
-          {
-            "id":2,
-            "text":"Black Barrel"
-          },
-          {
-            "id":13,
-            "text":"Standard"
-          },
-          {
-            "id":14,
-            "text":"Gold"
-          },
-          {
-            "id":15,
-            "text":"18 Year Old"
-          },
-          {
-            "id":16,
-            "text":"Rarest Vintage Reserve"
-          },
-          {
-            "id":17,
-            "text":"12 Year Old"
-          }
-        ],
-        "id":10924
-      },
-      {
-        "field_id":3465,
-        "name":"Seasonal Sales Program",
-        "value":"1126",
-        "type":"FormField::Dropdown",
-        "settings":null,
-        "ordering":7,
-        "required":true,
-        "kpi_id":null,
-        "id":822766
-      },
-      {
-        "field_id":3466,
-        "name":"Movember Item(s) Dropped",
-        "value":[
-          703,
-          705
-        ],
-        "type":"FormField::Checkbox",
-        "settings":null,
-        "ordering":8,
-        "required":false,
-        "kpi_id":null,
-        "segments":[
-          {
-            "id":701,
-            "text":"Posters",
-            "value":false
-          },
-          {
-            "id":702,
-            "text":"Chalkboard",
-            "value":false
-          },
-          {
-            "id":703,
-            "text":"Window Clings",
-            "value":true
-          },
-          {
-            "id":704,
-            "text":"Coasters",
-            "value":false
-          },
-          {
-            "id":705,
-            "text":"Table Tents",
-            "value":true
-          },
-          {
-            "id":706,
-            "text":"Buttons",
-            "value":false
-          },
-          {
-            "id":707,
-            "text":"Menu Stickers",
-            "value":false
-          }
-        ],
-        "id":822767
-      },
-      {
-        "field_id":3,
-        "name":"Miscellaneous Item(s) Dropped",
-        "value":[
-          2
-        ],
-        "type":"FormField::Checkbox",
-        "settings":null,
-        "ordering":9,
-        "required":false,
-        "kpi_id":null,
-        "segments":[
-          {
-            "id":1,
-            "text":"Chalk board",
-            "value":false
-          },
-          {
-            "id":2,
-            "text":"Mirror",
-            "value":true
-          },
-          {
-            "id":3,
-            "text":"Rail mat",
-            "value":false
-          },
-          {
-            "id":4,
-            "text":"Wearable",
-            "value":false
-          },
-          {
-            "id":5,
-            "text":"Church key",
-            "value":false
-          },
-          {
-            "id":6,
-            "text":"Napkin caddie",
-            "value":false
-          },
-          {
-            "id":7,
-            "text":"Poster",
-            "value":false
-          },
-          {
-            "id":21,
-            "text":"Table Tent",
-            "value":false
-          },
-          {
-            "id":22,
-            "text":"Glassware",
-            "value":false
-          },
-          {
-            "id":23,
-            "text":"Other",
-            "value":false
-          }
-        ],
-        "id":10925
-      },
-      {
-        "field_id":6,
-        "name":"Description",
-        "value":"",
-        "type":"FormField::TextArea",
-        "settings":null,
-        "ordering":11,
-        "required":false,
-        "kpi_id":null,
-        "id":10928
-      }
-    ]
-  }
   EOS
   def new
     respond_to do |format|
@@ -351,261 +108,12 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
     end
   end
 
-  api :GET, '/api/v1/actvities/:id/edit', 'Return a list of fields with results for an existing activity'
+  api :GET, '/api/v1/actvities/:id', 'Return a list of fields with results for an existing activity'
   description <<-EOS
     Returns a full list of the associated activity types for a campaign
   EOS
-  example <<-EOS
-  {
-    "id":2021,
-    "campaign":{
-      "id":5,
-      "name":"Jameson Locals FY14"
-    },
-    "company_user":{
-      "id":990,
-      "name":"Adam Kost"
-    },
-    "activity_type":{
-      "id":1,
-      "name":"POS Drop"
-    },
-    "activitable":{
-      "id":28205,
-      "type":"Event"
-    },
-    "data":[
-      {
-        "field_id":17,
-        "name":"User/Date",
-        "value":null,
-        "type":"FormField::UserDate",
-        "settings":null,
-        "ordering":0,
-        "required":null,
-        "kpi_id":null,
-        "id":822768
-      },
-      {
-        "field_id":3461,
-        "name":"POS Drop Date",
-        "value":"01/21/2015",
-        "type":"FormField::Date",
-        "settings":null,
-        "ordering":1,
-        "required":true,
-        "kpi_id":null,
-        "id":822764
-      },
-      {
-        "field_id":3462,
-        "name":"POS Removal Date",
-        "value":"01/14/2015",
-        "type":"FormField::Date",
-        "settings":null,
-        "ordering":2,
-        "required":false,
-        "kpi_id":null,
-        "id":822765
-      },
-      {
-        "field_id":1,
-        "name":"Brand",
-        "value":"8",
-        "type":"FormField::Brand",
-        "settings":null,
-        "ordering":4,
-        "required":true,
-        "kpi_id":null,
-        "segments":[
-          {
-            "id":8,
-            "text":"Jameson Irish Whiskey"
-          }
-        ],
-        "id":10923
-      },
-      {
-        "field_id":2,
-        "name":"Marque",
-        "value":"2",
-        "type":"FormField::Marque",
-        "settings":{
-
-        },
-        "ordering":5,
-        "required":false,
-        "kpi_id":null,
-        "segments":[
-          {
-            "id":2,
-            "text":"Black Barrel"
-          },
-          {
-            "id":13,
-            "text":"Standard"
-          },
-          {
-            "id":14,
-            "text":"Gold"
-          },
-          {
-            "id":15,
-            "text":"18 Year Old"
-          },
-          {
-            "id":16,
-            "text":"Rarest Vintage Reserve"
-          },
-          {
-            "id":17,
-            "text":"12 Year Old"
-          }
-        ],
-        "id":10924
-      },
-      {
-        "field_id":3465,
-        "name":"Seasonal Sales Program",
-        "value":"1126",
-        "type":"FormField::Dropdown",
-        "settings":null,
-        "ordering":7,
-        "required":true,
-        "kpi_id":null,
-        "id":822766
-      },
-      {
-        "field_id":3466,
-        "name":"Movember Item(s) Dropped",
-        "value":[
-          703,
-          705
-        ],
-        "type":"FormField::Checkbox",
-        "settings":null,
-        "ordering":8,
-        "required":false,
-        "kpi_id":null,
-        "segments":[
-          {
-            "id":701,
-            "text":"Posters",
-            "value":false
-          },
-          {
-            "id":702,
-            "text":"Chalkboard",
-            "value":false
-          },
-          {
-            "id":703,
-            "text":"Window Clings",
-            "value":true
-          },
-          {
-            "id":704,
-            "text":"Coasters",
-            "value":false
-          },
-          {
-            "id":705,
-            "text":"Table Tents",
-            "value":true
-          },
-          {
-            "id":706,
-            "text":"Buttons",
-            "value":false
-          },
-          {
-            "id":707,
-            "text":"Menu Stickers",
-            "value":false
-          }
-        ],
-        "id":822767
-      },
-      {
-        "field_id":3,
-        "name":"Miscellaneous Item(s) Dropped",
-        "value":[
-          2
-        ],
-        "type":"FormField::Checkbox",
-        "settings":null,
-        "ordering":9,
-        "required":false,
-        "kpi_id":null,
-        "segments":[
-          {
-            "id":1,
-            "text":"Chalk board",
-            "value":false
-          },
-          {
-            "id":2,
-            "text":"Mirror",
-            "value":true
-          },
-          {
-            "id":3,
-            "text":"Rail mat",
-            "value":false
-          },
-          {
-            "id":4,
-            "text":"Wearable",
-            "value":false
-          },
-          {
-            "id":5,
-            "text":"Church key",
-            "value":false
-          },
-          {
-            "id":6,
-            "text":"Napkin caddie",
-            "value":false
-          },
-          {
-            "id":7,
-            "text":"Poster",
-            "value":false
-          },
-          {
-            "id":21,
-            "text":"Table Tent",
-            "value":false
-          },
-          {
-            "id":22,
-            "text":"Glassware",
-            "value":false
-          },
-          {
-            "id":23,
-            "text":"Other",
-            "value":false
-          }
-        ],
-        "id":10925
-      },
-      {
-        "field_id":6,
-        "name":"Description",
-        "value":"",
-        "type":"FormField::TextArea",
-        "settings":null,
-        "ordering":11,
-        "required":false,
-        "kpi_id":null,
-        "id":10928
-      }
-    ]
-  }
-  EOS
   def show
+    authorize! :show, resource.activitable
     results = resource.form_field_results
     results.each { |r| r.save(validate: false) if r.new_record? }
     respond_to do |format|
@@ -615,7 +123,7 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
           activity_date: resource.activity_date,
           campaign: {
             id: resource.campaign_id,
-            name: resource.campaign_name,
+            name: resource.campaign_name
           },
           company_user: {
             id: resource.company_user.id,
@@ -632,6 +140,25 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
           data: serialize_fields_for_edit(resource.form_field_results)
         }
       end
+    end
+  end
+
+  api :GET, '/api/v1/events/:event_id/actvities/form', 'Returns a list of requred fields for uploading a file to S3'
+  description <<-EOS
+  This method returns all the info required to make a POST to Amazon S3 to upload a new file. The key sent to S3 should start with
+  /uploads and has to be created into a new folder with a unique generated name. Ideally using a GUID. Eg:
+  /uploads/9afa6775-2c8e-44f8-9cda-280e80446ced/My file.jpg
+
+  The signature will expire 1 hour after it's generated, therefore, it's recommended to not cache these fields for long time.
+  EOS
+  def form
+    bucket = AWS::S3.new.buckets[ENV['S3_BUCKET_NAME']]
+    form = bucket.presigned_post(acl: 'public-read', success_action_status: 201)
+           .where(:key).starts_with('uploads/')
+    data = { fields: form.fields, url: "https://s3.amazonaws.com/#{ENV['S3_BUCKET_NAME']}/"  }
+    respond_to do |format|
+      format.json { render json: data }
+      format.xml { render xml: data }
     end
   end
 
@@ -656,48 +183,8 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
     end
   end
 
-  def serialize_field(field, result=nil)
-    {
-      field_id: field.id,
-      name: field.name,
-      value: nil,
-      type: field.type,
-      settings: field.settings,
-      ordering: field.ordering,
-      required: field.required,
-      kpi_id: field.kpi_id
-    }.merge!(custom_field_values(field, result))
-  end
-
-  def custom_field_values(field, result)
-    if field.type == 'FormField::Percentage'
-      { segments: (field.options_for_input.map do|s|
-                    { id: s[1], text: s[0], value: result.value[s[1].to_s], goal: (resource.kpi_goals.key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][s[1]] : nil) }
-                  end) }
-    elsif field.type == 'FormField::Checkbox'
-      { value: result ? result.value || [] : nil,
-        segments: field.options_for_input.map { |s| { id: s[1], text: s[0], value: result ? result.value.include?(s[1]) : false } } }
-    elsif field.type == 'FormField::Radio'
-      { value: result ? result.value || [] : nil,
-        segments: field.options_for_input.map { |s| { id: s[1], text: s[0], value: result ? result.value.to_i.eql?(s[1]) : false } } }
-    elsif field.type == 'FormField::Dropdown'
-      { value: result ? result.value.to_i : nil,
-        segments: field.options_for_input.map { |s| { id: s[1], text: s[0], value: result ? result.value.to_i.eql?(s[1]) : false } } }
-    elsif field.type == 'FormField::Brand'
-      { value: result ? result.value.to_i : nil,
-        segments: field.options_for_field(result).map { |s| { id: s.id, text: s.name, value: result ? result.value.to_i.eql?(s.id) : false } } }
-    elsif field.type == 'FormField::Marque'
-      { value: result ? result.value.to_i : nil,
-        segments: field.options_for_field(result).map { |s| { id: s[1], text: s[0], value: result ? result.value.to_i.eql?(s[1]) : false } } }
-    elsif field.type == 'FormField::Summation'
-      { value: result ? result.value.map { |s| s[1].to_f }.reduce(0, :+) : nil,
-        segments: field.options_for_input.map { |s| { id: s[1], text: s[0], value: result ? result.value[s[1].to_s] : nil } } }
-    elsif field.type == 'FormField::LikertScale'
-      { statements: field.statements.order(:ordering).map { |s| { id: s.id, text: s.name, value: result ? result.value[s.id.to_s] : nil } },
-        segments: field.options_for_input.map { |s| { id: s[1], text: s[0] } } }
-    else
-      { value: result ? result.value || [] : nil}
-    end
+  def serialize_field(field, result = nil)
+    field.format_json(result)
   end
 
   def activity_params
@@ -714,6 +201,10 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
   end
 
   def collection
-     @activities ||= end_of_association_chain.where(active: true)
+    @activities ||= end_of_association_chain.where(active: true)
+  end
+
+  def authorize_parent
+    authorize!(:show, parent)
   end
 end

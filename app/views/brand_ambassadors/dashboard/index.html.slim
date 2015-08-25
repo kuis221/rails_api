@@ -16,8 +16,8 @@
           i.icon-arrow-down-small
         ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
           li
-            a.xlsx-download-link href="#" role="menuitem" data-url="#{brand_ambassadors_visits_path(format: :xls)}"
-              | Download as XLS
+            a.xlsx-download-link href="#" role="menuitem" data-url="#{brand_ambassadors_visits_path(format: :csv)}"
+              | Download as CSV
           li
             a#pdf-export.xlsx-download-link href="#" role="menuitem" data-url="#{brand_ambassadors_visits_path(format:"pdf")}"
               | Download as PDF
@@ -41,7 +41,7 @@
 
 - if can?(:index, BrandAmbassadors::Document)
   #brand-ambassador-documents.main.details_box.thinner
-    = render partial: 'brand_ambassadors/document_folders/index', locals: { children: (current_company.document_folders.root_children.active + current_company.brand_ambassadors_documents.root_children.active).sort_by(&:name) }
+    = render partial: 'brand_ambassadors/document_folders/index', locals: { children: (current_company.document_folders.root_children.active + current_company.brand_ambassadors_documents.root_children.active).sort_by(&:name), callback_url: brand_ambassadors_documents_path(format: :js)  }
 
 - if can?(:list, BrandAmbassadors::Visit) || can?(:calendar, BrandAmbassadors::Visit)
   javascript:
@@ -60,13 +60,18 @@
       'userFilters': #{user_saved_filters('visits').to_json.html_safe},
       'autoCompletePath': '#{autocomplete_path(:visits, format: :json)}',
       'fixListHeight': false,
-      'defaultParams': '#{j default_params_for_view('start_date=' + Time.zone.now.strftime("%m/%d/%Y") + '&end_date=' + (Time.zone.now + 10.years).strftime("%m/%d/%Y"))}',
+      'defaultParams': '#{j default_params_for_view('start_date[]=' + Time.zone.now.strftime("%m/%d/%Y") + '&end_date[]=' + (Time.zone.now + 10.years).strftime("%m/%d/%Y"))}',
       'applyTo': 'visits',
       'onChange': function() {
         if (typeof visitsCalendar !== 'undefined' && !window.loadingVisits) {
          visitsCalendar.fullCalendar('refetchEvents');
         }
-      }
+      },
+      'emptyStateMessage': '#{j t("visits.empty.line1", scope: :blank_states) }',
+      'emptyStateMessageLine2': '#{j t("visits.empty.line2.with#{can?(:create, BrandAmbassadors::Visit) ? '' : 'out'}_schedule_permissions", scope: :blank_states) }',
+      'emptyFilterResultsMessage': '#{j t("visits.filters.line1", default: :filters_line1, scope: :blank_states) }',
+      'emptyFilterResultsMessageLine2': '#{j t("visits.filters.line2", default: :filters_line2, scope: :blank_states) }',
+      'canCreatePermission': #{can?(:create, BrandAmbassadors::Visit)}
     });
 
     $(document).ready(function() {

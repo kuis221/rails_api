@@ -1,0 +1,416 @@
+
+// DETAILS BAR (Details pages bar)
+//
+
+$detail-bar-height: 40px;
+$back-arrow-width: 38px;
+$phase-height: 66px;
+$phase-id-width: 70px;
+$phase-actions-width: 200px;
+
+
+.with-login-as-bar{
+  .details-bar{
+    &.fixed{
+      top: 80px;
+    }
+  }
+}
+
+// Alerts for events on events bar
+
+.event-alert{
+  display: block;
+  position: absolute;
+  width: 100%;
+  z-index: 4;
+  text-align: center;
+  .alert-inner {
+    display: table;
+    position: relative;
+    width: 100%
+  }
+
+  .alert-main-text{
+    color: $white;
+    font-weight: normal;
+    line-height: 20px;
+    margin: 0;
+    font-size: 16px;
+  }
+  .alert-secondary-text{
+    color: $btn-red-hover;
+    margin: 0;
+  }
+  .alert-msg{
+    box-sizing: border-box;
+    display: table-cell;
+    height: $phase-height;
+    padding: 10px 0;
+    vertical-align: middle;
+  }
+  .close{
+    color: $red-dark;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-size: 16px;
+  }
+  .reject-reason {
+    display: block;
+    color: $red-dark;
+    font-size: 14px;
+  }
+}
+
+.alert-red{
+  background-color: $primary-red;
+}
+.alert-blue{
+  background-color: $primary-blue;
+  .close {
+    color: $dark_blue;
+  }
+}
+.alert-green{
+  background-color: $primary-green;
+  .close {
+    color: $dark_green;
+  }
+}
+
+// Details bar
+
+.details-bar{
+	position: relative;
+  .info-bar{
+	  background-color: $gray-darker;
+	  box-sizing: border-box;
+    height: $detail-bar-height;
+	  @include border-radius(6px 6px 0 0);
+    padding-left: 40px;
+    position: relative;
+		color: $brand;
+		h5{
+			margin: 0;
+		}
+    .event-name{
+      color: $gray-lighter;
+    }
+		.event-date{
+			color: $brand;
+			margin-left: 6px;
+			line-height: 14px;
+		}
+  }
+	a{
+		color: $brand;
+	}
+	.switch-list{
+		a{
+			cursor: pointer!important;
+			width: 100%;
+			display: inline-block;
+			padding: 9px 0 0 20px;
+			height: 40px;
+		}
+	}
+	.back-arrow{
+		box-sizing: border-box;
+		border-right: 1px solid $divider;
+		color: $brand;
+		font-size: 25px;
+		line-height: 25px;
+		padding: 11px 12px;
+		position: absolute;
+		height: $detail-bar-height;
+		left: 0;
+		top: 0;
+		width: $back-arrow-width;
+	}
+  &.fixed{
+    position: fixed !important;
+    top: 42px;
+    width: calc(100% - 100px);
+    z-index: 1100;
+    .info-bar{
+      @include border-radius(0);
+    }
+  }
+	.panel{
+		box-sizing: border-box;
+	}
+	.panel-collapse{
+		color: $white;
+	}
+}
+
+// Controller to open and close the panel
+
+.controller{
+  background-color: white;
+  border: 1px solid $gray-lighter;
+  border-bottom: 2px solid $gray-lighter;
+  border-top: 0;
+  font-size: 6px;
+  line-height: 12px;
+  margin-left: auto;
+  margin-right: auto;
+  height:10px;
+  text-align: center;
+  width: 35px;
+  a{
+    display: block;
+  }
+}
+
+.phases-expanded{
+  background-color: $white;
+  color: $silver;
+  .phase-msg{
+    display: inline-block;
+    padding-left: 20px;
+    padding-top: 2px;
+  }
+  .heading{
+    color: $gray;
+
+    margin-bottom: 0;
+  }
+}
+
+
+// Trackers Bar
+
+
+.trackers-bar{
+  position: absolute;
+  width: 100%;
+  z-index: 9;
+}
+
+.phase-container{
+  background-color: $white;
+  height: $phase-height;
+  border-bottom: 1px solid $gray-lighter;
+  .btn {
+    line-height: 16px;
+    height: 28px;
+    min-width: 82px;
+  }
+  .phase-name{
+    @extend .crop-text;
+    padding: 6px 4px;
+  }
+  .phase-steps, .phase-actions{
+    float: left;
+  }
+  .active {
+    .step{
+      &:not(.phase-id){
+        color: $primary-blue;
+        .icon-circle:before, .icon-check-circle:before {
+          background-color: $primary-blue;
+          border-radius: 10px;
+        }
+      }
+    }
+  }
+
+
+  &.steps-1 .step {
+    width: calc(100% - #{$phase-id-width + $phase-actions-width}/4);
+  }
+  &.steps-2 .step {
+    width: calc(50% - #{$phase-id-width + $phase-actions-width}/4);
+  }
+  &.steps-3 .step {
+    width: calc(33.3% - #{$phase-id-width + $phase-actions-width}/4);
+  }
+  &.steps-4 .step {
+    width: calc(25% - #{$phase-id-width + $phase-actions-width}/4);
+  }
+  &.steps-5 .step {
+    width: calc(20% - #{$phase-id-width + $phase-actions-width}/4);
+  }
+  &.steps-6 .step {
+    width: calc(16.6% - #{$phase-id-width + $phase-actions-width}/4);
+  }
+  .step{
+    box-sizing: border-box;
+    font-weight: bold;
+    float: left;
+    height: $phase-height;
+    padding: 17px 0;
+    text-align: center;
+    max-width: 400px;
+    &.phase-id{
+      background-color: $phase-bg;
+      color: $gray-light;
+      line-height: 32px;
+      padding-top: 12px;
+      font-size: 12px;
+      width: $phase-id-width;
+      &.active{
+        .id{
+          background-color: $gray-light;
+          color: $phase-bg;
+        }
+      }
+      .icon-lock{
+        background-color: $phase-bg;
+        position: absolute;
+        top: -3px;
+        right: -8px;
+        &:before {
+          top: -1px;
+          left: 1px;
+        }
+      }
+      .icon-check-circle{
+        font-size: 22px;
+      }
+      .id{
+        display:block;
+        border: 0.28em solid $gray-light;
+        @include border-radius(15px);
+        height: 16px;
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+        width: 16px;
+        line-height: 16px;
+        font-size: 11px;
+        position: relative;
+      }
+    }
+    &.locked {
+      color: $gray-lighter;
+      .id {
+        border-color: $gray-lighter
+      }
+    }
+    &:not(.phase-id){
+      color: $gray;
+      font-size: 11px;
+    }
+    &.pending{
+      color: $gray-light;
+    }
+    &.actions{
+      float: right;
+      padding: 10px 2px 0 0;
+      position: relative;
+      width: $phase-actions-width;
+      text-align: right;
+      .status-indicator{
+        color: $gray-light;
+        bottom: 5px;
+        font-size: 11px;
+        position: absolute;
+        right: 8px;
+        white-space: nowrap;
+      }
+      .action-event-wrapper {
+        display: inline-block;
+        &:first-child:not(:last-child) {
+          margin-right: 10px;
+        }
+        #approve-event-button {
+          bottom: 28px;
+          left: 0px;
+          position: absolute;
+          right: 104px;
+          top: 9px;
+        }
+        #reject-event-button {
+          bottom: 27px;
+          left: 91px;
+          position: absolute;
+          right: 11px;
+          top: 9px;
+        }
+      }
+    }
+    &:nth-child(2){
+      .icon-connect{
+        &:before{
+          display: none;
+        }
+      }
+    }
+    &.first-step{
+      .icon-connect{
+        &:before{
+          display:none;
+        }
+      }
+    }
+    &.last-step{
+      .icon-connect{
+        &:after{
+          display:none;
+        }
+      }
+    }
+    .icon-connect{
+      position: relative;
+      &:before, &:after{
+        content:"";
+        width: calc(50% - 7px);
+        border-bottom: solid 1px $gray-light;
+        position: absolute;
+        top: 50%;
+        z-index: 1;
+      }
+      &:before{
+        left: 0;
+      }
+      &:after{
+        right: 0;
+      }
+    }
+    .icon-check-circle, .icon-circle{
+      display:block;
+      font-size: 16px;
+      z-index: 2;
+      position: relative;
+    }
+  }
+}
+
+.phase{
+  background-color: $phase-bg;
+  color: $gray-light;
+  font-size: 12px;
+  text-align: center;
+}
+
+.panel-collapse{
+  border-bottom: 2px solid $gray-lighter;
+}
+
+
+
+// Scrollspy
+
+.scrollspy-style{
+	.switch-list{
+		margin-bottom: 0;
+		&>li{
+			a{
+				&:hover{
+					cursor: default;
+					text-decoration: none;
+				}
+			}
+			&:not(.active){
+				display: none;
+			}
+			.step-buttons{
+				display: inline-block;
+			}
+		}
+	}
+}
+

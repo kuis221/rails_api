@@ -74,7 +74,13 @@ describe ContactEventsController, type: :controller do
       contact = create(:contact, company: @company)
       expect do
         expect do
-          xhr :post, 'create', event_id: event.to_param,  contact_event: { contactable_type: 'Contact', contactable_id: contact.id, contactable_attributes: { id: contact.id, first_name: 'Fulanito', last_name: 'De Tal', email: 'email@test.com', country: 'US', state: 'CA', city: 'Los Angeles', phone_number: '12345678', zip_code: '12345' } }, format: :js
+          xhr :post, 'create', event_id: event.to_param,  contact_event: {
+            contactable_type: 'Contact', contactable_id: contact.id,
+            contactable_attributes: { id: contact.id, first_name: 'Fulanito',
+                                      company_name: 'Brandscopic',
+                                      last_name: 'De Tal', email: 'email@test.com', country: 'US',
+                                      state: 'CA', city: 'Los Angeles', phone_number: '12345678',
+                                      zip_code: '12345' } }, format: :js
           expect(response).to be_success
         end.to_not change(Contact, :count)
       end.to change(ContactEvent, :count).by(1)
@@ -83,6 +89,7 @@ describe ContactEventsController, type: :controller do
       expect(contact.first_name).to eq('Fulanito')
       expect(contact.last_name).to eq('De Tal')
       expect(contact.email).to eq('email@test.com')
+      expect(contact.company_name).to eq('Brandscopic')
       expect(contact.phone_number).to eq('12345678')
       expect(contact.country).to eq('US')
       expect(contact.state).to eq('CA')
@@ -93,7 +100,11 @@ describe ContactEventsController, type: :controller do
     it 'creates a new contact and assigns it to the event' do
       expect do
         expect do
-          xhr :post, 'create', event_id: event.to_param, contact_event: { contactable_attributes: { first_name: 'Fulanito', last_name: 'De Tal', email: 'email@test.com', country: 'US', state: 'CA', city: 'Los Angeles', phone_number: '12345678', zip_code: '12345' } }, format: :js
+          xhr :post, 'create', event_id: event.to_param, contact_event: {
+            contactable_attributes: {
+              first_name: 'Fulanito', last_name: 'De Tal', email: 'email@test.com',
+              country: 'US', state: 'CA', city: 'Los Angeles',
+              phone_number: '12345678', zip_code: '12345' } }, format: :js
           expect(response).to be_success
         end.to change(Contact, :count).by(1)
       end.to change(ContactEvent, :count).by(1)

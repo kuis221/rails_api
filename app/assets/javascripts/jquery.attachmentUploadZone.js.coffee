@@ -6,6 +6,8 @@ $.widget 'nmk.attachmentUploadZone', {
 		# $.each @element.find('.attached_asset_upload_form'), (index, form) ->
 		form = @element;
 		url = form.find('input[name=url]').val()
+		fieldId = form.find('input[name=field-id]').val()
+		fieldType = form.data('field-type')
 		form.find("input[type=file]").fileupload(
 			url: url
 			dataType: "xml"
@@ -13,6 +15,7 @@ $.widget 'nmk.attachmentUploadZone', {
 			dropZone: form
 			start: (e) ->
 				form.addClass("uploading").find(".attachment-attached-view, .attachment-select-file-view").hide().end().find(".attachment-uploading-view").show()
+				form.find('div[id="panel-' + fieldId + '"]').show()
 				return
 
 			add: (e, data) ->
@@ -40,11 +43,22 @@ $.widget 'nmk.attachmentUploadZone', {
 
 			change: (e, data) ->
 				$(".attachment-uploading-view .file-name", form).text data.files[0].name
+
 				return
 
 			progress: (e, data) ->
-				progress = parseInt(data.loaded / data.total * 100, 10)
-				$(".upload-progress", form).text progress + "%"
+				if fieldType
+					docExtension = data.files[0].name.substr(data.files[0].name.lastIndexOf('.') - 2)
+					docName = data.files[0].name.substring(0, 10) + '...' + docExtension
+					progress = parseInt(data.loaded / data.total * 100, 10)
+					context = $('div[id="panel-' + fieldId + '"] .attachment-upload-progress-info')
+					context.find('.document-name').text docName
+					context.find('.document-size').text filesize(data.files[0].size)
+					context.find('.progress .bar').css width: progress + '%'
+					context.find('.documents-counter').text 'Uploading...'
+				else
+					progress = parseInt(data.loaded / data.total * 100, 10)
+					$(".upload-progress", form).text progress + "%"
 				return
 
 			progressall: (e, data) ->
@@ -53,8 +67,35 @@ $.widget 'nmk.attachmentUploadZone', {
 				return
 
 			done: (e, data) ->
-				form.find("input[type=hidden].direct_upload_url").val $(data.result).find("Location").text()
-				form.removeClass("uploading").find(".attachment-uploading-view, .attachment-select-file-view").hide().end().find(".attachment-attached-view").show().find(".file-name").text data.files[0].name
+				isImage = data.files[0] and data.files[0].type.indexOf('image/') is 0
+				if fieldType or isImage
+					docExtension = data.files[0].name.substr(data.files[0].name.lastIndexOf('.') + 1)
+					form.find("input[type=hidden].direct_upload_url").val($(data.result).find("Location").text()).trigger('change')
+					form.removeClass("uploading")
+					if isImage
+						form.find('.attachment-uploading-view, .attachment-select-file-view').hide().end().find('.attachment-attached-view').show()
+						if data.files and data.files[0]
+							reader = new FileReader
+
+							reader.onload = (e) ->
+								form.find('div[id="view-' + fieldId + '"]').find('#image-link').attr 'href', e.target.result
+								form.find('div[id="view-' + fieldId + '"]').find('.download-attachment').attr 'href', e.target.result
+								#form.find('div[id="view-' + fieldId + '"]').find('.download-attachment').attr 'download', data.files[0].name
+								form.find('div[id="view-' + fieldId + '"]').find('#image-attached').attr 'src', e.target.result
+								#form.find('div[id="view-' + fieldId + '"]').find('#image-attached').attr 'data-info', '{"urls":{"download":"' + e.target.result + '"},"permissions":["download"]}'
+								return
+
+							reader.readAsDataURL data.files[0]
+
+					else
+						form.find('.attachment-uploading-view, .attachment-select-file-view').hide().end().find('.attachment-attached-view').show().find(".file-name").text data.files[0].name
+						form.find('div[id="view-' + fieldId + '"]').find(".document-icon").addClass(docExtension).text('.' + docExtension)
+
+					form.find('div[id="panel-' + fieldId + '"]').hide()
+					$('.attachment-uploading-view').find('.progress .bar').css width: '0%'
+				else
+					form.find("input[type=hidden].direct_upload_url").val($(data.result).find("Location").text()).trigger('change')
+					form.removeClass("uploading").find(".attachment-uploading-view, .attachment-select-file-view").hide().end().find(".attachment-attached-view").show().find(".file-name").text data.files[0].name
 				return
 
 			always: (f) ->
@@ -70,7 +111,7 @@ $.widget 'nmk.attachmentUploadZone', {
 					{name: elm.name, value: elm.value}
 
 				fileType = ""
-				fileType = @files[0].type	if "type" of @files[0]
+				fileType = @files[0].type if "type" of @files[0]
 				data.push
 					name: "content-type"
 					value: fileType
@@ -92,15 +133,25 @@ $.widget 'nmk.attachmentUploadZone', {
 			form.data('id', null).find(".attachment-attached-view").hide().end().
 					find(".attachment-select-file-view").show().end().
 					find("input[name*=\"[_destroy]\"]").val "1"
+			if fieldType == 'photo'
+				form.find('div[id="view-' + fieldId + '"]').find('#image-attached').attr 'src', ''
+				form.find('div[id="view-' + fieldId + '"]').find('.download-attachment').hide()
+			form.find("input[type=hidden].direct_upload_url").val('').trigger('change')
+
+			form.find('div[id="panel-' + fieldId + '"]').show()
 			false
 
+		form.on "click", ".download-attachment", (e) ->
+			e.stopPropagation()
+			true
+
 		form.on "click", "a.file-browse", (e) ->
-			e.preventDefault();
-			e.stopPropagation();
+			e.preventDefault()
+			e.stopPropagation()
 			false
 
 		form.on "click", "input#fileupload", (e) ->
-			e.stopPropagation();
+			e.stopPropagation()
 			true
 
 		form.on "click", ".cancel-upload", (e) ->

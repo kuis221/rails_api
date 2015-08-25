@@ -39,7 +39,7 @@
             mode: 'weeks',
             renderMonthDay: function(day) {
               date = (day.getMonth()+1)+'/'+day.getDate()+'/'+day.getFullYear()
-              return '<a class="cal-day-link" data-date="'+date+'" href="/events?start_date='+date+'&end_date=">'+day.getDate()+'</a>';
+              return '<a class="cal-day-link" data-date="'+date+'" href="/events?start_date%5B%5D='+encodeURIComponent(date)+'&end_date%5B%5D='+encodeURIComponent(date)+'">'+day.getDate()+'</a>';
             }
           });
         }

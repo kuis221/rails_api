@@ -35,6 +35,26 @@ class FormField::Photo < FormField
     true
   end
 
+  def format_json(result)
+    super.merge(
+      if result.nil? || result.attached_asset.nil?
+        { value: nil }
+      else
+        {
+          file_file_name: result.attached_asset.file_file_name,
+          file_content_type: result.attached_asset.file_content_type,
+          file_file_size: result.attached_asset.file_file_size,
+          created_at: result.attached_asset.created_at,
+          active: result.attached_asset.active,
+          file_small: result.attached_asset.file.url(:small),
+          file_thumbnail: result.attached_asset.file.url(:thumbnail),
+          file_medium: result.attached_asset.file.url(:medium),
+          file_original: result.attached_asset.file.url
+        }
+      end
+    )
+  end
+
   def format_html(result)
     if result.attached_asset.present? && result.attached_asset.processed?
       "<a href=\"#{result.attached_asset.download_url}\" title=\"Download\"><img src=\"#{result.attached_asset.file.url(:thumbnail)}\" alt=\"\" /></a>".html_safe

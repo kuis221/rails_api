@@ -2,9 +2,9 @@ require 'rails_helper'
 
 describe EventsController, type: :controller do
   describe 'as registered user' do
-    let(:user){ sign_in_as_user }
-    let(:company){ user.companies.first }
-    let(:company_user){ user.current_company_user }
+    let(:user) { sign_in_as_user }
+    let(:company) { user.companies.first }
+    let(:company_user) { user.current_company_user }
 
     before { user }
     after { Timecop.return }
@@ -48,19 +48,36 @@ describe EventsController, type: :controller do
 
     describe "GET 'show'" do
       describe 'for an event in the future' do
-        let(:event) { create(:event, company: company, campaign: create(:campaign, company: company), start_date: 1.week.from_now.to_s(:slashes), end_date: 1.week.from_now.to_s(:slashes)) }
+        let(:event) do
+          create(:event, company: company, campaign: create(:campaign, company: company),
+                         start_date: 1.week.from_now.to_s(:slashes),
+                         end_date: 1.week.from_now.to_s(:slashes))
+        end
 
         it 'renders the correct templates' do
-          get 'show', id: event.to_param
+          event.users << company_user
+          expect do
+            get 'show', id: event.to_param
+          end.to change(Notification, :count).by(-1)
           expect(response).to be_success
           expect(response).to render_template('show')
           expect(response).not_to render_template('show_results')
           expect(response).not_to render_template('edit_results')
         end
+
+        it 'sets the flash message after activities have been created' do
+          activity_type = create(:activity_type, name: 'POS Drop', company: company, campaigns: [event.campaign])
+          session['activity_create_123'] = 3
+          get 'show', id: event.id, activity_form: 123, activity_type_id: activity_type.id
+          expect(flash[:event_message_success]).to eql 'Nice work. 3 POS Drop activities have been added.'
+        end
       end
 
       describe 'for an event in the past' do
-        let(:event) { create(:event, company: company, campaign: create(:campaign, company: company), start_date: 1.day.ago.to_s(:slashes), end_date: 1.day.ago.to_s(:slashes)) }
+        let(:event) do
+          create(:event, company: company, campaign: create(:campaign, company: company),
+                         start_date: 1.day.ago.to_s(:slashes), end_date: 1.day.ago.to_s(:slashes))
+        end
 
         describe 'when no data have been entered' do
           it 'renders the correct templates' do
@@ -69,12 +86,11 @@ describe EventsController, type: :controller do
             get 'show', id: event.to_param
             expect(response).to be_success
             expect(response).to render_template('show')
-            expect(response).to render_template('_edit_results')
-            expect(response).to render_template('_surveys')
+            expect(response).to render_template('_basic_info')
+            expect(response).to render_template('_edit_event_data')
             expect(response).to render_template('_comments')
             expect(response).to render_template('_photos')
             expect(response).to render_template('_expenses')
-            expect(response).not_to render_template('_show_results')
           end
         end
       end
@@ -107,7 +123,7 @@ describe EventsController, type: :controller do
 
       it 'queue the job for export the list' do
         expect do
-          xhr :get, :index, format: :xls
+          xhr :get, :index, format: :csv
         end.to change(ListExport, :count).by(1)
         export = ListExport.last
         expect(ListExportWorker).to have_queued(export.id)
@@ -117,7 +133,7 @@ describe EventsController, type: :controller do
     describe "GET 'list_export'", search: true do
       let(:campaign) { create(:campaign, company: company, name: 'Test Campaign FY01') }
       it 'should return an empty book with the correct headers' do
-        expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+        expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
         ResqueSpec.perform_all(:export)
         expect(ListExport.last).to have_rows([
           ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'DURATION', 'VENUE NAME', 'ADDRESS', 'CITY',
@@ -128,26 +144,29 @@ describe EventsController, type: :controller do
       it 'should include the event results' do
         place = create(:place, name: 'Bar Prueba', city: 'Los Angeles', state: 'California', country: 'US')
         event = create(:approved_event, company: company, campaign: campaign,
-          start_date: '01/23/2019', end_date: '01/23/2019',
-          start_time: '10:00 am', end_time: '12:00 pm',
-          place: place)
+                                        start_date: '01/23/2019', end_date: '01/23/2019',
+                                        start_time: '10:00 am', end_time: '12:00 pm',
+                                        place: place)
         team = create(:team, company: company, name: 'zteam')
         event.teams << team
         event.users << company_user
-        contact1 = create(:contact, first_name: 'Guillermo', last_name: 'Vargas', email: 'guilleva@gmail.com', company: company)
-        contact2 = create(:contact, first_name: 'Chris', last_name: 'Jaskot', email: 'cjaskot@gmail.com', company: company)
+        contact1 = create(:contact, first_name: 'Guillermo', last_name: 'Vargas',
+                                    email: 'guilleva@gmail.com', company: company)
+        contact2 = create(:contact, first_name: 'Chris', last_name: 'Jaskot',
+                                    email: 'cjaskot@gmail.com', company: company)
         create(:contact_event, event: event, contactable: contact1)
         create(:contact_event, event: event, contactable: contact2)
         Sunspot.commit
 
-        expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+        expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
         ResqueSpec.perform_all(:export)
         expect(ListExport.last).to have_rows([
           ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'DURATION', 'VENUE NAME', 'ADDRESS', 'CITY',
            'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL'],
-          ['Test Campaign FY01', nil, '2019-01-23T10:00', '2019-01-23T12:00', '2.0',
+          ['Test Campaign FY01', '', '2019-01-23 10:00', '2019-01-23 12:00', '2.00',
            'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345', 'Los Angeles', 'California',
-           '12345', 'Active', 'Approved', 'Test User, zteam', 'Chris Jaskot, Guillermo Vargas', "http://localhost:5100/events/#{event.id}"]
+           '12345', 'Active', 'Approved', 'Test User, zteam', 'Chris Jaskot, Guillermo Vargas',
+           "http://test.host/events/#{event.id}"]
         ])
       end
     end
@@ -194,21 +213,13 @@ describe EventsController, type: :controller do
       end
     end
 
-    describe "GET 'tasks'" do
-      let(:event) { create(:event, company: company) }
-      it 'returns http success' do
-        get 'tasks', id: event.to_param
-        expect(response).to be_success
-        expect(response).to render_template(:tasks)
-        expect(response).to render_template('_tasks_counters')
-      end
-    end
-
     describe "POST 'create'" do
       let(:campaign) { create(:campaign, company: company) }
       it 'should not render form_dialog if no errors' do
         expect do
-          xhr :post, 'create', event: { campaign_id: campaign.id, start_date: '05/23/2020', start_time: '12:00pm', end_date: '05/22/2021', end_time: '01:00pm' }, format: :js
+          xhr :post, 'create', event: {
+            campaign_id: campaign.id, start_date: '05/23/2020', start_time: '12:00pm',
+            end_date: '05/22/2021', end_time: '01:00pm' }, format: :js
         end.to change(Event, :count).by(1)
         expect(response).to be_success
         expect(response).to render_template(:create)
@@ -226,7 +237,9 @@ describe EventsController, type: :controller do
 
       it "should assign current_user's company_id to the new event" do
         expect do
-          xhr :post, 'create', event: { campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm' }, format: :js
+          xhr :post, 'create', event: {
+            campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm',
+            end_date: '05/22/2020', end_time: '01:00pm' }, format: :js
         end.to change(Event, :count).by(1)
         expect(assigns(:event).company_id).to eq(company.id)
       end
@@ -236,7 +249,10 @@ describe EventsController, type: :controller do
           company_user.update_attributes(
             notifications_settings: %w(new_event_team_sms new_event_team_email),
             user_attributes: { phone_number_verified: true })
-          expect(UserMailer).to receive(:notification).with(company_user.id, 'Added to Event', /You have a new event http:\/\/localhost:5100\/events\/[0-9]+/).and_return(double(deliver: true))
+          expect(UserMailer).to receive(:notification)
+            .with(company_user.id, 'Added to Event',
+                  %r{You have a new event http:\/\/localhost:5100\/events\/[0-9]+})
+            .and_return(double(deliver: true))
           expect do
             expect do
               post 'create', event: {
@@ -253,7 +269,9 @@ describe EventsController, type: :controller do
 
       it 'should create the event with the correct dates' do
         expect do
-          xhr :post, 'create', event: { campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/21/2020', end_time: '01:00pm' }, format: :js
+          xhr :post, 'create', event: {
+            campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm',
+            end_date: '05/21/2020', end_time: '01:00pm' }, format: :js
         end.to change(Event, :count).by(1)
         event = Event.last
         expect(event.start_at).to eq(Time.zone.parse('2020/05/21 12:00pm'))
@@ -267,8 +285,8 @@ describe EventsController, type: :controller do
         expect do
           post 'create', event: {
             campaign_id: campaign.id, team_members: ["company_user:#{user.id}", "team:#{team.id}"],
-              start_date: '05/21/2020', start_time: '12:00pm', description: 'some description',
-              end_date: '05/21/2020', end_time: '01:00pm' }, format: :js
+            start_date: '05/21/2020', start_time: '12:00pm', description: 'some description',
+            end_date: '05/21/2020', end_time: '01:00pm' }, format: :js
         end.to change(Event, :count).by(1)
         event = Event.last
         expect(event.start_at).to eq(Time.zone.parse('2020/05/21 12:00pm'))
@@ -285,7 +303,10 @@ describe EventsController, type: :controller do
       let(:event) { create(:event, company: company, campaign: campaign) }
       it 'must update the event attributes' do
         new_campaign = create(:campaign, company: company)
-        xhr :put, 'update', id: event.to_param, event: { campaign_id: new_campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm' }, format: :js
+        xhr :put, 'update', id: event.to_param, event: {
+          campaign_id: new_campaign.id,
+          start_date: '05/21/2020', start_time: '12:00pm',
+          end_date: '05/22/2020', end_time: '01:00pm' }, format: :js
         expect(assigns(:event)).to eq(event)
         expect(response).to be_success
         event.reload
@@ -295,10 +316,19 @@ describe EventsController, type: :controller do
       end
 
       it 'must update the event attributes' do
-        xhr :put, 'update', id: event.to_param, partial: 'event_data', event: { campaign_id: create(:campaign, company: company).to_param, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm' }, format: :js
+        xhr :put, 'update', id: event.to_param, partial: 'event_data', event: {
+          campaign_id: create(:campaign, company: company).to_param,
+          start_date: '05/21/2020', start_time: '12:00pm',
+          end_date: '05/22/2020', end_time: '01:00pm'
+        }, format: :js
         expect(assigns(:event)).to eq(event)
         expect(response).to be_success
         expect(response).to render_template('_results_event_data')
+
+        # Test papertrail
+        expect(event.versions.count).to eql 2
+        expect(event.versions.last.reify.campaign_id).to eql campaign.id
+        expect(event.versions.last.whodunnit).to eql user.id.to_s
       end
 
       it 'should update the event data for a event without data' do
@@ -308,8 +338,10 @@ describe EventsController, type: :controller do
           put 'update', id: event.to_param,
                         event: {
                           results_attributes: {
-                            '0' => { form_field_id: campaign.form_field_for_kpi(Kpi.impressions), kpi_id: Kpi.impressions.id, kpis_segment_id: nil, value: '100' },
-                            '1' => { form_field_id: campaign.form_field_for_kpi(Kpi.interactions), kpi_id: Kpi.interactions.id, kpis_segment_id: nil, value: '200' }
+                            '0' => { form_field_id: campaign.form_field_for_kpi(Kpi.impressions),
+                                     kpi_id: Kpi.impressions.id, kpis_segment_id: nil, value: '100' },
+                            '1' => { form_field_id: campaign.form_field_for_kpi(Kpi.interactions),
+                                     kpi_id: Kpi.interactions.id, kpis_segment_id: nil, value: '200' }
                           }
                         }
         end.to change(FormFieldResult, :count).by(2)
@@ -334,8 +366,12 @@ describe EventsController, type: :controller do
           put 'update', id: event.to_param,
                         event: {
                           results_attributes: {
-                            '0' => { form_field_id: campaign.form_field_for_kpi(Kpi.impressions), kpi_id: Kpi.impressions.id, kpis_segment_id: nil, value: '1111', id: impressions.id },
-                            '1' => { form_field_id: campaign.form_field_for_kpi(Kpi.interactions), kpi_id: Kpi.interactions.id, kpis_segment_id: nil, value: '2222', id: interactions.id }
+                            '0' => { form_field_id: campaign.form_field_for_kpi(Kpi.impressions),
+                                     kpi_id: Kpi.impressions.id, kpis_segment_id: nil,
+                                     value: '1111', id: impressions.id },
+                            '1' => { form_field_id: campaign.form_field_for_kpi(Kpi.interactions),
+                                     kpi_id: Kpi.interactions.id, kpis_segment_id: nil,
+                                     value: '2222', id: interactions.id }
                           }
                         }
         end.to_not change(FormFieldResult, :count)
@@ -400,7 +436,6 @@ describe EventsController, type: :controller do
         event.reload
         user_tasks.each { |t| expect(t.reload.company_user_id).to be_nil }
         other_tasks.each { |t| expect(t.reload.company_user_id).not_to be_nil }
-
       end
 
       it 'should not unassign any tasks assigned the team users if the user is directly assigned to the event' do
@@ -434,8 +469,10 @@ describe EventsController, type: :controller do
         expect(response).to be_success
         expect(assigns(:event)).to eq(event)
         expect(assigns(:staff)).to match_array [
-          { 'id' => company_user.id.to_s, 'name' => company_user.full_name, 'description' => 'Super Admin', 'type' => 'user' },
-          { 'id' => another_user.id.to_s, 'name' => 'Test User', 'description' => 'Super Admin', 'type' => 'user' }
+          { 'id' => company_user.id.to_s, 'name' => company_user.full_name,
+            'description' => 'Super Admin', 'type' => 'user' },
+          { 'id' => another_user.id.to_s, 'name' => 'Test User',
+            'description' => 'Super Admin', 'type' => 'user' }
         ]
       end
 
@@ -445,7 +482,9 @@ describe EventsController, type: :controller do
         xhr :get, 'new_member', id: event.id, format: :js
         expect(response).to be_success
         expect(assigns(:event)).to eq(event)
-        expect(assigns(:staff).to_a).to eq([{ 'id' => another_user.id.to_s, 'name' => 'Test User', 'description' => 'Super Admin', 'type' => 'user' }])
+        expect(assigns(:staff).to_a).to eq([
+          { 'id' => another_user.id.to_s, 'name' => 'Test User',
+            'description' => 'Super Admin', 'type' => 'user' }])
       end
 
       it 'should load teams with active users' do
@@ -560,7 +599,9 @@ describe EventsController, type: :controller do
             user_attributes: { phone_number_verified: true })
           event.users << company_user
           message = "You have an event recap that is pending approval http://localhost:5100/events/#{event.id}"
-          expect(UserMailer).to receive(:notification).with(company_user.id, 'Event Recaps Pending Approval', message).and_return(double(deliver: true))
+          expect(UserMailer).to receive(:notification)
+            .with(company_user.id, 'Event Recaps Pending Approval', message)
+            .and_return(double(deliver: true))
           expect do
             xhr :put, 'submit', id: event.to_param, format: :js
             expect(response).to be_success
@@ -573,7 +614,8 @@ describe EventsController, type: :controller do
 
       it 'should not allow to submit the event if the event data is not valid' do
         campaign = create(:campaign, company_id: company)
-        field = create(:form_field_number, fieldable: campaign, kpi: create(:kpi, company_id: 1), required: true)
+        create(:form_field_number, fieldable: campaign,
+                                   kpi: create(:kpi, company_id: 1), required: true)
         event = create(:event, active: true, company: company, campaign: campaign)
         expect do
           xhr :put, 'submit', id: event.to_param, format: :js
@@ -615,7 +657,9 @@ describe EventsController, type: :controller do
               user_attributes: { phone_number_verified: true })
             event.users << company_user
             message = "You have a rejected event recap http://localhost:5100/events/#{event.id}"
-            expect(UserMailer).to receive(:notification).with(company_user.id, 'Rejected Event Recaps', message).and_return(double(deliver: true))
+            expect(UserMailer).to receive(:notification)
+              .with(company_user.id, 'Rejected Event Recaps', message)
+              .and_return(double(deliver: true))
             expect do
               xhr :put, 'reject', id: event.to_param, reason: 'blah blah blah', format: :js
               expect(response).to be_success
@@ -631,7 +675,10 @@ describe EventsController, type: :controller do
   end
 
   describe 'user with permissions to edit event data only' do
-    let(:company_user) { create(:company_user, company_id: create(:company).id, permissions: [[:show, 'Event'], [:edit_unsubmitted_data, 'Event']]) }
+    let(:company_user) do
+      create(:company_user, company_id: create(:company).id,
+                            permissions: [[:show, 'Event'], [:edit_unsubmitted_data, 'Event']])
+    end
     let(:user) { company_user.user }
     let(:company) { company_user.company }
     let(:event) { create(:event, company: company) }

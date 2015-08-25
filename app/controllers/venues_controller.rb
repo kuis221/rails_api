@@ -9,10 +9,12 @@ class VenuesController < FilteredController
 
   custom_actions member: [:select_areas, :add_areas]
 
+  before_action :redirect_to_merged_venue, only: [:show]
+
   def collection
     @extended_places ||= (super || []).tap do |places|
       ids = places.map { |p| p.place.place_id }
-      google_results = load_google_places.reject { |gp| ids.include?(gp.id) }
+      google_results = load_google_places.reject { |gp| ids.include?(gp.place_id) }
       @collection_count = @collection_count.to_i + google_results.count
       places.concat google_results
     end
@@ -34,6 +36,17 @@ class VenuesController < FilteredController
 
   protected
 
+  def collection_to_csv
+    CSV.generate do |csv|
+      csv << ['VENUE NAME', 'TD LINX CODE', 'ADDRESS', 'CITY', 'STATE', 'SCORE', 'EVENTS COUNT',
+              'PROMO HOURS COUNT', 'TOTAL $ SPENT']
+      each_collection_item do |venue|
+        csv << [venue.name, venue.td_linx_code, venue.formatted_address, venue.city,
+                venue.state, venue.score, venue.events_count, venue.promo_hours, venue.spent]
+      end
+    end
+  end
+
   def permitted_params
     params.permit(venue: [:place_id, :company_id])[:venue]
   end
@@ -41,8 +54,17 @@ class VenuesController < FilteredController
   def load_google_places
     return [] unless params[:location].present? && params[:q].present?
     (lat, lng) = params[:location].split(',')
-    google_places_client.spots(lat, lng, keyword: params[:q], radius: 50_000)
-  rescue
+    spots = google_places_client.spots(lat, lng, keyword: params[:q], radius: 50_000)
+    return [] if spots.empty?
+    merged_ids = Place.where.not(merged_with_place_id: nil)
+                  .joins('LEFT JOIN places nmp ON nmp.merged_with_place_id IS NULL AND nmp.place_id=places.place_id')
+                  .where(place_id: spots.map{ |s| s.place_id })
+                  .where('nmp.id is null')
+                  .pluck(:place_id)
+    spots.reject { |s| merged_ids.include?(s.place_id) }
+  rescue => e
+    puts "Search in google places failed with: #{e.message}"
+    puts e.backtrace.inspect
     []
   end
 
@@ -50,6 +72,7 @@ class VenuesController < FilteredController
     return if current_user.nil?
     return if params[:id] =~ /\A[0-9]+\z/
     place = Place.load_by_place_id(params[:id], params[:ref])
+    place = Place.find(place.merged_with_place_id) if place.present? && place.merged_with_place_id.present?
     fail ActiveRecord::RecordNotFound unless place
     place.save unless place.persisted?
     venue = current_company.venues.find_or_create_by(place_id: place.id)
@@ -67,6 +90,10 @@ class VenuesController < FilteredController
       # anyway...
       p[:current_company_user] = nil
       p[:search_address] = true
+      if p[:q].present?
+        p[:sorting] = :score
+        p[:sorting_dir] = :asc
+      end
 
       [:events_count, :promo_hours, :impressions, :interactions, :sampled, :spent, :venue_score].each do |param|
         p[param] ||= {}
@@ -85,9 +112,16 @@ class VenuesController < FilteredController
   end
 
   def permitted_search_params
-    [:location, :q, :page, :sorting, :sorting_dir, :per_page, :start_date, :end_date,
+    [:location, :q, :page, :sorting, :sorting_dir, :per_page, start_date: [], end_date: [],
      events_count: [:min, :max], promo_hours: [:min, :max], impressions: [:min, :max],
      interactions: [:min, :max], sampled: [:min, :max], spent: [:min, :max],
      venue_score: [:min, :max], price: [], area: [], campaign: [], brand: []]
+  end
+
+  def redirect_to_merged_venue
+    return if resource.merged_with_place_id.blank?
+    redirect_to venue_path(Venue.find_or_create_by(
+      company_id: resource.company_id,
+      place_id: resource.merged_with_place_id))
   end
 end

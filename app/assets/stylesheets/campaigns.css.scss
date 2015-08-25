@@ -59,6 +59,22 @@
 			}
 		}
 	}
+
+	#fields-wrapper-affix.fields-wrapper {
+	  height: 650px;
+
+	  &.affix {
+		position: fixed;
+		top: 120px;
+		z-index: 99;
+		right: 250px;
+	  }
+  	}
+
+	#form-field-accordion {
+	  overflow: auto;
+	  height: 600px;
+	}
 }
 
 

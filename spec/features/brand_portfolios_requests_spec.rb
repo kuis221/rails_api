@@ -128,13 +128,13 @@ feature 'BrandPortfolios', js: true, search: true do
                                            description: 'a portfolio description',
                                            active: true, company: company)
       visit brand_portfolio_path(portfolio)
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button 'Deactivate Brand Portfolio'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this brand portfolio?'
 
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button 'Activate Brand Portfolio'
         expect(page).to have_button 'Deactivate Brand Portfolio' # test the link have changed
       end
@@ -144,7 +144,7 @@ feature 'BrandPortfolios', js: true, search: true do
       portfolio = create(:brand_portfolio, name: 'Old name', company: company)
       visit brand_portfolio_path(portfolio)
       expect(page).to have_content('Old name')
-      within('.links-data') { click_js_button 'Edit Brand Portfolio' }
+      within('.edition-links') { click_js_button 'Edit Brand Portfolio' }
 
       within("form#edit_brand_portfolio_#{portfolio.id}") do
         fill_in 'Name', with: 'edited portfolio name'
@@ -200,11 +200,17 @@ feature 'BrandPortfolios', js: true, search: true do
 
   feature 'custom filters', search: true, js: true do
     it_behaves_like 'a list that allow saving custom filters' do
+      let!(:brand1) { create(:brand, name: 'Brand 1', company: company) }
+      let!(:brand2) { create(:brand, name: 'Brand 2', company: company) }
+
+      let!(:campaign) { create(:campaign, company: company) }
+
       before do
-        campaign = create(:campaign, company: company)
-        campaign.brands << create(:brand, name: 'Brand 1', company: company)
-        campaign.brands << create(:brand, name: 'Brand 2', company: company)
+        campaign.brands << brand1
+        campaign.brands << brand2
         company_user.campaigns << campaign
+        create :membership, company_user: company_user, memberable: brand1
+        create :membership, company_user: company_user, memberable: brand2
       end
 
       let(:list_url) { brand_portfolios_path }
@@ -236,11 +242,11 @@ feature 'BrandPortfolios', js: true, search: true do
       Sunspot.commit
     end
 
-    scenario 'should be able to export as XLS' do
+    scenario 'should be able to export as CSV' do
       visit brand_portfolios_path
 
       click_js_link 'Download'
-      click_js_link 'Download as XLS'
+      click_js_link 'Download as CSV'
 
       within visible_modal do
         expect(page).to have_content('We are processing your request, the download will start soon...')

@@ -119,13 +119,13 @@ feature 'Teams', js: true do
     scenario 'allows the user to activate/deactivate a team' do
       team = create(:team, active: true, company_id: company.id)
       visit team_path(team)
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button 'Deactivate Team'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this team?'
 
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button 'Activate Team'
         expect(page).to have_button('Deactivate Team') # test the link have changed
       end
@@ -136,7 +136,7 @@ feature 'Teams', js: true do
       Sunspot.commit
       visit team_path(team)
 
-      within('.links-data') { click_js_button 'Edit Team' }
+      within('.edition-links') { click_js_button 'Edit Team' }
 
       within visible_modal do
         fill_in 'Name', with: 'edited team name'
@@ -161,7 +161,7 @@ feature 'Teams', js: true do
 
       expect(page).to_not have_content('Fulanito')
 
-      click_js_link('Add Team Member')
+      click_js_button('Add Team Member')
 
       within visible_modal do
         find("#staff-member-user-#{company_user.id}").hover
@@ -205,11 +205,11 @@ feature 'Teams', js: true do
       Sunspot.commit
     end
 
-    scenario 'should be able to export as XLS' do
+    scenario 'should be able to export as CSV' do
       visit teams_path
 
       click_js_link 'Download'
-      click_js_link 'Download as XLS'
+      click_js_link 'Download as CSV'
 
       within visible_modal do
         expect(page).to have_content('We are processing your request, the download will start soon...')

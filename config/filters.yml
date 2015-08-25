@@ -10,6 +10,17 @@ filters:
     status:
       items: [Active, Inactive]
       name: 'status'
+  data_extracts_event_data:
+    brands: [Brand, BrandPortfolio]
+    areas: [Area]
+    people: [CompanyUser, Team]
+    event_status:
+      items: [Submitted, Late, Due, Approved, Rejected]
+      name: 'event_status'
+    status:
+      items: [Active, Inactive]
+      name: 'status'
+
   user_tasks:
     campaigns: [Campaign]
     task_status:
@@ -101,10 +112,19 @@ filters:
     status:
       items: [Active, Inactive]
       name: 'status'
+  data_extract_activities:
+    brands: [Brand]
+    campaigns: [Campaign]
+    areas: [Area]
+    users: [CompanyUser]
+    status:
+      items: [Active, Inactive]
+      name: 'status'
   results_photos:
     campaigns: [Campaign]
     brands: [Brand]
     areas: [Area]
+    people: [CompanyUser, Team]
     tags: [Tag]
     rating:
       items: [5, 4, 3, 2, 1, 0]
@@ -121,3 +141,10 @@ filters:
       method: trend_campaigns
     brands: [Brand]
     areas: [Area]
+  campaign_summary:
+    brands: [Brand]
+    areas: [Area]
+    people: [CompanyUser]
+    event_status:
+      items: [Submitted, Late, Due, Approved, Rejected]
+      name: 'event_status'

@@ -74,8 +74,6 @@ module Api
           - start_date
           - end_date
 
-          *Facets Results*
-
           The API returns the facets on the following format:
 
             [
@@ -110,50 +108,6 @@ module Api
           * *user*:
             * *id*: the user id
             * *full_name*: the name of the user to which the visit belongs
-        EOS
-        example <<-EOS
-        GET /api/v1/brand_ambassadors/visits.json
-        {
-          "page": 1,
-          "total_pages": 8
-          "total": 215,
-          "facets": [
-            <HERE GOES THE LIST FACETS DESCRIBED ABOVE>
-          ],
-          "results": [
-            {
-              id: 213,
-              visit_type_name: "Market Visit",
-              start_date: "2014-07-01",
-              end_date: "2014-07-02",
-              campaign_name: "Gin BA FY15",
-              area_name: "Miami",
-              city: "Miami",
-              description: "Three Martini Lunch",
-              status: "Active",
-              user: {
-                id: 130,
-                full_name: "Nick van Tiel"
-              }
-            },
-            {
-              id: 115,
-              visit_type_name: "PTO",
-              start_date: "2014-07-07",
-              end_date: "2014-07-11",
-              campaign_name: "Absolut BA FY15",
-              area_name: null,
-              city: null,
-              description: "",
-              status: "Active",
-              user: {
-                id: 103,
-                full_name: "Rudy Aguero"
-              }
-            },
-            ...
-          ]
-        }
         EOS
         def index
           collection

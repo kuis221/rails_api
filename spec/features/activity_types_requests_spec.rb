@@ -126,7 +126,7 @@ feature 'Activity Types', js: true do
       visit activity_type_path(activity_type)
 
       expect(page).to have_selector('h2', text: 'A test activity type')
-      find('.links-data').click_js_button('Edit Activity Type')
+      find('.edition-links').click_js_button('Edit Activity Type')
 
       within visible_modal do
         fill_in 'Name', with: 'Drink feature'
@@ -153,11 +153,11 @@ feature 'Activity Types', js: true do
       Sunspot.commit
     end
 
-    scenario 'should be able to export as XLS' do
+    scenario 'should be able to export as CSV' do
       visit activity_types_path
 
       click_js_link 'Download'
-      click_js_link 'Download as XLS'
+      click_js_link 'Download as CSV'
 
       within visible_modal do
         expect(page).to have_content('We are processing your request, the download will start soon...')

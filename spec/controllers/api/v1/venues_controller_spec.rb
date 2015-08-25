@@ -67,7 +67,6 @@ describe Api::V1::VenuesController, type: :controller do
         expect(result['results'].first).to include('id' => venue.id)
       end
     end
-
   end
 
   describe "GET 'show'" do
@@ -93,11 +92,12 @@ describe Api::V1::VenuesController, type: :controller do
       Sunspot.commit
 
       get 'photos', id: event.venue.to_param, format: :json
-      result = JSON.parse(response.body)
       expect(response).to be_success
-      expect(response).to render_template('photos')
 
-      expect(result.count).to eq(3)
+      expect(json.count).to eq(3)
+      expect(json.first.keys).to match_array(%w(
+        id file_content_type file_file_name file_file_size created_at active file_medium
+        file_thumbnail file_original file_small processed))
     end
   end
 
@@ -133,8 +133,19 @@ describe Api::V1::VenuesController, type: :controller do
       expect(place.state).to eql 'San José'
       expect(place.zipcode).to eql '12345'
       expect(place.country).to eql 'CR'
+      expect(place.types).to eql %w(bar restaurant)
       expect(place.latitude).to eql 1.2322
       expect(place.longitude).to eql -3.23455
+    end
+
+    it 'require valid data' do
+      expect do
+        post 'create', venue: {
+          name: "Guille's place", types: 'bar,restaurant',
+          country: nil, state: nil, street_number: nil, website: nil, zipcode: nil }, format: :json
+        expect(response.response_code).to eql 400
+      end.to_not change(Place, :count)
+      expect(json['success']).to be_falsey
     end
   end
 
@@ -149,18 +160,21 @@ describe Api::V1::VenuesController, type: :controller do
       expect(response).to be_success
       result = JSON.parse(response.body)
       expect(result.count).to eq(2)
-      expect(result).to match_array [{
-        'id' => comment2.id,
-        'content' => 'Comment #2',
-        'created_at' => '2013-08-23T09:15:00.000-07:00',
-        'type' => 'brandscopic'
-      },
-                                     {
-                                       'id' => comment1.id,
-                                       'content' => 'Comment #1',
-                                       'created_at' => '2013-08-22T11:59:00.000-07:00',
-                                       'type' => 'brandscopic'
-                                     }]
+      expect(result).to match_array [
+        {
+          'id' => comment2.id,
+          'content' => 'Comment #2',
+          'created_at' => '2013-08-23T09:15:00.000-07:00',
+          'created_by'=>{ 'id'=>user.id, 'full_name' => user.full_name },
+          'type' => 'brandscopic'
+        },
+        {
+          'id' => comment1.id,
+          'content' => 'Comment #1',
+          'created_at' => '2013-08-22T11:59:00.000-07:00',
+          'created_by'=>{ 'id'=>user.id, 'full_name' => user.full_name },
+          'type' => 'brandscopic'
+       }]
     end
   end
 
@@ -274,7 +288,7 @@ describe Api::V1::VenuesController, type: :controller do
 
     it 'should return the venues in the Places Bucket' do
       venue = create(:venue, company_id: company.id,
-                     place: create(:place, name: 'Guanacaste'))
+                             place: create(:place, name: 'Guanacaste'))
       Sunspot.commit
 
       get 'autocomplete', q: 'gua', format: :json

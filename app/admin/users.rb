@@ -4,6 +4,7 @@ ActiveAdmin.register User do
   actions :all, except: [:new, :create]
 
   index do
+    id_column
     column :first_name
     column :last_name
     column :email
@@ -45,9 +46,10 @@ ActiveAdmin.register User do
       f.input :password, required: false
       f.input :password_confirmation, required: false
     end
-    f.inputs 'Roles' do
+    f.inputs 'Company Information' do
       f.has_many :company_users, heading: false, allow_destroy: false, new_record: false do |cu|
         cu.input :role, label: cu.object.company.name, collection: cu.object.company.roles.active.pluck(:name, :id)
+        cu.input :tableau_username
       end
     end
     f.actions
@@ -95,7 +97,7 @@ ActiveAdmin.register User do
       params.permit(user: [
         :email, :first_name, :last_name,
         :country, :state, :city, :time_zone, :phone_number, :street_address,
-        :unit_number, :zip_code, :password, :password_confirmation, company_users_attributes: [:id, :role_id]])
+        :unit_number, :zip_code, :password, :password_confirmation, company_users_attributes: [:id, :role_id, :tableau_username]])
     end
   end
 end

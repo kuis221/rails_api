@@ -16,6 +16,8 @@
 #
 
 class FormField < ActiveRecord::Base
+  has_paper_trail
+
   MIN_OPTIONS_ALLOWED = 1
   MIN_STATEMENTS_ALLOWED = 1
   VALID_RANGE_FORMATS = %w(digits characters words value)
@@ -43,6 +45,9 @@ class FormField < ActiveRecord::Base
 
   validates :kpi_id,
             uniqueness: { scope: [:fieldable_id, :fieldable_type], allow_blank: true, allow_nil: true }
+
+  scope :for_campaigns, ->(campaigns) { where(fieldable_type: 'Campaign', fieldable_id: campaigns) }
+  scope :for_activity_types, ->(activity_types) { where(fieldable_type: 'ActivityType', fieldable_id: activity_types) }
 
   def self.for_events_in_company(companies)
     joins(
@@ -113,8 +118,36 @@ class FormField < ActiveRecord::Base
     result.value
   end
 
+  def format_text(result)
+    result.value
+  end
+
   def format_csv(result)
     result.value
+  end
+
+  def format_json(result)
+    value = result ? string_to_value(result.value) : nil
+    base = {
+      field_id: id,
+      name: name,
+      type: type,
+      value: value,
+      ordering: ordering,
+      required: required
+    }
+    base[:settings] = settings if settings.present?
+    base[:kpi_id] = kpi_id if kpi.present?
+    base
+  end
+
+  def format_chart_data(result)
+    return unless is_optionable?
+    if result.present?
+      Hash[options_for_input.map do |s|
+        [s[0], result.value[s[1].to_s].try(:to_f) || 0]
+      end]
+    end
   end
 
   def css_class
@@ -139,7 +172,7 @@ class FormField < ActiveRecord::Base
   end
 
   def trendeable?
-    TRENDING_FIELDS_TYPES.include?(self.type)
+    TRENDING_FIELDS_TYPES.include?(type)
   end
 
   def type_name
@@ -216,6 +249,42 @@ class FormField < ActiveRecord::Base
 
   def value_is_numeric?(value)
     true if Float(value) rescue false
+  end
+
+  def string_to_value(value)
+    return value || [] unless is_numeric? && value_is_numeric?(value)
+    return value.to_i if Integer(value) rescue false
+    return value.to_f if Float(value) rescue false
+  end
+
+  def range_message
+    return unless has_range_value_settings?
+    if settings['range_min'].present? && settings['range_max'].present?
+      range_format_msg = %w(Number Currency).include?(type_name) && settings['range_format'] == 'value' ? '' : settings['range_format']
+      I18n.translate("form_fields_ranges.#{type_name.downcase}.min_max",
+                     range_min: settings['range_min'],
+                     range_max: settings['range_max'],
+                     range_format: range_format_msg,
+                     field_id: id)
+    elsif settings['range_min'].present?
+      range_digits_msg = %w(Number Currency).include?(type_name) && settings['range_format'] == 'digits' ? 'min_digits' : 'min'
+      I18n.translate("form_fields_ranges.#{type_name.downcase}.#{range_digits_msg}",
+                     range_min: settings['range_min'],
+                     range_format: settings['range_format'],
+                     field_id: id)
+    elsif settings['range_max'].present?
+      range_digits_msg = %w(Number Currency).include?(type_name) && settings['range_format'] == 'digits' ? 'max_digits' : 'max'
+      I18n.translate("form_fields_ranges.#{type_name.downcase}.#{range_digits_msg}",
+                     range_max: settings['range_max'],
+                     range_format: settings['range_format'],
+                     field_id: id)
+    else
+      ''
+    end.html_safe
+  end
+
+  def grouped_results(campaign, scope)
+    form_field_results.for_event_campaign(campaign).merge(scope)
   end
 
   protected

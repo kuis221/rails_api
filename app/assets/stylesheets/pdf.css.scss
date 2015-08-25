@@ -1,5 +1,6 @@
 /*
  *= require 'application'
+ *= require 'forms'
  */
 @import "variables";
 @font-face {
@@ -14,6 +15,18 @@ body.app-layout {
 }
 .pdf-keeptogether {
 	page-break-inside: avoid !important;
+	#gender-graph {
+		height: 300px!important;
+		max-width: 600px!important;
+		min-width: 310px!important;
+		min-height: 300px!important;
+	}
+	.chart-area {
+		width: 700px!important;
+		max-height: 800px!important;
+		max-width: 700px!important;
+		min-height: 350px!important;
+	}
 }
 .last-in-page { page-break-after: always; }
 #main-container{
@@ -86,10 +99,30 @@ body.app-layout {
 		min-height: 114px;
 	}
 }
-
+.calendar-data, .email-data, .phone-data, .place-data,
+.time-data, .description-data, .member-data{
+	width: 100%;
+	span {
+		display: initial;
+	}
+}
+.details_box {
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+}
+.result_user_date{
+	display: none;
+}
 #resource-close-details {
 	display: none;
 }
 .with-details-close-bar .padding-top-close-bar {
 	padding-top: 0;
+}
+.export_fieldable {
+	.form_field_checkbox, .form_field_radio, .form_field_dropdown {
+		.controls {
+			margin-left: 20px;
+		}
+	}
 }

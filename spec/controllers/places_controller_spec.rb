@@ -1,19 +1,18 @@
 require 'rails_helper'
 
 describe PlacesController, type: :controller do
-  before(:each) do
-    @user = sign_in_as_user
-    @company = @user.companies.first
-  end
-
-  let(:campaign) { create(:campaign, company: @company) }
-  let(:company_user) { create(:company_user, company: @company) }
-  let(:area) { create(:area, company: @company) }
+  let(:user) { sign_in_as_user }
+  let(:company) { user.companies.first }
+  let(:campaign) { create(:campaign, company: company) }
+  let(:company_user) { create(:company_user, company: company) }
+  let(:area) { create(:area, company: company) }
   let(:place) { create(:place) }
+
+  before { user }
 
   describe "POST 'create'" do
     it 'returns http success' do
-      expect_any_instance_of(Place).to receive(:fetch_place_data).and_return(true)
+      expect_any_instance_of(Place).to receive(:fetch_place_data).at_least(:once).and_return(true)
       xhr :post, 'create', area_id: area.id, place: { reference: ':ref||:id' }, format: :js
       expect(response).to be_success
     end
@@ -21,9 +20,15 @@ describe PlacesController, type: :controller do
     it 'should create a new place that is no found in google places' do
       expect_any_instance_of(Place).to receive(:fetch_place_data).and_return(true)
       expect_any_instance_of(GooglePlaces::Client).to receive(:spots).and_return([])
-      expect_any_instance_of(described_class).to receive(:open).and_return(double(read: ActiveSupport::JSON.encode('results' => [{ 'geometry' => { 'location' => { 'lat' => '1.2322', lng: '-3.23455' } } }])))
+      expect_any_instance_of(described_class).to receive(:open)
+        .and_return(double(read: ActiveSupport::JSON.encode('results' => [
+          { 'geometry' => { 'location' => { 'lat' => '1.2322', lng: '-3.23455' } } }])))
       expect do
-        xhr :post, 'create', area_id: area.to_param, add_new_place: true, place: { name: "Guille's place", street_number: '123 st', route: 'xyz 321', city: 'Curridabat', state: 'San José', zipcode: '12345', country: 'CR' }, format: :js
+        xhr :post, 'create', area_id: area.to_param, add_new_place: true, place: {
+          name: "Guille's place", street_number: '123 st', route: 'xyz 321',
+          city: 'Curridabat', state: 'San José', zipcode: '12345',
+          types: 'bar',
+          country: 'CR' }, format: :js
       end.to change(Place, :count).by(1)
       place = Place.last
       expect(place.name).to eql "Guille's place"
@@ -40,16 +45,65 @@ describe PlacesController, type: :controller do
       expect(area.places).to match_array([place])
     end
 
+    it 'should allow to create places with custom venue values' do
+      expect_any_instance_of(Place).to receive(:fetch_place_data).and_return(true)
+      expect_any_instance_of(GooglePlaces::Client).to receive(:spots).and_return([])
+      expect_any_instance_of(described_class).to receive(:open)
+        .and_return(double(read: ActiveSupport::JSON.encode('results' => [
+          { 'geometry' => { 'location' => { 'lat' => '1.2322', lng: '-3.23455' } } }])))
+
+      ff = create(:form_field_number, fieldable: create(:entity_form, entity: "Venue", company_id: company.id))
+      expect do
+        expect do
+          expect do
+            xhr :post, 'create', area_id: area.to_param, add_new_place: true, place: {
+              name: "Guille's place", street_number: '123 st', route: 'xyz 321',
+              city: 'Curridabat', state: 'San José', zipcode: '12345',
+              types: 'bar', country: 'CR', venues_attributes: { '0' =>
+                { company_id: company.id, web_address: 'www.guilles.com', hours_fields_attributes: {
+                  '0' => { day: '1', hour_open: '0600', hour_close: '0000', '_destroy' => 'false' }
+                 }, results_attributes: { '0' =>
+                  { form_field_id: ff.id, value: 1 }
+                }
+              } } }, format: :js
+          end.to change(Place, :count).by(1)
+        end.to change(Venue, :count).by(1)
+      end.to change(FormFieldResult, :count).by(1)
+      place = Place.last
+      venue = Venue.last
+      expect(place.name).to eql "Guille's place"
+      expect(place.street_number).to eql '123 st'
+      expect(place.route).to eql 'xyz 321'
+      expect(place.city).to eql 'Curridabat'
+      expect(place.state).to eql 'San José'
+      expect(place.zipcode).to eql '12345'
+      expect(place.country).to eql 'CR'
+      expect(place.latitude).to eql 1.2322
+      expect(place.longitude).to eql -3.23455
+      expect(place.locations.count).to eql 4
+      expect(venue.website).to eql 'http://www.guilles.com'
+      expect(venue.opening_hours.count).to eql 1
+      expect(Venue.last.results_for([ff]).first.value).to eql "1"
+
+      expect(area.places).to match_array([place])
+    end
+
     context 'the place already exists on API' do
       it "save the user's address data if spot have not address associated" do
         expect_any_instance_of(GooglePlaces::Client).to receive(:spot).and_return(double(
           name: 'APIs place name', lat: '1.111', lng: '2.222', formatted_address: 'api fmt address', types: ['bar'],
           address_components: nil
         ))
-        expect_any_instance_of(GooglePlaces::Client).to receive(:spots).and_return([double(place_id: '123', name: "Guille's place", reference: 'XYZ')])
-        expect_any_instance_of(described_class).to receive(:open).and_return(double(read: ActiveSupport::JSON.encode('results' => [{ 'geometry' => { 'location' => { 'lat' => '1.2322', lng: '-3.23455' } } }])))
+        expect_any_instance_of(GooglePlaces::Client).to receive(:spots)
+          .and_return([double(place_id: '123', name: "Guille's place", reference: 'XYZ')])
+        expect_any_instance_of(described_class).to receive(:open)
+          .and_return(double(read: ActiveSupport::JSON.encode('results' => [
+            { 'geometry' => { 'location' => { 'lat' => '1.2322', lng: '-3.23455' } } }])))
         expect do
-          xhr :post, 'create', area_id: area.id, add_new_place: true, place: { name: "Guille's place", street_number: '123 st', route: 'xyz 321', city: 'Curridabat', state: 'San José', zipcode: '12345', country: 'CR' }, format: :js
+          xhr :post, 'create', area_id: area.id, add_new_place: true, place: {
+            name: "Guille's place", street_number: '123 st',
+            route: 'xyz 321', city: 'Curridabat', state: 'San José',
+            zipcode: '12345', country: 'CR' }, format: :js
         end.to change(Place, :count).by(1)
         place = Place.last
         expect(place.name).to eql 'APIs place name'
@@ -81,8 +135,7 @@ describe PlacesController, type: :controller do
             { 'types' => ['route'], 'short_name' => 'xyz 321', 'long_name' => 'xyz 321' }
           ]
         ))
-        # GooglePlaces::Client.any_instance.should_receive(:spots).and_return([double(id: '123', reference: 'XYZ')])
-        # PlacesController.any_instance.should_receive(:open).and_return(double(read: ActiveSupport::JSON.encode({'results' => [{'geometry' => { 'location' => {'lat' => '1.2322', lng: '-3.23455'}}}]})))
+
         expect do
           xhr :post, 'create', campaign_id: campaign.id, place: { reference: 'XXXXXXXXXXX||YYYYYYYYYY' }, format: :js
         end.to change(Place, :count).by(1)
@@ -158,7 +211,9 @@ describe PlacesController, type: :controller do
 
     it 'validates the address' do
       expect do
-        xhr :post, 'create', area_id: area.to_param, add_new_place: true, place: { name: "Guille's place", street_number: '123 st', route: 'QWERTY 321', city: 'YYYYYYYYYY', state: 'XXXXXXXXXXX', zipcode: '12345', country: 'CR' }, format: :js
+        xhr :post, 'create', area_id: area.to_param, add_new_place: true, place: {
+          name: "Guille's place", street_number: '123 st', route: 'QWERTY 321',
+          city: 'YYYYYYYYYY', state: 'XXXXXXXXXXX', zipcode: '12345', country: 'CR' }, format: :js
       end.to_not change(Place, :count)
       expect(assigns(:place).errors[:base]).to include("The entered address doesn't seems to be valid")
       expect(response).to render_template('_new_place_form')
@@ -166,7 +221,8 @@ describe PlacesController, type: :controller do
 
     it 'should render the form for new place if the place was not selected from the autocomplete for an area' do
       expect do
-        xhr :post, 'create', area_id: area.to_param, place: { reference: '' }, reference_display_name: 'blah blah blah', format: :js
+        xhr :post, 'create', area_id: area.to_param, place: { reference: '' },
+                             reference_display_name: 'blah blah blah', format: :js
       end.to_not change(Place, :count)
       expect(response).to be_success
       expect(response).to render_template('places/_new_place_form')
@@ -175,7 +231,8 @@ describe PlacesController, type: :controller do
 
     it 'should render the form for new place if the place was not selected from the autocomplete for a campaign' do
       expect do
-        xhr :post, 'create', campaign_id: campaign.to_param, place: { reference: '' }, reference_display_name: 'blah blah blah', format: :js
+        xhr :post, 'create', campaign_id: campaign.to_param, place: { reference: '' },
+                             reference_display_name: 'blah blah blah', format: :js
       end.to_not change(Place, :count)
       expect(response).to be_success
       expect(response).to render_template('places/_new_place_form')
@@ -184,7 +241,8 @@ describe PlacesController, type: :controller do
 
     it 'should render the form for new place if the place was not selected from the autocomplete for a company user' do
       expect do
-        xhr :post, 'create', company_user_id: company_user.to_param, place: { reference: '' }, reference_display_name: 'blah blah blah', format: :js
+        xhr :post, 'create', company_user_id: company_user.to_param, place: { reference: '' },
+                             reference_display_name: 'blah blah blah', format: :js
       end.to_not change(Place, :count)
       expect(response).to be_success
       expect(response).to render_template('places/_new_place_form')
@@ -246,4 +304,61 @@ describe PlacesController, type: :controller do
     end
   end
 
+  describe 'should allow to edit places' do
+    let(:venue) { create(:venue, company: company, web_address: 'http://www.test.com', place: create(:place, name: 'test 1', is_custom_place: true, reference: nil)) }
+
+    it 'returns http success' do
+      expect do
+        expect do
+          expect do
+            xhr :patch, 'update', id: venue.place.id, add_new_place: 'false', place: { venues_attributes: { '0' =>
+                { id: venue.id, web_address: 'www.guilles.com', company_id: company.id, hours_fields_attributes: {
+                  '0' => { day: '1', hour_open: '0600', hour_close: '0000', '_destroy' => 'false' }
+                 } } } }, format: :js
+          end.to change(Place, :count).by(1)
+        end.to change(Venue, :count).by(1)
+      end.to change(HoursField, :count).by(1)
+      place = Place.last
+      venue = Venue.last
+      expect(place.name).to eql 'test 1'
+      expect(place.street_number).to eql '11'
+      expect(place.route).to eql 'Main St.'
+      expect(place.city).to eql 'New York City'
+      expect(place.state).to eql 'NY'
+      expect(place.zipcode).to eql '12345'
+      expect(place.country).to eql 'US'
+      expect(venue.opening_hours.count).to eql 1
+      expect(venue.website).to eql 'http://www.guilles.com'
+    end
+  end
+
+  describe 'should allow to edit places remove hours' do
+    let(:venue) { create(:venue, company: company, web_address: 'http://www.test.com', place: create(:place, name: 'test 2', is_custom_place: true, reference: nil)) }
+
+    it 'returns http success' do
+      hours1 = create(:hours_field, day: '0', hour_open: '1200', hour_close: '0100', venue: venue)
+      hours2 = create(:hours_field, day: '1', hour_open: '1600', hour_close: '0100', venue: venue)
+      expect do
+        expect do
+          expect do
+            xhr :patch, 'update', id: venue.place.id, add_new_place: 'false', place: { venues_attributes: { '0' =>
+                { id: venue.id, web_address: 'www.guilles.com', company_id: company.id, hours_fields_attributes: {
+                  '0' => { id: hours1.id, day: '0', hour_open: '0600', hour_close: '0000', '_destroy' => 'true' },
+                  '1' => { id: hours2.id, day: '1', hour_open: '0600', hour_close: '0000', '_destroy' => 'false' }
+                 } } } }, format: :js
+          end.to change(Place, :count).by(0)
+        end.to change(Venue, :count).by(0)
+      end.to change(HoursField, :count).by(-1)
+      place = Place.last
+      venue = Venue.last
+      expect(place.name).to eql 'test 2'
+      expect(place.street_number).to eql '11'
+      expect(place.route).to eql 'Main St.'
+      expect(place.city).to eql 'New York City'
+      expect(place.state).to eql 'NY'
+      expect(place.zipcode).to eql '12345'
+      expect(place.country).to eql 'US'
+      expect(venue.website).to eql 'http://www.guilles.com'
+    end
+  end
 end

@@ -1,10 +1,10 @@
 module DashboardHelper
   def recent_photos_list
-    AttachedAsset.do_search(company_id: current_company.id, current_company_user: current_company_user, asset_type: 'photo', status: ['Active'], per_page: 12, sorting: :created_at, sorting_dir: :desc).results
+    AttachedAsset.do_search(company_id: current_company.id, current_company_user: current_company_user, asset_type: 'photo', status: ['Active'], per_page: 12, sorting: :created_at, sorting_dir: :desc, search_permission: :recent_photos_module, search_permission_class: Symbol, search_permission_subject_id: 'dashboard').results
   end
 
   def upcoming_events_list
-    @upcoming_events_list ||= Event.do_search(company_id: current_company.id, current_company_user: current_company_user, per_page: 5, sorting: :start_at, sorting_dir: :asc, start_date: Time.zone.now.strftime('%m/%d/%Y'), end_date: Time.zone.now + 10.years, event_status: ['Active']).results
+    @upcoming_events_list ||= Event.do_search(company_id: current_company.id, current_company_user: current_company_user, per_page: 5, sorting: :start_at, sorting_dir: :asc,  start_date: [Time.zone.now.strftime('%m/%d/%Y')], end_date: [(Time.zone.now + 10.years).strftime('%m/%d/%Y')], event_status: ['Active'], search_permission: :upcomings_events_module, search_permission_class: Symbol, search_permission_subject_id: 'dashboard').results
   end
 
   def my_incomplete_tasks

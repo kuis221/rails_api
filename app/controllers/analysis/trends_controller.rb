@@ -179,7 +179,7 @@ class Analysis::TrendsController < FilteredController
     state_name = country.states[state_code]['name'] unless country.nil?
     city_names = cities.map { |r| r[0] }
     locations = Hash[
-      Place.where('types like \'%political%\'')
+      Place.where('\'political\' = ANY (types)')
         .where(state: state_name, country: country_name, name: city_names).map do |place|
         [place.name, [place.latitude, place.longitude, place.name]]
       end
@@ -196,7 +196,7 @@ class Analysis::TrendsController < FilteredController
   end
 
   def permitted_search_params
-    [:start_date, :end_date, :page, :sorting, :sorting_dir,
+    [:page, :sorting, :sorting_dir, :term, start_date: [], end_date: [],
       campaign: [], question: [], source: [], brand: [], area: []]
   end
 end

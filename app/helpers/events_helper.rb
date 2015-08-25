@@ -2,6 +2,26 @@ module EventsHelper
   include ActionView::Helpers::NumberHelper
   include SurveySeriesHelper
 
+  def update_event_details_bar(event)
+    presenter = present(event)
+    contents = presenter.render_nav_phases
+    "
+      $('#phases-container').html('#{j contents }');
+      $('body').scrollmultispy('destroy');
+      #{create_scrollmultispy_js}
+      $(window).trigger('scroll');
+    \n".html_safe
+  end
+
+  def create_scrollmultispy_js
+    "
+      $('body').scrollmultispy({
+          target: '.event-details-scroll-spy',
+          offset: 200
+      });
+    ".html_safe
+  end
+
   def kpi_goal_progress_bar(goal, result)
     return unless goal.present?
     result ||= 0
@@ -13,43 +33,35 @@ module EventsHelper
   end
 
   def contact_info_tooltip(contact)
-    [
-      (contact.respond_to?(:title) ? contact.title : contact.role_name),
-      contact.email, contact.phone_number, contact.street_address,
-      [contact.city, contact.state, contact.country_name].delete_if(&:blank?).join(', ')
-    ].delete_if(&:blank?).join('<br />').html_safe
-  end
-
-  def allowed_campaigns(venue = nil)
-    campaigns = company_campaigns.active.accessible_by_user(current_company_user)
-    if venue.present? && !current_company_user.is_admin?
-      campaigns.select { |c| c.place_allowed_for_event?(venue.place) }
-    else
-      campaigns.for_dropdown
+    details = contact_details(contact)
+    details =
+      if details.any?
+        content_tag(:ul, class: 'unstyled contact-info') do
+          details.map { |d| content_tag(:li, tag(:i, class: d[:icon]) + d[:txt]) }.join.html_safe
+        end
+      else
+        ''.html_safe
+      end
+    content_tag(:div, class: 'contacts-tooltip') do
+      content_tag(:h6, contact.full_name, class: 'contact-name') +
+      content_tag(:span, (contact.respond_to?(:title) ? contact.title : contact.role_name), class: 'contact-role') +
+      details
     end
   end
 
-  def event_date(event, attribute)
-    event.send(attribute)
-  end
-
-  def describe_filters(resource_name=nil)
-    resource_name ||= resource_class.model_name.human.downcase
-    first_part = [
-      describe_status, describe_prices, describe_custom_date_ranges,
-      describe_brands, describe_brand_portfolios, describe_campaigns,
-      describe_areas, describe_places, describe_venues, describe_cities, describe_users,
-      describe_teams, describe_roles, describe_activity_types, describe_date_ranges,
-      describe_day_parts, describe_tasks, describe_range_filters, describe_tags,
-      describe_rating, describe_custom_filters
-    ].compact.join(' ').strip
-    first_part = "for: #{first_part}" unless first_part.blank?
-    [
-      '<span class="results-count">' + number_with_delimiter(collection_count) + '</span> ' +
-      resource_name.pluralize(collection_count),
-      'found',
-      first_part
-    ].compact.join(' ').strip.html_safe
+  def contact_details(contact)
+    [].tap do |a|
+      a.push(
+        icon: 'icon-wired-email',
+        txt: link_to(contact.email, "mailto:#{contact.email}")) unless contact.email.blank?
+      a.push(
+        icon: 'icon-mobile',
+        txt: link_to(contact.phone_number, "tel:#{contact.phone_number}")) unless contact.phone_number.blank?
+      address = [contact.street_address, contact.city, contact.state, contact.country_name].delete_if(&:blank?).join(', ')
+      a.push(
+        icon: 'icon-wired-venue',
+        txt: link_to(address, "https://maps.google.com?daddr=#{address}", target: '_blank')) unless address.blank?
+    end
   end
 
   def describe_before_event_alert(resource)
@@ -66,6 +78,24 @@ module EventsHelper
     end
     description += ' You can ' + alert_parts.compact.to_sentence unless alert_parts.empty?
     description.html_safe
+  end
+
+  def event_phases_and_steps_for_api(event)
+    phases = event.phases
+    phases.merge!(
+      phases: Hash[phases[:phases].map do |k, steps|
+                      [k, steps.select { |s| !s.key?(:if) || instance_exec(event, &s[:if]) }.map { |s| s.reject { |k, v| k == :if } }]
+                   end]
+    )
+    # Make sure that the user is allowed to perform the next step
+    phases.merge!(
+      next_step: phases[:phases][phases[:current_phase]].find { |p| p[:complete] == false }
+    )
+  end
+
+  def module_range_val(event, module_name, range_name)
+    return nil unless event.campaign.range_module_settings?(module_name)
+    event.campaign.module_setting(module_name, range_name).to_i
   end
 
   def describe_today_event_alert(resource)
@@ -110,190 +140,46 @@ module EventsHelper
     description.html_safe
   end
 
-  def describe_custom_date_ranges
-    start_date = params[:start_date].blank? ? nil : params[:start_date]
-    end_date = params[:end_date].blank? ? nil : params[:end_date]
-    return if start_date.nil?
-    dates = [start_date, end_date].compact.map { |d| Timeliness.parse(d).to_date }.map do |d|
-      if d == Time.current.to_date
-        'today'
-      elsif d == (Time.current - 1.day).to_date
-        'yesterday'
-      elsif d == (Time.current + 1.day).to_date
-        'tomorrow'
-      else
-        d
+  def describe_filters(resource_name = resource_class.model_name.human.downcase)
+    tags = FilterTags.new(params, current_company_user).tags do |label, filter_name, expandible, param|
+      remove_data = { filter: filter_name }
+      if /\Adate:(?<start_date>.*),(?<end_date>.*)\z/ =~ filter_name
+        remove_data = { filter: 'date', start_date: start_date, end_date: end_date }
       end
-    end
-
-    dates =
-      if dates.count > 1 && dates[1].is_a?(Date) && (dates[1].year > Time.zone.now.year + 2)
-        "#{dates[0].is_a?(Date) ? dates[0].to_s(:simple_short) : dates[0]} to the future"
-      else
-        dates.map{ |d| d.is_a?(Date) ? d.to_s(:simple_short) : d }.join(' - ')
+      content_tag(:div,  class: 'filter-item') do
+        (if expandible
+           link_to('', '#', class: 'icon icon-plus', title: 'Expand this filter',
+                            data: { filter: filter_name })
+         else
+           ''.html_safe
+         end) +
+        label.html_safe + link_to('', '#', class: 'icon icon-close',
+                                           title: 'Remove this filter',
+                                           data: remove_data)
       end
-    build_filter_object_item dates, "date"
-  end
+    end.join(' ').strip
 
-  def describe_range_filters
-    params.select{ |k, v| v.is_a?(Hash) && v.key?(:max) && v.key?(:min) }.map do |k, v|
-      build_filter_object_item "#{I18n.t('range_filters.' + k.to_s)} between #{v[:min]} and #{v[:max]}", k
-    end
-  end
-
-  def describe_campaigns
-    describe_resource_params(:campaign,
-                             current_company.campaigns.order('campaigns.name ASC'))
-  end
-
-  def describe_areas
-    describe_resource_params(:area,
-                             current_company.areas.order('areas.name ASC'),
-                             expandible: true)
-  end
-
-  def describe_tasks
-    describe_resource_params(:task,
-                             Task.by_companies(current_company).order('tasks.title ASC'), label_attribute: :title)
-  end
-
-  def describe_activity_types
-    describe_resource_params(:activity_type,
-                             current_company.activity_types.order('activity_types.name ASC'))
-  end
-
-  def describe_date_ranges
-    describe_resource_params(:date_range,
-                             current_company.date_ranges.order('date_ranges.name ASC'))
-  end
-
-  def describe_day_parts
-    describe_resource_params(:day_part,
-                             current_company.day_parts.order('day_parts.name ASC'))
-  end
-
-  def describe_brands
-    describe_resource_params(:brand,
-                             current_company.brands.order('brands.name ASC'))
-  end
-
-  def describe_places
-    describe_resource_params(:place,
-                             Place.order('places.name ASC'))
-  end
-
-  def describe_brand_portfolios
-    describe_resource_params(:brand_portfolio,
-                             current_company.brand_portfolios.order('brand_portfolios.name ASC'),
-                             expandible: true)
-  end
-
-  def describe_cities
-    build_filter_object_list :city, filter_params(:city).map{ |city| [city,city] }
-  end
-
-  def describe_prices
-    prices = {
-      '1' => '$',
-      '2' => '$$',
-      '3' => '$$$',
-      '4' => '$$$$',
-    }
-    build_filter_object_list :price, filter_params(:price).map{ |price| [price, prices[price]] }
-  end
-
-
-  def describe_venues
-    describe_resource_params(:venue,
-                             current_company.venues.joins(:place).order('places.name ASC'))
-  end
-
-  def describe_users
-    describe_resource_params(
-      :user,
-      current_company.company_users.joins(:user).order('2 ASC'),
-      label_attribute: 'users.first_name || \' \' || users.last_name as name')
-  end
-
-  def describe_teams
-    describe_resource_params(:team,
-                             current_company.teams.order('teams.name ASC'),
-                             expandible: true)
-  end
-
-  def describe_roles
-    describe_resource_params(:role,
-                             current_company.roles.order('roles.name ASC'))
-  end
-
-  def describe_status
-    status = filter_params(:status).sort
-    event_status = filter_params(:event_status).sort
-    task_status = filter_params(:task_status).sort
+    self.builder_block = builder_block if block_given?
+    resource_name ||= resource_class.model_name.human.downcase
+    tags = "for: #{tags}" unless tags.blank?
     [
-      build_filter_object_list(:status, status.map{ |status| [status,status] }),
-      build_filter_object_list(:event_status, event_status.map{ |status| [status,status] }),
-      build_filter_object_list(:task_status, task_status.map{ |status| [status,status] })
-    ].compact.join(' ')
+      '<span class="results-count">' + number_with_delimiter(collection_count) + '</span> ' +
+      resource_name.pluralize(collection_count),
+      'found',
+      tags
+    ].compact.join(' ').strip.html_safe
   end
 
-  def describe_tags
-    describe_resource_params(:tag,
-                             current_company.tags.order('tags.name ASC'))
-  end
-
-  def describe_rating
-    ratings = {
-      '0' => '0 stars',
-      '1' => '1 star',
-      '2' => '2 stars',
-      '3' => '3 stars',
-      '4' => '4 stars',
-      '5' => '5 stars'
-    }
-    build_filter_object_list :rating, filter_params(:rating).map{ |rating| [rating, ratings[rating]] }
-  end
-
-  def describe_custom_filters
-    custom_filter = CustomFilter.for_company_user(current_company_user)
-            .order('custom_filters.name ASC')
-    describe_resource_params(:cfid,
-                             custom_filter, expandible: true)
-  end
-
-  def filter_params(param_name)
-    ids = params[param_name]
-    ids = [ids] unless ids.is_a?(Array)
-    if params.key?(:q) && params[:q] =~ /^#{param_name},/
-      ids.push params[:q].gsub("#{param_name},", '').strip
-    end
-    ids.compact.uniq
-  end
-
-  def describe_resource_params(param_name, base_scope, label_attribute: :name, expandible: false)
-    ids = filter_params(param_name)
-    return unless ids.size > 0
-    build_filter_object_list param_name,
-                             base_scope.where(id: ids).pluck(:id, label_attribute),
-                             expandible: expandible
-  end
-
-  def build_filter_object_list(filter_name, list, expandible: false)
-    return if list.blank?
-    list.map do |item|
-      build_filter_object_item item[1], "#{filter_name}:#{item[0]}", expandible: expandible
-    end.join(' ').html_safe
-  end
-
-  def build_filter_object_item(label, filter_name, expandible: false)
-    content_tag(:div,  class: 'filter-item') do
-      (expandible ? link_to('', '#', class: 'icon icon-plus',
-                                     title: 'Expand this filter',
-                                     data: { filter: filter_name }) : ''.html_safe) +
-      label.html_safe + link_to('', '#', class: 'icon icon-close',
-                                         title: 'Remove this filter',
-                                         data: { filter: filter_name })
+  def allowed_campaigns(venue = nil)
+    campaigns = company_campaigns.active.accessible_by_user(current_company_user)
+    if venue.present? && !current_company_user.is_admin?
+      campaigns.select { |c| c.place_allowed_for_event?(venue.place) }.map { |c| [c.name, c.id] }
+    else
+      campaigns.for_dropdown
     end
   end
 
+  def event_date(event, attribute)
+    event.send(attribute)
+  end
 end

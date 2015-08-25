@@ -192,8 +192,8 @@ module Analysis
                           .group('2')
 
       if @campaign.present?
-        venues_totals_activities = Venue.where(place_id: @campaign.place_ids).joins(:activities)
-                          .where(activities: { activity_type_id: @goals.map(&:activity_type), active: true })
+        venues_totals_activities = @venues_scope.joins(:activities)
+                          .where(activities: { activity_type_id: @goals.map(&:activity_type), campaign_id: @campaign.id, active: true })
                           .select(fields_select_activities)
                           .group('2')
       end

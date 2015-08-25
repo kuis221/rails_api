@@ -74,4 +74,43 @@ feature 'Results Surveys Page', js: true, search: true  do
        { section: 'ACTIVE STATE', item: 'Inactive' }]
     end
   end
+
+  feature 'export', search: true do
+    scenario 'should be able to export as CSV' do
+      Kpi.create_global_kpis
+      campaign1.add_kpi(Kpi.surveys)
+      age_answer = Kpi.age.kpis_segments.sample
+      gender_answer = Kpi.gender.kpis_segments.sample
+      ethnicity_answer = Kpi.ethnicity.kpis_segments.sample
+
+      survey = create(:survey, created_at: Time.zone.local(2013, 8, 21, 22, 30))
+      survey.surveys_answers.build(kpi_id: Kpi.age.id, question_id: 1, answer: age_answer.id)
+      survey.surveys_answers.build(kpi_id: Kpi.gender.id, question_id: 1, answer: gender_answer.id)
+      survey.surveys_answers.build(kpi_id: Kpi.ethnicity.id, question_id: 1, answer: ethnicity_answer.id)
+
+      event = build(:approved_event,
+                    campaign: campaign1, start_date: '08/21/2013', end_date: '08/21/2013',
+                    start_time: '8:00pm', end_time: '11:00pm', place: create(:place, name: 'Place 1'))
+      event.surveys << survey
+      event.save
+      Sunspot.commit
+
+      visit results_surveys_path
+
+      click_js_button 'Download'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        expect(ListExportWorker).to have_queued(ListExport.last.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      expect(ListExport.last).to have_rows([
+        ['DESCRIPTION', 'CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS', 'EVENT START DATE', 'EVENT END DATE', 'SURVEY CREATED DATE'],
+        [age_answer.text + ' year old,' + ethnicity_answer.text + ',' + gender_answer.text, 'First Campaign', 'Place 1',
+         'Place 1, 11 Main St., New York City, NY, 12345', '08/21/2013 08:00PM', '08/21/2013 11:00PM', '08/21/2013 10:30PM']
+      ])
+    end
+  end
 end

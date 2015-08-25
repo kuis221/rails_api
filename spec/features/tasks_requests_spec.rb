@@ -127,13 +127,13 @@ feature 'Tasks', js: true, search: true do
 
         visit mine_tasks_path
 
-        expect(task_counters).to have_content '3 INCOMPLETE'
-        expect(task_counters).to have_content '1 LATE'
+        expect(task_counters).to have_content '3INCOMPLETE'
+        expect(task_counters).to have_content '1LATE'
 
         filter_section('TASK STATUS').unicheck 'Complete'
 
-        expect(task_counters).to have_content '0 INCOMPLETE'
-        expect(task_counters).to have_content '0 LATE'
+        expect(task_counters).to have_content '0INCOMPLETE'
+        expect(task_counters).to have_content '0LATE'
       end
     end
   end
@@ -141,7 +141,7 @@ feature 'Tasks', js: true, search: true do
   scenario 'allows to create a new task' do
     visit mine_tasks_path
 
-    click_js_button 'Create'
+    click_js_button 'Add Task'
     within('form#new_task') do
       fill_in 'Title', with: 'Do the math homework'
       fill_in 'Due at', with: '05/16/2013'
@@ -149,8 +149,8 @@ feature 'Tasks', js: true, search: true do
       click_js_button 'Submit'
     end
 
-    expect(page).to have_text('0 INCOMPLETE')
-    expect(page).to have_text('1 LATE')
+    expect(page).to have_text('0INCOMPLETE')
+    expect(page).to have_text('1LATE')
 
     within resource_item do
       expect(page).to have_content('Do the math homework')
@@ -197,7 +197,6 @@ feature 'Tasks', js: true, search: true do
     end
 
     it_behaves_like 'a list that allow saving custom filters' do
-
       before do
         create(:campaign, name: 'Campaign 1', company: company)
         create(:campaign, name: 'Campaign 2', company: company)
@@ -229,29 +228,29 @@ feature 'Tasks', js: true, search: true do
 
         visit my_teams_tasks_path
 
-        expect(task_counters).to have_content '1 UNASSIGNED'
-        expect(task_counters).to have_content '4 INCOMPLETE'
-        expect(task_counters).to have_content '1 LATE'
+        expect(task_counters).to have_content '1UNASSIGNED'
+        expect(task_counters).to have_content '4INCOMPLETE'
+        expect(task_counters).to have_content '1LATE'
 
         add_filter 'TASK STATUS', 'Complete'
 
-        expect(task_counters).to have_content '0 UNASSIGNED'
-        expect(task_counters).to have_content '0 INCOMPLETE'
-        expect(task_counters).to have_content '0 LATE'
+        expect(task_counters).to have_content '0UNASSIGNED'
+        expect(task_counters).to have_content '0INCOMPLETE'
+        expect(task_counters).to have_content '0LATE'
 
         remove_filter 'Complete'
         add_filter 'TASK STATUS', 'Incomplete'
 
-        expect(task_counters).to have_content '1 UNASSIGNED'
-        expect(task_counters).to have_content '4 INCOMPLETE'
-        expect(task_counters).to have_content '1 LATE'
+        expect(task_counters).to have_content '1UNASSIGNED'
+        expect(task_counters).to have_content '4INCOMPLETE'
+        expect(task_counters).to have_content '1LATE'
 
         remove_filter 'Incomplete'
         add_filter 'TASK STATUS', 'Late'
 
-        expect(task_counters).to have_content '0 UNASSIGNED'
-        expect(task_counters).to have_content '1 INCOMPLETE'
-        expect(task_counters).to have_content '1 LATE'
+        expect(task_counters).to have_content '0UNASSIGNED'
+        expect(task_counters).to have_content '1INCOMPLETE'
+        expect(task_counters).to have_content '1LATE'
       end
     end
   end
@@ -277,11 +276,11 @@ feature 'Tasks', js: true, search: true do
       Sunspot.commit
     end
 
-    scenario 'should be able to export as xls' do
+    scenario 'should be able to export as CSV' do
       visit mine_tasks_path
 
       click_js_link 'Download'
-      click_js_link 'Download as XLS'
+      click_js_link 'Download as CSV'
 
       within visible_modal do
         expect(page).to have_content('We are processing your request, the download will start soon...')
@@ -292,8 +291,8 @@ feature 'Tasks', js: true, search: true do
 
       expect(ListExport.last).to have_rows([
         %w(TITLE DATE CAMPAIGN STATUSES EMPLOYEE),
-        ['Pick up kidz at school', '2013-09-01T00:00', 'Cacique FY14', 'Active Assigned Incomplete Late', 'Test User'],
-        ['Bring beers to the party', '2013-09-02T00:00', 'Centenario FY14', 'Active Assigned Complete', 'Test User']
+        ['Pick up kidz at school', '09/01/2013', 'Cacique FY14', 'Active Assigned Incomplete Late', 'Test User'],
+        ['Bring beers to the party', '09/02/2013', 'Centenario FY14', 'Active Assigned Complete', 'Test User']
       ])
     end
 

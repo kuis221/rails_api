@@ -20,7 +20,6 @@ feature 'Notifications', search: true, js: true do
   end
 
   shared_examples_for 'a user that can see notifications' do
-
     it 'should receive notifications for new events' do
       company_user.update_attributes(notifications_settings: ['new_event_team_app'])
       without_current_user do
@@ -89,12 +88,12 @@ feature 'Notifications', search: true, js: true do
 
       expect(page).not_to have_notification 'You have a new event'
 
-      click_js_button 'Add Team Member'
+      click_js_button 'Edit Event'
       within visible_modal do
-        fill_in 'staff-search-item', with: user.name
-        within(resource_item("#staff-member-user-#{company_user.id}")) { click_js_link 'Add' }
+        select_from_chosen company_user.full_name, from: 'Event staff'
+        click_js_button 'Save'
       end
-      close_modal
+      ensure_modal_was_closed
 
       visit events_path
       expect(page).to have_selector('#events-list .resource-item', count: 1)
@@ -113,18 +112,21 @@ feature 'Notifications', search: true, js: true do
       team = create(:team, name: 'SuperAmigos', company: company)
       team.users << company_user
 
-      visit event_path(event)
+      visit events_path
 
       expect(page).not_to have_notification 'You have a new event'
 
-      click_js_button 'Add Team Member'
+      within(resource_item) { click_js_button 'Edit Event' }
+
       within visible_modal do
-        fill_in 'staff-search-item', with: 'SuperAmigos'
-        within(resource_item("#staff-member-team-#{team.id}")) { click_js_link 'Add' }
-        expect(page).not_to have_content('SuperAmigos')
+        select_from_chosen team.name, from: 'Event staff'
+        click_js_button 'Save'
       end
-      close_modal
+      ensure_modal_was_closed
       expect(event.teams).to include(team)
+
+      visit events_path
+      expect(page).not_to have_notification 'You have a new event'
 
       visit events_path
       expect(page).to have_selector('#events-list .resource-item', count: 1)
@@ -243,7 +245,7 @@ feature 'Notifications', search: true, js: true do
     it 'should receive notifications for new tasks assigned to him' do
       company_user.update_attributes(notifications_settings: ['new_task_assignment_app'])
       event = create(:event, company: company, users: [company_user], campaign: campaign, place: place)
-      task = create(:task, title: 'My Task #1', event: event, company_user: company_user, due_at: nil)
+      create(:task, title: 'My Task #1', event: event, company_user: company_user, due_at: nil)
 
       Sunspot.commit
 
@@ -326,14 +328,13 @@ feature 'Notifications', search: true, js: true do
       end
       Sunspot.commit
 
-      company_user.campaigns << campaign
-      company_user.campaigns << campaign2
+      company_user.campaigns << [campaign, campaign2]
 
       visit root_path
       expect(page).to have_notification 'You have 2 new campaigns'
 
       # New campaigns counter should be decreased by 1
-      visit campaign_path(company_user.campaigns.first)
+      visit campaign_path(campaign)
       expect(page).to have_notification 'You have a new campaign'
     end
 
@@ -411,12 +412,6 @@ feature 'Notifications', search: true, js: true do
     end
   end
 
-  feature 'Admin user' do
-    let(:role) { create(:role, company: company) }
-
-    it_behaves_like 'a user that can see notifications'
-  end
-
   feature 'Non Admin User' do
     let(:role) { create(:non_admin_role, company: company) }
 
@@ -425,7 +420,8 @@ feature 'Notifications', search: true, js: true do
       before { company_user.places << place }
       let(:permissions) do
         [
-          [:index, 'Event'], [:view_list, 'Event'], [:show, 'Event'], [:add_members, 'Event'], [:view_members, 'Event'],
+          [:index, 'Event'], [:view_list, 'Event'], [:show, 'Event'],
+          [:update, 'Event'], [:add_members, 'Event'], [:view_members, 'Event'],
           [:index_my, 'Task'], [:index_team, 'Task'], [:read, 'Campaign']
         ]
       end

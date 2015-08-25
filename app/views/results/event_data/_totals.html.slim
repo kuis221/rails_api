@@ -16,6 +16,10 @@
     .big-number
       = number_with_precision(data_totals['interactions'], precision: 0, separator: '.', delimiter: ',')
     = 'INTERACTIONS'
+  span.event-data-column.active-photos-count-box
+    .big-number
+      = number_with_precision(data_totals['active_photos_count'], precision: 0, separator: '.', delimiter: ',')
+    = 'PHOTOS'
   span.event-data-column.samples-box
     .big-number
       = number_with_precision(data_totals['samples'], precision: 0, separator: '.', delimiter: ',')
@@ -61,3 +65,7 @@
     .big-number
       = number_to_percentage(data_totals['ethnicity_white'], precision: 0)
     | WHITE
+  span.event-data-column.submitted-at-box
+    | SUBMITTED AT
+  span.event-data-column.approved-at-box
+    | APPROVED AT

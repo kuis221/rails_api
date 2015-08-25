@@ -46,7 +46,7 @@ class EventsCalendar
             start: day,
             end: day,
             color: COLORS[all_brands.index(brand.id) % COLORS.count],
-            url: Rails.application.routes.url_helpers.events_url('brand[]' => brand.id, 'start_date' => day.to_s(:slashes)) }
+            url: Rails.application.routes.url_helpers.events_url('brand[]' => brand.id, 'start_date[]' => day.to_s(:slashes)) }
           days[day][brand.id][:count] += 1
           days[day][brand.id][:description] = "<b>#{brand.name}</b><br />#{days[day][brand.id][:count]} Events"
         end

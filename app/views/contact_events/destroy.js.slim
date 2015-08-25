@@ -1,2 +1,4 @@
 |
-  $('#contact_event_#{resource.id}').remove();
+  $('.user-tag-option .has-tooltip').tooltip('hide')
+  $('#event-contacts-list').html('#{j render partial: 'events/contacts', locals: { resource: parent } }')
+  window.EventDetails.showMessage("#{j I18n.translate('instructive_messages.plan.contact.removed', contact_full_name: @contact.full_name)}", 'green');

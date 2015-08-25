@@ -188,13 +188,13 @@ feature 'Users', js: true do
       company_user = user.company_users.first
       visit company_user_path(company_user)
 
-      within('.profile-data') do
+      within('.edition-links') do
         click_js_button 'Deactivate User'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this user?'
 
-      within('.profile-data') do
+      within('.edition-links') do
         click_js_button 'Activate User'
         expect(page).to have_button('Deactivate User') # test the link have changed
       end
@@ -209,7 +209,7 @@ feature 'Users', js: true do
 
       expect(page).to have_content('Juanito Mora')
 
-      within('.profile-data') { click_js_button 'Edit Profile Data' }
+      within('.edition-links') { click_js_button 'Edit Profile Data' }
 
       within "form#edit_company_user_#{company_user.id}" do
         fill_in 'First name', with: 'Pedro'
@@ -236,7 +236,7 @@ feature 'Users', js: true do
 
       expect(page).to have_content('Juanito Mora')
 
-      within('.profile-data') { click_js_button 'Edit Profile Data' }
+      within('.edition-links') { click_js_button 'Edit Profile Data' }
 
       expect(page).to_not have_content('Test admin role')
       expect(page).to have_content('Test not admin role')
@@ -245,40 +245,45 @@ feature 'Users', js: true do
     scenario 'allows to assign areas to the user' do
       other_company_user = create(:company_user, company_id: company.id)
       area = create(:area, name: 'San Francisco Area', company: company)
-      area2 = create(:area, name: 'Los Angeles Area', company: company)
+      create(:area, name: 'Los Angeles Area', company: company)
       visit company_user_path(other_company_user)
 
-      click_js_link 'Add Area'
+      expect(page).to have_content 'No Places have been assigned to this user.'
+
+      click_js_button 'Add Place'
 
       within visible_modal do
         fill_in 'place-search-box', with: 'San'
-        expect(page).to have_selector("#area-#{area.id}")
-        expect(page).to have_no_selector("#area-#{area2.id}")
         expect(page).to have_content('San Francisco Area')
         expect(page).to have_no_content('Los Angeles Area')
         within resource_item area do
-          click_js_link('Add Area')
+          click_js_link 'Add Area'
         end
         expect(page).to have_no_selector("#area-#{area.id}") # The area was removed from the available areas list
       end
       close_modal
 
+      expect(page).to_not have_content 'No Places have been assigned to this user.'
+
       # Re-open the modal to make sure it's not added again to the list
-      click_js_link 'Add Area'
+      click_js_button 'Add Place'
       within visible_modal do
-        expect(page).to have_no_selector("#area-#{area.id}") # The area does not longer appear on the list after it was added to the user
-        expect(page).to have_selector("#area-#{area2.id}")
+        fill_in 'place-search-box', with: 'San'
+        expect(page).to_not have_content('San Francisco Area')
+        expect(page).to have_no_content('Los Angeles Area')
       end
       close_modal
 
       # Ensure the area now appears on the list of areas
-      within '#company_user-areas-list' do
-        expect(page).to have_content('San Francisco Area')
+      expect(page).to have_content('San Francisco Area')
 
-        # Test the area removal
+      # Test the area removal
+      within '#company_user-areas-list' do
         hover_and_click('.hover-item', 'Remove Area')
-        expect(page).to have_no_content('San Francisco Area')
       end
+      expect(page).to_not have_content('San Francisco Area')
+
+      expect(page).to have_content 'No Places have been assigned to this user.'
     end
 
     scenario 'should be able to assign brand portfolios to the user' do
@@ -344,7 +349,7 @@ feature 'Users', js: true do
       expect(page).to have_selector('h2', text: company_user.full_name)
       expect(current_path).to eql '/users/profile'
 
-      within('.profile-data') { click_js_button 'Edit Profile Data' }
+      within('.edition-links') { click_js_button 'Edit Profile Data' }
 
       within visible_modal do
         fill_in 'First name', with: 'Pedro'
@@ -373,7 +378,7 @@ feature 'Users', js: true do
     scenario 'user can modify his email address' do
       visit company_user_path(company_user)
 
-      within('.profile-data') { click_js_button 'Edit Profile Data' }
+      within('.edition-links') { click_js_button 'Edit Profile Data' }
 
       within visible_modal do
         fill_in 'Email', with: 'pedro@navaja.com'
@@ -384,7 +389,7 @@ feature 'Users', js: true do
         'Your email will not be changed until you complete this step.'
       )
 
-      within('.profile-data') { click_js_button 'Edit Profile Data' }
+      within('.edition-links') { click_js_button 'Edit Profile Data' }
       within visible_modal do
         expect(page).to have_content(
           'Check your (pedro@navaja.com) to confirm your new address. '\
@@ -396,7 +401,7 @@ feature 'Users', js: true do
     scenario 'user can cancel his email address change before confirmation' do
       visit company_user_path(company_user)
 
-      within('.profile-data') { click_js_button 'Edit Profile Data' }
+      within('.edition-links') { click_js_button 'Edit Profile Data' }
 
       confirmation_message = 'A confirmation email was sent to pedro@navaja.com. '\
         'Your email will not be changed until you complete this step.'
@@ -408,7 +413,7 @@ feature 'Users', js: true do
 
       expect(page).to have_content confirmation_message
 
-      within('.profile-data') { click_js_button 'Edit Profile Data' }
+      within('.edition-links') { click_js_button 'Edit Profile Data' }
       within visible_modal do
         click_js_link 'Cancel this change'
       end
@@ -456,11 +461,11 @@ feature 'Users', js: true do
       Sunspot.commit
     end
 
-    scenario 'should be able to export as XLS' do
+    scenario 'should be able to export as CSV' do
       visit company_users_path
 
       click_js_link 'Download'
-      click_js_link 'Download as XLS'
+      click_js_link 'Download as CSV'
 
       within visible_modal do
         expect(page).to have_content('We are processing your request, the download will start soon...')
@@ -477,7 +482,7 @@ feature 'Users', js: true do
         ['Pablo', 'Baltodano', 'email@hotmail.com', '+1000000000', 'TestRole', 'Street Address 123',
          'Unit Number 456', 'Los Angeles', 'CA', '90210', 'United States', 'Pacific Time (US & Canada)', nil, 'Active'],
         ['Test', 'User', user.email, '+1000000000', Role.first.name, 'Street Address 123',
-         'Unit Number 456', 'Curridabat', 'SJ', '90210', 'Costa Rica', 'Pacific Time (US & Canada)', 'about 0 minutes ago', 'Active']
+         'Unit Number 456', 'Curridabat', 'SJ', '90210', 'Costa Rica', 'Pacific Time (US & Canada)', company_user.last_activity_at.to_s, 'Active']
       ])
     end
 
