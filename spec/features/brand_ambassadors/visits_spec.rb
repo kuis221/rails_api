@@ -34,18 +34,18 @@ feature 'Brand Ambassadors Visits' do
       create(:brand_ambassadors_visit, company: company,
                                        start_date: today, end_date: (today + 1.day).to_s(:slashes),
                                        city: 'New York', area: area, campaign: campaign,
-                                       visit_type: 'market_visit', company_user: company_user,
+                                       visit_type: 'Formal Market Visit', company_user: company_user,
                                        description: 'The first visit description', active: true)
       create(:brand_ambassadors_visit, company: company,
                                        start_date: (today + 2.days).to_s(:slashes),
                                        end_date: (today + 3.days).to_s(:slashes),
                                        city: 'New York', area: area, campaign: campaign,
-                                       visit_type: 'brand_program', company_user: company_user, active: true)
+                                       visit_type: 'Brand Program', company_user: company_user, active: true)
       create(:brand_ambassadors_visit, company: company,
                                        start_date: (today + 4.days).to_s(:slashes),
                                        end_date: (today + 5.days).to_s(:slashes),
                                        city: nil, area: nil, campaign: campaign,
-                                       visit_type: 'pto', company_user: company_user, active: true)
+                                       visit_type: 'PTO', company_user: company_user, active: true)
       Sunspot.commit
     end
 
@@ -172,14 +172,14 @@ feature 'Brand Ambassadors Visits' do
              company: company,
              start_date: today, end_date: (today + 1.day).to_s(:slashes),
              city: 'Los Angeles', area: area1, campaign: campaign,
-             visit_type: 'brand_program', description: 'Visit1 description',
+             visit_type: 'Brand Program', description: 'Visit1 description',
              company_user: company_user, active: true)
     end
     let(:ba_visit2) do
       create(:brand_ambassadors_visit,
              company: company, city: 'Austin', area: area2, campaign: campaign,
              start_date: (today + 1.day).to_s(:slashes), end_date: (today + 4.day).to_s(:slashes),
-             visit_type: 'market_visit', description: 'Visit2 description',
+             visit_type: 'Formal Market Visit', description: 'Visit2 description',
              company_user: another_user, active: true)
     end
     let(:event1) do
@@ -313,13 +313,13 @@ feature 'Brand Ambassadors Visits' do
       month_name = Time.now.strftime('%B')
       ba_visit1 = create(:brand_ambassadors_visit, company: company,
                     start_date: "#{month_number}/15/#{year}", end_date: "#{month_number}/15/#{year}",
-                    visit_type: 'market_visit', description: 'Visit1 description',
+                    visit_type: 'Formal Market Visit', description: 'Visit1 description',
                     city: 'New York', area: area,
                     company_user: company_user, active: true, campaign: campaign)
       create(:brand_ambassadors_visit, company: company,
         start_date: "#{month_number}/16/#{year}", end_date: "#{month_number}/18/#{year}",
         city: 'New York', area: area,
-        visit_type: 'brand_program', company_user: company_user, active: true, campaign: campaign)
+        visit_type: 'Brand Program', company_user: company_user, active: true, campaign: campaign)
       Sunspot.commit
 
       visit brand_ambassadors_root_path
@@ -353,11 +353,11 @@ feature 'Brand Ambassadors Visits' do
       create(:brand_ambassadors_visit,
              company: company, city: 'New York', area: area, campaign: campaign,
              start_date: "#{month_number}/15/#{year}", end_date: "#{month_number}/16/#{year}",
-             visit_type: 'market_visit', company_user: company_user, active: true)
+             visit_type: 'Formal Market Visit', company_user: company_user, active: true)
       create(:brand_ambassadors_visit,
              company: company, city: 'New York', area: area, campaign: campaign,
              start_date: "#{month_number}/16/#{year}", end_date: "#{month_number}/18/#{year}",
-             visit_type: 'brand_program', company_user: company_user, active: true)
+             visit_type: 'Brand Program', company_user: company_user, active: true)
       Sunspot.commit
       visit brand_ambassadors_root_path
 
@@ -408,7 +408,7 @@ feature 'Brand Ambassadors Visits' do
         fill_in 'Start date', with: '01/23/2014'
         fill_in 'End date', with: '01/24/2014'
         select_from_chosen company_user.name, from: 'Employee'
-        select_from_chosen 'Formal Market Visit', from: 'Visit type'
+        select2_add_tag 'Visit type', from: 'Formal Market Visit'
         select_from_chosen 'My Area', from: 'Area'
         select_from_chosen 'My Campaign', from: 'Campaign'
         select_from_chosen 'My City', from: 'City'
@@ -429,7 +429,7 @@ feature 'Brand Ambassadors Visits' do
     let(:ba_visit) do
       create(:brand_ambassadors_visit,
              company: company, campaign: campaign,
-             visit_type: 'market_visit', description: 'Visit1 description',
+             visit_type: 'Formal Market Visit', description: 'Visit1 description',
              area: area, city: 'New York', company_user: company_user, active: true)
     end
     before do
@@ -446,12 +446,13 @@ feature 'Brand Ambassadors Visits' do
       end
 
       within visible_modal do
-        expect(find_field('Visit type', visible: false).value).to eql 'market_visit'
+        expect(find('#s2id_brand_ambassadors_visit_visit_type')).to have_content 'Formal Market Visit'
         expect(find_field('Area', visible: false).value).to eql area.id.to_s
         expect(find_field('Campaign', visible: false).value).to eql campaign.id.to_s
         expect(find_field('City', visible: false).value).to eql 'New York'
         expect(find_field('Description', visible: false).value).to eql 'Visit1 description'
-        select_from_chosen 'Brand Program', from: 'Visit type'
+        select2_remove_tag 'Formal Market Visit'
+        select2_add_tag 'Visit type', 'Brand Program'
         select_from_chosen 'My Area', from: 'Area'
         select_from_chosen 'My Campaign', from: 'Campaign'
         select_from_chosen 'My City', from: 'City'
@@ -518,7 +519,7 @@ feature 'Brand Ambassadors Visits' do
     let(:ba_visit)do
       create(:brand_ambassadors_visit, company: company,
                                        start_date: '02/01/2014', end_date: '02/02/2014',
-                                       visit_type: 'market_visit', description: 'Visit1 description',
+                                       visit_type: 'Formal Market Visit', description: 'Visit1 description',
                                        campaign: campaign, area: area,
                                        company_user: company_user, active: true)
     end
@@ -536,7 +537,8 @@ feature 'Brand Ambassadors Visits' do
       click_js_button('Edit')
 
       within visible_modal do
-        select_from_chosen 'Brand Program', from: 'Visit type'
+        select2_remove_tag 'Formal Market Visit'
+        select2_add_tag 'Visit type', 'Brand Program'
         fill_in 'Description', with: 'new visit description'
         click_js_button 'Save'
       end
@@ -614,7 +616,7 @@ feature 'Brand Ambassadors Visits' do
       ba_visit1 = create(:brand_ambassadors_visit,
                         company: company,
                         start_date: '02/01/2014', end_date: '02/02/2014',
-                        visit_type: 'market_visit', description: 'Visit1 description',
+                        visit_type: 'Formal Market Visit', description: 'Visit1 description',
                         campaign: campaign, area: nil,
                         company_user: company_user, active: true)
 

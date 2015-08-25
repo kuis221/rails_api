@@ -24,7 +24,7 @@ describe Api::V1::BrandAmbassadors::VisitsController, type: :controller do
       expect(result['total']).to eq(3)
       expect(result['page']).to eq(1)
       expect(result['results'].first.keys).to match_array(%w(
-        id visit_type visit_type_name start_date end_date campaign_id area_id
+        id visit_type start_date end_date campaign_id area_id
         city description status user campaign area))
     end
 

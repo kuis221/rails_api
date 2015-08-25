@@ -27,7 +27,7 @@ FactoryGirl.define do
     start_date { Date.today.to_s(:slashes) }
     end_date { Date.today.to_s(:slashes) }
     active true
-    visit_type 'brand_program'
+    visit_type 'Brand Program'
     campaign { create(:campaign, company: company) }
     area_id 1
     city 'Test City'

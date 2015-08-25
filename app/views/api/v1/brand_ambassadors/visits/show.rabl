@@ -1,6 +1,6 @@
 object @visit
 
-attributes :id, :campaign_id, :area_id, :visit_type, :visit_type_name, 
+attributes :id, :campaign_id, :area_id, :visit_type,
 		   :start_date, :end_date, :city, :description, :status
 
 child(:company_user => :user) do

@@ -48,11 +48,6 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
     end
   end
 
-  VISIT_TYPE_OPTIONS = { 'Brand Program' => 'brand_program',
-                         'PTO' => 'pto',
-                         'Formal Market Visit' => 'market_visit',
-                         'Local Market Request' => 'local_market_request' }
-
   before_validation { self.city = nil if city == '' }
 
   validates :company_user, presence: true
@@ -87,10 +82,6 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
 
   def deactivate!
     update_attribute :active, false
-  end
-
-  def visit_type_name
-    BrandAmbassadors::Visit::VISIT_TYPE_OPTIONS.find { |_k, v| v == visit_type }.try(:[], 0) if visit_type
   end
 
   def status

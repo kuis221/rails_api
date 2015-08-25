@@ -66,7 +66,7 @@ javascript:
           'default': function(){ return ''; }
         },
         eventRender: function(visit, element) {
-          var title = [(visit.visit_type_name || null), (visit.campaign_name || null)].filter(function(e) { return e; }).join(' - ');
+          var title = [(visit.visit_type || null), (visit.campaign_name || null)].filter(function(e) { return e; }).join(' - ');
           element.find('.fc-title').html(
             title + "<br/>" +
             "<span class='user-name'>" + visit.company_user.full_name + "</span>" +
