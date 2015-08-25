@@ -5,7 +5,7 @@
 
   .details_box.padding-top-close-bar
     .details-main-title
-      h2.pull-left= resource.visit_type_name
+      h2.pull-left= resource.visit_type
       .edition-links
         = button_to_edit resource if can?(:edit, resource)
         = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)

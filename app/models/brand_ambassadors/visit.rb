@@ -84,10 +84,6 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
     update_attribute :active, false
   end
 
-  def visit_type_name
-    visit_type
-  end
-
   def status
     self.active? ? 'Active' : 'Inactive'
   end

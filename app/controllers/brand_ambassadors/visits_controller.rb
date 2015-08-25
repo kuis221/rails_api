@@ -16,7 +16,7 @@ class BrandAmbassadors::VisitsController < FilteredController
       csv << ['START DATE', 'END DATE', 'EMPLOYEE', 'AREA', 'CITY', 'CAMPAIGN', 'TYPE', 'DESCRIPTION']
       each_collection_item do |visit|
         csv << [visit.start_date, visit.end_date, visit.company_user.try(:full_name), visit.area_name,
-                visit.city, visit.campaign_name, visit.visit_type_name, visit.description]
+                visit.city, visit.campaign_name, visit.visit_type, visit.description]
       end
     end
   end

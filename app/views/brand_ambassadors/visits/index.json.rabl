@@ -1,6 +1,6 @@
 collection @visits, root: false, object_root: false
 
-attributes visit_type_name: :visit_type_name,
+attributes visit_type: :visit_type,
            start_date: :start,
            campaign_name: :campaign_name,
            city: :city,

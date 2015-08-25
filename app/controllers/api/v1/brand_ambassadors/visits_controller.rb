@@ -97,7 +97,7 @@ module Api
 
           Each visit in the result set has the following attributes:
           * *id*: the visits's ID
-          * *visit_type_name*: the visit's type name
+          * *visit_type: the visit's type name
           * *start_date*: the visit's start date
           * *end_date*: the visit's end date
           * *campaign_name*: the campaign to which the visit belongs
@@ -121,7 +121,7 @@ module Api
 
         The possible attributes returned are:
           * *id*: the visits's ID
-          * *visit_type_name*: the visit's type name
+          * *visit_type: the visit's type name
           * *start_date*: the visit's start date
           * *end_date*: the visit's end date
           * *campaign_name*: the campaign to which the visit belongs
@@ -137,7 +137,7 @@ module Api
         example <<-EOS
         {
           id: 319,
-          visit_type_name: "Brand Program",
+          visit_type: "Brand Program",
           start_date: "2014-11-08",
           end_date: "2014-11-08",
           campaign_name: "Whisky Show TGL FY15",
@@ -171,7 +171,7 @@ module Api
             campaign_id: "115",
             area_id: "21",
             city: "Decatur",
-            visit_type: "market_visit",
+            visit_type: "Market Visit",
             description: "My description"
           }
         }
@@ -180,7 +180,7 @@ module Api
         {
           {
             id: 361,
-            visit_type_name: "Market Visit",
+            visit_type: "Market Visit",
             start_date: "2014-11-09",
             end_date: "2014-11-10",
             campaign_name: "Absolut BA FY15",
@@ -218,7 +218,7 @@ module Api
             campaign_id: "115",
             area_id: "21",
             city: "Decatur",
-            visit_type: "market_visit",
+            visit_type: "Market Visit",
             description: "My description"
           }
         }
@@ -227,8 +227,7 @@ module Api
         {
           {
             id: 361,
-            visit_type: "market_visit",
-            visit_type_name: "Market Visit",
+            visit_type: "Market Visit",
             start_date: "2014-11-09",
             end_date: "2014-11-10",
             campaign_id: 115,
