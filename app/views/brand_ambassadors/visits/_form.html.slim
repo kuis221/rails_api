@@ -21,7 +21,7 @@
     - if can?(:tag, BrandAmbassadors::Visit)
       = f.input :visit_type
     - else
-      = f.input :visit_type, collection: current_company.brand_ambassadors_visits.reorder(nil).pluck('DISTINCT(visit_type)').compact.sort, include_blank: '', required: true, input_html: {class: 'chosen-enabled', data: {placeholder: "Select the type"}}
+      = f.input :visit_type, collection: return_visit_types, include_blank: '', required: true, input_html: {class: 'chosen-enabled', data: {placeholder: "Select the type"}}
 
     .row-fluid
       .span12
@@ -44,4 +44,4 @@ javascript:
 
 - if can?(:tag, BrandAmbassadors::Visit)
   javascript:
-    $('#brand_ambassadors_visit_visit_type').select2({ tags: #{ raw(current_company.brand_ambassadors_visits.reorder(nil).pluck('DISTINCT(visit_type)').compact.sort.to_json).html_safe }, maximumSelectionSize: 1 });
+    $('#brand_ambassadors_visit_visit_type').select2({ tags: #{ raw(return_visit_types.to_json).html_safe }, maximumSelectionSize: 1 });

@@ -7,7 +7,7 @@ class BrandAmbassadors::VisitsController < FilteredController
 
   include EventsHelper
 
-  helper_method :return_path
+  helper_method :return_path, :return_visit_types
 
   protected
 
@@ -66,5 +66,9 @@ class BrandAmbassadors::VisitsController < FilteredController
   def return_path
     url_to_return = super || brand_ambassadors_root_path
     url_to_return if url_valid? url_to_return
+  end
+
+  def return_visit_types
+    current_company.brand_ambassadors_visits.reorder(nil).pluck('DISTINCT(visit_type)').compact.sort
   end
 end
