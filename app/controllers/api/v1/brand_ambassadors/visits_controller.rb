@@ -272,7 +272,7 @@ module Api
         }
         EOS
         def types
-          render json: current_company.brand_ambassadors_visits.order(:visit_type).pluck(:visit_type).uniq.compact.to_json
+          render json: current_company.brand_ambassadors_visits.reorder(nil).pluck('DISTINCT(visit_type)').compact.sort.to_json
         end
 
         api :GET, '/api/v1/brand_ambassadors/visits/:id/events', 'Get a list of events for a visit'
