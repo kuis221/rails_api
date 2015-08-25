@@ -60,7 +60,9 @@ describe PlacesController, type: :controller do
               name: "Guille's place", street_number: '123 st', route: 'xyz 321',
               city: 'Curridabat', state: 'San José', zipcode: '12345',
               types: 'bar', country: 'CR', venues_attributes: { '0' =>
-                { company_id: company.id, web_address: 'www.guilles.com', hours_fields_attributes: {
+                { company_id: company.id, web_address: 'www.guilles.com',
+                  place_price_level: '2', phone_number: '(404) 234234234',
+                  hours_fields_attributes: {
                   '0' => { day: '1', hour_open: '0600', hour_close: '0000', '_destroy' => 'false' }
                  }, results_attributes: { '0' =>
                   { form_field_id: ff.id, value: 1 }
@@ -82,6 +84,8 @@ describe PlacesController, type: :controller do
       expect(place.longitude).to eql -3.23455
       expect(place.locations.count).to eql 4
       expect(venue.website).to eql 'http://www.guilles.com'
+      expect(venue.price_level).to eql 2
+      expect(venue.phone_number).to eql '(404) 234234234'
       expect(venue.opening_hours.count).to eql 1
       expect(Venue.last.results_for([ff]).first.value).to eql "1"
 
@@ -305,14 +309,15 @@ describe PlacesController, type: :controller do
   end
 
   describe 'should allow to edit places' do
-    let(:venue) { create(:venue, company: company, web_address: 'http://www.test.com', place: create(:place, name: 'test 1', is_custom_place: true, reference: nil)) }
+    let(:venue) { create(:venue, company: company, place_price_level: '4', web_address: 'http://www.test.com', place: create(:place, name: 'test 1', is_custom_place: true, reference: nil)) }
 
     it 'returns http success' do
       expect do
         expect do
           expect do
             xhr :patch, 'update', id: venue.place.id, add_new_place: 'false', place: { venues_attributes: { '0' =>
-                { id: venue.id, web_address: 'www.guilles.com', company_id: company.id, hours_fields_attributes: {
+                { id: venue.id, web_address: 'www.guilles.com', place_price_level: '3', phone_number: '(404) 65652114',
+                  company_id: company.id, hours_fields_attributes: {
                   '0' => { day: '1', hour_open: '0600', hour_close: '0000', '_destroy' => 'false' }
                  } } } }, format: :js
           end.to change(Place, :count).by(1)
@@ -329,6 +334,8 @@ describe PlacesController, type: :controller do
       expect(place.country).to eql 'US'
       expect(venue.opening_hours.count).to eql 1
       expect(venue.website).to eql 'http://www.guilles.com'
+      expect(venue.phone_number).to eql '(404) 65652114'
+      expect(venue.price_level).to eql 3
     end
   end
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150814224113) do
+ActiveRecord::Schema.define(version: 20150819161934) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1077,6 +1077,8 @@ ActiveRecord::Schema.define(version: 20150814224113) do
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
     t.string   "web_address"
+    t.integer  "place_price_level"
+    t.string   "phone_number"
   end
 
   add_index "venues", ["company_id", "place_id"], :name => "index_venues_on_company_id_and_place_id", :unique => true
