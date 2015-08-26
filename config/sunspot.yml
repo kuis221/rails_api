@@ -20,10 +20,9 @@ development:
 
 test:
   solr:
-    hostname: 127.0.0.1
+    hostname: localhost
     port: <%= 8981 + ENV['TEST_ENV_NUMBER'].to_i %>
-    log_level: DEBUG
-    path: /solr/test
-  auto_commit_after_request: true
-  auto_commit_after_delete_request: true
-    
+    log_level: WARNING
+    data_path: <%= File.join(::Rails.root, 'solr', 'data', ::Rails.env, ENV['TEST_ENV_NUMBER'].to_i.to_s) %>
+    log_file: <%= File.join(::Rails.root, 'log', "sunspot-solr-test-#{ENV['TEST_ENV_NUMBER'].to_i}.log") %>
+    pid_path: <%= File.join(::Rails.root, 'solr', 'pids', ::Rails.env, "#{ENV['TEST_ENV_NUMBER'].to_i}") %>

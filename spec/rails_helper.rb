@@ -61,6 +61,7 @@ RSpec.configure do |config|
   config.include RequestsHelper, type: :feature
 
   config.before(:suite) do
+    puts "creating views"
     ActiveRecord::Base.connection.execute(IO.read("db/functions.sql"))
     ActiveRecord::Base.connection.execute(IO.read("db/views.sql"))
   end

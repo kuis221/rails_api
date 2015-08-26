@@ -122,6 +122,7 @@ group :test do
   gem 'sunspot_matchers'
   # gem 'launchy'
   gem 'sunspot_test'
+  #gem 'sunspot-rails-tester'
   gem 'resque_spec'
   gem 'simplecov', require: false
   gem 'capybara-screenshot'
