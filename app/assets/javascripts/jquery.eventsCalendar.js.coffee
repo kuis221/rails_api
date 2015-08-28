@@ -230,7 +230,7 @@ $.widget 'nmk.eventsCalendar', {
 			if response && response.length > 0
 				for eventElement in response
 					parts = eventElement.start.split('-')
-					d = new Date(parts[0], parseInt(parts[1])-1, parts[2])
+					d = new Date(parts[0], parseInt(parts[1], 10)-1, parts[2])
 					cell = @calendar.find("##{d.getUTCFullYear()}_#{d.getUTCMonth()+1}_#{d.getUTCDate()}")
 					if cell.length > 0
 						cell.find('.calendar-day-events-container').append @_renderEvent(eventElement)
