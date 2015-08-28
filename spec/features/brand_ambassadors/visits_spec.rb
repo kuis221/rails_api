@@ -490,6 +490,77 @@ feature 'Brand Ambassadors Visits' do
     end
   end
 
+  shared_examples_for 'a user that can edit visits without permission to add tab' do
+    let(:ba_visit) do
+      create(:brand_ambassadors_visit,
+             company: company, campaign: campaign,
+             visit_type: 'Formal Market Visit', description: 'Visit1 description',
+             area: area, city: 'New York', company_user: company_user, active: true)
+    end
+    let(:ba_visit2) do
+      create(:brand_ambassadors_visit,
+             company: company, campaign: campaign,
+             visit_type: 'Brand Program', description: 'Visit2 description',
+             area: area, city: 'Florida', company_user: company_user, active: true)
+    end
+    before do
+      ba_visit.save
+      ba_visit2.save
+      Sunspot.commit
+    end
+    scenario 'allows the user to edit a visit' do
+      area.places << create(:city, name: 'My City')
+      visit brand_ambassadors_root_path
+      choose_predefined_date_range 'Current month'
+
+      within resource_item do
+        click_js_button 'Edit Visit'
+      end
+
+      within visible_modal do
+        expect(find_field('Visit type', visible: false).value).to eql 'Formal Market Visit'
+        expect(find_field('Area', visible: false).value).to eql area.id.to_s
+        expect(find_field('Campaign', visible: false).value).to eql campaign.id.to_s
+        expect(find_field('City', visible: false).value).to eql 'New York'
+        expect(find_field('Description', visible: false).value).to eql 'Visit1 description'
+        select_from_chosen 'Brand Program', from: 'Visit type'
+        select_from_chosen 'My Area', from: 'Area'
+        select_from_chosen 'My Campaign', from: 'Campaign'
+        select_from_chosen 'My City', from: 'City'
+        fill_in 'Description', with: 'new visit description'
+        click_js_button 'Save'
+      end
+      ensure_modal_was_closed
+
+      within resource_item do
+        expect(page).to have_content company_user.full_name
+        expect(page).to have_content 'My Area (My City)'
+        expect(page).to have_content campaign.name
+        expect(page).to have_content 'Brand Program'
+      end
+    end
+
+    scenario 'user is redirected to the list of visits after editing' do
+      visit brand_ambassadors_root_path
+
+      within resource_item do
+        click_link 'Visit Details'
+      end
+      expect(current_path).to eql brand_ambassadors_visit_path(ba_visit)
+
+      within('.edition-links') { click_js_button 'Edit Visit' }
+      within visible_modal do
+        fill_in 'Description', with: 'Some description'
+        click_js_button 'Save'
+      end
+
+      expect(page).to have_text('Some description')
+
+      click_link 'You are viewing visit details. Click to close.'
+      expect(current_path).to eql brand_ambassadors_root_path
+    end
+  end
+
   shared_examples_for 'a user that can deactivate visits' do
     scenario "can deactivate a visit and it's removed from the view" do
       today = Time.zone.local(Time.now.strftime('%Y'), Time.now.strftime('%m'), 18, 12, 00)
@@ -818,11 +889,35 @@ feature 'Brand Ambassadors Visits' do
     end
 
     it_should_behave_like 'a user that can edit visits' do
-      let(:permissions) { [[:list, 'BrandAmbassadors::Visit'], [:show, 'BrandAmbassadors::Visit'], [:update, 'BrandAmbassadors::Visit']] }
+      let(:permissions) do
+        [
+          [:list, 'BrandAmbassadors::Visit'],
+          [:show, 'BrandAmbassadors::Visit'],
+          [:update, 'BrandAmbassadors::Visit'],
+          [:tag, 'BrandAmbassadors::Visit']
+        ]
+      end
+    end
+
+    it_should_behave_like 'a user that can edit visits without permission to add tab' do
+      let(:permissions) do
+        [
+          [:list, 'BrandAmbassadors::Visit'],
+          [:show, 'BrandAmbassadors::Visit'],
+          [:update, 'BrandAmbassadors::Visit']
+        ]
+      end
     end
 
     it_should_behave_like 'a user that can create visits' do
-      let(:permissions) { [[:list, 'BrandAmbassadors::Visit'], [:create, 'BrandAmbassadors::Visit'], [:show, 'BrandAmbassadors::Visit']] }
+      let(:permissions) do
+        [
+          [:list, 'BrandAmbassadors::Visit'],
+          [:create, 'BrandAmbassadors::Visit'],
+          [:show, 'BrandAmbassadors::Visit'],
+          [:tag, 'BrandAmbassadors::Visit']
+        ]
+      end
     end
 
     it_should_behave_like 'a user that can view the calendar of visits' do
@@ -834,7 +929,7 @@ feature 'Brand Ambassadors Visits' do
         [
           [:list, 'BrandAmbassadors::Visit'], [:deactivate, 'BrandAmbassadors::Visit'],
           [:show, 'BrandAmbassadors::Visit'], [:update, 'BrandAmbassadors::Visit'],
-          [:create, 'Event'], [:show, 'Event'], [:view_list, 'Event']]
+          [:create, 'Event'], [:show, 'Event'], [:view_list, 'Event'], [:tag, 'BrandAmbassadors::Visit']]
       end
       before { company_user.places << place }
       before { campaign.places << place }

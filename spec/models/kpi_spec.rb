@@ -143,8 +143,8 @@ describe Kpi, type: :model do
       end.to change(FormFieldResult, :count).by(-1)
 
       event.reload
-      result = event.result_for_kpi(kpi1)
-      result.reload
+      kpi  = described_class.where(id: [kpi1.id, kpi2.id]).first # In this case, any kpi can be kept
+      result = event.result_for_kpi(kpi)
       expect(result.value).to eq('100')
     end
 

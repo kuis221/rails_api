@@ -43,7 +43,7 @@ feature 'Venues Section', js: true, search: true do
       fill_in 'I am looking for', with: 'Alcatraz'
       click_js_button 'Search'
       expect(find('#venues-list')).to have_content 'Alcatraz Island'
-      resource_item.click
+      find('.resource-item-link').click
 
       expect(page).to have_selector('h2', text: 'Alcatraz Island')
       expect(current_path).to eql venue_path(Venue.last)
