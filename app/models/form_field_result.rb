@@ -36,7 +36,7 @@ class FormFieldResult < ActiveRecord::Base
   def value
     if form_field.present? && form_field.is_hashed_value?
       if form_field.type == 'FormField::Checkbox'
-        (attributes['hash_value'].try(:keys) || attributes['value'] || []).map(&:to_i)
+        (attributes['hash_value'].try(:keys) || (attributes['value'] if attributes['value'].present?) || []).map(&:to_i)
       else
         attributes['hash_value'] || attributes['value'] || {}
       end
