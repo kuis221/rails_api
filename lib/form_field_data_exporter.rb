@@ -138,7 +138,7 @@ class FormFieldDataExporter < BaseExporter
       if campaign_ids.count == 1
         'form_fields.ordering ASC'
       else
-        'lower(form_fields.name) ASC, form_fields.type ASC'
+        'lower(form_fields.name) ASC, form_fields.type ASC, form_fields.id ASC'
       end
     fields_scope = FormField.for_events_in_company(company_user.company)
                     .where.not(type: exclude_field_types)
@@ -153,7 +153,7 @@ class FormFieldDataExporter < BaseExporter
         FormField.for_activity_types_in_company(company_user.company)
       else
         FormField.for_activity_types_in_campaigns(campaign_ids)
-      end.where.not(type: exclude_field_types).order('lower(form_fields.name) ASC, form_fields.type ASC')
+      end.where.not(type: exclude_field_types).order('lower(form_fields.name) ASC, form_fields.type ASC, form_fields.id ASC')
     s = s.where(fieldable_id: params[:activity_type]) if params[:activity_type] && params[:activity_type].any?
     s.map { |field| [field.id, field] }
   end
@@ -162,28 +162,28 @@ class FormFieldDataExporter < BaseExporter
     ['FormField::Attachment', 'FormField::Photo', 'FormField::Section', 'FormField::UserDate']
   end
 
-   def custom_columns
-     return @custom_columns unless @custom_columns.nil?
-     @fields_mapping = {}
-     @custom_columns = {}
-     custom_fields_to_export.each do |_, field|
-       segments =
-         if SEGMENTED_FIELD_TYPES.include?(field.type)
-           s = field.options_for_input.sort { |left, right| left[1] <=> right[1] }
-           s.map! { |option| ["#{field.id}_#{option[1]}", "#{field.name}: #{option[0]}"] }
-           s.push(["#{field.id}__TOTAL", "#{field.name}: TOTAL"]) if field.type == SUMMATION_TYPE
-           s
-         else
-           [[field.id, field.name]]
-         end
-       segments.each do |s|
-         id = unique_field_id(field, s[1])
-         @fields_mapping[s[0]] = id
-         @custom_columns[id] = s[1]
-       end
-     end
-     @custom_columns
-   end
+  def custom_columns
+    return @custom_columns unless @custom_columns.nil?
+    @fields_mapping = {}
+    @custom_columns = {}
+    custom_fields_to_export.each do |_, field|
+      segments =
+        if SEGMENTED_FIELD_TYPES.include?(field.type)
+          s = field.options_for_input.sort { |left, right| left[1] <=> right[1] }
+          s.map! { |option| ["#{field.id}_#{option[1]}", "#{field.name}: #{option[0]}"] }
+          s.push(["#{field.id}__TOTAL", "#{field.name}: TOTAL"]) if field.type == SUMMATION_TYPE
+          s
+        else
+          [[field.id, field.name]]
+        end
+      segments.each do |s|
+        id = unique_field_id(field, s[1])
+        @fields_mapping[s[0]] = id
+        @custom_columns[id] = s[1]
+      end
+    end
+    @custom_columns
+  end
 
   def unique_field_id(field, name)
     @fieldable_fields_mapping ||= {}
