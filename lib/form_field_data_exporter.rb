@@ -49,12 +49,21 @@ class FormFieldDataExporter < BaseExporter
             resource_values[key] = 'Yes'
           end
         elsif @result.form_field.type == LIKERT_SCALE_TYPE
-          @likert_statements_mapping[@result.form_field.id] ||= Hash[@result.form_field.statements.map{ |s| [s.id.to_s, s.name] }]
+          @likert_statements_mapping[@result.form_field.id] ||= Hash[@result.form_field.statements.map { |s| [s.id.to_s, s.name] }]
           @result.value.each do |statement_id, option_id|
-            value = @likert_statements_mapping[@result.form_field.id][statement_id]
-            key = @fields_mapping["#{@result.form_field.id}_#{option_id}"]
-            resource_values[key] = value
-          end
+            if @result.form_field.capture_mechanism == 'radio'
+              value = @likert_statements_mapping[@result.form_field.id][statement_id]
+              key = @fields_mapping["#{@result.form_field.id}_#{option_id}"]
+              resource_values[key] = value
+            else
+              option_id = eval(option_id) if option_id.present?
+              option_id.each do |option|
+                value = @likert_statements_mapping[@result.form_field.id][statement_id]
+                key = @fields_mapping["#{@result.form_field.id}_#{option.to_i}"]
+                resource_values[key] = resource_values[key].present? ? resource_values[key] + ", #{value}" : value
+              end if option_id.present? && option_id.is_a?(Array)
+            end
+          end if @result.value.is_a?(Hash)
         else
           sum = 0
           @result.form_field.options_for_input.each do |option|
