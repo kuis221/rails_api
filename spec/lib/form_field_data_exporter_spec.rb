@@ -117,6 +117,7 @@ describe FormFieldDataExporter, type: :model do
       it 'includes LIKERT SCALE fields that are not linked to a KPI' do
         field = create(:form_field_likert_scale, name: 'My LikertScale Field',
           fieldable: campaign,
+          capture_mechanism: 'radio',
           options: [
             option1 = create(:form_field_option, name: 'LikertScale Opt1'),
             option2 = create(:form_field_option, name: 'LikertScale Opt2')],
