@@ -25,7 +25,8 @@ ActiveAdmin.register Company do
       f.input :expense_categories,
               hint: 'Enter one category per line'
     end
-    f.inputs name: 'Brand Ambassadors' do
+    f.inputs 'Brand Ambassadors', name: 'Brand Ambassadors' do
+      f.input :auto_match_events, label: 'Auto match events in visits'
       f.input :brand_ambassadors_role_ids,
               label: 'Brand Ambassadors Roles',
               as: :check_boxes,
@@ -71,6 +72,7 @@ ActiveAdmin.register Company do
           'All users'
         end
       end
+      row :auto_match_events, 'Auto match events in visits'
       row 'Brand Ambassadors Roles' do
         company.roles.where(id: company.brand_ambassadors_role_ids).pluck(:name).join(', ')
       end
@@ -88,7 +90,8 @@ ActiveAdmin.register Company do
   controller do
     def permitted_params
       params.permit(company: [:name, :admin_email, :timezone_support, :event_alerts_policy,
-                              :ytd_dates_range, :expense_categories, brand_ambassadors_role_ids: []])
+                              :ytd_dates_range, :expense_categories, :auto_match_events,
+                              brand_ambassadors_role_ids: []])
     end
   end
 end

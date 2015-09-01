@@ -9,6 +9,7 @@
 #  timezone_support   :boolean
 #  settings           :hstore
 #  expense_categories :text
+#  auto_match_events  :boolean
 #
 
 class Company < ActiveRecord::Base
