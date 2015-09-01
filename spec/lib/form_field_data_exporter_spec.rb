@@ -148,7 +148,7 @@ describe FormFieldDataExporter, type: :model do
           ])
         end
 
-        it 'includes single answer LIKERT SCALE fields that are not linked to a KPI' do
+        it 'includes multiple answer LIKERT SCALE fields that are not linked to a KPI' do
           field.update_attribute(:capture_mechanism, 'checkbox')
           event.results_for([field]).first.value = { statement1.id.to_s => [option1.id.to_s],
                                                      statement2.id.to_s => [option1.id.to_s, option2.id.to_s] }
@@ -588,7 +588,7 @@ describe FormFieldDataExporter, type: :model do
           ])
         end
 
-        it 'includes single answer LIKERT SCALE fields that are not linked to a KPI' do
+        it 'includes multiple answer LIKERT SCALE fields that are not linked to a KPI' do
           field.update_attribute(:capture_mechanism, 'checkbox')
           activity.results_for([field]).first.value = { statement1.id.to_s => [option1.id.to_s],
                                                         statement2.id.to_s => [option1.id.to_s, option2.id.to_s] }
