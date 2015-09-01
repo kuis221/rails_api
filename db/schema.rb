@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150901000551) do
+ActiveRecord::Schema.define(version: 20150901153506) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -552,12 +552,14 @@ ActiveRecord::Schema.define(version: 20150901000551) do
     t.datetime "submitted_at"
     t.datetime "approved_at"
     t.integer  "active_photos_count",                         default: 0
+    t.integer  "visit_id"
   end
 
   add_index "events", ["aasm_state"], :name => "index_events_on_aasm_state"
   add_index "events", ["campaign_id"], :name => "index_events_on_campaign_id"
   add_index "events", ["company_id"], :name => "index_events_on_company_id"
   add_index "events", ["place_id"], :name => "index_events_on_place_id"
+  add_index "events", ["visit_id"], :name => "index_events_on_visit_id"
 
   create_table "filter_settings", force: true do |t|
     t.integer  "company_user_id"
