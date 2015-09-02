@@ -295,14 +295,15 @@ class Place < ActiveRecord::Base
         # Update them one by one so the versions are generated
         venue.activities.each { |a| a.update_attribute(:activitable_id, real_venue.id) }
         venue.invites.update_all(venue_id: real_venue.id)
+
+        Event.where(place_id: place.id).each do |event|
+          event.update_attribute(:place_id, id) or fail('cannot update event')
+        end
+
         venue.destroy
       end
 
-      Event.where(place_id: place.id).each do |event|
-        event.update_attribute(:place_id, id) or fail('cannot update event')
-      end
-
-      Placeable.where(place_id: place.id).update_all(place_id: place.id)
+      Placeable.where(place_id: place.id).update_all(place_id: id)
 
       place.td_linx_code ||= place.td_linx_code
       place.update_attribute(:merged_with_place_id, id)
