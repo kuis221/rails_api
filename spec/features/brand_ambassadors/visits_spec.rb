@@ -851,6 +851,53 @@ feature 'Brand Ambassadors Visits' do
     end
   end
 
+  shared_examples_for 'a user that can view visits details without auto_match_events' do
+    before {
+      company.auto_match_events = false
+      company.save
+    }
+    let(:campaign) { create(:campaign, company: company, name: 'ABSOLUT Vodka') }
+    let(:ba_visit)do
+      create(:brand_ambassadors_visit, company: company,
+                                       start_date: '02/01/2014', end_date: '02/02/2014',
+                                       visit_type: 'Formal Market Visit', description: 'Visit1 description',
+                                       campaign: campaign, area: area,
+                                       company_user: company_user, active: true)
+    end
+
+    scenario 'can view a list of events' do
+      without_current_user do
+        create(:event,
+               start_date: '02/01/2014', end_date: '02/01/2014',
+               campaign: campaign,
+               users: [company_user],
+               place: create(:place, name: 'My Place 1', city: 'New York', state: 'NY'),
+               visit: ba_visit)
+
+        create(:event,
+               start_date: '02/01/2014', end_date: '02/01/2014',
+               campaign: campaign,
+               users: [company_user],
+               place: create(:place, name: 'My Place 2', city: 'San Francisco', state: 'CA'))
+
+        create(:event,
+               start_date: '02/01/2014', end_date: '02/01/2014',
+               campaign: campaign,
+               visit: ba_visit,
+               place: create(:place, name: 'My Place 3', city: 'New York', state: 'NY'))
+      end
+      Sunspot.commit
+
+      visit brand_ambassadors_visit_path(ba_visit)
+
+      within '#events-list' do
+        expect(page).to have_content('My Place 1')
+        expect(page).not_to have_content('My Place 2')
+        expect(page).to have_content('My Place 3')
+      end
+    end
+  end
+
   shared_examples_for 'a user that can view visits details and deactivate visits' do
     scenario 'can activate/deactivate a visit from the details view' do
       ba_visit = create(:brand_ambassadors_visit,
@@ -936,6 +983,15 @@ feature 'Brand Ambassadors Visits' do
       before { company_user.areas << area }
     end
 
+    it_should_behave_like 'a user that can view visits details without auto_match_events' do
+      let(:permissions) do
+        [
+          [:list, 'BrandAmbassadors::Visit'], [:deactivate, 'BrandAmbassadors::Visit'],
+          [:show, 'BrandAmbassadors::Visit'], [:update, 'BrandAmbassadors::Visit'],
+          [:create, 'Event'], [:show, 'Event'], [:view_list, 'Event'], [:tag, 'BrandAmbassadors::Visit']]
+      end
+    end
+
     it_should_behave_like 'a user that can view visits details and deactivate visits' do
       let(:permissions) { [[:list, 'BrandAmbassadors::Visit'], [:deactivate, 'BrandAmbassadors::Visit'], [:show, 'BrandAmbassadors::Visit']] }
     end
@@ -950,6 +1006,7 @@ feature 'Brand Ambassadors Visits' do
     it_behaves_like 'a user that can edit visits'
     it_behaves_like 'a user that can create visits'
     it_behaves_like 'a user that can view visits details'
+    it_behaves_like 'a user that can view visits details without auto_match_events'
     it_behaves_like 'a user that can view visits details and deactivate visits'
   end
 end
