@@ -290,16 +290,15 @@ class Place < ActiveRecord::Base
     fail 'Cannot merge a venue into a merged venued' unless merged_with_place_id.blank?
     fail 'Cannot merge place with itself' if id == place.id
     self.class.connection.transaction do
+      Event.where(place_id: place.id).each do |event|
+        event.update_attribute(:place_id, id) or fail('cannot update event')
+      end
+
       Venue.where(place_id: place.id).each do |venue|
         real_venue = Venue.find_or_create_by(place_id: id, company_id: venue.company_id)
         # Update them one by one so the versions are generated
         venue.activities.each { |a| a.update_attribute(:activitable_id, real_venue.id) }
         venue.invites.update_all(venue_id: real_venue.id)
-
-        Event.where(place_id: place.id).each do |event|
-          event.update_attribute(:place_id, id) or fail('cannot update event')
-        end
-
         venue.destroy
       end
 
