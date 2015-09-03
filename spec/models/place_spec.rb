@@ -482,17 +482,14 @@ describe Place, type: :model do
     let(:place2) { create(:place, route: '2st st', street_number: '22 Street', city: 'Los Angeles',
                                   state: 'California', country: 'US')
     }
-    let(:venue1) { create(:venue, company_id: campaign.company_id, place: place1) }
-    let(:venue2) { create(:venue, company_id: campaign.company_id, place: place2) }
-    let(:event) { create(:event, place_id: place1.id, company_id: campaign.company_id, start_date: '01/23/2019',
+    let!(:venue1) { create(:venue, company_id: campaign.company_id, place: place1) }
+    let!(:venue2) { create(:venue, company_id: campaign.company_id, place: place2) }
+    let!(:event) { create(:event, place_id: place1.id, company_id: campaign.company_id, start_date: '01/23/2019',
                                  end_date: '01/23/2019', start_time: '8:00am', end_time: '11:00am')
     }
     let(:area) {  create(:area, company_id: campaign.company_id) }
 
     before do
-      venue1
-      venue2
-      event
       area.places << place1
     end
 
@@ -501,9 +498,7 @@ describe Place, type: :model do
         place2.merge(place1)
       end.to change(Venue, :count).by(-1)
 
-      assert_raises ActiveRecord::RecordNotFound do
-        Venue.find(venue1.id)
-      end
+      expect { Venue.find(venue1.id) }.to raise_error(ActiveRecord::RecordNotFound)
 
       event.reload
       expect(event.place_id).to eq(place2.id)
@@ -515,9 +510,7 @@ describe Place, type: :model do
     it 'should not merge venues when it is already merged' do
       place2.update_attribute :merged_with_place_id, 3
 
-      assert_raises RuntimeError do
-        place2.merge(place1)
-      end
+      expect { place2.merge(place1) }.to raise_error(RuntimeError)
 
       expect(Venue.count).to eq(2)
 
@@ -529,9 +522,7 @@ describe Place, type: :model do
     end
 
     it 'should not merge a place with itself' do
-      assert_raises RuntimeError do
-        place2.merge(place2)
-      end
+      expect { place2.merge(place2) }.to raise_error(RuntimeError)
 
       expect(Venue.count).to eq(2)
 
