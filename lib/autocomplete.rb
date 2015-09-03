@@ -44,7 +44,7 @@ class Autocomplete
           highlight :name
         end
         group :class do
-          limit 5
+          limit 100
         end
         with(:company_id, [-1, user.company_id])
 
