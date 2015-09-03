@@ -641,7 +641,7 @@ jQuery ->
 						else
 							$filterSidebar.css {
 								position: 'fixed',
-								top: "#{headerHeight}px",
+								top: "#{headerHeight + 42}px",
 								right: "10px",
 								bottom: 'auto'
 							}
