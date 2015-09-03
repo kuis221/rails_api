@@ -12,7 +12,6 @@ upload:
     :job_count: 120
   environments:
     - production
-    - staging
   worker_name: uploads
   min_workers: 1
 
@@ -34,6 +33,5 @@ export:
     :job_count: 16
   environments:
     - production
-    - staging
   worker_name: exports
   min_workers: 1
