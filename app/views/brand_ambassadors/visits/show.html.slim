@@ -60,14 +60,12 @@
 
       #collection-list-filters.hide
       div#events-list.resource-list
-        - unless current_company.auto_match_events
+        - unless current_company.auto_match_events == 1
           = render partial: 'events/event', collection: resource.events.accessible_by_user(current_company_user).order('events.start_at ASC')
-
-
   #visit-documents.details_box
     = render partial: 'brand_ambassadors/document_folders/index', locals: {children: (resource.document_folders.root_children.active + resource.brand_ambassadors_documents.root_children.active).sort_by(&:name), parent: resource, callback_url: brand_ambassadors_visit_documents_path(resource, format: :js) }
 
-- if current_company.auto_match_events
+- if current_company.auto_match_events == 1
   javascript:
     $('#collection-list-filters').filteredList({
       'source': '#{url_for(controller: '/events', action: :items)}',

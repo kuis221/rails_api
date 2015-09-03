@@ -348,7 +348,7 @@ module Api
           ]
         EOS
         def events
-          if current_company.auto_match_events
+          if current_company.auto_match_events == 1
             @events = Event.do_search(
               company_id: current_company.id,
               current_company_user: current_company_user,

@@ -26,7 +26,9 @@ ActiveAdmin.register Company do
               hint: 'Enter one category per line'
     end
     f.inputs 'Brand Ambassadors', name: 'Brand Ambassadors' do
-      f.input :auto_match_events, label: 'Auto match events in visits'
+      f.input :auto_match_events,
+              label: 'Auto match events in visits',
+              as: :boolean
       f.input :brand_ambassadors_role_ids,
               label: 'Brand Ambassadors Roles',
               as: :check_boxes,
@@ -72,7 +74,9 @@ ActiveAdmin.register Company do
           'All users'
         end
       end
-      row :auto_match_events, 'Auto match events in visits'
+      row :auto_match_events, 'Auto match events in visits' do
+        company.auto_match_events == 1 ? 'true' : 'false'
+      end
       row 'Brand Ambassadors Roles' do
         company.roles.where(id: company.brand_ambassadors_role_ids).pluck(:name).join(', ')
       end

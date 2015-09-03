@@ -852,12 +852,13 @@ feature 'Brand Ambassadors Visits' do
   end
 
   shared_examples_for 'a user that can view visits details without auto_match_events' do
-    before {
-      company.auto_match_events = false
+    before do
+      company.auto_match_events = 0
       company.save
-    }
+    end
+
     let(:campaign) { create(:campaign, company: company, name: 'ABSOLUT Vodka') }
-    let(:ba_visit)do
+    let(:ba_visit) do
       create(:brand_ambassadors_visit, company: company,
                                        start_date: '02/01/2014', end_date: '02/02/2014',
                                        visit_type: 'Formal Market Visit', description: 'Visit1 description',

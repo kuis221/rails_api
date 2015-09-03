@@ -125,6 +125,15 @@ describe Event, type: :model do
     it { is_expected.to allow_value(Time.zone.local(2016, 2, 2, 12, 5, 0).to_s(:slashes)).for(:end_date) }
   end
 
+  describe 'between_visit_date_range: visit no present' do
+    it 'visit no present' do
+      event = Event.new(start_at: Time.zone.local(2016, 2, 1, 11, 5, 0),
+                        end_at: Time.zone.local(2016, 2, 1, 12, 5, 0))
+
+      expect(event.instance_eval{ between_visit_date_range }).to eql nil
+    end
+  end
+
   describe 'reset_verification' do
     let(:user) { create(:user) }
 
