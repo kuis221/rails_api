@@ -82,7 +82,7 @@ class Autocomplete
       a = opt.is_a?(Array) ? opt[0].to_s : opt
       (params[bucket_name].blank? || !params[bucket_name].include?(a)) &&
       a.downcase.include?(q)
-    end.first(5).map do |opt|
+    end.first(100).map do |opt|
       if opt.is_a?(Array)
         { label: opt[1].gsub(/(#{q})/i, '<i>\1</i>'), value: opt[0], type: bucket_name }
       else
@@ -101,7 +101,7 @@ class Autocomplete
     end
 
     # Sort by scoring if we are grouping multiple clasess into one bucket
-    results = results.sort { |a, b| b.score <=> a.score }.first(5) if klasess.size > 1
+    results = results.sort { |a, b| b.score <=> a.score }.first(100) if klasess.size > 1
     { label: I18n.translate("filters.#{bucket_name}"), value: get_bucket_results(results) }
   end
 
