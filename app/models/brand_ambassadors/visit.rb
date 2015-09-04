@@ -48,6 +48,8 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
     end
   end
 
+  has_many :events, inverse_of: :visit
+
   before_validation { self.city = nil if city == '' }
 
   validates :company_user, presence: true

@@ -19,7 +19,7 @@ FactoryGirl.define do
     no_create_admin true
     settings {}
     timezone_support false
-
+    auto_match_events 1
     factory :company_with_user do
       no_create_admin false
       sequence(:admin_email) { |n| "testadminuser#{n}@brandscopic.com" }

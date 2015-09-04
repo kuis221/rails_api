@@ -25,6 +25,7 @@
 #  submitted_at   :datetime
 #  approved_at    :datetime
 #  active_photos_count   :integer          default(0)
+#  visit_id       :integer
 #
 
 class Event < ActiveRecord::Base
@@ -40,14 +41,14 @@ class Event < ActiveRecord::Base
 
   track_who_does_it
 
-  attr_accessor :visit_id
-
   has_paper_trail
 
   belongs_to :created_by, class_name: 'User'
   belongs_to :updated_by, class_name: 'User'
   belongs_to :campaign
   belongs_to :place, autosave: true
+
+  belongs_to :visit, class_name: 'BrandAmbassadors::Visit'
 
   has_many :tasks, -> { order 'due_at ASC' }, dependent: :destroy, inverse_of: :event
   has_many :photos, -> { order('created_at DESC').where(asset_type: 'photo') },
@@ -231,7 +232,7 @@ class Event < ActiveRecord::Base
   validates :company_id, presence: true, numericality: true
   validates :start_at, presence: true
   validates :end_at, presence: true, date: { on_or_after: :start_at, message: 'must be after' }
-  validate :between_visit_date_range, before: [:create, :update], if: :visit_id
+  validate :between_visit_date_range, before: [:create, :update], if: :visit
 
   DATE_FORMAT = %r{\A[0-1]?[0-9]/[0-3]?[0-9]/[0-2]0[0-9][0-9]\z}
   validates :start_date, format: { with: DATE_FORMAT, message: 'MM/DD/YYYY' }
@@ -791,8 +792,7 @@ class Event < ActiveRecord::Base
   end
 
   def between_visit_date_range
-    return unless start_at && end_at && !visit_id.blank?
-    visit = BrandAmbassadors::Visit.find(visit_id)
+    return unless start_at && end_at && visit.present?
     visit_start_date = visit.start_date.to_date
     visit_end_date = visit.end_date.to_date
     if start_at.to_date < visit_start_date
