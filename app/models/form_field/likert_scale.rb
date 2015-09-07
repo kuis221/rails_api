@@ -25,7 +25,8 @@ class FormField::LikertScale < FormField
       label: name,
       field_id: id,
       options: settings,
-      capture_mechanism: capture_mechanism,
+      multiple: multiple,
+      have_results: form_field_results?,
       required: required,
       input_html: {
         value: result.value,
@@ -61,7 +62,7 @@ class FormField::LikertScale < FormField
           value: result ? result.value[s.id.to_s] : nil }
       end,
       segments: options_for_input.map { |s| { id: s[1], text: s[0] } },
-      capture_mechanism: capture_mechanism
+      multiple: multiple
     )
   end
 

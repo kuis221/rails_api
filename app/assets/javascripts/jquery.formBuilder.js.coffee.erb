@@ -383,10 +383,6 @@ $.widget 'nmk.formBuilder', {
 		$field = field.data('field')
 		@element.find('.selected').removeClass('selected')
 		field.addClass('selected')
-		if $field.attributes.type.indexOf('LikertScale') >= 0
-			@attributesPanel.addClass('large-panel')
-		else
-			@attributesPanel.removeClass('large-panel')
 
 		if form = $field.attributesForm()
 			$('#form-field-tabs a[href="#attributes"]').tab('show')
@@ -474,7 +470,7 @@ FormField = Class.extend {
 		else if @attributes.kpi_id
 			{id: @attributes.id, name: @attributes.name, ordering: @attributes.ordering, required: @attributes.required, kpi_id: @attributes.kpi_id, field_type: @fieldType(), settings: @attributes.settings}
 		else
-			{id: @attributes.id, name: @attributes.name, ordering: @attributes.ordering, required: @attributes.required, field_type: @fieldType(), settings: @attributes.settings, capture_mechanism: @attributes.capture_mechanism, options_attributes: @getOptionsAttributes(), statements_attributes: @getStatementsAttributes() }
+			{id: @attributes.id, name: @attributes.name, ordering: @attributes.ordering, required: @attributes.required, field_type: @fieldType(), settings: @attributes.settings, multiple: @attributes.multiple, options_attributes: @getOptionsAttributes(), statements_attributes: @getStatementsAttributes() }
 
 	getId: () ->
 		@attributes.id
@@ -502,18 +498,15 @@ FormField = Class.extend {
 			)
 		])
 
-	optionsType: (label = 'Answers') ->
+	optionsType: (label = 'Allow multiple answers per statement') ->
 		$('<div class="control-group">').append([
-			$('<label class="control-label likert-scale">').text(label),
 			$('<div class="controls">').append(
-				$.map @attributes.captureMechanisms, (option, index) =>
-					if option._destroy isnt '1' and not @_optionIsExcluded(option)
-						$('<label>').addClass('radio').append(
-							$('<input type="radio" name="option_type"'+(if @attributes.capture_mechanism == option.value then ' checked="checked"' else '')+'>').attr('id', 'option_type_'+option.id).attr('value', option.value).on 'change', (e) =>
-								@attributes.capture_mechanism = $(e.target).val()
-								@form.setModified()
-								true
-						).append(' '+ option.name)
+				$('<label class="control-label" for="option_multiple_chk">').text(label).prepend(
+					$('<input type="checkbox" id="option_multiple_chk" name="multiple"'+(if @attributes.multiple then ' checked="checked"' else '')+'">').on 'change', (e) =>
+						@attributes.multiple = (if e.target.checked then 'true' else 'false')
+						@form.setModified()
+						true
+				)
 			)
 		])
 
@@ -562,12 +555,12 @@ FormField = Class.extend {
 			)
 		])
 
-	optionsField: (type='option', side_by_side=false) ->
+	optionsField: (type='option') ->
 		list = if type is 'statement' then @attributes.statements else @attributes.options
 		min_fields_allowed = if type is 'statement' then @attributes.min_statements_allowed else @attributes.min_options_allowed
 		visible_items = list.filter (item) -> not item._destroy
 		titles = {'option': ['Option','Options'], 'statement': ['Statement', 'Statements']}
-		$('<div class="control-group field-options" data-type="'+type+'">').addClass(if side_by_side is true then 'side-by-side' else '' ).append($('<label class="control-label">').text(titles[type][1])).append(
+		$('<div class="control-group field-options" data-type="'+type+'">').append($('<label class="control-label">').text(titles[type][1])).append(
 			$.map list, (option, index) =>
 				optionHidden = option._destroy is '1'
 				$('<div class="controls field-option">').addClass(if @_optionIsExcluded(option) then 'disabled-option' else '' ).data('option', option).append([
@@ -1228,14 +1221,14 @@ LikertScaleField = FormField.extend {
 		@attributes = $.extend({
 			name: 'Likert scale',
 			id: null,
+			have_results: false,
 			min_options_allowed: 1,
 			min_statements_allowed: 1,
 			required: false,
-			capture_mechanism: 'radio',
+			multiple: false,
 			type: 'FormField::LikertScale',
 			settings: {},
 			options: [],
-			captureMechanisms: [],
 			statements: []
 		}, attributes)
 
@@ -1252,11 +1245,6 @@ LikertScaleField = FormField.extend {
 				{id: null, name: 'Statement 2', ordering: 1},
 				{id: null, name: 'Statement 3', ordering: 2}
 			]
-
-		@attributes.captureMechanisms = [
-			{id: 0, name: 'Single Answer', value: 'radio', ordering: 0},
-			{id: 1, name: 'Multiple Answer', value: 'checkbox', ordering: 1}
-		]
 
 		@attributes.settings ||= {}
 
@@ -1276,7 +1264,7 @@ LikertScaleField = FormField.extend {
 							$('<tr>').append($('<td>').append($('<label>').text(statement.name))).append(
 								$.map @attributes.options, (option, index) =>
 									$('<td>').append(
-										if @attributes.capture_mechanism is 'radio' #Single Answer
+										if @attributes.multiple is false #Single Answer
 											$('<label class="radio"><div class="radio"><input type="radio"></div></label>')
 										else #Multiple Answer
 											$('<label class="checkbox multiple"><div class="checkbox"><input type="checkbox"></div></label>')
@@ -1292,10 +1280,15 @@ LikertScaleField = FormField.extend {
 			$('<h4>').text('Likert scale'),
 			@labelField(),
 			$('<div class="control-group">').append(
-				@optionsField('statement', true),
-				@optionsField('option', true)
+				@optionsField('statement'),
+				[
+					if @attributes.have_results is false
+						@optionsType()
+					else
+						null
+				],
+				@optionsField('option')
 			),
-			@optionsType(),
 			@requiredField()
 		]
 }

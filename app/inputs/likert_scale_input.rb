@@ -9,7 +9,7 @@ class LikertScaleInput < SimpleForm::Inputs::Base
       '<tr><td><label class="likert-statement">' + statement.name + '</label></td>' + options[:collection].map do |option|
         field_name = "#{object_name}[#{attribute_name}][#{statement.id}]"
         field_id = "#{group}_#{statement.id}"
-        if options[:capture_mechanism] == 'radio' # Single Answer
+        if options[:multiple] == false # Single Answer
           value = values.try(:[], statement.id.to_s).to_i
           checked = value == option.id ? ' checked="checked"' : ''
           '<td><label class="radio"><div class="radio"><input type="radio" name="' + field_name + '" id="' + field_id + '_' + option.id.to_s + '" value="' + option.id.to_s + '"' + checked + '></div></label></td>'
