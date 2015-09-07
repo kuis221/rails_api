@@ -897,6 +897,27 @@ feature 'Brand Ambassadors Visits' do
         expect(page).to have_content('My Place 3')
       end
     end
+
+    scenario 'can view a blank state message' do
+      without_current_user do
+        create(:event,
+               start_date: '02/01/2014', end_date: '02/01/2014',
+               campaign: campaign,
+               users: [company_user],
+               place: create(:place, name: 'My Place 1', city: 'New York', state: 'NY')
+               )
+        create(:event,
+               start_date: '02/01/2014', end_date: '02/01/2014',
+               campaign: campaign,
+               users: [company_user],
+               place: create(:place, name: 'My Place 2', city: 'San Francisco', state: 'CA'))
+      end
+      Sunspot.commit
+
+      visit brand_ambassadors_visit_path(ba_visit)
+
+      expect(page).to have_content('No events have been scheduled for this visit')
+    end
   end
 
   shared_examples_for 'a user that can view visits details and deactivate visits' do
