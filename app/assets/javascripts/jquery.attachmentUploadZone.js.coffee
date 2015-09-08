@@ -96,6 +96,8 @@ $.widget 'nmk.attachmentUploadZone', {
 				else
 					form.find("input[type=hidden].direct_upload_url").val($(data.result).find("Location").text()).trigger('change')
 					form.removeClass("uploading").find(".attachment-uploading-view, .attachment-select-file-view").hide().end().find(".attachment-attached-view").show().find(".file-name").text data.files[0].name
+
+				form.find("input[name*=\"[_destroy]\"]").val ''
 				return
 
 			always: (f) ->
