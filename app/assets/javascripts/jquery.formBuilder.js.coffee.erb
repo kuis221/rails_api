@@ -605,7 +605,7 @@ FormField = Class.extend {
 							[
 								if @form.options.canEdit
 									# Button for adding a new option to the field
-									$('<a href="#" class="add-option-btn" title="Add option after this"></a>').on 'click', (e) =>
+									$('<a href="#" class="icon-plus-sign" title="Add option after this"></a>').on 'click', (e) =>
 										option = $(e.target).closest('.field-option').data('option')
 										index = list.indexOf(option)+1
 										list.splice(index,0, {id: null, name: titles[type][0] + ' ' + (list.length+1), ordering: index})
@@ -619,7 +619,7 @@ FormField = Class.extend {
 
 								# Button for removing an option of the field
 								if @form.options.canEdit && visible_items.length > min_fields_allowed
-									$('<a href="#" class="remove-option-btn" title="Remove this option"></a>').on 'click', (e) =>
+									$('<a href="#" class="icon-minus-rounded" title="Remove this option"></a>').on 'click', (e) =>
 										option = $(e.target).closest('.field-option').data('option')
 										if option.id isnt null
 											bootbox.confirm "Removing this " + type + " will remove all the entered data/answers associated with it.<br/>&nbsp;<p>Are you sure you want to do this? This cannot be undone</p>", (result) =>
