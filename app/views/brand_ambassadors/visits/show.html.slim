@@ -42,7 +42,7 @@
   - if can?(:view_list, Event)
     #visit-events.details_box
       h5.module-title EVENTS
-      #event-list-wrapper
+      #event-list-wrapper style="display: none"
         #list-tools
           .pull-left= add_event_btn
           .text-right
@@ -62,9 +62,13 @@
       div#events-list.resource-list
         - unless current_company.auto_match_events == 1
           = render partial: 'events/event', collection: resource.events.accessible_by_user(current_company_user).order('events.start_at ASC')
+      - unless current_company.auto_match_events == 1
+        .blank-state.section-module.event-blank-state style="display: none"
+          h5.text-center
+            = I18n.t("invite_events.empty.line1", scope: :blank_states)
+          = add_event_btn
   #visit-documents.details_box
     = render partial: 'brand_ambassadors/document_folders/index', locals: {children: (resource.document_folders.root_children.active + resource.brand_ambassadors_documents.root_children.active).sort_by(&:name), parent: resource, callback_url: brand_ambassadors_visit_documents_path(resource, format: :js) }
-
 - if current_company.auto_match_events == 1
   javascript:
     $('#collection-list-filters').filteredList({
@@ -98,5 +102,14 @@
       'emptyFilterResultsMessage': '#{j t("invite_events.filters.line1", default: :filters_line1, scope: :blank_states) }',
       'emptyFilterResultsMessageLine2': '#{j t("invite_events.filters.line2", default: :filters_line2, scope: :blank_states) }'
     });
-
+- else
+  javascript:
+    if ($('.resource-item').length > 0) {
+      $('.event-blank-state').hide();
+      $('#event-list-wrapper').show();
+    }
+    else {
+      $('.event-blank-state').show();
+      $('#event-list-wrapper').hide();
+    }
 - reload_page_on_edit_resource
