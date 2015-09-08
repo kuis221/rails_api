@@ -563,7 +563,15 @@ $margin-right: 240px;
 	.option-actions {
 		display: inline-block;
 		position: relative;
-		top: -5px;
+		vertical-align: text-bottom;
+		.option-wrapper {
+			background-color: $white;
+			border-radius: 100%;
+			display: inline-block;
+			height: 13px;
+			margin-left: 10px;
+			width: 13px;
+		}
 		a {
 			margin-left: 5px;
 			&:hover {
@@ -582,12 +590,17 @@ $margin-right: 240px;
 			&.icon-plus-sign {
 				color: $gray;
 				font-size: 18px;
-				vertical-align: middle;
+				&:before {
+					left: -6px;
+				}
 			}
 			&.icon-minus-rounded {
 				color: $primary-red;
 				font-size: 18px;
-				vertical-align: text-bottom;
+				&:before {
+					left: -7px;
+					top: -2px;
+				}
 			}
 		}
 	}
