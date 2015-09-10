@@ -13,6 +13,7 @@
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  kpi_id         :integer
+#  multiple       :boolean
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl
@@ -25,7 +26,7 @@ FactoryGirl.define do
     settings nil
     sequence(:ordering) { |n| n }
     required false
-    capture_mechanism nil
+    multiple false
   end
 
   factory :form_field_text_area, class: FormField::TextArea do

@@ -776,7 +776,7 @@ RSpec.shared_examples 'a fieldable element' do
     end.to change(FormFieldOption, :count).by(-1)
   end
 
-  scenario 'user can add/delete likert scale fields to form' do
+  scenario 'user can add/modify/delete likert scale fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     likert_scale_field.drag_to form_builder
@@ -820,7 +820,7 @@ RSpec.shared_examples 'a fieldable element' do
     field = FormField.last
     expect(field.name).to eql 'My Likert scale Field'
     expect(field.type).to eql 'FormField::LikertScale'
-    expect(field.capture_mechanism).to eql 'radio'
+    expect(field.multiple).to eql false
     expect(field.options.order('ordering ASC').map(&:name)).to eql [
       'First Option', 'Second Option', 'Disagree', 'Agree', 'Strongly Agree']
     expect(field.options.map(&:ordering)).to eql [0, 1, 2, 3, 4]
@@ -840,7 +840,7 @@ RSpec.shared_examples 'a fieldable element' do
 
     # Multiple Answers / Checkboxes
     within form_field_settings_for 'My Likert scale Field' do
-      choose 'Multiple Answer'
+      unicheck('Allow multiple answers per statement')
     end
 
     # Close the field settings form
@@ -850,11 +850,40 @@ RSpec.shared_examples 'a fieldable element' do
     wait_for_ajax
 
     field = FormField.last
-    expect(field.capture_mechanism).to eql 'checkbox'
+    expect(field.multiple).to eql true
 
     within '.form_field_likertscale' do
       expect(page).to have_no_selector('label.radio')
       expect(page).to have_selector('label.checkbox.multiple')
+    end
+
+    # Creating results for field
+    if fieldable.is_a?(Campaign)
+      event = create(:approved_event, campaign_id: fieldable.id,
+                                      place: create(:place),
+                                      start_date: '01/23/2013',
+                                      end_date: '01/23/2013')
+
+      event.results_for([field]).first.value = { field.statements.first.id.to_s => field.options.first.id.to_s }
+      expect(event.save).to be_truthy
+    elsif fieldable.is_a?(ActivityType)
+      campaign = create(:campaign, company: fieldable.company)
+      campaign.activity_types << fieldable
+      event = create(:approved_event, campaign: campaign,
+                                      place: create(:place),
+                                      start_date: '01/23/2013',
+                                      end_date: '01/23/2013')
+      activity = create(:activity, activity_type: fieldable, activitable: event, company_user: create(:company_user, company: fieldable.company))
+      activity.results_for([field]).first.value = { field.statements.first.id.to_s => field.options.first.id.to_s }
+      expect(activity.save).to be_truthy
+    end
+
+    # Reload page to refresh field object data (have_results)
+    visit fieldable_path
+
+    # Should not display the multiple answers option for fields with results
+    within form_field_settings_for 'My Likert scale Field' do
+      expect(page).to_not have_text('Allow multiple answers per statement')
     end
 
     # Remove fields

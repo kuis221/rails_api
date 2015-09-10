@@ -1,10 +1,10 @@
 # == Schema Information
 #
-# Table name: brand_portfolios
+# Table name: brand_portfolios_brands
 #
-#  id                    :integer          not null, primary key
-#  brand_id              :integer
-#  brand_portfolio_id    :integer
+#  id                 :integer          not null, primary key
+#  brand_id           :integer
+#  brand_portfolio_id :integer
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

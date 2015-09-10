@@ -13,7 +13,7 @@ table.table.likert-scale-table
           label= statement.name
         - form_field.options.each do |option|
           td
-            - if form_field.capture_mechanism == 'radio'
+            - if form_field.multiple == false
               - value = result.value.try(:[], statement.id.to_s).to_i
               - checked = value == option.id ? 'checked' : false
               label.radio

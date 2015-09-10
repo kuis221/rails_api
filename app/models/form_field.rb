@@ -13,6 +13,7 @@
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  kpi_id         :integer
+#  multiple       :boolean
 #
 
 class FormField < ActiveRecord::Base
@@ -285,6 +286,10 @@ class FormField < ActiveRecord::Base
 
   def grouped_results(campaign, scope)
     form_field_results.for_event_campaign(campaign).merge(scope)
+  end
+
+  def form_field_results?
+    form_field_results.count > 0
   end
 
   protected
