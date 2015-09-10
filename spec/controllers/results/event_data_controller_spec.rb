@@ -425,7 +425,7 @@ describe Results::EventDataController, type: :controller do
       let(:statement2) { create(:form_field_statement, name: 'LikertScale Stat2') }
       let(:field) { create(:form_field_likert_scale, name: 'My LikertScale Field',
                                                      fieldable: campaign,
-                                                     capture_mechanism: 'radio',
+                                                     multiple: false,
                                                      options: [option1, option2],
                                                      statements: [statement1, statement2]
                     )
@@ -453,7 +453,7 @@ describe Results::EventDataController, type: :controller do
       end
 
       it 'should correctly include the multiple answer likert scale fields' do
-        field.update_attribute(:capture_mechanism, 'checkbox')
+        field.update_attribute(:multiple, true)
         event.results_for([field]).first.value = { statement1.id.to_s => [option1.id.to_s],
                                                    statement2.id.to_s => [option1.id.to_s, option2.id.to_s] }
         event.save

@@ -51,7 +51,7 @@ class FormFieldDataExporter < BaseExporter
         elsif @result.form_field.type == LIKERT_SCALE_TYPE
           @likert_statements_mapping[@result.form_field.id] ||= Hash[@result.form_field.statements.map { |s| [s.id.to_s, s.name] }]
           @result.value.each do |statement_id, option_id|
-            if @result.form_field.capture_mechanism == 'radio'
+            if @result.form_field.multiple == false
               value = @likert_statements_mapping[@result.form_field.id][statement_id]
               key = @fields_mapping["#{@result.form_field.id}_#{option_id}"]
               resource_values[key] = value
