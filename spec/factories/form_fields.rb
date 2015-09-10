@@ -25,7 +25,7 @@ FactoryGirl.define do
     settings nil
     sequence(:ordering) { |n| n }
     required false
-    capture_mechanism nil
+    multiple false
   end
 
   factory :form_field_text_area, class: FormField::TextArea do

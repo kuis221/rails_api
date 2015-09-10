@@ -443,11 +443,10 @@ describe FormFieldResult, type: :model do
 
   describe 'for summation fields' do
     let(:form_field) do
-      create(:form_field,
-                         type: 'FormField::Summation',
-                         options: [create(:form_field_option, name: 'Opt1'), create(:form_field_option, name: 'Opt2')],
-                         fieldable: create(:activity_type, company_id: 1),
-                         required: false)
+      create(:form_field, type: 'FormField::Summation',
+                          options: [create(:form_field_option, name: 'Opt1'), create(:form_field_option, name: 'Opt2')],
+                          fieldable: create(:activity_type, company_id: 1),
+                          required: false)
     end
     before { subject.form_field_id = form_field.id }
     it { is_expected.to allow_value(nil).for(:value) }
@@ -474,7 +473,7 @@ describe FormFieldResult, type: :model do
              type: 'FormField::LikertScale',
              options: [create(:form_field_option, name: 'Opt1'), create(:form_field_option, name: 'Opt2')],
              statements: [create(:form_field_statement, name: 'Stat1'), create(:form_field_statement, name: 'Stat2')],
-             fieldable: create(:activity_type, company_id: 1), capture_mechanism: 'radio',
+             fieldable: create(:activity_type, company_id: 1), multiple: false,
              required: false)
     end
     before { subject.form_field_id = form_field.id }
@@ -491,7 +490,7 @@ describe FormFieldResult, type: :model do
     end
 
     describe 'when it is checkboxes' do
-      before { subject.form_field.capture_mechanism = 'checkbox' }
+      before { subject.form_field.multiple = true }
       it { is_expected.to allow_value(nil).for(:value) }
       it { is_expected.to allow_value('').for(:value) }
       it { is_expected.to allow_value(form_field.statements[0].id => [form_field.options[0].id], form_field.statements[1].id => [form_field.options[0].id]).for(:value) }

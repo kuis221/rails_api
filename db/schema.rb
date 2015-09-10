@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150903041815) do
+ActiveRecord::Schema.define(version: 20150904175220) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -606,10 +606,10 @@ ActiveRecord::Schema.define(version: 20150903041815) do
     t.text     "settings"
     t.integer  "ordering"
     t.boolean  "required"
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
     t.integer  "kpi_id"
-    t.string   "capture_mechanism"
+    t.boolean  "multiple"
   end
 
   add_index "form_fields", ["fieldable_id", "fieldable_type"], :name => "index_form_fields_on_fieldable_id_and_fieldable_type"
@@ -1081,7 +1081,6 @@ ActiveRecord::Schema.define(version: 20150903041815) do
     t.string   "web_address"
     t.integer  "place_price_level"
     t.string   "phone_number"
-    t.string   "place_types",                                                                array: true
   end
 
   add_index "venues", ["company_id", "place_id"], :name => "index_venues_on_company_id_and_place_id", :unique => true
