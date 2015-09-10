@@ -5,7 +5,7 @@
 #  id                     :integer          not null, primary key
 #  name                   :string(255)
 #  reference              :string(400)
-#  place_id               :string(100)
+#  place_id               :string(200)
 #  types_old              :string(255)
 #  formatted_address      :string(255)
 #  street_number          :string(255)

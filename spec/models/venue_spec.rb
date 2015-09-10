@@ -25,6 +25,9 @@
 #  top_venue            :boolean          default(FALSE)
 #  created_by_id        :integer
 #  updated_by_id        :integer
+#  web_address          :string(255)
+#  place_price_level    :integer
+#  phone_number         :string(255)
 #
 
 require 'rails_helper'

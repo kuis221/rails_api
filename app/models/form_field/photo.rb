@@ -13,6 +13,7 @@
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  kpi_id         :integer
+#  multiple       :boolean
 #
 
 class FormField::Photo < FormField
