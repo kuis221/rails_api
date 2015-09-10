@@ -81,6 +81,8 @@ class Place < ActiveRecord::Base
 
   after_save :clear_cache
 
+  before_save :normalize_names
+
   before_save :update_locations
 
   validate :valid_types?, on: :create
@@ -496,6 +498,12 @@ class Place < ActiveRecord::Base
     areas.each do |area|
       Area.update_common_denominators(area)
     end
+  end
+
+  def normalize_names
+    self.city = self.city.gsub(/^st\.?\s/i, 'Saint ') if self.city.present?
+    self.neighborhoods = self.neighborhoods.map { |x| x.gsub(/^st\.?\s/i, 'Saint ') } if self.neighborhoods.is_a?(Array)
+    true
   end
 
   def update_locations

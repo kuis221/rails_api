@@ -533,4 +533,25 @@ describe Place, type: :model do
       expect(Placeable.first.place_id).to eq(place1.id)
     end
   end
+
+  describe 'Complete and fix place data on place save' do
+    it 'normalize city and neighborhoods names, and update locations data' do
+      place = create(:place, name: 'Beverly Hills', types: %w(locality political), route: nil,
+                             street_number: nil, city: 'St Louis', state: 'Missouri',
+                             country: 'US', neighborhoods: ['St. Pablo'])
+
+      place.save
+      expect(place.city).to eq('Saint Louis')
+      expect(place.neighborhoods).to eq(['Saint Pablo'])
+      expect(place.is_location).to eq(true)
+      expect(place.location.path).to eq('north america/united states/missouri/saint louis/saint pablo')
+      expect(place.locations.map(&:path)).to match_array([
+        'north america',
+        'north america/united states',
+        'north america/united states/missouri',
+        'north america/united states/missouri/saint louis',
+        'north america/united states/missouri/saint louis/saint pablo'
+      ])
+    end
+  end
 end
