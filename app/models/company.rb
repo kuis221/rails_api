@@ -15,7 +15,7 @@ class Company < ActiveRecord::Base
   attr_accessor :admin_email
   attr_accessor :no_create_admin
 
-  store_accessor :settings, :event_alerts_policy, :brand_ambassadors_role_ids, :ytd_dates_range
+  store_accessor :settings, :event_alerts_policy, :brand_ambassadors_role_ids, :ytd_dates_range, :auto_match_events
 
   has_many :company_users, dependent: :destroy
   has_many :teams, dependent: :destroy
@@ -99,6 +99,10 @@ class Company < ActiveRecord::Base
 
   def ytd_dates_range
     (super || YTD_DEFAULT).to_i
+  end
+
+  def auto_match_events
+    (super || 1).to_i
   end
 
   def company_id

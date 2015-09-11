@@ -81,6 +81,8 @@ class Place < ActiveRecord::Base
 
   after_save :clear_cache
 
+  before_save :normalize_names
+
   before_save :update_locations
 
   validate :valid_types?, on: :create
@@ -290,6 +292,10 @@ class Place < ActiveRecord::Base
     fail 'Cannot merge a venue into a merged venued' unless merged_with_place_id.blank?
     fail 'Cannot merge place with itself' if id == place.id
     self.class.connection.transaction do
+      Event.where(place_id: place.id).each do |event|
+        event.update_attribute(:place_id, id) or fail('cannot update event')
+      end
+
       Venue.where(place_id: place.id).each do |venue|
         real_venue = Venue.find_or_create_by(place_id: id, company_id: venue.company_id)
         # Update them one by one so the versions are generated
@@ -298,11 +304,7 @@ class Place < ActiveRecord::Base
         venue.destroy
       end
 
-      Event.where(place_id: place.id).each do |event|
-        event.update_attribute(:place_id, id) or fail('cannot update event')
-      end
-
-      Placeable.where(place_id: place.id).update_all(place_id: place.id)
+      Placeable.where(place_id: place.id).update_all(place_id: id)
 
       place.td_linx_code ||= place.td_linx_code
       place.update_attribute(:merged_with_place_id, id)
@@ -496,6 +498,12 @@ class Place < ActiveRecord::Base
     areas.each do |area|
       Area.update_common_denominators(area)
     end
+  end
+
+  def normalize_names
+    self.city = self.city.gsub(/^st\.?\s/i, 'Saint ') if self.city.present?
+    self.neighborhoods = self.neighborhoods.map { |x| x.gsub(/^st\.?\s/i, 'Saint ') } if self.neighborhoods.is_a?(Array)
+    true
   end
 
   def update_locations

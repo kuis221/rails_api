@@ -473,4 +473,85 @@ describe Place, type: :model do
       expect(described_class.in_campaign_scope(campaign)).to match_array [place_la, city_la]
     end
   end
+
+  describe '#merge' do
+    let(:campaign) { create(:campaign) }
+    let(:place1) { create(:place, route: '1st st', street_number: '12 Street', city: 'Los Angeles',
+                                  state: 'California', country: 'US')
+    }
+    let(:place2) { create(:place, route: '2st st', street_number: '22 Street', city: 'Los Angeles',
+                                  state: 'California', country: 'US')
+    }
+    let!(:venue1) { create(:venue, company_id: campaign.company_id, place: place1) }
+    let!(:venue2) { create(:venue, company_id: campaign.company_id, place: place2) }
+    let!(:event) { create(:event, place_id: place1.id, company_id: campaign.company_id, start_date: '01/23/2019',
+                                 end_date: '01/23/2019', start_time: '8:00am', end_time: '11:00am')
+    }
+    let(:area) {  create(:area, company_id: campaign.company_id) }
+
+    before do
+      area.places << place1
+    end
+
+    it 'should merge venues' do
+      expect do
+        place2.merge(place1)
+      end.to change(Venue, :count).by(-1)
+
+      expect { Venue.find(venue1.id) }.to raise_error(ActiveRecord::RecordNotFound)
+
+      event.reload
+      expect(event.place_id).to eq(place2.id)
+
+      expect(place1.merged_with_place_id).to eq(place2.id)
+      expect(Placeable.first.place_id).to eq(place2.id)
+    end
+
+    it 'should not merge venues when it is already merged' do
+      place2.update_attribute :merged_with_place_id, 3
+
+      expect { place2.merge(place1) }.to raise_error(RuntimeError)
+
+      expect(Venue.count).to eq(2)
+
+      event.reload
+      expect(event.place_id).to eq(place1.id)
+
+      expect(place1.merged_with_place_id).to eq(nil)
+      expect(Placeable.first.place_id).to eq(place1.id)
+    end
+
+    it 'should not merge a place with itself' do
+      expect { place2.merge(place2) }.to raise_error(RuntimeError)
+
+      expect(Venue.count).to eq(2)
+
+      event.reload
+      expect(event.place_id).to eq(place1.id)
+
+      expect(place1.merged_with_place_id).to eq(nil)
+      expect(Placeable.first.place_id).to eq(place1.id)
+    end
+  end
+
+  describe 'Complete and fix place data on place save' do
+    it 'normalize city and neighborhoods names, and update locations data' do
+      place = create(:place, name: 'Beverly Hills', types: %w(locality political), route: nil,
+                             street_number: nil, city: 'St Louis', state: 'Missouri',
+                             country: 'US', neighborhoods: ['St. Pablo'])
+
+      place.save
+      expect(place.city).to eq('Saint Louis')
+      expect(place.neighborhoods).to eq(['Saint Pablo'])
+      expect(place.is_location).to eq(true)
+      expect(place.location.path).to eq('north america/united states/missouri/saint louis/saint pablo')
+      expect(place.locations.map(&:path)).to match_array([
+        'north america',
+        'north america/united states',
+        'north america/united states/missouri',
+        'north america/united states/missouri/saint louis',
+        'north america/united states/missouri/saint louis/saint pablo'
+      ])
+    end
+  end
 end

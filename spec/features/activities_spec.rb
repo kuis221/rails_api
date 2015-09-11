@@ -392,12 +392,41 @@ feature 'Activities management' do
           expect(page).to have_content('Activity Type #1')
         end
 
-        activity = Activity.last
         photo = AttachedAsset.last
         expect(photo.attachable).to be_a FormFieldResult
         expect(photo.file_file_name).to eql 'photo.jpg'
 
-        # Remove the file
+        # Remove the photo and attach a new one
+        hover_and_click resource_item, 'Edit'
+
+        expect(page).to_not have_content('DRAG & DROP')
+        find('.attachment-attached-view').hover
+        within '.attachment-attached-view' do
+          expect(page).to have_link('Remove')
+          expect(page).to have_link('Download')
+          click_js_link('Remove')
+        end
+        expect(page).to have_content('DRAG & DROP')
+
+        attach_file 'file', 'spec/fixtures/photo2.jpg'
+        expect(page).to have_no_content('is not a valid file')
+        wait_for_ajax(30) # For the image to upload to S3
+        expect(page).to_not have_content('DRAG & DROP')
+        find('.attachment-attached-view').hover
+        within '.attachment-attached-view' do
+          expect(page).to have_link('Remove')
+          expect(page).to_not have_link('Download')
+        end
+
+        wait_for_photo_to_process 30 do
+          click_button 'Save'
+        end
+
+        photo = AttachedAsset.last
+        expect(photo.attachable).to be_a FormFieldResult
+        expect(photo.file_file_name).to eql 'photo2.jpg'
+
+        # Remove the photo
         hover_and_click resource_item, 'Edit'
 
         expect do
