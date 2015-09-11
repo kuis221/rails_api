@@ -69,6 +69,16 @@ RSpec.describe DataExtract::EventData, type: :model do
         ["ff_#{field.id}_#{option3.id}", 'My percentage field: Opt 3'],
         ["ff_#{field.id}_#{option1.id}", 'My percentage field: Opt 1']])
     end
+
+    it 'returns name for form fields place' do
+      subject.params = { 'campaign_id' => [campaign.id] }
+      place1 = create(:form_field_place, fieldable: campaign)
+      place2 = create(:form_field_place, fieldable: campaign)
+
+      expect(subject.exportable_columns.slice(-2, 2)).to eql ([
+        ["ff_#{place2.id}", "#{place2.name}"],
+        ["ff_#{place1.id}", "#{place1.name}"]])
+    end
   end
 
   describe '#columns_definitions' do
@@ -196,6 +206,27 @@ RSpec.describe DataExtract::EventData, type: :model do
           expect(subject.rows).to eql [
             ['Campaign Absolut FY12',  'Opt 1'],
             ['Campaign Absolut FY12',  'Opt 3']
+          ]
+        end
+
+        it 'returns the results for place field' do
+          place = create(:place, name: 'My place', street_number: '21st', route: 'Jump Street',
+                       city: 'Santa Rosa Beach', state: 'Florida')
+          place2 = create(:place, name: 'My place 2', street_number: '23st', route: 'Jump Street2',
+                       city: 'Santa Rosa Beach', state: 'Florida')
+          field = create(:form_field_place, fieldable: campaign)
+          event.results_for([field]).first.value = place.id
+          event.save
+
+          event2 = create(:event, campaign: campaign)
+          event2.results_for([field]).first.value = place2.id
+          event2.save
+
+          subject.columns = ['campaign_name', "ff_#{field.id}"]
+          subject.default_sort_by = "ff_#{field.id}"
+          expect(subject.rows).to eql [
+            ['Campaign Absolut FY12',  'My place'],
+            ['Campaign Absolut FY12',  'My place 2']
           ]
         end
 
