@@ -209,6 +209,27 @@ RSpec.describe DataExtract::EventData, type: :model do
           ]
         end
 
+        it 'returns the results for place field' do
+          place = create(:place, name: 'My place', street_number: '21st', route: 'Jump Street',
+                       city: 'Santa Rosa Beach', state: 'Florida')
+          place2 = create(:place, name: 'My place 2', street_number: '23st', route: 'Jump Street2',
+                       city: 'Santa Rosa Beach', state: 'Florida')
+          field = create(:form_field_place, fieldable: campaign)
+          event.results_for([field]).first.value = place.id
+          event.save
+
+          event2 = create(:event, campaign: campaign)
+          event2.results_for([field]).first.value = place2.id
+          event2.save
+
+          subject.columns = ['campaign_name', "ff_#{field.id}"]
+          subject.default_sort_by = "ff_#{field.id}"
+          expect(subject.rows).to eql [
+            ['Campaign Absolut FY12',  'My place'],
+            ['Campaign Absolut FY12',  'My place 2']
+          ]
+        end
+
         it 'returns the results for kpis correctly' do
           kpi = create(:kpi, company: company, kpi_type: 'count', kpis_segments: [
             segment1 = build(:kpis_segment, text: 'Yes', ordering: 1),
