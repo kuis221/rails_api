@@ -11,7 +11,9 @@ module DataExtractFieldableBase
     @columns_definitions ||= (super.dup.tap do |definitions|
       form_fields.each do |ff|
         definitions.merge!(
-          if ff.is_hashed_value?
+          if ff.type == 'FormField::Place'
+            { "ff_#{ff.id}".to_sym => "ff_#{ff.id}_place.name" }
+          elsif ff.is_hashed_value?
             Hash[ff.options.map { |o| ["ff_#{ff.id}_#{o.id}".to_sym, "join_ff_#{ff.id}.value->'#{o.id}'"] }]
           else
             { "ff_#{ff.id}".to_sym => "join_ff_#{ff.id}.value->'value'" }
@@ -43,6 +45,9 @@ module DataExtractFieldableBase
       s = s.joins("LEFT JOIN #{self.class::RESULTS_VIEW_NAME} join_ff_#{id} "\
                   "ON join_ff_#{id}.form_field_id=#{id} AND "\
                   "   join_ff_#{id}.#{model.name.underscore}_id=#{model.table_name}.id")
+      if form_fields.find_by(id: id).type == 'FormField::Place'
+        s = s.joins("LEFT JOIN places AS ff_#{id}_place ON ff_#{id}_place.id = ((join_ff_#{id}.value->'value')::int)")
+      end
     end
     s
   end

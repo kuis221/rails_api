@@ -69,6 +69,16 @@ RSpec.describe DataExtract::EventData, type: :model do
         ["ff_#{field.id}_#{option3.id}", 'My percentage field: Opt 3'],
         ["ff_#{field.id}_#{option1.id}", 'My percentage field: Opt 1']])
     end
+
+    it 'returns name for form fields place' do
+      subject.params = { 'campaign_id' => [campaign.id] }
+      place1 = create(:form_field_place, fieldable: campaign)
+      place2 = create(:form_field_place, fieldable: campaign)
+
+      expect(subject.exportable_columns.slice(-2, 2)).to eql ([
+        ["ff_#{place2.id}", "#{place2.name}"],
+        ["ff_#{place1.id}", "#{place1.name}"]])
+    end
   end
 
   describe '#columns_definitions' do
