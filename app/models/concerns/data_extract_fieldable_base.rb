@@ -25,7 +25,7 @@ module DataExtractFieldableBase
 
   def form_fields_columms
     @form_fields_columms ||= [].tap do |cols|
-      form_fields.map do |ff|
+      form_fields.order(:name).map do |ff|
         if ff.is_hashed_value?
           cols.concat ff.options.map { |o| ["ff_#{ff.id}_#{o.id}", "#{ff.name}: #{o.name}"] }
         else
