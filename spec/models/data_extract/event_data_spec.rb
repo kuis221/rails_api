@@ -72,12 +72,12 @@ RSpec.describe DataExtract::EventData, type: :model do
 
     it 'returns name for form fields place' do
       subject.params = { 'campaign_id' => [campaign.id] }
-      place1 = create(:form_field_place, fieldable: campaign)
-      place2 = create(:form_field_place, fieldable: campaign)
+      field_place1 = create(:form_field_place, name: 'Place A', fieldable: campaign)
+      field_place2 = create(:form_field_place, name: 'Place B', fieldable: campaign)
 
       expect(subject.exportable_columns.slice(-2, 2)).to eql ([
-        ["ff_#{place2.id}", "#{place2.name}"],
-        ["ff_#{place1.id}", "#{place1.name}"]])
+        ["ff_#{field_place1.id}", 'Place A'],
+        ["ff_#{field_place2.id}", 'Place B']])
     end
   end
 
@@ -108,7 +108,7 @@ RSpec.describe DataExtract::EventData, type: :model do
   describe '#rows' do
     let(:subject) { described_class.new(company: company, current_user: user,
                                         columns: ['campaign_name', 'end_date', 'end_time', 'start_date', 'start_time',
-                                        'place_street','place_city', 'place_name', 'place_state', 'place_zipcode', 
+                                        'place_street','place_city', 'place_name', 'place_state', 'place_zipcode',
                                         'event_team_members', 'event_status', 'status']) }
 
     it 'returns empty if no rows are found' do
@@ -222,11 +222,16 @@ RSpec.describe DataExtract::EventData, type: :model do
           event2.results_for([field]).first.value = place2.id
           event2.save
 
+          event3 = create(:event, campaign: campaign)
+          event3.results_for([field]).first.value = ''
+          event3.save
+
           subject.columns = ['campaign_name', "ff_#{field.id}"]
           subject.default_sort_by = "ff_#{field.id}"
           expect(subject.rows).to eql [
             ['Campaign Absolut FY12',  'My place'],
-            ['Campaign Absolut FY12',  'My place 2']
+            ['Campaign Absolut FY12',  'My place 2'],
+            ['Campaign Absolut FY12',  nil]
           ]
         end
 

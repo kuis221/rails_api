@@ -46,7 +46,7 @@ module DataExtractFieldableBase
                   "ON join_ff_#{id}.form_field_id=#{id} AND "\
                   "   join_ff_#{id}.#{model.name.underscore}_id=#{model.table_name}.id")
       if form_fields.find_by(id: id).type == 'FormField::Place'
-        s = s.joins("LEFT JOIN places AS ff_#{id}_place ON ff_#{id}_place.id = ((join_ff_#{id}.value->'value')::int)")
+        s = s.joins("LEFT JOIN places AS ff_#{id}_place ON ((ff_#{id}_place.id)::text) = join_ff_#{id}.value->'value'")
       end
     end
     s
