@@ -22,6 +22,7 @@ class FormFieldDataExporter < BaseExporter
   def custom_fields_to_export_values(resource)
     # We are reusing the same object for each result to reduce memory usage
     @likert_statements_mapping ||= Hash.new()
+    @likert_options_mapping ||= Hash.new()
     @result ||= FormFieldResult.new
     resource_values = empty_values_hash
     ActiveRecord::Base.connection.select_all(ActiveRecord::Base.connection.unprepared_statement do
@@ -50,17 +51,18 @@ class FormFieldDataExporter < BaseExporter
           end
         elsif @result.form_field.type == LIKERT_SCALE_TYPE
           @likert_statements_mapping[@result.form_field.id] ||= Hash[@result.form_field.statements.map { |s| [s.id.to_s, s.name] }]
+          @likert_options_mapping[@result.form_field.id] ||= Hash[@result.form_field.options.map { |s| [s.id.to_s, s.name] }]
           @result.value.each do |statement_id, option_id|
             if @result.form_field.multiple == false
-              value = @likert_statements_mapping[@result.form_field.id][statement_id]
-              key = @fields_mapping["#{@result.form_field.id}_#{option_id}"]
+              value = @likert_options_mapping[@result.form_field.id][option_id]
+              key = @fields_mapping["#{@result.form_field.id}_#{statement_id}"]
               resource_values[key] = value
             else
               option_id = eval(option_id) if option_id.present?
               option_id.each do |option|
                 value = @likert_statements_mapping[@result.form_field.id][statement_id]
-                key = @fields_mapping["#{@result.form_field.id}_#{option.to_i}"]
-                resource_values[key] = resource_values[key].present? ? resource_values[key] + ", #{value}" : value
+                key = @fields_mapping["#{@result.form_field.id}_#{statement_id}_#{option.to_i}"]
+                resource_values[key] = value.present? ? '1' : ''
               end if option_id.present? && option_id.is_a?(Array)
             end
           end if @result.value.is_a?(Hash)
@@ -178,9 +180,23 @@ class FormFieldDataExporter < BaseExporter
     custom_fields_to_export.each do |_, field|
       segments =
         if SEGMENTED_FIELD_TYPES.include?(field.type)
-          s = field.options_for_input.sort { |left, right| left[1] <=> right[1] }
-          s.map! { |option| ["#{field.id}_#{option[1]}", "#{field.name}: #{option[0]}"] }
-          s.push(["#{field.id}__TOTAL", "#{field.name}: TOTAL"]) if field.type == SUMMATION_TYPE
+          if field.type == LIKERT_SCALE_TYPE
+            if field.multiple == false
+              s = field.statements.pluck(:name, :id)
+              s.map! { |statement| ["#{field.id}_#{statement[1]}", "#{field.name}: #{statement[0]}"] }
+            else
+              s = []
+              field.statements.pluck(:name, :id).each do |statement|
+                o = field.options_for_input.sort { |left, right| left[1] <=> right[1] }
+                o.map! { |option| ["#{field.id}_#{statement[1]}_#{option[1]}", "#{field.name}: #{statement[0]} - #{option[0]}"] }
+                s.concat o
+              end
+            end
+          else
+            s = field.options_for_input.sort { |left, right| left[1] <=> right[1] }
+            s.map! { |option| ["#{field.id}_#{option[1]}", "#{field.name}: #{option[0]}"] }
+            s.push(["#{field.id}__TOTAL", "#{field.name}: TOTAL"]) if field.type == SUMMATION_TYPE
+          end
           s
         else
           [[field.id, field.name]]
