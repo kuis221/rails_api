@@ -68,6 +68,13 @@ describe Results::EventDataController, type: :controller do
                                       event_expenses: [
                                         build(:event_expense, category: 'Entertainment', amount: 99.99)
                                       ])
+      # Event to test order by event start date
+      event2 = create(:approved_event, company: company, campaign: campaign, place: place,
+                                       start_date: '01/22/2019', end_date: '01/22/2019',
+                                       start_time: '09:00 am', end_time: '11:00 am',
+                                       event_expenses: [
+                                         build(:event_expense, category: 'Entertainment', amount: 88.88)
+                                       ])
       event.users << company_user
       team = create(:team, company: company, name: 'zteam')
       event.teams << team
@@ -93,6 +100,10 @@ describe Results::EventDataController, type: :controller do
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'CITY', 'STATE', 'ZIP',
          'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL', 'START', 'END',
          'SUBMITTED AT', 'APPROVED AT', 'PROMO HOURS', 'SPENT', 'ENTERTAINMENT'],
+        ['Test Campaign FY01', 'My area', '="443321"', 'Bar Prueba',
+         'Bar Prueba, 11 Main St., Los Angeles, California, 12345', 'US', 'Los Angeles', 'California', '12345',
+         'Active', 'Approved', '', '', "http://test.host/events/#{event2.id}", '2019-01-22 09:00', '2019-01-22 11:00',
+         nil, nil, '2.00', '88.88', '88.88'],
         ['Test Campaign FY01', 'My area', '="443321"', 'Bar Prueba',
          'Bar Prueba, 11 Main St., Los Angeles, California, 12345', 'US', 'Los Angeles', 'California', '12345',
          'Active', 'Approved', 'Test User, zteam', 'Chris Jaskot, Guillermo Vargas',

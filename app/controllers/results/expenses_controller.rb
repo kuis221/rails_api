@@ -26,6 +26,8 @@ class Results::ExpensesController < FilteredController
     @search_params || (super.tap do |p|
       p[:with_expenses_only] = true unless p.key?(:user) && p[:user].present?
       p[:event_data_stats] = true
+      p[:sorting] ||= Event.search_start_date_field
+      p[:sorting_dir] ||= 'asc'
       p[:search_permission] = :index_results
       p[:search_permission_class] = EventExpense
     end)
