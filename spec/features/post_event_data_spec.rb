@@ -485,6 +485,89 @@ feature 'Post Event Data' do
       expect(page).to have_link('Edit event data')
       expect(page).to_not have_button('Save')
     end
+
+    scenario 'should display message for likert scale radio validation' do
+      field = create(:form_field,
+                     name: 'Custom LikertScale',
+                     type: 'FormField::LikertScale',
+                     options: [
+                       create(:form_field_option, name: 'LikertScale Opt1'),
+                       create(:form_field_option, name: 'LikertScale Opt2')],
+                     statements: [
+                       create(:form_field_statement, name: 'LikertScale Stat1'),
+                       create(:form_field_statement, name: 'LikertScale Stat2')],
+                     fieldable: campaign,
+                     required: true)
+      event = create(:event,
+                     start_date: Date.yesterday.to_s(:slashes), end_date: Date.yesterday.to_s(:slashes),
+                     campaign: campaign, place: place)
+
+      visit event_path(event)
+
+      click_js_button 'Save'
+
+      expect(page).to have_content('This field is required.')
+
+      radio = find("#event_results_attributes_0_value_#{ field.statements[0].id }_#{ field.options[0].id }")
+      radio.trigger('click')
+
+      click_js_button 'Save'
+
+      expect(page).to have_content('This field is required.')
+
+      radio = find("#event_results_attributes_0_value_#{ field.statements[1].id }_#{ field.options[1].id }")
+      radio.trigger('click')
+
+      click_js_button 'Save'
+
+      expect(page).to_not have_content('This field is required.')
+    end
+
+    scenario 'should display message for likert scale checkbox validation' do
+      field = create(:form_field,
+                     name: 'Custom LikertScale',
+                     type: 'FormField::LikertScale',
+                     options: [
+                       create(:form_field_option, name: 'LikertScale Opt1'),
+                       create(:form_field_option, name: 'LikertScale Opt2')],
+                     statements: [
+                       create(:form_field_statement, name: 'LikertScale Stat1'),
+                       create(:form_field_statement, name: 'LikertScale Stat2')],
+                     fieldable: campaign,
+                     required: true,
+                     multiple: true)
+      event = create(:event,
+                     start_date: Date.yesterday.to_s(:slashes), end_date: Date.yesterday.to_s(:slashes),
+                     campaign: campaign, place: place)
+
+      visit event_path(event)
+
+      click_js_button 'Save'
+
+      expect(page).to have_content('This field is required.')
+
+      checkbox = find("#event_results_attributes_0_value_#{ field.statements[0].id }_#{ field.options[0].id }")
+      checkbox.trigger('click')
+
+      click_js_button 'Save'
+
+      expect(page).to have_content('This field is required.')
+
+      checkbox = find("#event_results_attributes_0_value_#{ field.statements[0].id }_#{ field.options[1].id }")
+      checkbox.trigger('click')
+
+      click_js_button 'Save'
+
+      expect(page).to have_content('This field is required.')
+
+      checkbox = find("#event_results_attributes_0_value_#{ field.statements[1].id }_#{ field.options[1].id }")
+      checkbox.trigger('click')
+
+      click_js_button 'Save'
+
+      expect(page).to_not have_content('This field is required.')
+    end
+
   end
 
   feature 'non admin user', js: true do
