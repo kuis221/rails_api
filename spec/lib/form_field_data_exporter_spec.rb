@@ -137,10 +137,10 @@ describe FormFieldDataExporter, type: :model do
           expect(event.save).to be_truthy
 
           expect(subject.custom_fields_to_export_headers).to eq([
-            'MY LIKERTSCALE FIELD: LIKERTSCALE OPT1', 'MY LIKERTSCALE FIELD: LIKERTSCALE OPT2'
+            'MY LIKERTSCALE FIELD: LIKERTSCALE STAT1', 'MY LIKERTSCALE FIELD: LIKERTSCALE STAT2'
           ])
           expect(subject.custom_fields_to_export_values(event)).to eq([
-            'LikertScale Stat1', 'LikertScale Stat2'
+            'LikertScale Opt1', 'LikertScale Opt2'
           ])
 
           expect(subject.custom_fields_to_export_values(event2)).to eq([
@@ -159,14 +159,15 @@ describe FormFieldDataExporter, type: :model do
           expect(event.save).to be_truthy
 
           expect(subject.custom_fields_to_export_headers).to eq([
-            'MY LIKERTSCALE FIELD: LIKERTSCALE OPT1', 'MY LIKERTSCALE FIELD: LIKERTSCALE OPT2'
+            'MY LIKERTSCALE FIELD: LIKERTSCALE STAT1 - LIKERTSCALE OPT1', 'MY LIKERTSCALE FIELD: LIKERTSCALE STAT1 - LIKERTSCALE OPT2',
+            'MY LIKERTSCALE FIELD: LIKERTSCALE STAT2 - LIKERTSCALE OPT1', 'MY LIKERTSCALE FIELD: LIKERTSCALE STAT2 - LIKERTSCALE OPT2'
           ])
           expect(subject.custom_fields_to_export_values(event)).to eq([
-            'LikertScale Stat1, LikertScale Stat2', 'LikertScale Stat2'
+            '1', nil, '1', '1'
           ])
 
           expect(subject.custom_fields_to_export_values(event2)).to eq([
-            nil, nil
+            nil, nil, nil, nil
           ])
         end
       end
@@ -581,10 +582,10 @@ describe FormFieldDataExporter, type: :model do
           expect(activity.save).to be_truthy
 
           expect(subject.custom_fields_to_export_headers).to eq([
-            'MY LIKERTSCALE FIELD: LIKERTSCALE OPT1', 'MY LIKERTSCALE FIELD: LIKERTSCALE OPT2'
+            'MY LIKERTSCALE FIELD: LIKERTSCALE STAT1', 'MY LIKERTSCALE FIELD: LIKERTSCALE STAT2'
           ])
           expect(subject.custom_fields_to_export_values(activity)).to eq([
-            'LikertScale Stat1', 'LikertScale Stat2'
+            'LikertScale Opt1', 'LikertScale Opt2'
           ])
         end
 
@@ -598,11 +599,14 @@ describe FormFieldDataExporter, type: :model do
           expect(activity.save).to be_truthy
 
           expect(subject.custom_fields_to_export_headers).to eq([
-            'MY LIKERTSCALE FIELD: LIKERTSCALE OPT1', 'MY LIKERTSCALE FIELD: LIKERTSCALE OPT2'
+            'MY LIKERTSCALE FIELD: LIKERTSCALE STAT1 - LIKERTSCALE OPT1', 'MY LIKERTSCALE FIELD: LIKERTSCALE STAT1 - LIKERTSCALE OPT2',
+            'MY LIKERTSCALE FIELD: LIKERTSCALE STAT2 - LIKERTSCALE OPT1', 'MY LIKERTSCALE FIELD: LIKERTSCALE STAT2 - LIKERTSCALE OPT2'
           ])
+
           expect(subject.custom_fields_to_export_values(activity)).to eq([
-            'LikertScale Stat1, LikertScale Stat2', 'LikertScale Stat2'
+            '1', nil, '1', '1'
           ])
+
         end
       end
 
