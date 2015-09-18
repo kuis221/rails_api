@@ -56,7 +56,7 @@ describe Results::ExpensesController, type: :controller do
                 build(:event_expense, category: 'Entertainment', amount: 10, created_at: created_at, updated_at: updated_at)])
 
       create(:approved_event, campaign: campaign,
-              start_date: '08/25/2013', end_date: '08/25/2013',
+              start_date: '08/20/2013', end_date: '08/20/2013',
               start_time: '9:00am', end_time: '10:00am', place: create(:place, name: 'Place 2'),
               event_expenses: [
                 build(:event_expense, category: 'Uncategorized', amount: 20, created_at: created_at, updated_at: updated_at)])
@@ -70,10 +70,10 @@ describe Results::ExpensesController, type: :controller do
       expect(export.reload).to have_rows([
         ['CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'EVENT START DATE', 'EVENT END DATE',
          'CREATED AT', 'CREATED BY', 'LAST MODIFIED', 'MODIFIED BY', 'SPENT', 'ENTERTAINMENT', 'UNCATEGORIZED'],
-        ['Test Campaign FY01', 'Place 1', 'Place 1, 11 Main St., New York City, NY, 12345', 'US',
-         '2013-08-21 20:00', '2013-08-21 23:00', '2014-07-02 10:00', 'Test User', '2015-07-01 10:00', 'Test User', '10.0', '10.0', nil],
         ['Test Campaign FY01', 'Place 2', 'Place 2, 11 Main St., New York City, NY, 12345', 'US',
-         '2013-08-25 09:00', '2013-08-25 10:00', '2014-07-02 10:00', 'Test User', '2015-07-01 10:00', 'Test User', '20.0', nil, '20.0']
+         '2013-08-20 09:00', '2013-08-20 10:00', '2014-07-02 10:00', 'Test User', '2015-07-01 10:00', 'Test User', '20.0', nil, '20.0'],
+        ['Test Campaign FY01', 'Place 1', 'Place 1, 11 Main St., New York City, NY, 12345', 'US',
+         '2013-08-21 20:00', '2013-08-21 23:00', '2014-07-02 10:00', 'Test User', '2015-07-01 10:00', 'Test User', '10.0', '10.0', nil]
       ])
     end
   end
