@@ -456,10 +456,10 @@ describe Results::EventDataController, type: :controller do
         expect(ListExport.last).to have_rows([
           ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'CITY', 'STATE', 'ZIP',
            'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL', 'START', 'END', 'SUBMITTED AT',
-           'APPROVED AT', 'PROMO HOURS', 'SPENT', 'MY LIKERTSCALE FIELD: LIKERTSCALE OPT1', 'MY LIKERTSCALE FIELD: LIKERTSCALE OPT2'],
+           'APPROVED AT', 'PROMO HOURS', 'SPENT', 'MY LIKERTSCALE FIELD: LIKERTSCALE STAT1', 'MY LIKERTSCALE FIELD: LIKERTSCALE STAT2'],
           ['Test Campaign FY01', '', nil, 'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345', 'US',
            'Los Angeles', 'California', '12345', 'Active', 'Approved', '', '', "http://test.host/events/#{event.id}",
-           '2013-01-23 10:00', '2013-01-23 12:00', nil, nil, '2.00', '0', 'LikertScale Stat1', 'LikertScale Stat2']
+           '2013-01-23 10:00', '2013-01-23 12:00', nil, nil, '2.00', '0', 'LikertScale Opt1', 'LikertScale Opt2']
         ])
       end
 
@@ -475,10 +475,12 @@ describe Results::EventDataController, type: :controller do
         expect(ListExport.last).to have_rows([
           ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'CITY', 'STATE', 'ZIP',
            'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL', 'START', 'END', 'SUBMITTED AT',
-           'APPROVED AT', 'PROMO HOURS', 'SPENT', 'MY LIKERTSCALE FIELD: LIKERTSCALE OPT1', 'MY LIKERTSCALE FIELD: LIKERTSCALE OPT2'],
+           'APPROVED AT', 'PROMO HOURS', 'SPENT', 'MY LIKERTSCALE FIELD: LIKERTSCALE STAT1 - LIKERTSCALE OPT1',
+           'MY LIKERTSCALE FIELD: LIKERTSCALE STAT1 - LIKERTSCALE OPT2', 'MY LIKERTSCALE FIELD: LIKERTSCALE STAT2 - LIKERTSCALE OPT1',
+           'MY LIKERTSCALE FIELD: LIKERTSCALE STAT2 - LIKERTSCALE OPT2'],
           ['Test Campaign FY01', '', nil, 'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345', 'US',
            'Los Angeles', 'California', '12345', 'Active', 'Approved', '', '', "http://test.host/events/#{event.id}",
-           '2013-01-23 10:00', '2013-01-23 12:00', nil, nil, '2.00', '0', 'LikertScale Stat1, LikertScale Stat2', 'LikertScale Stat2']
+           '2013-01-23 10:00', '2013-01-23 12:00', nil, nil, '2.00', '0', '1', nil, '1', '1']
         ])
       end
     end
