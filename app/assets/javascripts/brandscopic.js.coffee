@@ -747,6 +747,24 @@ jQuery ->
 		return true;
 	, ' ');
 
+	$.validator.addMethod("likert-field", (value, element) ->
+		if $('.likert-scale-' + $(element).data('likert-error-id')).closest('.form_field_likert_scale').find('label').hasClass('optional')
+			return true
+		else
+			fields = $('.likert-scale-' + $(element).data('likert-error-id')).find('.likert-fields')
+			valid = true
+			i = 0
+			while i < fields.length
+				if element.type == 'checkbox'
+					if $(fields[i]).find('input:checkbox:checked').length <= 0
+						valid = false
+				else
+					if !$(fields[i]).find('.likert-field').is(':checked')
+						valid = false
+				i++
+			return valid;
+	, 'This field is required.');
+
 	$.validator.addMethod("optional", (value, element) ->
 		return true;
 	, "");
