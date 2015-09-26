@@ -1467,6 +1467,28 @@ describe Event, type: :model do
     end
 
     describe 'execute_phases' do
+      it 'includes the PER step as complete if campaign has not required form fields' do
+        create(:form_field_number, fieldable: campaign, kpi: create(:kpi, company_id: 1), required: false)
+        event = create(:event, campaign: campaign)
+        expect(event.execute_phases.find { |s| s[:id] == :per }).to include(
+          id: :per, title: 'Post Event Recap', complete: true)
+      end
+
+      it 'includes the PER step as incomplete if campaign has required form fields without associated results' do
+        create(:form_field_number, fieldable: campaign, kpi: create(:kpi, company_id: 1), required: true)
+        event = create(:event, campaign: campaign)
+        expect(event.execute_phases.find { |s| s[:id] == :per }).to include(
+          id: :per, title: 'Post Event Recap', complete: false)
+      end
+
+      it 'includes the PER step as complete if campaign has required form fields with associated results' do
+        field = create(:form_field_number, fieldable: campaign, kpi: create(:kpi, company_id: 1), required: true)
+        event = create(:event, campaign: campaign)
+        event.results_for([field]).first.value = 100
+        expect(event.execute_phases.find { |s| s[:id] == :per }).to include(
+          id: :per, title: 'Post Event Recap', complete: true)
+      end
+
       it 'includes the activities step if campaign have any activity type' do
         event = create(:event, campaign: campaign)
         campaign.activity_types << create(:activity_type, company: company)
