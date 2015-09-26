@@ -641,7 +641,7 @@ feature 'Events section' do
               find_field('Start date').click
               select_and_fill_from_datepicker('custom_start_date', Date.today.beginning_of_week(:sunday).to_s(:slashes))
               find_field('End date').click
-              select_and_fill_from_datepicker('custom_end_date', (Date.today.beginning_of_week(:sunday) + 5.days).to_s(:slashes))
+              select_and_fill_from_datepicker('custom_end_date', (Date.today.beginning_of_week(:sunday) + 7.days).to_s(:slashes))
               expect(page).to have_button('Apply', disabled: false)
               click_js_button 'Apply'
             end
