@@ -65,7 +65,7 @@ class CombinedSearch
   def filter_merged(solr_results, google_results)
     # Get places id for places merged with results from Solr
     merged_ids = Place.where(merged_with_place_id: solr_results.map{ |r| r[:id] }).pluck(:place_id).uniq
-    # Remove results from Google that where merged with results from Solr
+    # Remove results from Google that were merged with results from Solr
     results = []
     google_results.each do |r|
       _reference, id = r[:id].split('||')
