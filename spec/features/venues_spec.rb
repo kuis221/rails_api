@@ -165,8 +165,8 @@ feature 'Venues Section', js: true, search: true do
         text = page.text.gsub(/[\s\n]/, '')
         expect(text).to include 'Place1'
         expect(text).to include 'Place2'
-        expect(text).to include '123MyStre'
-        expect(text).to include '456YourStre'
+        expect(text).to include '11MainSt.,NewYorkCity'
+        expect(text).to include '11MainSt.,LosAngeles'
         expect(text).to include '$1,000.00'
         expect(text).to include '$2,000.00'
       end
