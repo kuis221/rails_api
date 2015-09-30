@@ -26,7 +26,7 @@ gem 'countries'
 gem 'company_scoped', path: 'vendor/gems/company_scoped'
 gem 'legacy', path: 'vendor/gems/legacy', require: false
 gem 'newrelic_rpm'
-gem 'paperclip', '~> 4.1'
+gem 'paperclip', '~> 4.3'
 gem 'aws-sdk'
 gem 'google_places'
 gem 'timeliness'
@@ -61,6 +61,8 @@ gem 'pgbackups-archive'
 gem 'active_model_serializers'
 gem 'rgeo-geojson'
 gem 'paper_trail', '~> 4.0.0.rc'
+gem 'simple_form', '~> 3.2.0'
+gem 'country_select', '2.0.0.rc1'
 
 # For memory debugging
 # gem "allocation_stats"
@@ -82,8 +84,6 @@ group :web do
   gem 'font_assets', path: 'vendor/gems/font_assets'
   gem 'activeadmin', github: 'activeadmin/active_admin'
   gem 'unicorn'
-  gem 'simple_form', '~> 3.2.0'
-  gem 'country_select', '2.0.0.rc1'
 end
 
 # Gems used only for assets and not required

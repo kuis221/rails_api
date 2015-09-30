@@ -1,4 +1,4 @@
-if ENV['WEB']
+if Object.const_defined?('SimpleForm')
   # Use this setup block to configure all options available in SimpleForm.
   SimpleForm.setup do |config|
     # Wrappers are used by the form builder to generate a
@@ -83,7 +83,7 @@ if ENV['WEB']
 
     # You can define the class to use on all collection wrappers. Defaulting to none.
     # config.collection_wrapper_class = nil
-    config.label_text = lambda { |label, required, explicit_label | "#{label}" + (required.present? ? '' : ' <span class="optional">(optional)</span>') }
+    config.label_text = ->(label, required, _ ) { "#{label}" + (required.present? ? '' : ' <span class="optional">(optional)</span>') }
 
     # You can wrap each item in a collection of radio/check boxes with a tag,
     # defaulting to :span. Please note that when using :boolean_style = :nested,

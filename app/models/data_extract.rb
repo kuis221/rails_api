@@ -37,6 +37,10 @@ class DataExtract < ActiveRecord::Base
 
   scope :active, -> { where(active: true) }
 
+  after_initialize do
+    params.serialize_keys! if params.present? && params.respond_to?(:serialize_keys!)
+  end
+
   class << self
     def define_columns(columns)
       @export_columns_definitions = columns
