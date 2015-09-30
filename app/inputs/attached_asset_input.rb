@@ -1,5 +1,5 @@
 class AttachedAssetInput < SimpleForm::Inputs::Base
-  def input
+  def input(wrapper_options)
     options[:field_id] ||= rand(9999)
     options[:file_types] ||= ''
     options[:hidden_field_name] ||= attribute_name

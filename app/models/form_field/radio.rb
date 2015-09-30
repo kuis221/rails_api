@@ -60,10 +60,9 @@ class FormField::Radio < FormField::Hashed
 
   def validate_result(result)
     super
-    unless result.errors.get(:value) || result.value.nil? || result.value == ''
-      unless valid_hash_keys.map(&:to_s).include?(result.value.to_s)
-        result.errors.add :value, :invalid
-      end
+    return if result.errors.get(:value) || result.value.nil? || result.value == ''
+    unless valid_hash_keys.map(&:to_s).include?(result.value.to_s)
+      result.errors.add :value, :invalid
     end
   end
 
@@ -77,8 +76,8 @@ class FormField::Radio < FormField::Hashed
     hash_result[:titles] << name
 
     events.each do |event|
-      options_map = Hash[options_for_input.map{|o| [o[1], o[0]] }]
-      value = event.value.nil? ? "" : options_map[event.value.to_i]
+      options_map = Hash[options_for_input.map { |o| [o[1], o[0]] }]
+      value = event.value.nil? ? '' : options_map[event.value.to_i]
 
       hash_result[event.resultable_id] << value
     end

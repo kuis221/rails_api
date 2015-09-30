@@ -122,7 +122,7 @@ class Results::DataExtractsController < InheritedResources::Base
     params[:step].nil? ? 1 : params[:step].to_i
   end
 
-  def form_action(params_extract = '')
+  def form_action(params_extract = {})
     if resource.new_record?
       new_results_data_extract_path(params_extract)
     else

@@ -133,8 +133,6 @@ describe FormFieldDataExporter, type: :model do
           expect(event.save).to be_truthy
 
           event2 = create(:approved_event, campaign: campaign)
-          event.results_for([field]).first.value = nil
-          expect(event.save).to be_truthy
 
           expect(subject.custom_fields_to_export_headers).to eq([
             'MY LIKERTSCALE FIELD: LIKERTSCALE STAT1', 'MY LIKERTSCALE FIELD: LIKERTSCALE STAT2'
@@ -155,8 +153,6 @@ describe FormFieldDataExporter, type: :model do
           expect(event.save).to be_truthy
 
           event2 = create(:approved_event, campaign: campaign)
-          event.results_for([field]).first.value = nil
-          expect(event.save).to be_truthy
 
           expect(subject.custom_fields_to_export_headers).to eq([
             'MY LIKERTSCALE FIELD: LIKERTSCALE STAT1 - LIKERTSCALE OPT1', 'MY LIKERTSCALE FIELD: LIKERTSCALE STAT1 - LIKERTSCALE OPT2',
@@ -578,9 +574,6 @@ describe FormFieldDataExporter, type: :model do
                                                         statement2.id.to_s => option2.id.to_s }
           expect(activity.save).to be_truthy
 
-          activity.results_for([field]).first.value = nil
-          expect(activity.save).to be_truthy
-
           expect(subject.custom_fields_to_export_headers).to eq([
             'MY LIKERTSCALE FIELD: LIKERTSCALE STAT1', 'MY LIKERTSCALE FIELD: LIKERTSCALE STAT2'
           ])
@@ -592,21 +585,20 @@ describe FormFieldDataExporter, type: :model do
         it 'includes multiple answer LIKERT SCALE fields that are not linked to a KPI' do
           field.update_attribute(:multiple, true)
           activity.results_for([field]).first.value = { statement1.id.to_s => [option1.id.to_s],
-                                                        statement2.id.to_s => [option1.id.to_s, option2.id.to_s] }
-          expect(activity.save).to be_truthy
-
-          activity.results_for([field]).first.value = nil
+                                                        statement2.id.to_s => [option1.id.to_s,
+                                                                               option2.id.to_s] }
           expect(activity.save).to be_truthy
 
           expect(subject.custom_fields_to_export_headers).to eq([
-            'MY LIKERTSCALE FIELD: LIKERTSCALE STAT1 - LIKERTSCALE OPT1', 'MY LIKERTSCALE FIELD: LIKERTSCALE STAT1 - LIKERTSCALE OPT2',
-            'MY LIKERTSCALE FIELD: LIKERTSCALE STAT2 - LIKERTSCALE OPT1', 'MY LIKERTSCALE FIELD: LIKERTSCALE STAT2 - LIKERTSCALE OPT2'
+            'MY LIKERTSCALE FIELD: LIKERTSCALE STAT1 - LIKERTSCALE OPT1',
+            'MY LIKERTSCALE FIELD: LIKERTSCALE STAT1 - LIKERTSCALE OPT2',
+            'MY LIKERTSCALE FIELD: LIKERTSCALE STAT2 - LIKERTSCALE OPT1',
+            'MY LIKERTSCALE FIELD: LIKERTSCALE STAT2 - LIKERTSCALE OPT2'
           ])
 
           expect(subject.custom_fields_to_export_values(activity)).to eq([
             '1', nil, '1', '1'
           ])
-
         end
       end
 

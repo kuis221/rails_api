@@ -1,5 +1,5 @@
 class LikertScaleInput < SimpleForm::Inputs::Base
-  def input
+  def input(wrapper_options)
     values = object.send(attribute_name)
     group = "#{object_name}_#{attribute_name}".gsub(/[\[\]]+\z/, '').gsub(/[\[\]]+/, '_').gsub(/_+/, '_')
     '<table class="table likert-scale-table likert-scale-' + options[:field_id].to_s + '">' \

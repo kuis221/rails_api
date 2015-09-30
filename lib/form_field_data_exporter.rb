@@ -25,10 +25,10 @@ class FormFieldDataExporter < BaseExporter
     @likert_options_mapping ||= Hash.new()
     @result ||= FormFieldResult.new
     resource_values = empty_values_hash
-    ActiveRecord::Base.connection.select_all(ActiveRecord::Base.connection.unprepared_statement do
+    ActiveRecord::Base.connection.select_all(
       resource.results.where(form_field_id: active_fields_for_resource(resource))
                 .select('form_field_results.form_field_id, form_field_results.value, form_field_results.hash_value').to_sql
-    end).each do |row|
+    ).each do |row|
       @result.form_field = custom_fields_to_export[row['form_field_id'].to_i]
       if @result.form_field.is_hashed_value?
         @result.value = nil

@@ -133,6 +133,7 @@ describe Results::EventDataController, type: :controller do
          "http://test.host/events/#{event.id}", '2013-01-23 10:00', '2013-01-23 12:00', nil, nil, '2.00',
          '0', '9876.0']
       ])
+      Campaign.find(campaign.id)
     end
 
     it 'includes any custom fields for the campaigns in the custom filter' do
@@ -342,6 +343,7 @@ describe Results::EventDataController, type: :controller do
       expect do
         xhr :get, 'index', campaign: [campaign.id, campaign2.id], format: :csv
       end.to change(ListExport, :count).by(1)
+
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'CITY',

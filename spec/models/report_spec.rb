@@ -1146,15 +1146,17 @@ describe Report, type: :model do
 
       event = create(:event, campaign: campaign, place: create(:place))
       event.result_for_kpi(kpi).value = kpi.kpis_segments.first.id
-      event.save # Save the event results
+      event.valid?
+      expect(event.save).to be_truthy # Save the event results
 
       event = create(:event, campaign: campaign, place: create(:place))
       event.result_for_kpi(kpi).value = kpi.kpis_segments.second.id
-      event.save # Save the event results
+      event.valid?
+      expect(event.save).to be_truthy # Save the event results
 
       event = create(:event, campaign: campaign, place: create(:place))
       event.result_for_kpi(kpi).value = kpi.kpis_segments.second.id
-      event.save # Save the event results
+      expect(event.save).to be_truthy # Save the event results
 
       report = create(:report,
                       company: company,
@@ -1520,7 +1522,7 @@ describe Report, type: :model do
                                                option1 = create(:form_field_option, name: 'Opt1', ordering: 1),
                                                option2 = create(:form_field_option, name: 'Opt2', ordering: 2)]
         )
-        checkbox_field = FormField.find(checkbox_field)
+        checkbox_field = FormField.find(checkbox_field.id)
         campaign.activity_types << checkbox_field.fieldable
 
         event = create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
@@ -1531,22 +1533,22 @@ describe Report, type: :model do
         activity = create(:activity, activitable: event,
           activity_type: checkbox_field.fieldable, company_user: user)
         activity.results_for([checkbox_field]).first.value = [option1.id]
-        activity.save
+        expect(activity.save).to be_truthy
 
         activity = create(:activity, activitable: event,
           activity_type: checkbox_field.fieldable, company_user: user)
         activity.results_for([checkbox_field]).first.value = [option2.id]
-        activity.save
+        expect(activity.save).to be_truthy
 
         activity = create(:activity, activitable: event,
           activity_type: checkbox_field.fieldable, company_user: user)
         activity.results_for([checkbox_field]).first.value = [option1.id, option2.id]
-        activity.save
+        expect(activity.save).to be_truthy
 
         activity = create(:activity, activitable: event,
           activity_type: checkbox_field.fieldable, company_user: user)
         activity.results_for([checkbox_field]).first.value = [option2.id]
-        activity.save
+        expect(activity.save).to be_truthy
 
         report = create(:report,
                         company: company,
@@ -1582,17 +1584,17 @@ describe Report, type: :model do
         activity = create(:activity, activitable: event,
           activity_type: percentage_field.fieldable, company_user: user)
         activity.results_for([percentage_field]).first.value = { option1.id.to_s => 35, option2.id.to_s => 65 }
-        activity.save
+        expect(activity.save).to be_truthy
 
         activity = create(:activity, activitable: event,
           activity_type: percentage_field.fieldable, company_user: user)
         activity.results_for([percentage_field]).first.value = { option1.id.to_s => 20, option2.id.to_s => 80,  option3.id.to_s => '' }
-        activity.save
+        expect(activity.save).to be_truthy
 
         activity = create(:activity, activitable: event,
           activity_type: percentage_field.fieldable, company_user: user)
         activity.results_for([percentage_field]).first.value = { option1.id.to_s => 40, option2.id.to_s => 60,  option3.id.to_s => '' }
-        activity.save
+        expect(activity.save).to be_truthy
 
         report = create(:report,
                         company: company,
@@ -1629,13 +1631,13 @@ describe Report, type: :model do
           activity_type: radio_field.fieldable, company_user: user)
         activity.results_for([radio_field]).first.value = option1.id
         activity.results_for([numeric_field]).first.value = 100
-        activity.save
+        expect(activity.save).to be_truthy
 
         activity = create(:activity, activitable: event,
           activity_type: radio_field.fieldable, company_user: user)
         activity.results_for([radio_field]).first.value = option2.id
         activity.results_for([numeric_field]).first.value = 400
-        activity.save
+        expect(activity.save).to be_truthy
 
         report = create(:report,
                         company: company,
@@ -1673,25 +1675,25 @@ describe Report, type: :model do
           activity_type: checkbox_field.fieldable, company_user: user)
         activity.results_for([checkbox_field]).first.value = [option1.id]
         activity.results_for([numeric_field]).first.value = 100
-        activity.save
+        expect(activity.save).to be_truthy
 
         activity = create(:activity, activitable: event,
           activity_type: checkbox_field.fieldable, company_user: user)
         activity.results_for([checkbox_field]).first.value = [option2.id]
         activity.results_for([numeric_field]).first.value = 400
-        activity.save
+        expect(activity.save).to be_truthy
 
         activity = create(:activity, activitable: event,
           activity_type: checkbox_field.fieldable, company_user: user)
         activity.results_for([checkbox_field]).first.value = [option1.id, option2.id]
         activity.results_for([numeric_field]).first.value = 300
-        activity.save
+        expect(activity.save).to be_truthy
 
         report = create(:report,
                         company: company,
                         columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                        rows:     [{ 'field' => "form_field:#{checkbox_field.id}",
-                                     'label' => 'Radio Field', 'aggregate' => 'sum' }],
+                        rows:    [{ 'field' => "form_field:#{checkbox_field.id}",
+                                    'label' => 'Radio Field', 'aggregate' => 'sum' }],
                         values:  [{ 'field' => "form_field:#{numeric_field.id}",
                                     'label' => 'Numeric Field', 'aggregate' => 'sum' }]
         )
@@ -2046,12 +2048,12 @@ describe Report, type: :model do
       event1 = create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
         results: { impressions: 100, interactions: 50 })
       event1.result_for_kpi(kpi).value = seg1.id
-      event1.save
+      expect(event1.save).to be_truthy
 
       event2 = create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
         results: { impressions: 200, interactions: 150 })
       event2.result_for_kpi(kpi).value = seg2.id
-      event2.save
+      expect(event2.save).to be_truthy
 
       report = create(:report,
                       company: company,

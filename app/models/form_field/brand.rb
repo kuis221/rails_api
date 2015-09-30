@@ -42,7 +42,8 @@ class FormField::Brand < FormField
 
   def format_html(result)
     return if result.value.nil? || result.value == ''
-    ::Brand.where(id: result.value).pluck(:name).join(', ')
+    ids = Array(result.value.split(',')).map(&:to_i)
+    ::Brand.where(id: ids).pluck(:name).join(', ')
   end
 
   def format_json(result)
@@ -79,17 +80,17 @@ class FormField::Brand < FormField
     values = totals.reject{ |k, v| k == nil || v.nil? || v == '' || v.to_f == 0.0 }
     r = campaign.events.first.results_for([self]).first
     options_map = Hash[options_for_field(r).pluck(:id, :name)]
-    values.map{ |k, v| [options_map[k.to_i], v] }
+    values.map { |k, v| [options_map[k.to_i], v] }
   end
 
   def csv_results(campaign, event_scope, hash_result)
-    events = form_field_results.for_event_campaign(campaign).merge(event_scope)
+    results = form_field_results.for_event_campaign(campaign).merge(event_scope)
     hash_result[:titles] << name
     r = campaign.events.first.results_for([self]).first
-    events.each do |event|
-      options_map = Hash[options_for_field(r).pluck(:id, :name)]
-      value = event.value.nil? ? "" : options_map[event.value.to_i]
-      hash_result[event.resultable_id] << value
+    options_map = Hash[options_for_field(r).pluck(:id, :name)]
+    results.each do |result|
+      value = result.value.nil? ? '' : options_map[result.value.to_i]
+      hash_result[result.resultable_id] << value
     end
     hash_result
   end

@@ -72,7 +72,7 @@ describe FormField::Brand, type: :model do
   end
 
   describe '#format_html' do
-    it 'should return the correct values' do
+    it 'returns the correct values' do
       expect(field.format_html(build(:form_field_result, value: nil, form_field_id: field.id))).to eql nil
       expect(field.format_html(build(:form_field_result, value: create(:brand, name: 'BrandT1').id, form_field_id: field.id))).to eql 'BrandT1'
       expect(field.format_html(build(:form_field_result, value: '', form_field_id: field.id))).to eql nil

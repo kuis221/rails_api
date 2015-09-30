@@ -137,5 +137,4 @@ class FilteredController < InheritedResources::Base
   def controller_filters(c)
     c
   end
-
 end

@@ -127,6 +127,14 @@ class FormField < ActiveRecord::Base
     result.value
   end
 
+  def result_value(result)
+    if settings.present? && settings.key?('multiple') && settings['multiple']
+      result['value'].try(:split, ',')
+    else
+      result['value']
+    end
+  end
+
   def format_json(result)
     value = result ? string_to_value(result.value) : nil
     base = {
@@ -144,11 +152,10 @@ class FormField < ActiveRecord::Base
 
   def format_chart_data(result)
     return unless is_optionable?
-    if result.present?
-      Hash[options_for_input.map do |s|
-        [s[0], result.value[s[1].to_s].try(:to_f) || 0]
-      end]
-    end
+    return unless result.present?
+    Hash[options_for_input.map do |s|
+      [s[0], result.value[s[1].to_s].try(:to_f) || 0]
+    end]
   end
 
   def css_class
@@ -182,43 +189,25 @@ class FormField < ActiveRecord::Base
 
   def validate_result(result)
     if required? && (result.value.nil? || (result.value.is_a?(String) && result.value.empty?))
-      result.errors.add(:value, I18n.translate('errors.messages.blank'))
-    end
-    if is_hashed_value?
-      if required? && (result.value.nil? || (result.value.is_a?(Hash) && result.value.empty?))
-        result.errors.add(:value, I18n.translate('errors.messages.blank'))
-      elsif result.value.present?
-        if result.value.is_a?(Hash)
-          if result.value.any? { |k, v| v != '' && !is_valid_value_for_key?(k, v) }
-            result.errors.add :value, :invalid
-          elsif (result.value.keys.map(&:to_i) - valid_hash_keys).any?
-            result.errors.add :value, :invalid  # If a invalid key was given
-          end
-        else
-          result.errors.add :value, :invalid
-        end
-      end
+      result.errors.add(:value, :blank)
     end
 
-    if has_range_value_settings? && result.value.present? && !result.value.to_s.empty?
-      val = result.value.to_s.strip
-      if settings['range_format'] == 'characters'
-        items = val.length
-      elsif settings['range_format'] == 'words'
-        items = val.scan(/\w+/).size
-      elsif settings['range_format'] == 'digits'
-        items = val.gsub(/[\.\,\s]/, '').length
-      elsif settings['range_format'] == 'value'
-        items = val.to_f rescue 0
-      end
+    return unless has_range_value_settings? && result.value.present? && !result.value.to_s.blank?
 
-      min_result = !settings['range_min'].present? || (items >= settings['range_min'].to_i)
-      max_result = !settings['range_max'].present? || (items <= settings['range_max'].to_i)
-
-      if !min_result || !max_result
-        result.errors.add :value, :invalid
-      end
+    val = result.value.to_s.strip
+    if settings['range_format'] == 'characters'
+      items = val.length
+    elsif settings['range_format'] == 'words'
+      items = val.scan(/\w+/).size
+    elsif settings['range_format'] == 'digits'
+      items = val.gsub(/[\.\,\s]/, '').length
+    elsif settings['range_format'] == 'value'
+      items = val.to_f rescue 0
     end
+
+    min_result = !settings['range_min'].present? || (items >= settings['range_min'].to_i)
+    max_result = !settings['range_max'].present? || (items <= settings['range_max'].to_i)
+    result.errors.add :value, :invalid if !min_result || !max_result
   end
 
   def options_for_input(include_excluded = false)

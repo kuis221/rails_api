@@ -232,7 +232,7 @@ class Event < ActiveRecord::Base
   validates :company_id, presence: true, numericality: true
   validates :start_at, presence: true
   validates :end_at, presence: true, date: { on_or_after: :start_at, message: 'must be after' }
-  validate :between_visit_date_range, before: [:create, :update], if: :visit
+  validate :between_visit_date_range, on: [:create, :update], if: :visit
 
   DATE_FORMAT = %r{\A[0-1]?[0-9]/[0-3]?[0-9]/[0-2]0[0-9][0-9]\z}
   validates :start_date, format: { with: DATE_FORMAT, message: 'MM/DD/YYYY' }

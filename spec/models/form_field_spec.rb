@@ -182,11 +182,11 @@ describe FormField, type: :model do
   end
 
   describe '#format_html' do
-    it 'should return the values as is' do
+    it 'returns the values as is' do
       expect(field.format_html(build(:form_field_result, value: nil, form_field: field))).to eql nil
-      expect(field.format_html(build(:form_field_result, value: 1, form_field: field))).to eql 1
+      expect(field.format_html(build(:form_field_result, value: 1, form_field: field))).to eql '1'
       expect(field.format_html(build(:form_field_result, value: 'two', form_field: field))).to eql 'two'
-      expect(field.format_html(build(:form_field_result, value: 1.2, form_field: field))).to eql 1.2
+      expect(field.format_html(build(:form_field_result, value: 1.2, form_field: field))).to eql '1.2'
     end
   end
 end

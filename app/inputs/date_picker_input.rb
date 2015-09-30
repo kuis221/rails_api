@@ -1,5 +1,5 @@
 class DatePickerInput < SimpleForm::Inputs::Base
-  def input
+  def input(wrapper_options)
     if options[:inline]
       @builder.template.content_tag(:div, '', data: { date: object.send(attribute_name) }, id: "calendar_#{attribute_name}", class: :datepicker) +       "#{@builder.input_field(attribute_name, as: :hidden)}".html_safe
     else

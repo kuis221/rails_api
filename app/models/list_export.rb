@@ -140,7 +140,7 @@ class ListExport < ActiveRecord::Base
       ctrl.instance_variable_set(:@current_user, company_user.user)
       ctrl.instance_variable_set(:@current_company, company_user.company)
       ctrl.instance_variable_set(:@current_company_user, company_user)
-      ctrl.instance_variable_set(:@_url_options, url_options.merge(only_path: false))
+      ctrl.instance_variable_set(:@_url_options, url_options)
     end
   end
 
