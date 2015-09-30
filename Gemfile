@@ -51,7 +51,7 @@ gem 'apipie-rails'
 gem 'heroku-resque-workers-scaler', github: 'guilleva/heroku-resque-workers-scaler'
 gem 'twilio-ruby'
 gem 'nested_form'
-gem 'wicked_pdf' #, github: 'mileszs/wicked_pdf'
+gem 'wicked_pdf'
 gem 'rack-cors', require: 'rack/cors'
 gem 'roo'
 gem 'similar_text'
@@ -60,7 +60,7 @@ gem 'clockwork', require: false
 gem 'pgbackups-archive'
 gem 'active_model_serializers'
 gem 'rgeo-geojson'
-gem 'paper_trail', '~> 4.0.0.rc'
+gem 'paper_trail', '~> 4.0.0'
 gem 'simple_form', '~> 3.2.0'
 gem 'country_select', '2.0.0.rc1'
 
@@ -106,8 +106,6 @@ group :test, :development do
   gem 'faker'
   gem 'rubocop', require: false
   gem 'rubocop-rspec', require: false
-  gem 'pry-rescue'
-  gem 'pry-stack_explorer'
 end
 
 group :test do
