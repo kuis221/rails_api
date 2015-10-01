@@ -113,7 +113,7 @@ class ListExport < ActiveRecord::Base
 
   def build_xlsx_file(path)
     self.file = File.open(path)
-    self.file_content_type = 'application/vnd.ms-excel'
+    self.file_content_type = export_format == 'csv' ? 'text/csv' : 'application/vnd.ms-excel'
   end
 
   # Builds a PDF file from an
@@ -140,7 +140,7 @@ class ListExport < ActiveRecord::Base
       ctrl.instance_variable_set(:@current_user, company_user.user)
       ctrl.instance_variable_set(:@current_company, company_user.company)
       ctrl.instance_variable_set(:@current_company_user, company_user)
-      ctrl.instance_variable_set(:@_url_options, url_options.merge(only_path: false))
+      ctrl.instance_variable_set(:@_url_options, url_options)
     end
   end
 

@@ -17,8 +17,8 @@
 
 FactoryGirl.define do
   factory :form_field_result do
-    resultable nil
-    form_field nil
+    resultable_id nil
+    form_field_id nil
     value nil
   end
 end

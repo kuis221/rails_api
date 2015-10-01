@@ -5,7 +5,7 @@
 #  id                     :integer          not null, primary key
 #  name                   :string(255)
 #  reference              :string(400)
-#  place_id               :string(100)
+#  place_id               :string(200)
 #  types_old              :string(255)
 #  formatted_address      :string(255)
 #  street_number          :string(255)
@@ -53,17 +53,17 @@ class Place < ActiveRecord::Base
                       inclusion: { in: proc { Country.all.map { |c| c[1] } }, message: 'is not valid' }
 
   # Areas-Places relationship
-  has_many :events
+  has_many :events, counter_cache: false
   has_many :placeables
   has_many :venues, inverse_of: :place, dependent: :destroy
   has_and_belongs_to_many :locations, autosave: true
   belongs_to :location, autosave: true
 
-  # By default, use the GEOS implementation for spatial columns.
-  self.rgeo_factory_generator = RGeo::Geos.factory_generator
+  # # By default, use the GEOS implementation for spatial columns.
+  # self.rgeo_factory_generator = RGeo::Geos.factory_generator
 
-  # But use a geographic implementation for the :lonlat column.
-  set_rgeo_factory_for_column(:lonlat, RGeo::Geographic.spherical_factory(:srid => 4326))
+  # # But use a geographic implementation for the :lonlat column.
+  # set_rgeo_factory_for_column(:lonlat, RGeo::Geographic.spherical_factory(:srid => 4326))
 
   with_options through: :placeables, source: :placeable do |place|
     place.has_many :areas, source_type: 'Area'
@@ -80,6 +80,8 @@ class Place < ActiveRecord::Base
   before_validation :fetch_place_data, on: :create
 
   after_save :clear_cache
+
+  before_save :normalize_names
 
   before_save :update_locations
 
@@ -290,6 +292,10 @@ class Place < ActiveRecord::Base
     fail 'Cannot merge a venue into a merged venued' unless merged_with_place_id.blank?
     fail 'Cannot merge place with itself' if id == place.id
     self.class.connection.transaction do
+      Event.where(place_id: place.id).each do |event|
+        event.update_attribute(:place_id, id) or fail('cannot update event')
+      end
+
       Venue.where(place_id: place.id).each do |venue|
         real_venue = Venue.find_or_create_by(place_id: id, company_id: venue.company_id)
         # Update them one by one so the versions are generated
@@ -298,11 +304,7 @@ class Place < ActiveRecord::Base
         venue.destroy
       end
 
-      Event.where(place_id: place.id).each do |event|
-        event.update_attribute(:place_id, id) or fail('cannot update event')
-      end
-
-      Placeable.where(place_id: place.id).update_all(place_id: place.id)
+      Placeable.where(place_id: place.id).update_all(place_id: id)
 
       place.td_linx_code ||= place.td_linx_code
       place.update_attribute(:merged_with_place_id, id)
@@ -496,6 +498,12 @@ class Place < ActiveRecord::Base
     areas.each do |area|
       Area.update_common_denominators(area)
     end
+  end
+
+  def normalize_names
+    self.city = self.city.gsub(/^st\.?\s/i, 'Saint ') if self.city.present?
+    self.neighborhoods = self.neighborhoods.map { |x| x.gsub(/^st\.?\s/i, 'Saint ') } if self.neighborhoods.is_a?(Array)
+    true
   end
 
   def update_locations

@@ -13,6 +13,7 @@
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  kpi_id         :integer
+#  multiple       :boolean
 #
 
 class FormField::Percentage < FormField::Hashed
@@ -68,11 +69,10 @@ class FormField::Percentage < FormField::Hashed
   end
 
   def format_text(result)
-    if result.value
-      options.map do |option|
-        "#{option.name}: #{result.value[option.id.to_s] || 0}%"
-      end.join(', ').html_safe
-    end
+    return unless result.value
+    options.map do |option|
+      "#{option.name}: #{result.value[option.id.to_s] || 0}%"
+    end.join(', ').html_safe
   end
 
   def validate_result(result)

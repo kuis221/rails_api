@@ -5,29 +5,39 @@ feature 'Reports', js: true do
   let(:user) { sign_in_as_user }
   let(:company) { user.companies.first }
   let(:company_user) { user.current_company_user }
+  let!(:campaign) { create(:campaign, company: company) }
 
   before { user }
   after { Warden.test_reset! }
 
   before {  page.driver.resize 1024, 3000 }
 
-  pending 'Create a report' do
+  feature 'Create a report' do
     scenario 'user is redirected to the report build page after creation' do
       visit results_reports_path
 
       click_js_button 'New Report'
+      select_from_chosen 'Event Data', from: 'What type of report do you want to create?'
+      select_from_chosen campaign.name, from: 'Choose a campaign'
+      click_js_button 'Next'
 
-      expect do
-        within visible_modal do
-          fill_in 'Name', with: 'new report name'
-          fill_in 'Description', with: 'new report description'
-          click_button 'Create'
-        end
-        ensure_modal_was_closed
-      end.to change(Report, :count).by(1)
-      report = Report.last
-
-      expect(current_path).to eql(build_results_report_path(report))
+      empty_string = 'No fields have been added to your report'
+      expect(page).to have_content empty_string
+      find('.available-field', text: 'Campaign').click
+      expect(page).to_not have_content empty_string
+      click_js_button 'Next'
+      expect(page).to have_content 'There are no results matching the filtering criteria you selected.'
+      expect(page).to have_content 'Please select different filtering criteria.'
+      click_js_button 'Save'
+      within visible_modal do
+        fill_in 'Name', with: 'My Report'
+        fill_in 'Description', with: 'Some report description'
+        click_js_button 'Save'
+      end
+      ensure_modal_was_closed
+      expect(page).to have_content 'CUSTOM REPORTS'
+      expect(page).to have_content 'My Report'
+      expect(page).to have_content 'Some report description'
     end
   end
 

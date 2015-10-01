@@ -13,11 +13,19 @@
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  kpi_id         :integer
+#  multiple       :boolean
 #
 
 class FormField::Date < FormField
   def field_options(result)
-    { as: :date_picker, label: name, field_id: id, options: settings, required: required, input_html: { value: result.value, class: field_classes, step: 'any', required: (self.required? ? 'required' : nil) } }
+    { as: :date_picker,
+      label: name,
+      field_id: id,
+      options: settings,
+      required: required,
+      input_html: { value: result.value, class: field_classes,
+                    step: 'any',
+                    required: (self.required? ? 'required' : nil) } }
   end
 
   def field_classes
@@ -25,11 +33,13 @@ class FormField::Date < FormField
   end
 
   def format_html(result)
-    date = Timeliness.parse(result.value) rescue false if result.value
+    date = Timeliness.parse(result.value) if result.value
     if date && date.year == ::Time.now.year
-      date.strftime('<i>%^a</i> %b %d').html_safe rescue nil
+      date.strftime('<i>%^a</i> %b %d').html_safe
     else
-      date.strftime('<i>%^a</i> %b %d, %Y').html_safe rescue nil
+      date.strftime('<i>%^a</i> %b %d, %Y').html_safe
     end
+  rescue
+    nil
   end
 end

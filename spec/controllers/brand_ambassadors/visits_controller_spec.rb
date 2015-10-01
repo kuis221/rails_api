@@ -59,7 +59,7 @@ RSpec.describe BrandAmbassadors::VisitsController, type: :controller do
       area = create(:area, name: 'Area 1', company_id: company.to_param)
 
       visit = create(:brand_ambassadors_visit,
-                                 visit_type: 'pto', description: 'Test Visit description', company_user: visit_user,
+                                 visit_type: 'PTO', description: 'Test Visit description', company_user: visit_user,
                                  start_date: '01/23/2014', end_date: '01/24/2014', campaign: campaign, area: area,
                                  city: 'Test City', company: company)
       Sunspot.commit

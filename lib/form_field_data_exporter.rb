@@ -22,12 +22,13 @@ class FormFieldDataExporter < BaseExporter
   def custom_fields_to_export_values(resource)
     # We are reusing the same object for each result to reduce memory usage
     @likert_statements_mapping ||= Hash.new()
+    @likert_options_mapping ||= Hash.new()
     @result ||= FormFieldResult.new
     resource_values = empty_values_hash
-    ActiveRecord::Base.connection.select_all(ActiveRecord::Base.connection.unprepared_statement do
+    ActiveRecord::Base.connection.select_all(
       resource.results.where(form_field_id: active_fields_for_resource(resource))
                 .select('form_field_results.form_field_id, form_field_results.value, form_field_results.hash_value').to_sql
-    end).each do |row|
+    ).each do |row|
       @result.form_field = custom_fields_to_export[row['form_field_id'].to_i]
       if @result.form_field.is_hashed_value?
         @result.value = nil
@@ -49,12 +50,22 @@ class FormFieldDataExporter < BaseExporter
             resource_values[key] = 'Yes'
           end
         elsif @result.form_field.type == LIKERT_SCALE_TYPE
-          @likert_statements_mapping[@result.form_field.id] ||= Hash[@result.form_field.statements.map{ |s| [s.id.to_s, s.name] }]
+          @likert_statements_mapping[@result.form_field.id] ||= Hash[@result.form_field.statements.map { |s| [s.id.to_s, s.name] }]
+          @likert_options_mapping[@result.form_field.id] ||= Hash[@result.form_field.options.map { |s| [s.id.to_s, s.name] }]
           @result.value.each do |statement_id, option_id|
-            value = @likert_statements_mapping[@result.form_field.id][statement_id]
-            key = @fields_mapping["#{@result.form_field.id}_#{option_id}"]
-            resource_values[key] = value
-          end
+            if @result.form_field.multiple == false
+              value = @likert_options_mapping[@result.form_field.id][option_id]
+              key = @fields_mapping["#{@result.form_field.id}_#{statement_id}"]
+              resource_values[key] = value
+            else
+              option_id = eval(option_id) if option_id.present?
+              option_id.each do |option|
+                value = @likert_statements_mapping[@result.form_field.id][statement_id]
+                key = @fields_mapping["#{@result.form_field.id}_#{statement_id}_#{option.to_i}"]
+                resource_values[key] = value.present? ? '1' : ''
+              end if option_id.present? && option_id.is_a?(Array)
+            end
+          end if @result.value.is_a?(Hash)
         else
           sum = 0
           @result.form_field.options_for_input.each do |option|
@@ -138,7 +149,7 @@ class FormFieldDataExporter < BaseExporter
       if campaign_ids.count == 1
         'form_fields.ordering ASC'
       else
-        'lower(form_fields.name) ASC, form_fields.type ASC'
+        'lower(form_fields.name) ASC, form_fields.type ASC, form_fields.id ASC'
       end
     fields_scope = FormField.for_events_in_company(company_user.company)
                     .where.not(type: exclude_field_types)
@@ -153,7 +164,7 @@ class FormFieldDataExporter < BaseExporter
         FormField.for_activity_types_in_company(company_user.company)
       else
         FormField.for_activity_types_in_campaigns(campaign_ids)
-      end.where.not(type: exclude_field_types).order('lower(form_fields.name) ASC, form_fields.type ASC')
+      end.where.not(type: exclude_field_types).order('lower(form_fields.name) ASC, form_fields.type ASC, form_fields.id ASC')
     s = s.where(fieldable_id: params[:activity_type]) if params[:activity_type] && params[:activity_type].any?
     s.map { |field| [field.id, field] }
   end
@@ -162,28 +173,42 @@ class FormFieldDataExporter < BaseExporter
     ['FormField::Attachment', 'FormField::Photo', 'FormField::Section', 'FormField::UserDate']
   end
 
-   def custom_columns
-     return @custom_columns unless @custom_columns.nil?
-     @fields_mapping = {}
-     @custom_columns = {}
-     custom_fields_to_export.each do |_, field|
-       segments =
-         if SEGMENTED_FIELD_TYPES.include?(field.type)
-           s = field.options_for_input.sort { |left, right| left[1] <=> right[1] }
-           s.map! { |option| ["#{field.id}_#{option[1]}", "#{field.name}: #{option[0]}"] }
-           s.push(["#{field.id}__TOTAL", "#{field.name}: TOTAL"]) if field.type == SUMMATION_TYPE
-           s
-         else
-           [[field.id, field.name]]
-         end
-       segments.each do |s|
-         id = unique_field_id(field, s[1])
-         @fields_mapping[s[0]] = id
-         @custom_columns[id] = s[1]
-       end
-     end
-     @custom_columns
-   end
+  def custom_columns
+    return @custom_columns unless @custom_columns.nil?
+    @fields_mapping = {}
+    @custom_columns = {}
+    custom_fields_to_export.each do |_, field|
+      segments =
+        if SEGMENTED_FIELD_TYPES.include?(field.type)
+          if field.type == LIKERT_SCALE_TYPE
+            if field.multiple == false
+              s = field.statements.pluck(:name, :id)
+              s.map! { |statement| ["#{field.id}_#{statement[1]}", "#{field.name}: #{statement[0]}"] }
+            else
+              s = []
+              field.statements.pluck(:name, :id).each do |statement|
+                o = field.options_for_input.sort { |left, right| left[1] <=> right[1] }
+                o.map! { |option| ["#{field.id}_#{statement[1]}_#{option[1]}", "#{field.name}: #{statement[0]} - #{option[0]}"] }
+                s.concat o
+              end
+            end
+          else
+            s = field.options_for_input.sort { |left, right| left[1] <=> right[1] }
+            s.map! { |option| ["#{field.id}_#{option[1]}", "#{field.name}: #{option[0]}"] }
+            s.push(["#{field.id}__TOTAL", "#{field.name}: TOTAL"]) if field.type == SUMMATION_TYPE
+          end
+          s
+        else
+          [[field.id, field.name]]
+        end
+      segments.each do |s|
+        id = unique_field_id(field, s[1])
+        @fields_mapping[s[0]] = id
+        @custom_columns[id] = s[1]
+      end
+    end
+    @custom_columns
+  end
 
   def unique_field_id(field, name)
     @fieldable_fields_mapping ||= {}

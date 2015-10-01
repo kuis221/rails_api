@@ -13,14 +13,15 @@
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  kpi_id         :integer
+#  multiple       :boolean
 #
 
 class FormField::Hashed < FormField
   def results_for_hash_values(result)
     return [] if result.blank?
 
-    keys = options_for_input.map { |k, v| v.to_s }
-    totals = Hash[keys.zip(result.map { |h| h.values_at(*keys) }.inject{ |a, v| a.zip(v).map{ |sum, t| sum.to_f + t.to_f} })]
+    keys = options_for_input.map { |_, v| v.to_s }
+    totals = Hash[keys.zip(result.map { |h| h.values_at(*keys) }.inject { |a, v| a.zip(v).map{ |sum, t| sum.to_f + t.to_f } })]
 
     totals.inject({}) do |memo, (key, value)|
       memo[key.to_i] = value
@@ -31,15 +32,15 @@ class FormField::Hashed < FormField
   def results_for_percentage_chart_for_hash(result)
     totals = results_for_hash_values(result)
 
-    values = totals.reject{ |k, v| v.nil? || v == '' || v.to_f == 0.0 }
+    values = totals.reject { |k, v| v.nil? || v == '' || v.to_f == 0.0 }
     options_map = Hash[options_for_input.map{|o| [o[1], o[0]] }]
-    values.map{ |k, v| [options_map[k], v] }
+    values.map { |k, v| [options_map[k], v] }
   end
 
   def results_for_percentage_chart_for_value(result)
-    values = result.reject{ |k, v| k == nil || v.nil? || v == '' || v.to_f == 0.0 }
+    values = result.reject { |k, v| k == nil || v.nil? || v == '' || v.to_f == 0.0 }
     options_map = Hash[options_for_input.map{|o| [o[1], o[0]] }]
-    values.map{ |k, v| [options_map[k.to_i], v] }
+    values.map { |k, v| [options_map[k.to_i], v] }
   end
 
   def percent_of(n, t)
@@ -48,11 +49,11 @@ class FormField::Hashed < FormField
 
   def csv_results(campaign, event_scope, hash_result)
     events = form_field_results.for_event_campaign(campaign).merge(event_scope)
-    options_for_input.each do |n,_|
+    options_for_input.each do |n, _|
       hash_result[:titles] << "#{name} - #{n}"
     end
     events.each do |event|
-      value = event.hash_value.nil? ? "" : event.hash_value
+      value = event.hash_value.nil? ? '' : event.hash_value
       hash_result[event.resultable_id].concat(values_by_option(value)) unless hash_result[event.resultable_id].nil?
     end
     hash_result
@@ -62,6 +63,30 @@ class FormField::Hashed < FormField
     options_for_input.inject([]) do |memo, option|
       memo << hash_values[option[1].to_s]
       memo
+    end
+  end
+
+  def result_value(result)
+    return super unless is_hashed_value?
+    result['hash_value'] || result['value'] || {}
+  end
+
+  def validate_result(result)
+    super
+    # For some strange reason Dropdown also inherits from this class...
+    return unless is_hashed_value?
+    if required? && (result.value.nil? || (result.value.is_a?(Hash) && result.value.empty?))
+      result.errors.add(:value, I18n.translate('errors.messages.blank'))
+    elsif result.value.present?
+      if result.value.is_a?(Hash)
+        if result.value.any? { |k, v| v != '' && !is_valid_value_for_key?(k, v) }
+          result.errors.add :value, :invalid
+        elsif (result.value.keys.map(&:to_i) - valid_hash_keys).any?
+          result.errors.add :value, :invalid  # If a invalid key was given
+        end
+      else
+        result.errors.add :value, :invalid
+      end
     end
   end
 end

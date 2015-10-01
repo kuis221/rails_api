@@ -3,7 +3,10 @@ object @campaign
 attributes :id, :name, :modules, :survey_brand_ids
 
 child :form_fields => :form_fields do
-  attributes :id, :name, :type, :required, :settings, :ordering, :kpi_id, :min_options_allowed, :min_statements_allowed, :capture_mechanism
+  attributes :id, :name, :type, :required, :settings, :ordering, :kpi_id, :min_options_allowed, :min_statements_allowed, :multiple
+  node :have_results do |field|
+    field.form_field_results?
+  end
   node :options, if: ->(field){ field.respond_to?(:options) } do |field|
     field.options_for_input(true).each_with_index.map{|option, index| {id: option[1], name: option[0], ordering: index } }
   end

@@ -24,7 +24,7 @@ describe Api::V1::BrandAmbassadors::VisitsController, type: :controller do
       expect(result['total']).to eq(3)
       expect(result['page']).to eq(1)
       expect(result['results'].first.keys).to match_array(%w(
-        id visit_type visit_type_name start_date end_date campaign_id area_id
+        id visit_type start_date end_date campaign_id area_id
         city description status user campaign area))
     end
 
@@ -231,6 +231,52 @@ describe Api::V1::BrandAmbassadors::VisitsController, type: :controller do
       expect(response).to be_success
       result = JSON.parse(response.body)
 
+      expect(result).to match_array([
+        { 'id' => event1.id, 'start_date' => '11/09/2014', 'start_time' => '10:00 AM',
+           'end_date' => '11/09/2014', 'end_time' => '11:00 AM',
+           'status' => 'Active', 'event_status' => 'Late',
+           'campaign' => { 'id' => campaign.id, 'name' => 'My Campaign' },
+           'place' => { 'id' => place1.id, 'name' => 'Place 1', 'formatted_address' => 'Los Angeles, CA, US',
+                        'country' => 'US', 'state_name' => 'CA', 'city' => 'Los Angeles', 'zipcode' => '90210' } },
+        { 'id' => event2.id, 'start_date' => '11/10/2014', 'start_time' => '8:00 AM',
+          'end_date' => '11/11/2014', 'end_time' => '9:00 AM',
+          'status' => 'Active', 'event_status' => 'Late',
+          'campaign' => { 'id' => campaign.id, 'name' => 'My Campaign' },
+          'place' => { 'id' => place2.id, 'name' => 'Place 2', 'formatted_address' => 'Austin, TX, US',
+                       'country' => 'US', 'state_name' => 'TX', 'city' => 'Austin', 'zipcode' => '15879' } }])
+    end
+  end
+
+  describe '#events for auto_match_events', search: true do
+    before do
+      company.auto_match_events = 0
+      company.save
+    end
+    it 'returns a list of events' do
+      place1 = create(:place, name: 'Place 1', formatted_address: 'Los Angeles, CA, US', city: 'Los Angeles',
+                      state: 'CA', country: 'US', zipcode: '90210', types: %w(political locality))
+      place2 = create(:place, name: 'Place 2', formatted_address: 'Austin, TX, US', city: 'Austin',
+                      state: 'TX', country: 'US', zipcode: '15879', types: %w(political locality))
+      visit = create(:brand_ambassadors_visit, company: company,
+                     start_date: '11/09/2014', end_date: '11/13/2014',
+                     city: 'New York', area: area, campaign: campaign,
+                     visit_type: 'market_visit', company_user: company_user,
+                     description: 'The first visit description', active: true)
+
+      event1 = create(:event, start_date: '11/09/2014', end_date: '11/09/2014', start_time: '10:00am', user_ids: [company_user.id],
+                      end_time: '11:00am', campaign: campaign, place: place1, company: company, visit_id: visit.id)
+      event2 = create(:event, start_date: '11/10/2014', end_date: '11/11/2014', start_time: '8:00am', user_ids: [company_user.id],
+                      end_time: '9:00am', campaign: campaign, place: place2, company: company, visit_id: visit.id)
+      event3 = create(:event, start_date: '11/11/2014', end_date: '11/12/2014', start_time: '9:00am', user_ids: [company_user.id],
+                      end_time: '3:00pm', campaign: campaign, place: place2, company: company)
+      event4 = create(:event, start_date: '11/12/2014', end_date: '11/13/2014', start_time: '11:00am', user_ids: [company_user.id],
+                      end_time: '9:00pm', campaign: campaign, place: place1, company: company)
+
+      Sunspot.commit
+
+      get 'events', id: visit.to_param, format: :json
+      expect(response).to be_success
+      result = JSON.parse(response.body)
       expect(result).to match_array([
         { 'id' => event1.id, 'start_date' => '11/09/2014', 'start_time' => '10:00 AM',
            'end_date' => '11/09/2014', 'end_time' => '11:00 AM',

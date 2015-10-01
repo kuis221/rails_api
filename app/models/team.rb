@@ -39,7 +39,7 @@ class Team < ActiveRecord::Base
 
   scope :active, -> { where(active: true) }
 
-  scope :with_users, joins(:users).group('teams.id')
+  scope :with_users, -> { joins(:users).group('teams.id') }
   scope :with_user, ->(company_user) { joins(:users).where(company_users: { id: company_user }).group('teams.id')  }
   scope :with_active_users, ->(companies) { joins(:users).where(company_users: { active: true, company_id: companies }).group('teams.id') }
 

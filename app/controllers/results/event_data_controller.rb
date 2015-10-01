@@ -49,6 +49,8 @@ class Results::EventDataController < FilteredController
 
   def search_params
     @search_params || (super.tap do |p|
+      p[:sorting] ||= Event.search_start_date_field
+      p[:sorting_dir] ||= 'asc'
       p[:search_permission] = :index_results
       p[:search_permission_class] = EventData
       p[:event_data_stats] = true

@@ -198,7 +198,7 @@ class EventsController < FilteredController
       if can?(:update, Event) || can?(:create, Event)
         allowed.concat([
           :end_date, :end_time, :start_date, :start_time, :campaign_id, :visit_id,
-          :place_id, :place_reference, :description, :visit_id, { team_members: [] }])
+          :place_id, :place_reference, :description, { team_members: [] }])
       end
       if can?(:edit_data, Event)
         allowed.concat([

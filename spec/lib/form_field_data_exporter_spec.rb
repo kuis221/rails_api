@@ -93,7 +93,7 @@ describe FormFieldDataExporter, type: :model do
         expect(event.save).to be_truthy
 
         expect(subject.custom_fields_to_export_headers).to eq(['MY PERC FIELD: PERC OPT1', 'MY PERC FIELD: PERC OPT2'])
-        expect(subject.custom_fields_to_export_values(event)).to eq([ 0.3,  0.7])
+        expect(subject.custom_fields_to_export_values(event)).to eq([0.3,  0.7])
       end
 
       it 'includes SUMMATION fields that are not linked to a KPI' do
@@ -114,34 +114,58 @@ describe FormFieldDataExporter, type: :model do
         ])
       end
 
-      it 'includes LIKERT SCALE fields that are not linked to a KPI' do
-        field = create(:form_field_likert_scale, name: 'My LikertScale Field',
-          fieldable: campaign,
-          options: [
-            option1 = create(:form_field_option, name: 'LikertScale Opt1'),
-            option2 = create(:form_field_option, name: 'LikertScale Opt2')],
-          statements: [
-            statement1 = create(:form_field_statement, name: 'LikertScale Stat1'),
-            statement2 = create(:form_field_statement, name: 'LikertScale Stat2')])
+      describe 'LIKERT SCALE fields' do
+        let(:option1) { create(:form_field_option, name: 'LikertScale Opt1') }
+        let(:option2) { create(:form_field_option, name: 'LikertScale Opt2') }
+        let(:statement1) { create(:form_field_statement, name: 'LikertScale Stat1') }
+        let(:statement2) { create(:form_field_statement, name: 'LikertScale Stat2') }
+        let(:field) { create(:form_field_likert_scale, name: 'My LikertScale Field',
+                                                       fieldable: campaign,
+                                                       multiple: false,
+                                                       options: [option1, option2],
+                                                       statements: [statement1, statement2]
+                      )
+        }
 
-        event.results_for([field]).first.value = { statement1.id.to_s => option1.id.to_s,
-                                                   statement2.id.to_s => option2.id.to_s }
-        expect(event.save).to be_truthy
+        it 'includes single answer LIKERT SCALE fields that are not linked to a KPI' do
+          event.results_for([field]).first.value = { statement1.id.to_s => option1.id.to_s,
+                                                     statement2.id.to_s => option2.id.to_s }
+          expect(event.save).to be_truthy
 
-        event2 = create(:approved_event, campaign: campaign)
-        event.results_for([field]).first.value = nil
-        expect(event.save).to be_truthy
+          event2 = create(:approved_event, campaign: campaign)
 
-        expect(subject.custom_fields_to_export_headers).to eq([
-          'MY LIKERTSCALE FIELD: LIKERTSCALE OPT1', 'MY LIKERTSCALE FIELD: LIKERTSCALE OPT2'
-        ])
-        expect(subject.custom_fields_to_export_values(event)).to eq([
-          'LikertScale Stat1', 'LikertScale Stat2'
-        ])
+          expect(subject.custom_fields_to_export_headers).to eq([
+            'MY LIKERTSCALE FIELD: LIKERTSCALE STAT1', 'MY LIKERTSCALE FIELD: LIKERTSCALE STAT2'
+          ])
+          expect(subject.custom_fields_to_export_values(event)).to eq([
+            'LikertScale Opt1', 'LikertScale Opt2'
+          ])
 
-        expect(subject.custom_fields_to_export_values(event2)).to eq([
-          nil, nil
-        ])
+          expect(subject.custom_fields_to_export_values(event2)).to eq([
+            nil, nil
+          ])
+        end
+
+        it 'includes multiple answer LIKERT SCALE fields that are not linked to a KPI' do
+          field.update_attribute(:multiple, true)
+          event.results_for([field]).first.value = { statement1.id.to_s => [option1.id.to_s],
+                                                     statement2.id.to_s => [option1.id.to_s, option2.id.to_s] }
+          expect(event.save).to be_truthy
+
+          event2 = create(:approved_event, campaign: campaign)
+
+          expect(subject.custom_fields_to_export_headers).to eq([
+            'MY LIKERTSCALE FIELD: LIKERTSCALE STAT1 - LIKERTSCALE OPT1', 'MY LIKERTSCALE FIELD: LIKERTSCALE STAT1 - LIKERTSCALE OPT2',
+            'MY LIKERTSCALE FIELD: LIKERTSCALE STAT2 - LIKERTSCALE OPT1', 'MY LIKERTSCALE FIELD: LIKERTSCALE STAT2 - LIKERTSCALE OPT2'
+          ])
+          expect(subject.custom_fields_to_export_values(event)).to eq([
+            '1', nil, '1', '1'
+          ])
+
+          expect(subject.custom_fields_to_export_values(event2)).to eq([
+            nil, nil, nil, nil
+          ])
+        end
       end
 
       it 'includes TIME fields that are not linked to a KPI' do
@@ -236,7 +260,7 @@ describe FormFieldDataExporter, type: :model do
           expect(subject.custom_fields_to_export_values(event2)).to eq([0.1, 0.9])
         end
 
-      it 'merge custom segmented fields of different campaigns with the same name and type into the same column even with different options' do
+        it 'merge custom segmented fields of different campaigns with the same name and type into the same column even with different options' do
           field1 = create(:form_field_percentage, name: 'My Perc Field',
             fieldable: campaign, options: [
               option11 = create(:form_field_option, name: 'Perc Opt1'),
@@ -530,6 +554,52 @@ describe FormFieldDataExporter, type: :model do
 
         expect(subject.custom_fields_to_export_headers).to eq(['MY DATE FIELD'])
         expect(subject.custom_fields_to_export_values(activity)).to eq(['01/31/2014'])
+      end
+
+      describe 'LIKERT SCALE fields' do
+        let(:option1) { create(:form_field_option, name: 'LikertScale Opt1') }
+        let(:option2) { create(:form_field_option, name: 'LikertScale Opt2') }
+        let(:statement1) { create(:form_field_statement, name: 'LikertScale Stat1') }
+        let(:statement2) { create(:form_field_statement, name: 'LikertScale Stat2') }
+        let(:field) { create(:form_field_likert_scale, name: 'My LikertScale Field',
+                                                       fieldable: activity_type,
+                                                       multiple: false,
+                                                       options: [option1, option2],
+                                                       statements: [statement1, statement2]
+                      )
+        }
+
+        it 'includes single answer LIKERT SCALE fields that are not linked to a KPI' do
+          activity.results_for([field]).first.value = { statement1.id.to_s => option1.id.to_s,
+                                                        statement2.id.to_s => option2.id.to_s }
+          expect(activity.save).to be_truthy
+
+          expect(subject.custom_fields_to_export_headers).to eq([
+            'MY LIKERTSCALE FIELD: LIKERTSCALE STAT1', 'MY LIKERTSCALE FIELD: LIKERTSCALE STAT2'
+          ])
+          expect(subject.custom_fields_to_export_values(activity)).to eq([
+            'LikertScale Opt1', 'LikertScale Opt2'
+          ])
+        end
+
+        it 'includes multiple answer LIKERT SCALE fields that are not linked to a KPI' do
+          field.update_attribute(:multiple, true)
+          activity.results_for([field]).first.value = { statement1.id.to_s => [option1.id.to_s],
+                                                        statement2.id.to_s => [option1.id.to_s,
+                                                                               option2.id.to_s] }
+          expect(activity.save).to be_truthy
+
+          expect(subject.custom_fields_to_export_headers).to eq([
+            'MY LIKERTSCALE FIELD: LIKERTSCALE STAT1 - LIKERTSCALE OPT1',
+            'MY LIKERTSCALE FIELD: LIKERTSCALE STAT1 - LIKERTSCALE OPT2',
+            'MY LIKERTSCALE FIELD: LIKERTSCALE STAT2 - LIKERTSCALE OPT1',
+            'MY LIKERTSCALE FIELD: LIKERTSCALE STAT2 - LIKERTSCALE OPT2'
+          ])
+
+          expect(subject.custom_fields_to_export_values(activity)).to eq([
+            '1', nil, '1', '1'
+          ])
+        end
       end
 
       describe 'when filtered by activity_type' do

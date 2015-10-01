@@ -13,7 +13,7 @@ node :total do
 end
 
 child @visits => 'results' do
-  attributes :id, :visit_type, :visit_type_name, :start_date, :end_date,
+  attributes :id, :visit_type, :start_date, :end_date,
              :area_id, :campaign_id, :city, :description, :status
   child(:company_user => :user) do
     attributes :id, :full_name

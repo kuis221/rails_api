@@ -190,6 +190,10 @@ module PlacesHelper
     (5 - price).times.map {|_| '$' }.join.html_safe
   end
 
+  def select_price_level()
+    { '$': 1, '$$': 2, '$$$': 3, '$$$$': 4, '$$$$$': 5 }
+  end
+
   def select_days()
     days = { 'Mon': 0, 'Tue': 1, 'Wed': 2, 'Thu': 3, 'Fri': 4, 'Sat': 5, 'Sun': 6 }
   end

@@ -2,28 +2,30 @@
 #
 # Table name: events
 #
-#  id             :integer          not null, primary key
-#  campaign_id    :integer
-#  company_id     :integer
-#  start_at       :datetime
-#  end_at         :datetime
-#  aasm_state     :string(255)
-#  created_by_id  :integer
-#  updated_by_id  :integer
-#  created_at     :datetime         not null
-#  updated_at     :datetime         not null
-#  active         :boolean          default(TRUE)
-#  place_id       :integer
-#  promo_hours    :decimal(6, 2)    default(0.0)
-#  reject_reason  :text
-#  timezone       :string(255)
-#  local_start_at :datetime
-#  local_end_at   :datetime
-#  description    :text
-#  kbmg_event_id  :string(255)
-#  rejected_at    :datetime
-#  submitted_at   :datetime
-#  approved_at    :datetime
+#  id                  :integer          not null, primary key
+#  campaign_id         :integer
+#  company_id          :integer
+#  start_at            :datetime
+#  end_at              :datetime
+#  aasm_state          :string(255)
+#  created_by_id       :integer
+#  updated_by_id       :integer
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  active              :boolean          default(TRUE)
+#  place_id            :integer
+#  promo_hours         :decimal(6, 2)    default(0.0)
+#  reject_reason       :text
+#  timezone            :string(255)
+#  local_start_at      :datetime
+#  local_end_at        :datetime
+#  description         :text
+#  kbmg_event_id       :string(255)
+#  rejected_at         :datetime
+#  submitted_at        :datetime
+#  approved_at         :datetime
+#  active_photos_count :integer          default(0)
+#  visit_id            :integer
 #
 
 require 'rails_helper'
@@ -123,6 +125,15 @@ describe Event, type: :model do
     it { is_expected.not_to allow_value(Time.zone.local(2016, 2, 3, 12, 5, 0).to_s(:slashes)).for(:end_date).with_message('should be before 02/03/2016') }
     it { is_expected.to allow_value(Time.zone.local(2016, 2, 1, 12, 5, 0).to_s(:slashes)).for(:start_date) }
     it { is_expected.to allow_value(Time.zone.local(2016, 2, 2, 12, 5, 0).to_s(:slashes)).for(:end_date) }
+  end
+
+  describe 'between_visit_date_range: visit no present' do
+    it 'visit no present' do
+      event = Event.new(start_at: Time.zone.local(2016, 2, 1, 11, 5, 0),
+                        end_at: Time.zone.local(2016, 2, 1, 12, 5, 0))
+
+      expect(event.instance_eval{ between_visit_date_range }).to eql nil
+    end
   end
 
   describe 'reset_verification' do

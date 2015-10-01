@@ -13,7 +13,7 @@
 class Permission < ActiveRecord::Base
   belongs_to :role
 
-  validate :action, uniqueness: { scope: [:role_id, :subject_class] }
+  validates :action, uniqueness: { scope: [:role_id, :subject_class] }
 
   after_save { role.clear_cached_permissions }
 end

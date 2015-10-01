@@ -6,7 +6,6 @@
 #  event_id                  :integer
 #  impressions               :integer          default(0)
 #  interactions              :integer          default(0)
-#  photos_count              :integer          default(0)
 #  samples                   :integer          default(0)
 #  gender_female             :decimal(5, 2)    default(0.0)
 #  gender_male               :decimal(5, 2)    default(0.0)

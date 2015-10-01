@@ -1,11 +1,10 @@
 - add_event_btn = button_to('Add Event', new_event_path(resource, event: { visit_id: resource.id, campaign_id: resource.campaign_id }, format: :js), remote: true, class: 'btn btn-primary', :id => 'new-event-btn', method: :get) if can?(:create, Event)
-
 .row-fluid.with-details-close-bar
   = resource_details_bar("You are viewing visit details. Click to close.")
 
   .details_box.padding-top-close-bar
     .details-main-title
-      h2.pull-left= resource.visit_type_name
+      h2.pull-left= resource.visit_type
       .edition-links
         = button_to_edit resource if can?(:edit, resource)
         = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
@@ -61,42 +60,56 @@
 
       #collection-list-filters.hide
       div#events-list.resource-list
-
-
+        - unless current_company.auto_match_events == 1
+          = render partial: 'events/event', collection: resource.events.accessible_by_user(current_company_user).order('events.start_at ASC')
+      - unless current_company.auto_match_events == 1
+        .blank-state.section-module.event-blank-state style="display: none"
+          h5.text-center
+            = I18n.t("invite_events.empty.line1", scope: :blank_states)
+          = add_event_btn
   #visit-documents.details_box
     = render partial: 'brand_ambassadors/document_folders/index', locals: {children: (resource.document_folders.root_children.active + resource.brand_ambassadors_documents.root_children.active).sort_by(&:name), parent: resource, callback_url: brand_ambassadors_visit_documents_path(resource, format: :js) }
-
-javascript:
-  $('#collection-list-filters').filteredList({
-    'source': '#{url_for(controller: '/events', action: :items)}',
-    'filtersUrl': null,
-    'listContainer' : '#events-list',
-    'sorting': 'start_at',
-    'sorting_dir': 'asc',
-    'includeCalendars': true,
-    'selectDefaultDate': false,
-    'selectDefaultDateRange': false,
-    'ytdDatesRange': '#{current_company.ytd_dates_range}',
-    'includeAutoComplete': false,
-    'fixListHeight': false,
-    'defaultParams': '#{j default_params_for_view('start_date[]=' + resource.start_date.strftime("%m/%d/%Y") + '&end_date[]=' + resource.end_date.strftime("%m/%d/%Y") + '&campaign[]=' + resource.campaign_id.to_s + (resource.area_id ? '&area[]=' + resource.area_id.to_s : '') + '&user[]=' +resource.company_user_id.to_s)}',
-    'placeholderElement': function(message) {
-      return false;
-    },
-    'onItemsLoad': function(response, page) {
-      if (response.find('[data-content="items"]').data('total') > 0) {
-        $('.event-blank-state').remove();
-        $('#event-list-wrapper').show();
-      } else {
-        $('#event-list-wrapper').hide();
-        $('#{blank_state_module('visit.events') { add_event_btn } }').addClass('event-blank-state').insertAfter($('#event-list-wrapper'));
-      }
-    },
-    'applyTo': 'visits',
-    'emptyStateMessage': '#{j t("invite_events.empty.line1", scope: :blank_states) }',
-    'emptyStateMessageLine2': '#{j t("invite_events.empty.line2.with#{can?(:create, Event) ? '' : 'out'}_schedule_permissions", scope: :blank_states) }',
-    'emptyFilterResultsMessage': '#{j t("invite_events.filters.line1", default: :filters_line1, scope: :blank_states) }',
-    'emptyFilterResultsMessageLine2': '#{j t("invite_events.filters.line2", default: :filters_line2, scope: :blank_states) }'
-  });
-
+- if current_company.auto_match_events == 1
+  javascript:
+    $('#collection-list-filters').filteredList({
+      'source': '#{url_for(controller: '/events', action: :items)}',
+      'filtersUrl': null,
+      'listContainer' : '#events-list',
+      'sorting': 'start_at',
+      'sorting_dir': 'asc',
+      'includeCalendars': true,
+      'selectDefaultDate': false,
+      'selectDefaultDateRange': false,
+      'ytdDatesRange': '#{current_company.ytd_dates_range}',
+      'includeAutoComplete': false,
+      'fixListHeight': false,
+      'defaultParams': '#{j default_params_for_view('start_date[]=' + resource.start_date.strftime("%m/%d/%Y") + '&end_date[]=' + resource.end_date.strftime("%m/%d/%Y") + '&campaign[]=' + resource.campaign_id.to_s + (resource.area_id ? '&area[]=' + resource.area_id.to_s : '') + '&user[]=' +resource.company_user_id.to_s)}',
+      'placeholderElement': function(message) {
+        return false;
+      },
+      'onItemsLoad': function(response, page) {
+        if (response.find('[data-content="items"]').data('total') > 0) {
+          $('.event-blank-state').remove();
+          $('#event-list-wrapper').show();
+        } else {
+          $('#event-list-wrapper').hide();
+          $('#{blank_state_module('visit.events') { add_event_btn } }').addClass('event-blank-state').insertAfter($('#event-list-wrapper'));
+        }
+      },
+      'applyTo': 'visits',
+      'emptyStateMessage': '#{j t("invite_events.empty.line1", scope: :blank_states) }',
+      'emptyStateMessageLine2': '#{j t("invite_events.empty.line2.with#{can?(:create, Event) ? '' : 'out'}_schedule_permissions", scope: :blank_states) }',
+      'emptyFilterResultsMessage': '#{j t("invite_events.filters.line1", default: :filters_line1, scope: :blank_states) }',
+      'emptyFilterResultsMessageLine2': '#{j t("invite_events.filters.line2", default: :filters_line2, scope: :blank_states) }'
+    });
+- else
+  javascript:
+    if ($('.resource-item').length > 0) {
+      $('.event-blank-state').hide();
+      $('#event-list-wrapper').show();
+    }
+    else {
+      $('.event-blank-state').show();
+      $('#event-list-wrapper').hide();
+    }
 - reload_page_on_edit_resource

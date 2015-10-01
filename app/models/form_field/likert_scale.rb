@@ -13,9 +13,10 @@
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  kpi_id         :integer
+#  multiple       :boolean
 #
 
-class FormField::LikertScale < FormField
+class FormField::LikertScale < FormField::Hashed
   def field_options(result)
     {
       as: :likert_scale,
@@ -25,7 +26,8 @@ class FormField::LikertScale < FormField
       label: name,
       field_id: id,
       options: settings,
-      capture_mechanism: capture_mechanism,
+      multiple: multiple,
+      have_results: form_field_results?,
       required: required,
       input_html: {
         value: result.value,
@@ -61,7 +63,7 @@ class FormField::LikertScale < FormField
           value: result ? result.value[s.id.to_s] : nil }
       end,
       segments: options_for_input.map { |s| { id: s[1], text: s[0] } },
-      capture_mechanism: capture_mechanism
+      multiple: multiple
     )
   end
 
@@ -115,8 +117,8 @@ class FormField::LikertScale < FormField
       memo[statement.id] = {
         name: statement.name,
         totals: options.inject({}) do |m, (option)|
-            m[option.id] = { name: option.name, total: 0 }
-            m
+          m[option.id] = { name: option.name, total: 0 }
+          m
         end
       }
       memo
@@ -125,14 +127,14 @@ class FormField::LikertScale < FormField
 
   def totals_likert_scale(totals)
     values = totals.reject{ |_, v| v[:total].nil? || v[:total] == '' || v[:total].to_f == 0.0 }
-    values.map{ |_, v| [v[:name], v[:total]] }
+    values.map { |_, v| [v[:name], v[:total]] }
   end
 
   def values_by_option(hash_values)
     statements.inject([]) do |memo, statement|
       opt = hash_values[statement.id.to_s]
       object_option = options.find(opt.to_i) unless opt.nil?
-      value = object_option.nil? ? "" : object_option.name
+      value = object_option.nil? ? '' : object_option.name
       memo << value
       memo
     end

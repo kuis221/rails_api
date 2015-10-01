@@ -14,6 +14,8 @@
 #
 
 class FormFieldResult < ActiveRecord::Base
+  attr_accessor :value_dirty, :value_tmp
+
   belongs_to :resultable, polymorphic: true
   belongs_to :form_field
 
@@ -24,7 +26,7 @@ class FormFieldResult < ActiveRecord::Base
 
   has_one :attached_asset, as: :attachable, dependent: :destroy, inverse_of: :attachable
 
-  before_validation :prepare_for_store
+  before_validation :check_value_dirty
   after_commit :reindex_trending
 
   scope :for_kpi, -> (kpi) { joins(:form_field).where(form_fields: { kpi_id: kpi }) }
@@ -34,17 +36,35 @@ class FormFieldResult < ActiveRecord::Base
   scope :for_place_in_company, -> (place, company) { joins('INNER JOIN events ON events.id=form_field_results.resultable_id AND form_field_results.resultable_type=\'Event\'').where(events: { company_id: company, place_id: place }) }
 
   def value
-    if form_field.present? && form_field.is_hashed_value?
-      if form_field.type == 'FormField::Checkbox'
-        (attributes['hash_value'].try(:keys) || attributes['value'] || []).map(&:to_i)
-      else
-        attributes['hash_value'] || attributes['value'] || {}
-      end
-    elsif form_field.present? && form_field.settings.present? && form_field.settings.key?('multiple') && form_field.settings['multiple']
-      attributes['value'].try(:split, ',')
-    else
-      attributes['value']
+    return @value_tmp if @value_dirty
+    form_field.result_value self if form_field.present?
+  end
+
+  def value=(val)
+    unless form_field.present?
+      @value_dirty = true
+      return @value_tmp = val
     end
+    val = form_field.store_value(val)
+    if form_field.is_hashed_value?
+      self[:hash_value] = val
+    else
+      if form_field.is_attachable? && !val.blank?
+        build_attached_asset(direct_upload_url: val)
+      end
+      self[:scalar_value] = val.to_f rescue 0 if val.present? && val.to_s =~ /\A[0-9\.\,]+\z/
+      self[:value] = val
+    end
+  end
+
+  def form_field_id=(id)
+    super
+    check_value_dirty
+  end
+
+  def form_field=(field)
+    super
+    check_value_dirty
   end
 
   def to_html
@@ -70,17 +90,10 @@ class FormFieldResult < ActiveRecord::Base
     form_field.validate_result(self)
   end
 
-  def prepare_for_store
-    if self.value_changed?
-      self.value = form_field.store_value(attributes['value'])
-      if form_field.is_hashed_value?
-        (self.hash_value, self.value) = [attributes['value'], nil]
-      elsif form_field.is_attachable?
-        build_attached_asset(direct_upload_url: value) unless value.nil? || value == ''
-      end
-    end
-    self.scalar_value = value.to_f rescue 0 if value.present? && value.to_s =~ /\A[0-9\.\,]+\z/
-    true
+  def check_value_dirty
+    return unless @value_dirty && form_field.present?
+    self.value = @value_tmp # re-assign the value now that there is a a form field
+    @value_dirty = @value_tmp = nil
   end
 
   def reindex_trending

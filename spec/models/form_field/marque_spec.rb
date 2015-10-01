@@ -13,6 +13,7 @@
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  kpi_id         :integer
+#  multiple       :boolean
 #
 
 require 'rails_helper'
@@ -63,10 +64,10 @@ describe FormField::Marque, type: :model do
       campaign.activity_types << @activity_type
       venue = create(:venue, place: create(:place), company: Company.current)
       activity = create(:activity, activity_type: @activity_type, activitable: venue, campaign: campaign, company_user_id: 1)
-      ff_brand = create(:form_field, type: 'FormField::Brand', fieldable: @activity_type, settings: {}, ordering: 1)
-      activity_result = create(:form_field_result, resultable: activity, form_field: ff_brand, value: brand.id)
+      ff_brand = create(:form_field_brand, fieldable: @activity_type, settings: {}, ordering: 1)
+      brand_result = create(:form_field_result, resultable: activity, form_field: ff_brand, value: brand.id)
       @activity_type.form_fields.reload
-      ff_marque = create(:form_field, type: 'FormField::Marque', fieldable: @activity_type, settings: {}, ordering: 2)
+      ff_marque = create(:form_field_marque, fieldable: @activity_type, settings: {}, ordering: 2)
       activity_result = create(:form_field_result, resultable: activity, form_field: ff_marque, value: "#{marque1.id},#{marque2.id}")
 
       ff_marque = FormField.find(ff_marque.id)
@@ -86,9 +87,9 @@ describe FormField::Marque, type: :model do
       campaign.activity_types << @activity_type
       venue = create(:venue, place: create(:place), company: Company.current)
       activity = create(:activity, activity_type: @activity_type, activitable: venue, campaign: campaign, company_user_id: 1)
-      ff_brand = create(:form_field, type: 'FormField::Brand', fieldable: @activity_type, settings: {}, ordering: 1)
+      ff_brand = create(:form_field_brand, fieldable: @activity_type, settings: {}, ordering: 1)
       @activity_type.form_fields.reload
-      ff_marque = create(:form_field, type: 'FormField::Marque', fieldable: @activity_type, settings: {}, ordering: 2)
+      ff_marque = create(:form_field_marque, fieldable: @activity_type, settings: {}, ordering: 2)
       activity_result = build(:form_field_result, resultable: activity, form_field: ff_marque)
 
       ff_marque = FormField.find(ff_marque.id)

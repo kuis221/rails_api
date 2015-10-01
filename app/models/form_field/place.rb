@@ -13,7 +13,9 @@
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  kpi_id         :integer
+#  multiple       :boolean
 #
+
 class FormField
   class Place < FormField
     def field_options(result)
@@ -49,7 +51,7 @@ class FormField
 
     def format_json(result)
       super.merge!(
-        if result.nil? || result.value.empty?
+        if result.nil? || result.value.blank?
           { value: nil }
         else
           { value: result.value,

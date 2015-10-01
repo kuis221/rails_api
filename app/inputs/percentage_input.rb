@@ -1,5 +1,5 @@
 class PercentageInput < SimpleForm::Inputs::Base
-  def input
+  def input(wrapper_options)
     if options[:collection] && options[:collection].length > 0
       field_id = options[:field_id].to_s
       output_html = '

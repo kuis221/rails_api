@@ -68,6 +68,13 @@ describe Results::EventDataController, type: :controller do
                                       event_expenses: [
                                         build(:event_expense, category: 'Entertainment', amount: 99.99)
                                       ])
+      # Event to test order by event start date
+      event2 = create(:approved_event, company: company, campaign: campaign, place: place,
+                                       start_date: '01/22/2019', end_date: '01/22/2019',
+                                       start_time: '09:00 am', end_time: '11:00 am',
+                                       event_expenses: [
+                                         build(:event_expense, category: 'Entertainment', amount: 88.88)
+                                       ])
       event.users << company_user
       team = create(:team, company: company, name: 'zteam')
       event.teams << team
@@ -93,6 +100,10 @@ describe Results::EventDataController, type: :controller do
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'CITY', 'STATE', 'ZIP',
          'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL', 'START', 'END',
          'SUBMITTED AT', 'APPROVED AT', 'PROMO HOURS', 'SPENT', 'ENTERTAINMENT'],
+        ['Test Campaign FY01', 'My area', '="443321"', 'Bar Prueba',
+         'Bar Prueba, 11 Main St., Los Angeles, California, 12345', 'US', 'Los Angeles', 'California', '12345',
+         'Active', 'Approved', '', '', "http://test.host/events/#{event2.id}", '2019-01-22 09:00', '2019-01-22 11:00',
+         nil, nil, '2.00', '88.88', '88.88'],
         ['Test Campaign FY01', 'My area', '="443321"', 'Bar Prueba',
          'Bar Prueba, 11 Main St., Los Angeles, California, 12345', 'US', 'Los Angeles', 'California', '12345',
          'Active', 'Approved', 'Test User, zteam', 'Chris Jaskot, Guillermo Vargas',
@@ -122,6 +133,7 @@ describe Results::EventDataController, type: :controller do
          "http://test.host/events/#{event.id}", '2013-01-23 10:00', '2013-01-23 12:00', nil, nil, '2.00',
          '0', '9876.0']
       ])
+      Campaign.find(campaign.id)
     end
 
     it 'includes any custom fields for the campaigns in the custom filter' do
@@ -331,6 +343,7 @@ describe Results::EventDataController, type: :controller do
       expect do
         xhr :get, 'index', campaign: [campaign.id, campaign2.id], format: :csv
       end.to change(ListExport, :count).by(1)
+
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'CITY',
@@ -415,6 +428,63 @@ describe Results::EventDataController, type: :controller do
          "http://test.host/events/#{event2.id}", '2013-01-24 10:00', '2013-01-24 12:00',
          nil, nil, '2.00', '0', '0.0', '0.0', '134.0']
       ])
+    end
+
+    describe 'Include the likert scale fields' do
+      let(:cf) { create(:custom_filter, owner: company_user, filters: "campaign[]=#{campaign.id}") }
+      let(:option1) { create(:form_field_option, name: 'LikertScale Opt1') }
+      let(:option2) { create(:form_field_option, name: 'LikertScale Opt2') }
+      let(:statement1) { create(:form_field_statement, name: 'LikertScale Stat1') }
+      let(:statement2) { create(:form_field_statement, name: 'LikertScale Stat2') }
+      let(:field) { create(:form_field_likert_scale, name: 'My LikertScale Field',
+                                                     fieldable: campaign,
+                                                     multiple: false,
+                                                     options: [option1, option2],
+                                                     statements: [statement1, statement2]
+                    )
+      }
+
+      let(:place) { create(:place, name: 'Bar Prueba', city: 'Los Angeles', state: 'California', country: 'US') }
+      let(:event) { build(:approved_event, campaign: campaign, place: place, start_date: '01/23/2013', end_date: '01/23/2013') }
+
+      it 'should correctly include the single answer likert scale fields' do
+        event.results_for([field]).first.value = { statement1.id.to_s => option1.id.to_s,
+                                                   statement2.id.to_s => option2.id.to_s }
+        event.save
+        Sunspot.commit
+
+        expect { xhr :get, 'index', cfid: [cf.id], format: :csv }.to change(ListExport, :count).by(1)
+        ResqueSpec.perform_all(:export)
+        expect(ListExport.last).to have_rows([
+          ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'CITY', 'STATE', 'ZIP',
+           'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL', 'START', 'END', 'SUBMITTED AT',
+           'APPROVED AT', 'PROMO HOURS', 'SPENT', 'MY LIKERTSCALE FIELD: LIKERTSCALE STAT1', 'MY LIKERTSCALE FIELD: LIKERTSCALE STAT2'],
+          ['Test Campaign FY01', '', nil, 'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345', 'US',
+           'Los Angeles', 'California', '12345', 'Active', 'Approved', '', '', "http://test.host/events/#{event.id}",
+           '2013-01-23 10:00', '2013-01-23 12:00', nil, nil, '2.00', '0', 'LikertScale Opt1', 'LikertScale Opt2']
+        ])
+      end
+
+      it 'should correctly include the multiple answer likert scale fields' do
+        field.update_attribute(:multiple, true)
+        event.results_for([field]).first.value = { statement1.id.to_s => [option1.id.to_s],
+                                                   statement2.id.to_s => [option1.id.to_s, option2.id.to_s] }
+        event.save
+        Sunspot.commit
+
+        expect { xhr :get, 'index', cfid: [cf.id], format: :csv }.to change(ListExport, :count).by(1)
+        ResqueSpec.perform_all(:export)
+        expect(ListExport.last).to have_rows([
+          ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'CITY', 'STATE', 'ZIP',
+           'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL', 'START', 'END', 'SUBMITTED AT',
+           'APPROVED AT', 'PROMO HOURS', 'SPENT', 'MY LIKERTSCALE FIELD: LIKERTSCALE STAT1 - LIKERTSCALE OPT1',
+           'MY LIKERTSCALE FIELD: LIKERTSCALE STAT1 - LIKERTSCALE OPT2', 'MY LIKERTSCALE FIELD: LIKERTSCALE STAT2 - LIKERTSCALE OPT1',
+           'MY LIKERTSCALE FIELD: LIKERTSCALE STAT2 - LIKERTSCALE OPT2'],
+          ['Test Campaign FY01', '', nil, 'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345', 'US',
+           'Los Angeles', 'California', '12345', 'Active', 'Approved', '', '', "http://test.host/events/#{event.id}",
+           '2013-01-23 10:00', '2013-01-23 12:00', nil, nil, '2.00', '0', '1', nil, '1', '1']
+        ])
+      end
     end
   end
 end
