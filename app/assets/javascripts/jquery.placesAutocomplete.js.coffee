@@ -33,6 +33,8 @@ $.widget 'brandscopic.placesAutocomplete', {
 		@element.blur (e) =>
 			if @element.val() == ''
 				$(@element.data('hidden')).val ''
+			else
+				@element.val @value
 
 		@getLocation()
 
