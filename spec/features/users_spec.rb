@@ -311,6 +311,34 @@ feature 'Users', js: true do
       expect(other_company_user.reload.brand_portfolios.to_a).to be_empty
     end
 
+    scenario 'should be able to assign campaign to the user' do
+      other_company_user = create(:company_user, company_id: company.id)
+      brand_portfolio = create(:brand_portfolio, name: 'Guisqui', company: company)
+
+      campaign = create(:campaign, name: 'Cacique FY13', description: 'test campaign for guaro cacique', company: company)
+      campaign2 = create(:campaign, name: 'Centenario FY12', description: 'ron Centenario test campaign', company: company)
+
+      brand_portfolio.campaigns << campaign
+      brand_portfolio.campaigns << campaign2
+
+      visit company_user_path(other_company_user)
+
+      find("#btn-add-campaign-BrandPortfolio-#{brand_portfolio.id}").click
+
+      within visible_modal do
+        fill_in 'campaign-search-box', with: 'Caci'
+        expect(page).to have_content('Cacique FY13')
+        expect(page).to have_no_content('Centenario FY12')
+        within resource_item campaign do
+          click_js_link 'Add Campaign'
+        end
+        expect(page).to have_no_selector("#campaign-#{campaign.id}") # The campaign was removed from the available campaigns list
+      end
+      close_modal
+
+      expect(page).to have_content('Cacique FY13')
+    end
+
     scenario 'should be able to assign brands to the user' do
       other_company_user = create(:company_user, company_id: company.id)
       brand = create(:brand, name: 'Guisqui Rojo', company: company)
