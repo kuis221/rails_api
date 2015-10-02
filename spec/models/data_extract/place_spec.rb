@@ -22,7 +22,7 @@
 require 'rails_helper'
 
 RSpec.describe DataExtract::Place, type: :model do
-  pending '#available_columns' do
+  describe '#available_columns' do
     let(:subject) { described_class }
 
     it 'returns the correct columns' do
@@ -34,15 +34,18 @@ RSpec.describe DataExtract::Place, type: :model do
     end
   end
 
-  pending '#rows' do
+  describe '#rows' do
     let(:company) { create(:company) }
     let(:company_user) do
       create(:company_user, company: company,
                             user: create(:user, first_name: 'Benito', last_name: 'Camelas'))
     end
-    let(:subject) { described_class.new(company: company, current_user: company_user,
-                    columns: ['name', 'venues_types', 'street', 'city', 'state_name', 'country_name',
-                    'zipcode', 'td_linx_code', 'created_by', 'created_at']) }
+    let(:subject) do
+      described_class.new(company: company,
+        current_user: company_user,
+        columns: ['name', 'venues_types', 'street', 'city', 'state_name', 'country_name',
+                  'zipcode', 'td_linx_code', 'created_by', 'created_at'])
+    end
 
     it 'returns empty if no rows are found' do
       expect(subject.rows).to be_empty
@@ -55,7 +58,7 @@ RSpec.describe DataExtract::Place, type: :model do
 
       it 'returns all the events in the company with all the columns' do
         expect(subject.rows).to eql [
-          ['My Place', 'establishment', '11 Main St.', 'New York City', 'NY', 'US', '12345', nil, nil, '08/23/2013']
+          ['My Place', 'Establishment', '11 Main St.', 'New York City', 'NY', 'US', '12345', nil, nil, '08/23/2013']
         ]
       end
 
