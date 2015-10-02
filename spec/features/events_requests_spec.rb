@@ -616,11 +616,13 @@ feature 'Events section' do
           end
 
           scenario 'can filter the events by custom date range selecting start and end dates' do
-            create(:event, campaign: campaign1, start_date: '09/06/2015', end_date: '09/27/2015')
-            create(:event, campaign: campaign2, start_date: '09/23/2015', end_date: '09/23/2015')
-            create(:event, campaign: campaign2, start_date: '09/20/2015', end_date: '09/20/2015')
-            create(:event, campaign: campaign3, start_date: '09/23/2015', end_date: '09/23/2015')
-            create(:event, campaign: campaign3, start_date: '09/25/2015', end_date: '09/25/2015')
+            month_number = today.strftime('%m')
+            year_number = today.strftime('%Y')
+            create(:event, campaign: campaign1, start_date: "#{month_number}/06/#{year_number}", end_date: "#{month_number}/27/#{year_number}")
+            create(:event, campaign: campaign2, start_date: "#{month_number}/23/#{year_number}", end_date: "#{month_number}/23/#{year_number}")
+            create(:event, campaign: campaign2, start_date: "#{month_number}/20/#{year_number}", end_date: "#{month_number}/20/#{year_number}")
+            create(:event, campaign: campaign3, start_date: "#{month_number}/23/#{year_number}", end_date: "#{month_number}/23/#{year_number}")
+            create(:event, campaign: campaign3, start_date: "#{month_number}/25/#{year_number}", end_date: "#{month_number}/25/#{year_number}")
             Sunspot.commit
 
             visit events_path
@@ -630,9 +632,9 @@ feature 'Events section' do
             within 'ul.dropdown-menu' do
               expect(page).to have_button('Apply', disabled: true)
               find_field('Start date').click
-              select_and_fill_from_datepicker('custom_start_date', '09/20/2015')
+              select_and_fill_from_datepicker('custom_start_date', "#{month_number}/20/#{year_number}")
               find_field('End date').click
-              select_and_fill_from_datepicker('custom_end_date', '09/25/2015')
+              select_and_fill_from_datepicker('custom_end_date', "#{month_number}/25/#{year_number}")
               expect(page).to have_button('Apply', disabled: false)
               click_js_button 'Apply'
             end
