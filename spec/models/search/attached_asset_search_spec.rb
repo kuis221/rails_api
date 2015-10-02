@@ -20,8 +20,16 @@ describe AttachedAsset, type: :model, search: true do
     asset2 = create(:attached_asset, asset_type: 'document', attachable: event2, rating: 2)
     tag = create(:tag, company: company)
     tag2 = create(:tag, company: company)
+    company_user1 = create(:company_user, user: create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: company)
+    company_user2 = create(:company_user, user: create(:user, first_name: 'Mario', last_name: 'Cantinflas'), company: company)
+    team = create(:team, name: 'Team A', company: company)
     asset.tags << tag
     asset2.tags << [tag, tag2]
+    company_user1.update_attributes(team_ids: [team.id])
+    company_user2.update_attributes(team_ids: [team.id])
+    event.users << company_user1
+    event.teams << team
+    event2.users << company_user2
 
     # Search for all Attached Assets
     expect(search(company_id: company.id)).to match_array([asset, asset2])
@@ -33,6 +41,14 @@ describe AttachedAsset, type: :model, search: true do
       .to match_array([asset2])
     expect(search(company_id: company.id, asset_type: 'another'))
       .to match_array([])
+
+    # Search for Attached Assets on a given user
+    expect(search(company_id: company.id, user: [company_user1.id]))
+      .to match_array([asset])
+    expect(search(company_id: company.id, user: [company_user2.id]))
+      .to match_array([asset2])
+    expect(search(company_id: company.id, user: [company_user1.id, company_user2.id]))
+      .to match_array([asset, asset2])
 
     # Search for brands associated to the Attached Assets
     expect(search(company_id: company.id, brand: brand.id))
