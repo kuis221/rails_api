@@ -283,7 +283,7 @@ feature 'Activities management' do
       end
 
       field = find_field('Search for a place')
-      page.execute_script %{$('##{field['id']}').val('').keydown()}
+      page.execute_script %{$('##{field['id']}').val('Bar la Unión').keydown().blur()}
 
       click_button 'Save'
 
@@ -292,6 +292,23 @@ feature 'Activities management' do
       end
 
       expect(page).to have_content('Walt Disney World Dolphin')
+
+      visit venue_path(venue)
+
+      within resource_item do
+        click_js_link('Edit')
+      end
+
+      field = find_field('Search for a place')
+      page.execute_script %{$('##{field['id']}').val('').keydown().blur()}
+
+      click_button 'Save'
+
+      within resource_item do
+        click_js_link('Activity Details')
+      end
+
+      expect(page).to_not have_content('Walt Disney World Dolphin')
     end
 
     scenario 'allows the user to add an activity to a Venue, see it displayed in the Activities list and then deactivate it', search: true do
