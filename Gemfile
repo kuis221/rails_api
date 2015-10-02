@@ -129,8 +129,8 @@ group :test do
   # gem 'sms-spec', '~> 0.1.9'
   gem 'sms-spec'
   gem 'pdf-reader'
-  gem 'vcr'
-  gem 'webmock'
+#  gem 'vcr'
+  #gem 'webmock'
 end
 
 group :production do
