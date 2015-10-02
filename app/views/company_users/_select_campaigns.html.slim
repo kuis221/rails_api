@@ -1,8 +1,9 @@
-.resource-list.select-list
+input#campaign-search-box.search-box.select-list-seach-box type="text" name="q" data-list="#user-campaigns-list"
+#user-campaigns-list.resource-list.select-list
   - @campaigns.each do |campaign|
     .resource-item id="campaign-#{campaign.id}"
       .resource-item-link
         .text-large= campaign.name
         = campaign.description
       .resource-item-actions
-        = link_to '', add_campaign_company_user_path(resource, parent_id: params[:parent_id], parent_type: params[:parent_type], campaign_id: campaign.id), remote: true, method: :post, data: {disable_with: '...'}, class: 'icon-plus-sign'
+        = link_to '', add_campaign_company_user_path(resource, parent_id: params[:parent_id], parent_type: params[:parent_type], campaign_id: campaign.id), remote: true, method: :post, data: {disable_with: '...'}, class: 'icon-plus-sign', title: 'Add Campaign'

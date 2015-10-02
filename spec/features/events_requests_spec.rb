@@ -616,20 +616,13 @@ feature 'Events section' do
           end
 
           scenario 'can filter the events by custom date range selecting start and end dates' do
-            create(:event,
-                   campaign: campaign1,
-                   start_date: (today - 2.weeks).to_s(:slashes),
-                   end_date: (today - 2.weeks).to_s(:slashes))
-            create(:event, campaign: campaign2,
-                           start_date: today.to_s(:slashes), end_date: today.to_s(:slashes))
-            create(:event, campaign: campaign2,
-                           start_date: Date.today.beginning_of_week(:sunday).to_s(:slashes),
-                           end_date: Date.today.beginning_of_week(:sunday).to_s(:slashes))
-            create(:event, campaign: campaign3,
-                           start_date: today.to_s(:slashes), end_date: today.to_s(:slashes))
-            create(:event, campaign: campaign3,
-                           start_date: (Date.today.beginning_of_week(:sunday) + 5.days).to_s(:slashes),
-                           end_date: (Date.today.beginning_of_week(:sunday) + 5.days).to_s(:slashes))
+            month_number = today.strftime('%m')
+            year_number = today.strftime('%Y')
+            create(:event, campaign: campaign1, start_date: "#{month_number}/06/#{year_number}", end_date: "#{month_number}/27/#{year_number}")
+            create(:event, campaign: campaign2, start_date: "#{month_number}/23/#{year_number}", end_date: "#{month_number}/23/#{year_number}")
+            create(:event, campaign: campaign2, start_date: "#{month_number}/20/#{year_number}", end_date: "#{month_number}/20/#{year_number}")
+            create(:event, campaign: campaign3, start_date: "#{month_number}/23/#{year_number}", end_date: "#{month_number}/23/#{year_number}")
+            create(:event, campaign: campaign3, start_date: "#{month_number}/25/#{year_number}", end_date: "#{month_number}/25/#{year_number}")
             Sunspot.commit
 
             visit events_path
@@ -639,9 +632,9 @@ feature 'Events section' do
             within 'ul.dropdown-menu' do
               expect(page).to have_button('Apply', disabled: true)
               find_field('Start date').click
-              select_and_fill_from_datepicker('custom_start_date', Date.today.beginning_of_week(:sunday).to_s(:slashes))
+              select_and_fill_from_datepicker('custom_start_date', "#{month_number}/20/#{year_number}")
               find_field('End date').click
-              select_and_fill_from_datepicker('custom_end_date', (Date.today.beginning_of_week(:sunday) + 5.days).to_s(:slashes))
+              select_and_fill_from_datepicker('custom_end_date', "#{month_number}/25/#{year_number}")
               expect(page).to have_button('Apply', disabled: false)
               click_js_button 'Apply'
             end
