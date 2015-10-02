@@ -22,7 +22,7 @@
 require 'rails_helper'
 
 RSpec.describe DataExtract::Place, type: :model do
-  pending '#available_columns' do
+  describe '#available_columns' do
     let(:subject) { described_class }
 
     it 'returns the correct columns' do
@@ -34,28 +34,41 @@ RSpec.describe DataExtract::Place, type: :model do
     end
   end
 
-  pending '#rows' do
+  describe '#rows' do
     let(:company) { create(:company) }
     let(:company_user) do
       create(:company_user, company: company,
                             user: create(:user, first_name: 'Benito', last_name: 'Camelas'))
     end
-    let(:subject) { described_class.new(company: company, current_user: company_user,
-                    columns: ['name', 'venues_types', 'street', 'city', 'state_name', 'country_name',
-                    'zipcode', 'td_linx_code', 'created_by', 'created_at']) }
+    let(:subject) do
+      described_class.new(company: company,
+        current_user: company_user,
+        columns: ['name', 'venues_types', 'street', 'city', 'state_name', 'country_name',
+                  'zipcode', 'td_linx_code', 'created_by', 'created_at'])
+    end
 
     it 'returns empty if no rows are found' do
       expect(subject.rows).to be_empty
     end
 
     describe 'with data' do
+      let(:place1) do
+        create(:place, name: 'Vertigo 42',
+                       reference: 'REFERENCE1',
+                       place_id: 'PLACEID1',
+                       formatted_address: 'Tower 42, Los Angeles, CA 23211, United States',
+                       street_number: 23, route: 'Main Street',
+                       city: 'Los Angeles', state: 'CA', country: 'US',
+                       lonlat: 'POINT(44.44 11.11)')
+      end
+
       before do
-        create(:venue, place: create(:place, name: 'My Place'), company: company, created_at: Time.zone.local(2013, 8, 23, 9, 15))
+        create(:venue, place: place1, company: company, created_at: Time.zone.local(2013, 8, 23, 9, 15))
       end
 
       it 'returns all the events in the company with all the columns' do
         expect(subject.rows).to eql [
-          ['My Place', 'establishment', '11 Main St.', 'New York City', 'NY', 'US', '12345', nil, nil, '08/23/2013']
+          ['Vertigo 42', 'Establishment', '23 Main Street', 'Los Angeles', 'CA', 'US', '12345', nil, nil, '08/23/2013']
         ]
       end
 
@@ -66,29 +79,46 @@ RSpec.describe DataExtract::Place, type: :model do
         subject.default_sort_by = 'name'
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
-          ['My Place', 'New York City'],
-          ['Tres Rios', 'La Unión']
+          ['Tres Rios', 'La Unión'],
+          ['Vertigo 42', 'Los Angeles']
         ]
 
         subject.default_sort_by = 'name'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
-          ['Tres Rios', 'La Unión'],
-          ['My Place', 'New York City']
+          ['Vertigo 42', 'Los Angeles'],
+          ['Tres Rios', 'La Unión']
         ]
 
         subject.default_sort_by = 'city'
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
           ['Tres Rios', 'La Unión'],
-          ['My Place', 'New York City']
+          ['Vertigo 42', 'Los Angeles']
         ]
 
         subject.default_sort_by = 'city'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
-          ['My Place', 'New York City'],
+          ['Vertigo 42', 'Los Angeles'],
           ['Tres Rios', 'La Unión']
+        ]
+      end
+
+      it 'returns the correct data avoiding merged venues' do
+        place2 = create(:place, name: 'Vertigo Copy 42',
+                                reference: 'REFERENCE3',
+                                place_id: 'PLACEID2',
+                                formatted_address: 'Tower 42 Copy, Los Angeles, CA 23211, United States',
+                                street_number: 23, route: 'Main St.',
+                                city: 'Los Angeles', state: 'CA', country: 'US',
+                                lonlat: 'POINT(44.44 11.11)',
+                                merged_with_place_id: place1.id)
+
+        create(:venue, place: place2, company: company)
+
+        expect(subject.rows).to eql [
+          ['Vertigo 42', 'Establishment', '23 Main Street', 'Los Angeles', 'CA', 'US', '12345', nil, nil, '08/23/2013']
         ]
       end
     end
