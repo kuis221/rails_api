@@ -9,10 +9,11 @@ class CombinedSearch
 
   # Performs the search and returns the results
   def results
-    results = solr_search.compact
-    google_place_ids = google_place_ids_from_places(results.map { |p| p[:id] })
+    solr_results = solr_search.compact
+    google_place_ids = google_place_ids_from_places(solr_results.map { |p| p[:id] })
     google_results = filter_duplicated google_search, google_place_ids
-    sort_results(results + google_results).flatten.compact.slice(0, 10)
+    results = filter_merged solr_results, google_results
+    sort_results(results).flatten.compact.slice(0, 10)
   end
 
   def sort_results(rows)
@@ -59,6 +60,18 @@ class CombinedSearch
       reference, id = p[:id].split('||')
       place_ids.include?(reference) || place_ids.include?(id) || merged_ids.include?(id)
     end
+  end
+
+  def filter_merged(solr_results, google_results)
+    # Get places id for places merged with results from Solr
+    merged_ids = Place.where(merged_with_place_id: solr_results.map{ |r| r[:id] }).pluck(:place_id).uniq
+    # Remove results from Google that were merged with results from Solr
+    results = []
+    google_results.each do |r|
+      _reference, id = r[:id].split('||')
+      results.push(r) unless merged_ids.include?(id)
+    end
+    solr_results + results
   end
 
   def google_search

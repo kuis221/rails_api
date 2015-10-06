@@ -52,13 +52,23 @@ RSpec.describe DataExtract::Place, type: :model do
     end
 
     describe 'with data' do
+      let(:place1) do
+        create(:place, name: 'Vertigo 42',
+                       reference: 'REFERENCE1',
+                       place_id: 'PLACEID1',
+                       formatted_address: 'Tower 42, Los Angeles, CA 23211, United States',
+                       street_number: 23, route: 'Main Street',
+                       city: 'Los Angeles', state: 'CA', country: 'US',
+                       lonlat: 'POINT(44.44 11.11)')
+      end
+
       before do
-        create(:venue, place: create(:place, name: 'My Place'), company: company, created_at: Time.zone.local(2013, 8, 23, 9, 15))
+        create(:venue, place: place1, company: company, created_at: Time.zone.local(2013, 8, 23, 9, 15))
       end
 
       it 'returns all the events in the company with all the columns' do
         expect(subject.rows).to eql [
-          ['My Place', 'Establishment', '11 Main St.', 'New York City', 'NY', 'US', '12345', nil, nil, '08/23/2013']
+          ['Vertigo 42', 'Establishment', '23 Main Street', 'Los Angeles', 'CA', 'US', '12345', nil, nil, '08/23/2013']
         ]
       end
 
@@ -69,29 +79,46 @@ RSpec.describe DataExtract::Place, type: :model do
         subject.default_sort_by = 'name'
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
-          ['My Place', 'New York City'],
-          ['Tres Rios', 'La Unión']
+          ['Tres Rios', 'La Unión'],
+          ['Vertigo 42', 'Los Angeles']
         ]
 
         subject.default_sort_by = 'name'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
-          ['Tres Rios', 'La Unión'],
-          ['My Place', 'New York City']
+          ['Vertigo 42', 'Los Angeles'],
+          ['Tres Rios', 'La Unión']
         ]
 
         subject.default_sort_by = 'city'
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
           ['Tres Rios', 'La Unión'],
-          ['My Place', 'New York City']
+          ['Vertigo 42', 'Los Angeles']
         ]
 
         subject.default_sort_by = 'city'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
-          ['My Place', 'New York City'],
+          ['Vertigo 42', 'Los Angeles'],
           ['Tres Rios', 'La Unión']
+        ]
+      end
+
+      it 'returns the correct data ignoring merged venues' do
+        place2 = create(:place, name: 'Vertigo Copy 42',
+                                reference: 'REFERENCE3',
+                                place_id: 'PLACEID2',
+                                formatted_address: 'Tower 42 Copy, Los Angeles, CA 23211, United States',
+                                street_number: 23, route: 'Main St.',
+                                city: 'Los Angeles', state: 'CA', country: 'US',
+                                lonlat: 'POINT(44.44 11.11)',
+                                merged_with_place_id: place1.id)
+
+        create(:venue, place: place2, company: company)
+
+        expect(subject.rows).to eql [
+          ['Vertigo 42', 'Establishment', '23 Main Street', 'Los Angeles', 'CA', 'US', '12345', nil, nil, '08/23/2013']
         ]
       end
     end

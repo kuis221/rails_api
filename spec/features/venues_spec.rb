@@ -43,7 +43,7 @@ feature 'Venues Section', js: true, search: true do
       fill_in 'I am looking for', with: 'Alcatraz'
       click_js_button 'Search'
       expect(find('#venues-list')).to have_content 'Alcatraz Island'
-      find('.resource-item-link').click
+      find('.resource-item-link', text: 'Alcatraz Island San Francisco', exact: true).click
 
       expect(page).to have_selector('h2', text: 'Alcatraz Island')
       expect(current_path).to eql venue_path(Venue.last)
@@ -165,8 +165,8 @@ feature 'Venues Section', js: true, search: true do
         text = page.text.gsub(/[\s\n]/, '')
         expect(text).to include 'Place1'
         expect(text).to include 'Place2'
-        expect(text).to include '123MyStre'
-        expect(text).to include '456YourStre'
+        expect(text).to include '11MainSt.,NewYorkCity'
+        expect(text).to include '11MainSt.,LosAngeles'
         expect(text).to include '$1,000.00'
         expect(text).to include '$2,000.00'
       end
