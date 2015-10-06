@@ -249,7 +249,7 @@ class TrendObject
 
       # Index form field results
       batch_counter = 0
-      FormField.where(type: FormField::TRENDING_FIELDS_TYPES).each do |form_field|
+      FormField.where(type: FormField::TRENDING_FIELDS_TYPES, fieldable_type: [Campaign, ActivityType]).each do |form_field|
         form_field.form_field_results
           .preload(:resultable)
           .find_in_batches(options.slice(:batch_size, :start)) do |records|
