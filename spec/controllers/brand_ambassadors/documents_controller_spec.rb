@@ -56,7 +56,7 @@ RSpec.describe BrandAmbassadors::DocumentsController, type: :controller do
 
       it 'should successfully create the new record for a visit' do
         visit = create(:brand_ambassadors_visit,
-                                   company: company, company_user: user)
+                       company: company, company_user: user)
         expect do
           xhr :post, 'create', visit_id: visit.id, brand_ambassadors_document: { direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg' }, format: :js
         end.to change(AttachedAsset, :count).by(1)

@@ -6,11 +6,11 @@ feature 'Passwords', js: true do
   before do
     Warden.test_mode!
     @user = create(:invited_user,
-                               first_name: 'First Name',
-                               last_name: 'Last Name',
-                               email: 'test@email.com',
-                               role_id: create(:role).id,
-                               company_id: create(:company).id
+                   first_name: 'First Name',
+                   last_name: 'Last Name',
+                   email: 'test@email.com',
+                   role_id: create(:role).id,
+                   company_id: create(:company).id
     )
   end
   after do

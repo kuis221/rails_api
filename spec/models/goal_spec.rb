@@ -60,7 +60,7 @@ describe Goal, type: :model do
   end
 
   describe 'due_date validation' do
-    subject { Goal.new(start_date: '01/20/2016') }
+    subject { described_class.new(start_date: '01/20/2016') }
 
     it { is_expected.not_to allow_value('01/19/2016').for(:due_date).with_message('must be a date on or after 01/20/2016') }
     it { is_expected.to allow_value('01/20/2016').for(:due_date) }
@@ -72,7 +72,7 @@ describe Goal, type: :model do
   describe 'set_kpi_id' do
     it 'should set the kpi_id if nill and the kpis_segment_id is set' do
       segment = create(:kpis_segment, kpi: create(:kpi))
-      goal = Goal.new(kpis_segment_id: segment.id)
+      goal = described_class.new(kpis_segment_id: segment.id)
       goal.valid?
       expect(goal.kpi_id).to eql segment.kpi_id
     end

@@ -116,7 +116,7 @@ describe Analysis::AttendanceController, type: :controller do
 
       expect(export.reload).to have_rows([
         ['NEIGHBORHOOD', 'CITY', 'STATE', 'ATTENDEES', 'ACCOUNTS ATTENDED', 'INVITATIONS'],
-        ["Central City", "Los Angeles", "CA", "1", "0", "1"]])
+        ['Central City', 'Los Angeles', 'CA', '1', '0', '1']])
     end
   end
 end

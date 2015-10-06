@@ -27,7 +27,7 @@ describe FormField::Brand, type: :model do
 
   describe '#field_options' do
     it 'should return all brands for company campaigns if it is a new record' do
-      field = FormField::Brand.new(settings: {})
+      field = described_class.new(settings: {})
       brands = []
       brands << create(:brand, company: company)
       brands << create(:brand, company: company)

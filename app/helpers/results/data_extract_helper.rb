@@ -82,7 +82,7 @@ module Results
       content_tag(:ul, class: 'available-field-list', id: 'available-field-list') do
         if fields.present?
           fields.sort.map do |field|
-            content_tag(:li, field[1], class: 'available-field', data: { name: field[0], title: render_descripcion_available_field(field[0], source, field[1])})
+            content_tag(:li, field[1], class: 'available-field', data: { name: field[0], title: render_descripcion_available_field(field[0], source, field[1]) })
           end.join.html_safe
         end
       end

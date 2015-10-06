@@ -77,7 +77,7 @@ class Analysis::EventStatusController < ApplicationController
 
   def report_group_by
     @_group_by ||= if params[:report] && params[:report][:group_by]
-                      params[:report][:group_by]
+                     params[:report][:group_by]
     else
       if can?(:event_status_campaigns, Campaign)
         'campaign'

@@ -9,7 +9,7 @@
         .text-large= venue.name
         .type= venue.types_without_establishment.map{|type| t("venue_types.#{type}") }.join(', ')
         .venue_address.crop-text
-          = venue.formatted_address
+          = place_address(venue.place, false, ', ', ' ', true, false)
       .venue-stats.pull-right
         .events
           .n_events

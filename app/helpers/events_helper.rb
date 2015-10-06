@@ -84,7 +84,7 @@ module EventsHelper
     phases = event.phases
     phases.merge!(
       phases: Hash[phases[:phases].map do |k, steps|
-                      [k, steps.select { |s| !s.key?(:if) || instance_exec(event, &s[:if]) }.map { |s| s.reject { |k, v| k == :if } }]
+                     [k, steps.select { |s| !s.key?(:if) || instance_exec(event, &s[:if]) }.map { |s| s.reject { |k, _v| k == :if } }]
                    end]
     )
     # Make sure that the user is allowed to perform the next step
@@ -141,7 +141,7 @@ module EventsHelper
   end
 
   def describe_filters(resource_name = resource_class.model_name.human.downcase)
-    tags = FilterTags.new(params, current_company_user).tags do |label, filter_name, expandible, param|
+    tags = FilterTags.new(params, current_company_user).tags do |label, filter_name, expandible, _param|
       remove_data = { filter: filter_name }
       if /\Adate:(?<start_date>.*),(?<end_date>.*)\z/ =~ filter_name
         remove_data = { filter: 'date', start_date: start_date, end_date: end_date }

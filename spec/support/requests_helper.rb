@@ -61,7 +61,7 @@ module CapybaraBrandscopicHelpers
     self
   end
 
-  def show_all_filters()
+  def show_all_filters
     find(:link, 'Show filters').trigger('click') # Use this if using capybara-webkit instead of selenium
     expect(page).to have_link('Hide filters')
   end
@@ -285,7 +285,7 @@ module RequestsHelper
     visit(path) unless current_path == path
   end
 
-  def resource_item(resource=1, list: nil)
+  def resource_item(resource = 1, list: nil)
     root = page
     root = find(list) unless list.nil?
     item =

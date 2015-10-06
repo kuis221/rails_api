@@ -130,7 +130,7 @@ describe RolesController, type: :controller do
                         { action: 'kpi_trends_module', subject_class: 'Symbol', subject_id: 'dashboard', mode: 'none' },
                         { action: 'upcomings_events_module', subject_class: 'Symbol', subject_id: 'dashboard', mode: 'all' },
                         { action: 'demographics_module', subject_class: 'Symbol', subject_id: 'dashboard', mode: 'campaigns' }
-                      ]},
+                      ] },
                       partial: 'dashboard_permissions',
                       format: :js
       end.to change(role.permissions, :count).by(3)

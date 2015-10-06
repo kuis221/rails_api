@@ -52,7 +52,7 @@ class Api::V1::BrandsController < Api::V1::ApiController
   EOS
   def index
     collection
-    #@brands = current_company.brands.active.accessible_by_user(current_company_user).order(:name)
+    # @brands = current_company.brands.active.accessible_by_user(current_company_user).order(:name)
   end
 
   api :GET, '/api/v1/brands/:id/marques', 'Get a list of marques for a brand'
@@ -87,10 +87,10 @@ class Api::V1::BrandsController < Api::V1::ApiController
   def marques
     @marques = resource.marques
   end
- 
+
   protected
 
   def collection
-     @brands ||= end_of_association_chain.where(company_id: current_company.id).active.accessible_by_user(current_company_user).order(:name)
+    @brands ||= end_of_association_chain.where(company_id: current_company.id).active.accessible_by_user(current_company_user).order(:name)
   end
 end

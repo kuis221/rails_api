@@ -15,9 +15,9 @@ describe DocumentsController, type: :controller do
       allow(s3object).to receive(:copy_from).and_return(true)
       file_object = double(head: double(content_length: 100, content_type: 'image/jpeg', last_modified: Time.now))
       objects = double(objects: {
-        'uploads/dummy/test.jpg' => file_object,
-        'attached_assets/original/test.jpg' => s3object
-      })
+                         'uploads/dummy/test.jpg' => file_object,
+                         'attached_assets/original/test.jpg' => s3object
+                       })
       allow(file_object).to receive(:exists?).at_least(:once).and_return(true)
       allow(s3object).to receive(:exists?).at_least(:once).and_return(true)
       expect_any_instance_of(AWS::S3).to receive(:buckets).at_least(:once).and_return(

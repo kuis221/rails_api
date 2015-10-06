@@ -77,7 +77,7 @@ class FormField::Brand < FormField
     totals = form_field_results.for_event_campaign(campaign).merge(event_scope).group(:value).count
     return [] if totals.blank?
 
-    values = totals.reject{ |k, v| k == nil || v.nil? || v == '' || v.to_f == 0.0 }
+    values = totals.reject { |k, v| k.nil? || v.nil? || v == '' || v.to_f == 0.0 }
     r = campaign.events.first.results_for([self]).first
     options_map = Hash[options_for_field(r).pluck(:id, :name)]
     values.map { |k, v| [options_map[k.to_i], v] }

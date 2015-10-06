@@ -45,10 +45,10 @@ RSpec.describe DataExtract::Event, type: :model do
     end
 
     let(:campaign) { create(:campaign, name: 'Campaign Absolut FY12', company: company) }
-    let(:subject) { described_class.new(company: company, current_user: company_user,
-                    columns: ['campaign_name', 'end_date', 'end_time', 'start_date', 'start_time',
-                    'place_street', 'place_city', 'place_name', 'place_state', 'place_zipcode',
-                    'event_team_members', 'event_status', 'created_by', 'created_at', 'status']) }
+    let(:subject) do
+      described_class.new(company: company, current_user: company_user,
+                    columns: %w(campa          ign_name end_date end_time start_date start_time place_street place_city place_name place_state           place_zipcode event_team_members event_status created_by created_at status))
+    end
 
     it 'returns empty if no rows are found' do
       expect(subject.rows).to be_empty
@@ -74,7 +74,7 @@ RSpec.describe DataExtract::Event, type: :model do
       end
 
       it 'returns only the requested columns' do
-        subject.columns = ['campaign_name', 'start_date']
+        subject.columns = %w(campaign_name start_date)
         expect(subject.rows).to eql [['Campaign Absolut FY12', '01/01/2014']]
       end
 
@@ -103,7 +103,7 @@ RSpec.describe DataExtract::Event, type: :model do
                        start_date: '02/02/2014', start_time: '03:00 am',
                        end_date: '02/02/2014', end_time: '03:00 pm')
 
-        subject.columns = ['campaign_name', 'start_date', 'place_name']
+        subject.columns = %w(campaign_name start_date place_name)
         subject.default_sort_by = 'campaign_name'
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [

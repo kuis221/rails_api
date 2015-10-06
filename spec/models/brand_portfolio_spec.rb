@@ -45,7 +45,7 @@ describe BrandPortfolio, type: :model do
     let!(:brand_portfolio1) { create :brand_portfolio, company: company }
     let!(:brand_portfolio2) { create :brand_portfolio, company: company }
 
-    let(:collection) { BrandPortfolio.accessible_by_user(company_user).all }
+    let(:collection) { described_class.accessible_by_user(company_user).all }
 
     it 'should return all company brand portfolios' do
       expect(collection).to match_array([brand_portfolio1, brand_portfolio2])

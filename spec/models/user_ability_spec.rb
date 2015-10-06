@@ -11,7 +11,7 @@ describe Ability, type: :model do
     let(:other_company) { create(:company) }
     let(:event) { create(:event, campaign: campaign, company: company, place_id: place.id) }
     let(:event_in_other_company) do
-      without_current_user{ create(:event, campaign: create(:campaign, company: other_company), place: create(:place)) }
+      without_current_user { create(:event, campaign: create(:campaign, company: other_company), place: create(:place)) }
     end
     let(:place) { create(:place) }
     let(:campaign) { create(:campaign, company: company) }
@@ -928,7 +928,7 @@ describe Ability, type: :model do
         let(:photo) { create(:photo, attachable: event) }
         let(:photo_in_other_campaign) do
           without_current_user do
-            create(:photo, attachable: create(:event, campaign: other_campaign) )
+            create(:photo, attachable: create(:event, campaign: other_campaign))
           end
         end
         it 'can deactivate a tag if has the permission :deactivate on AttachedAsset' do
@@ -1198,7 +1198,7 @@ describe Ability, type: :model do
 
           user.role.permission_for(:create, BrandAmbassadors::Document, mode: 'campaigns').save
 
-          ability = Ability.new(user)
+          ability = described_class.new(user)
 
           expect(ability).to be_able_to(:create, new_document)
           expect(ability).to be_able_to(:move, document)
@@ -1343,7 +1343,6 @@ describe Ability, type: :model do
           expect(ability).to be_able_to(:export_fieldable, event)
         end
       end
-
 
       #   ____  ____   __ __  ____  ______    ___  _____
       #  |    ||    \ |  |  ||    ||      |  /  _]/ ___/

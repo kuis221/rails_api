@@ -37,13 +37,13 @@ describe CustomFiltersController, type: :controller do
       category = create(:custom_filters_category, company: @company)
       expect do
         xhr :post, 'create',
-                   company_id: @company.id,
-                   custom_filter: {
-                     name: 'My Custom Filter',
-                     category_id: category.id,
-                     apply_to: 'events',
-                     filters: 'Filters' },
-                   format: :js
+            company_id: @company.id,
+            custom_filter: {
+              name: 'My Custom Filter',
+              category_id: category.id,
+              apply_to: 'events',
+              filters: 'Filters' },
+            format: :js
       end.to change(CustomFilter, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template('create')

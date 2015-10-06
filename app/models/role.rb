@@ -31,7 +31,7 @@ class Role < ActiveRecord::Base
 
   scope :active, -> { where(active: true) }
   scope :accessible_by_user, ->(user) { in_company(user.company_id) }
-  scope :not_admin, -> { where(is_admin: false)}
+  scope :not_admin, -> { where(is_admin: false) }
 
   searchable do
     integer :id

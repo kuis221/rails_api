@@ -120,8 +120,8 @@ feature 'Activity Types', js: true do
   feature 'Details view' do
     scenario 'should allow user to edit an activity type' do
       activity_type = create(:activity_type, name: 'A test activity type',
-                             description: 'Algunos vinos de Costa Rica',
-                             company: @company)
+                                             description: 'Algunos vinos de Costa Rica',
+                                             company: @company)
       Sunspot.commit
       visit activity_type_path(activity_type)
 
@@ -141,10 +141,14 @@ feature 'Activity Types', js: true do
   end
 
   feature 'export', search: true do
-    let(:activity_type1) { create(:activity_type, company: @company, name: 'Activity Type 1',
-                                  description: 'First description', active: true) }
-    let(:activity_type2) { create(:activity_type, company: @company, name: 'Activity Type 2',
-                                  description: 'Second description', active: true) }
+    let(:activity_type1) do
+      create(:activity_type, company: @company, name: 'Activity Type 1',
+                                  description: 'First description', active: true)
+    end
+    let(:activity_type2) do
+      create(:activity_type, company: @company, name: 'Activity Type 2',
+                                  description: 'Second description', active: true)
+    end
 
     before do
       # make sure activity types are created before

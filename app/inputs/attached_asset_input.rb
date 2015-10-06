@@ -1,5 +1,5 @@
 class AttachedAssetInput < SimpleForm::Inputs::Base
-  def input(wrapper_options)
+  def input(_wrapper_options)
     options[:field_id] ||= rand(9999)
     options[:file_types] ||= ''
     options[:hidden_field_name] ||= attribute_name
@@ -134,12 +134,12 @@ class AttachedAssetInput < SimpleForm::Inputs::Base
   def photo_view_panel
     '<div id="view-' + options[:field_id].to_s + '" class="attachment-attached-view photo"' + (attached_asset? ? '' : 'style="display: none"') + '>
         <div class="image">
-            <a href="' + (attached_asset.present? && attached_asset.processed? ? attached_asset.file.url(:original) : '' ) + '" id="image-link" data-toggle="gallery">
-              <img id="image-attached" src="' + (attached_asset.present? && attached_asset.processed? ? attached_asset.file.url(:thumbnail) : '' ) + '" data-info="' + (attached_asset.present? && attached_asset.processed? ? '{&quot;image_id&quot;:' + attached_asset.id.to_s + ', &quot;permissions&quot;:[]}' : '' ) + '">
+            <a href="' + (attached_asset.present? && attached_asset.processed? ? attached_asset.file.url(:original) : '') + '" id="image-link" data-toggle="gallery">
+              <img id="image-attached" src="' + (attached_asset.present? && attached_asset.processed? ? attached_asset.file.url(:thumbnail) : '') + '" data-info="' + (attached_asset.present? && attached_asset.processed? ? '{&quot;image_id&quot;:' + attached_asset.id.to_s + ', &quot;permissions&quot;:[]}' : '') + '">
             </a>
         </div>
         <div class="image-toolbar">
-          <a class="icon-trash remove-attachment" title="Remove" href=""></a>' + (attached_asset.present? && attached_asset.processed? ? '<a class="icon-download download-attachment" title="Download" href="' + attached_asset.download_url + '"></a>' : '' ) + '
+          <a class="icon-trash remove-attachment" title="Remove" href=""></a>' + (attached_asset.present? && attached_asset.processed? ? '<a class="icon-download download-attachment" title="Download" href="' + attached_asset.download_url + '"></a>' : '') + '
         </div>
       </div>
     </div>'

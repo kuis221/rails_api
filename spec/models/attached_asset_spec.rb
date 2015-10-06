@@ -40,11 +40,11 @@ describe AttachedAsset, type: :model do
     let(:campaign) { create(:campaign) }
     let(:event) { create(:event, campaign: campaign) }
 
-    describe "when a max is set for the campaign" do
+    describe 'when a max is set for the campaign' do
       before do
         event.campaign.update_attribute(
-          :modules, {'photos' => {'settings' => { 'range_min' => '1',
-                                                  'range_max' => '2' }}})
+          :modules, 'photos' => { 'settings' => { 'range_min' => '1',
+                                                  'range_max' => '2' } })
       end
 
       it 'should not allow create more than two photos for the event' do
@@ -63,7 +63,7 @@ describe AttachedAsset, type: :model do
 
       it 'correctly displays a message when max is set to 1' do
         event.campaign.update_attribute(
-          :modules, {'photos' => {'settings' => { 'range_max' => '1' }}})
+          :modules, 'photos' => { 'settings' => { 'range_max' => '1' } })
         create(:photo, attachable: event)
         photo = build(:photo, attachable: event)
         expect(photo.save).to be_falsey
@@ -72,11 +72,11 @@ describe AttachedAsset, type: :model do
       end
     end
 
-    describe "when a max is not set for the campaing" do
+    describe 'when a max is not set for the campaing' do
       before do
         event.campaign.update_attribute(
-          :modules, {'photos' => {'settings' => { 'range_min' => '1',
-                                                    'range_max' => '' }}})
+          :modules, 'photos' => { 'settings' => { 'range_min' => '1',
+                                                  'range_max' => '' } })
       end
 
       it 'allows create any number of photos for the event' do

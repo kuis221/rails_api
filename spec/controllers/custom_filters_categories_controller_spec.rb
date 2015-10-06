@@ -28,11 +28,11 @@ describe CustomFiltersCategoriesController, type: :controller do
 
     it 'should render the form_dialog template if errors' do
       expect do
-        xhr :post, 'create', custom_filters_category: { name: ''}, format: :js
+        xhr :post, 'create', custom_filters_category: { name: '' }, format: :js
       end.not_to change(CustomFiltersCategory, :count)
       expect(response).to render_template('create')
       expect(response).to render_template('_form_dialog')
       assigns(:custom_filters_category).errors.count > 0
     end
-  end    
+  end
 end

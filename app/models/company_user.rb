@@ -275,7 +275,7 @@ class CompanyUser < ActiveRecord::Base
   end
 
   def teams_name
-    self.teams.pluck(:name).join(' ,')
+    teams.pluck(:name).join(' ,')
   end
 
   def dismissed_alert?(alert, version = 1)

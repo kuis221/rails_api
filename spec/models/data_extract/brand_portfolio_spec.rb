@@ -39,8 +39,10 @@ RSpec.describe DataExtract::BrandPortfolio, type: :model do
       create(:company_user, company: company,
                             user: create(:user, first_name: 'Benito', last_name: 'Camelas'))
     end
-    let(:subject) { described_class.new(company: company, current_user: company_user,
-                    columns: ['name', 'description', 'created_by', 'created_at', 'active_state']) }
+    let(:subject) do
+      described_class.new(company: company, current_user: company_user,
+                    columns: %w(name description created_by created_at active_state))
+    end
 
     it 'returns empty if no rows are found' do
       expect(subject.rows).to be_empty

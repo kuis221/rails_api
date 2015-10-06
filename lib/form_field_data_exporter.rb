@@ -21,8 +21,8 @@ class FormFieldDataExporter < BaseExporter
 
   def custom_fields_to_export_values(resource)
     # We are reusing the same object for each result to reduce memory usage
-    @likert_statements_mapping ||= Hash.new()
-    @likert_options_mapping ||= Hash.new()
+    @likert_statements_mapping ||= {}
+    @likert_options_mapping ||= {}
     @result ||= FormFieldResult.new
     resource_values = empty_values_hash
     ActiveRecord::Base.connection.select_all(

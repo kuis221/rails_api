@@ -62,7 +62,7 @@ describe Api::V1::EventsController, type: :controller do
       Sunspot.commit
 
       expect do
-        get :index, campaign: [campaign.id], place: [place.id], new_at: 123456, format: :json
+        get :index, campaign: [campaign.id], place: [place.id], new_at: 123_456, format: :json
       end.to change(Notification, :count).by(-2)
       expect(response).to be_success
       result = JSON.parse(response.body)
@@ -144,8 +144,8 @@ describe Api::V1::EventsController, type: :controller do
 
       expect(
         result['facets'].map { |i| [i['label'], i['count']] }).to match_array([
-        ['Late', 1], ['Due', 1], ['Submitted', 1],
-        ['Rejected', 1], ['Approved', 1]])
+          ['Late', 1], ['Due', 1], ['Submitted', 1],
+          ['Rejected', 1], ['Approved', 1]])
     end
   end
 
@@ -282,7 +282,7 @@ describe Api::V1::EventsController, type: :controller do
       gender_result = event.result_for_kpi(Kpi.gender)
       gender_result.value = {
         Kpi.gender.kpis_segments.first.id => 10,
-        Kpi.gender.kpis_segments.last.id => 90,
+        Kpi.gender.kpis_segments.last.id => 90
       }
       event.save
 
@@ -294,7 +294,7 @@ describe Api::V1::EventsController, type: :controller do
           value: {
             Kpi.gender.kpis_segments.first.id.to_s => 5,
             Kpi.gender.kpis_segments.last.id.to_s => 5
-          }}]
+          } }]
       }, format: :json
       expect(response.code).to eql '422'
       errors = JSON.parse(response.body)
@@ -437,18 +437,18 @@ describe Api::V1::EventsController, type: :controller do
         create(:form_field_option, name: 'Option 3')
       ])
       create(:form_field_number, fieldable: campaign, required: true, settings: {
-        'range_format' => 'value',
-        'range_min' => '1',
-        'range_max' => '100'
-      })
+               'range_format' => 'value',
+               'range_min' => '1',
+               'range_max' => '100'
+             })
       create(:form_field_section, fieldable: campaign, settings: {
-        'description' => 'This is a section description'
-      })
+               'description' => 'This is a section description'
+             })
       create(:form_field_text, fieldable: campaign, settings: {
-        'range_format' => 'words',
-        'range_min' => '20',
-        'range_max' => ''
-      })
+               'range_format' => 'words',
+               'range_min' => '20',
+               'range_max' => ''
+             })
       create(:form_field_likert_scale,
              fieldable: campaign,
              options: [

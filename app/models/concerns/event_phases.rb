@@ -37,7 +37,7 @@ module EventPhases
     phase = execute_phases.dup
     if current_phase == :execute
       phase.push(id: :per, title: 'Submit',
-                  complete: false, required: false) if phase.all?{ |p| p[:complete] }
+                  complete: false, required: false) if phase.all? { |p| p[:complete] }
     end
     phase
   end
@@ -54,7 +54,7 @@ module EventPhases
   def execute_phases
     @execute_phases ||= [].tap do |phases|
       phases.push(id: :per, title: 'Post Event Recap',
-                  complete: event_data?, required: true
+                  complete: valid_results?, required: true
                  ) if campaign.form_fields.any?
       phases.push(id: :activities, title: 'Activities',
                   complete: activities.any?,

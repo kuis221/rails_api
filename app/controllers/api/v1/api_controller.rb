@@ -14,7 +14,7 @@ class Api::V1::ApiController < ActionController::Base
   after_action :set_access_control_headers
   after_action :update_user_last_activity_mobile
 
-  around_filter :scope_current_user
+  around_action :scope_current_user
 
   load_and_authorize_resource only: [:show, :edit, :update, :destroy, :new], unless: :skip_default_validation
   authorize_resource only: [:create, :index], unless: :skip_default_validation

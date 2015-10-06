@@ -43,7 +43,7 @@ describe FormField, type: :model do
     it { is_expected.not_to allow_value('range_min' => '', 'range_max' => 'xx').for(:settings) }
   end
 
-  let(:field) { FormField.new }
+  let(:field) { described_class.new }
   describe '#field_options' do
     it 'should return basic options' do
       expect(field.field_options(FormFieldResult.new)).to eql(as: :string)

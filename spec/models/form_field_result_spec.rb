@@ -80,7 +80,7 @@ describe FormFieldResult, type: :model do
     context 'mass attribute assignment' do
       let(:form_field) { create(:form_field_text, fieldable: create(:campaign)) }
       it 'correctly assigns the value' do
-        result = FormFieldResult.new(value: 'xxx', form_field_id: form_field.id)
+        result = described_class.new(value: 'xxx', form_field_id: form_field.id)
         expect(result['value']).to eql 'xxx'
       end
     end
@@ -92,9 +92,9 @@ describe FormFieldResult, type: :model do
     describe 'for numeric fields' do
       let(:form_field) do
         build(:form_field_number,
-               settings: {},
-               fieldable: create(:activity_type, company_id: 1),
-               required: false)
+              settings: {},
+              fieldable: create(:activity_type, company_id: 1),
+              required: false)
       end
 
       describe "when doesn't have range validation rules" do
@@ -158,7 +158,7 @@ describe FormFieldResult, type: :model do
       describe 'when only have a max but not a min' do
         before do
           form_field.settings = {
-           'range_format' => 'value', 'range_min' => '', 'range_max' => '4' }
+            'range_format' => 'value', 'range_min' => '', 'range_max' => '4' }
         end
         it { is_expected.to allow_value(nil).for(:value) }
         it { is_expected.to allow_value('').for(:value) }
@@ -381,9 +381,9 @@ describe FormFieldResult, type: :model do
       describe 'when range format is words' do
         let(:form_field) do
           create(:form_field_text_area,
-                             settings: { 'range_format' => 'words', 'range_min' => '2', 'range_max' => '4' },
-                             fieldable: create(:activity_type, company_id: 1),
-                             required: false)
+                 settings: { 'range_format' => 'words', 'range_min' => '2', 'range_max' => '4' },
+                 fieldable: create(:activity_type, company_id: 1),
+                 required: false)
         end
         it { is_expected.to allow_value(nil).for(:value) }
         it { is_expected.to allow_value('').for(:value) }
@@ -459,9 +459,9 @@ describe FormFieldResult, type: :model do
     describe 'for summation fields' do
       let(:form_field) do
         create(:form_field_summation,
-                            options: [create(:form_field_option, name: 'Opt1'), create(:form_field_option, name: 'Opt2')],
-                            fieldable: create(:activity_type, company_id: 1),
-                            required: false)
+               options: [create(:form_field_option, name: 'Opt1'), create(:form_field_option, name: 'Opt2')],
+               fieldable: create(:activity_type, company_id: 1),
+               required: false)
       end
       it { is_expected.to allow_value(nil).for(:value) }
       it { is_expected.to allow_value('').for(:value) }

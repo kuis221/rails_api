@@ -5,7 +5,7 @@ class Analysis::GvaController < InheritedResources::Base
 
   before_action :campaign, except: :index
   before_action :authorize_actions
-  before_action :set_scopes , if: ->{ action_name == 'report' || request.format.pdf? }
+  before_action :set_scopes, if: -> { action_name == 'report' || request.format.pdf? }
 
   helper_method :return_path, :report_view_mode, :report_group_by, :report_group_permissions
 
@@ -38,7 +38,7 @@ class Analysis::GvaController < InheritedResources::Base
         csv << ['METRIC', 'GOAL', 'ACTUAL', 'ACTUAL %', 'PENDING', 'PENDING %']
       end
       @goalables_data.each do |goalable|
-        goalable[:event_goal].each do |id, event_goal|
+        goalable[:event_goal].each do |_id, event_goal|
           pending_and_total = (event_goal[:submitted] || 0) + event_goal[:total_count]
           pending = number_with_precision(pending_and_total.round(2), strip_insignificant_zeros: true)
           actual_percentage = event_goal[:completed_percentage]
@@ -59,7 +59,7 @@ class Analysis::GvaController < InheritedResources::Base
   def prepare_collection_for_export
     @goalables_data = goalables_by_type.map do |goalable|
       set_report_scopes_for(goalable)
-      {name: goalable.name, item: goalable, event_goal: view_context.each_events_goal}
+      { name: goalable.name, item: goalable, event_goal: view_context.each_events_goal }
     end
   end
 
@@ -132,14 +132,14 @@ class Analysis::GvaController < InheritedResources::Base
     elsif report_group_by == 'place'
       campaign.children_goals.for_areas_and_places(
         campaign.areas.accessible_by_user(current_company_user).pluck('areas.id'),
-        campaign.places.select{|place| current_company_user.allowed_to_access_place?(place) }.map(&:id))
+        campaign.places.select { |place| current_company_user.allowed_to_access_place?(place) }.map(&:id))
     else
       campaign.children_goals.for_users_and_teams
     end.select('goalable_id, goalable_type').where('value IS NOT NULL').includes(:goalable).group('goalable_id, goalable_type').map(&:goalable).sort_by(&:name)
   end
 
   def set_report_scopes_for(goalable)
-    if ['csv', 'pdf'].include?(params[:format]) && (report_group_by == 'place' || report_group_by == 'staff')
+    if %w(csv pdf).include?(params[:format]) && (report_group_by == 'place' || report_group_by == 'staff')
       @area, @place, @company_user, @team = nil, nil, nil, nil
       params.merge!(item_type: goalable.class.name, item_id: goalable.id)
     end
@@ -147,25 +147,25 @@ class Analysis::GvaController < InheritedResources::Base
     @venues_scope = filter_venues_scope
     @group_header_data = {}
     goals = if area
-      area.goals.in(campaign)
+              area.goals.in(campaign)
     elsif place
-      place.goals.in(campaign)
+              place.goals.in(campaign)
     elsif company_user
-      company_user.goals.in(campaign)
+              company_user.goals.in(campaign)
     elsif team
-      team.goals.in(campaign)
+              team.goals.in(campaign)
     else
       campaign.goals.base
     end
 
-    sub_query = Campaign.connection.unprepared_statement{ campaign.activity_types.active.select(:id).to_sql }
+    sub_query = Campaign.connection.unprepared_statement { campaign.activity_types.active.select(:id).to_sql }
 
     goals = goals.where('goals.value is not null and goals.value <> 0')
     goals_activities =  goals.joins(:activity_type).where("activity_type_id in (#{sub_query})").includes(:activity_type)
     goals_kpis = goals.joins(:kpi).where(kpi_id: campaign.active_kpis).includes(:kpi)
     # Following KPIs should be displayed in this specific order at the beginning. Rest of KPIs and Activity Types should be next in the list ordered by name
     promotables = ['Events', 'Promo Hours', 'Expenses', 'Samples', 'Interactions', 'Impressions']
-    @goals = (goals_kpis + goals_activities).sort_by{|g| g.kpi_id.present? ? (promotables.index(g.kpi.name) || ('A'+g.kpi.name)).to_s : g.activity_type.name }
+    @goals = (goals_kpis + goals_activities).sort_by { |g| g.kpi_id.present? ? (promotables.index(g.kpi.name) || ('A' + g.kpi.name)).to_s : g.activity_type.name }
   end
 
   def kpis_headers_data(goalables)
@@ -175,7 +175,7 @@ class Analysis::GvaController < InheritedResources::Base
       end]
       goalables = [goalables]
     else
-      goals = Hash[campaign.children_goals.with_value.where(kpi_id: [Kpi.events.id, Kpi.promo_hours.id, Kpi.expenses.id, Kpi.samples.id]).where('goalable_type || goalable_id in (?)', goalables.map{|g| "#{g.class.name}#{g.id}"}).map do |g|
+      goals = Hash[campaign.children_goals.with_value.where(kpi_id: [Kpi.events.id, Kpi.promo_hours.id, Kpi.expenses.id, Kpi.samples.id]).where('goalable_type || goalable_id in (?)', goalables.map { |g| "#{g.class.name}#{g.id}" }).map do |g|
         ["#{g.goalable_type}_#{g.goalable_id}_#{g.kpi_id}", g]
       end]
     end
@@ -183,7 +183,7 @@ class Analysis::GvaController < InheritedResources::Base
     goal_keys = goals.keys
     items = {}
     goalables.each do |goalable|
-      ['promo_hours', 'events', 'samples', 'expenses'].each do |kpi|
+      %w(promo_hours events samples expenses).each do |kpi|
         items[goalable.class.name] ||= {}
         items[goalable.class.name][kpi] ||= []
         items[goalable.class.name][kpi].push goalable if goal_keys.include?("#{goalable.class.name}_#{goalable.id}_#{Kpi.send(kpi).id}")
@@ -191,9 +191,9 @@ class Analysis::GvaController < InheritedResources::Base
     end
     queries = ActiveRecord::Base.connection.unprepared_statement do
       items.map do |goalable_type, goaleables_ids|
-        ['promo_hours', 'events', 'samples', 'expenses'].map do |kpi|
+        %w(promo_hours events samples expenses).map do |kpi|
           next unless goaleables_ids[kpi].any?
-          events_scope = campaign.events.active.where(aasm_state: ['approved', 'rejected', 'submitted']).group('1').reorder(nil)
+          events_scope = campaign.events.active.where(aasm_state: %w(approved rejected submitted)).group('1').reorder(nil)
 
           query =
             if goalable_type == 'Area'
@@ -213,7 +213,7 @@ class Analysis::GvaController < InheritedResources::Base
           elsif kpi == 'events'
             goaleables_ids['events'].any? ? query.to_sql.gsub('{KPI_NAME}', 'EVENTS').gsub('{KPI_AGGR}', 'COUNT(events.id)') : nil
           elsif kpi == 'samples'
-            goaleables_ids['samples'].any? ? query.joins(results: :form_field).where(form_fields: {kpi_id: Kpi.samples.id}).to_sql.gsub('{KPI_NAME}', 'SAMPLES').gsub('{KPI_AGGR}', 'SUM(form_field_results.scalar_value)') : nil
+            goaleables_ids['samples'].any? ? query.joins(results: :form_field).where(form_fields: { kpi_id: Kpi.samples.id }).to_sql.gsub('{KPI_NAME}', 'SAMPLES').gsub('{KPI_AGGR}', 'SUM(form_field_results.scalar_value)') : nil
           elsif kpi == 'expenses'
             goaleables_ids['expenses'].any? ? query.joins(:event_expenses).to_sql.gsub('{KPI_NAME}', 'EXPENSES').gsub('{KPI_AGGR}', 'SUM(event_expenses.amount)') : nil
           end
@@ -224,29 +224,29 @@ class Analysis::GvaController < InheritedResources::Base
     if queries.any?
       ActiveRecord::Base.connection.unprepared_statement do
         Hash[ActiveRecord::Base.connection.select_all("
-          SELECT keys[1] as id, keys[2] as type, promo_hours, events, samples, expenses FROM crosstab('#{queries.join(' UNION ALL ').gsub('\'','\'\'')} ORDER by 1',
+          SELECT keys[1] as id, keys[2] as type, promo_hours, events, samples, expenses FROM crosstab('#{queries.join(' UNION ALL ').gsub('\'', '\'\'')} ORDER by 1',
             'SELECT unnest(ARRAY[''PROMO HOURS'', ''EVENTS'', ''SAMPLES'', ''EXPENSES''])') AS ct(keys varchar[], promo_hours numeric, events numeric, samples numeric, expenses numeric)").map do |r|
 
           r['events'] = if goals["#{r['type']}_#{r['id']}_#{Kpi.events.id}"].present?
-            r['events'].to_f * 100 / goals["#{r['type']}_#{r['id']}_#{Kpi.events.id}"].value
+                          r['events'].to_f * 100 / goals["#{r['type']}_#{r['id']}_#{Kpi.events.id}"].value
           else
             nil
           end
 
           r['promo_hours'] = if goals["#{r['type']}_#{r['id']}_#{Kpi.promo_hours.id}"].present?
-            r['promo_hours'].to_f * 100 / goals["#{r['type']}_#{r['id']}_#{Kpi.promo_hours.id}"].value
+                               r['promo_hours'].to_f * 100 / goals["#{r['type']}_#{r['id']}_#{Kpi.promo_hours.id}"].value
           else
             nil
           end
 
           r['samples'] = if goals["#{r['type']}_#{r['id']}_#{Kpi.samples.id}"].present?
-            r['samples'].to_f * 100 / goals["#{r['type']}_#{r['id']}_#{Kpi.samples.id}"].value
+                           r['samples'].to_f * 100 / goals["#{r['type']}_#{r['id']}_#{Kpi.samples.id}"].value
           else
             nil
           end
 
           r['expenses'] = if goals["#{r['type']}_#{r['id']}_#{Kpi.expenses.id}"].present?
-            r['expenses'].to_f * 100 / goals["#{r['type']}_#{r['id']}_#{Kpi.expenses.id}"].value
+                            r['expenses'].to_f * 100 / goals["#{r['type']}_#{r['id']}_#{Kpi.expenses.id}"].value
           else
             nil
           end
@@ -261,7 +261,7 @@ class Analysis::GvaController < InheritedResources::Base
 
   def report_group_by
     @_group_by ||= if params[:report].present? && params[:report][:group_by].present?
-      params[:report][:group_by]
+                     params[:report][:group_by]
     else
       if can?(:gva_report_campaigns, Campaign)
         'campaign'
@@ -275,7 +275,7 @@ class Analysis::GvaController < InheritedResources::Base
 
   def report_view_mode
     @_view_mode ||= if params[:report].present? && params[:report][:view_mode].present?
-      params[:report][:view_mode]
+                      params[:report][:view_mode]
     else
       'graph'
     end

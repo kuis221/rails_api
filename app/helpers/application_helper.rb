@@ -18,7 +18,7 @@ module ApplicationHelper
     @presenter ||= present(resource)
   end
 
-  def place_address(place, link_name = false, line_separator = '<br />', name_separator = '<br />', concat_zip_code = false)
+  def place_address(place, link_name = false, line_separator = '<br />', name_separator = '<br />', concat_zip_code = false, concat_place_name = true)
     return if place.nil?
     place_name = place.name
     place_city = place.city
@@ -53,7 +53,7 @@ module ApplicationHelper
     address.push city_parts.compact.join(', ') unless city_parts.empty? || !place.city
     address.push place.formatted_address if place.formatted_address.present? && city_parts.empty? && (place.city || !place.types.include?('political'))
     address_with_name = nil
-    address_with_name = "<span class=\"address-name\">#{place_name}</span>" unless place_name.blank?
+    address_with_name = "<span class=\"address-name\">#{place_name}</span>" unless place_name.blank? || concat_place_name == false
     address_with_name = [address_with_name, address.compact.join(line_separator)].compact.join(name_separator) unless address.compact.empty?
 
     "<address>#{address_with_name}</address>".html_safe
@@ -201,8 +201,8 @@ module ApplicationHelper
   def reload_page_on_edit_resource
     content_for :footer do
       javascript_tag <<-EOF
-        $(document).on('#{resource.class.name.pluralize.underscore.gsub('/','_')}:change', function(){
-          window.location = '#{url_for params: {return: return_path}}'
+        $(document).on('#{resource.class.name.pluralize.underscore.gsub('/', '_')}:change', function(){
+          window.location = '#{url_for params: { return: return_path }}'
         });
       EOF
     end
@@ -317,7 +317,7 @@ module ApplicationHelper
     link_to(image_tag('video_arrow.png', width: 70, height: 70), '#',
             class: 'video-thumbnail', title: 'Play Video',
                                       data: { video: t("new_features.#{name}.video"),
-                                              width: "640", height: "360" }) +
+                                              width: '640', height: '360' }) +
     content_tag(:div, t("new_features.#{name}.description").html_safe, class: 'feature-description')
   end
 
@@ -331,8 +331,8 @@ module ApplicationHelper
         content_tag(:ul, class: 'dropdown-menu', id: 'user-company-dropdown', role: 'menu', 'aria-labelledby' => 'dLabel') do
           companies.map do |company|
             content_tag(:li, link_to(content_tag(:i, nil, class: 'icon-checked') + company.name, select_company_path(company),
-                                                     id: 'select-company-' + company.id.to_s),
-                             role: 'presentation', class: (company.id == current_company.id ? ' active' : ''))
+                                     id: 'select-company-' + company.id.to_s),
+                        role: 'presentation', class: (company.id == current_company.id ? ' active' : ''))
           end.join('').html_safe
         end
       end
@@ -361,7 +361,7 @@ module ApplicationHelper
   def link_to_if_permitted(permission_action, subject_class, options, html_options = {}, &block)
     content = capture(&block)
     allowed = if subject_class.is_a?(Class)
-       current_company_user.role.has_permission?(permission_action, subject_class)
+                current_company_user.role.has_permission?(permission_action, subject_class)
     else
       can?(permission_action, subject_class)
     end
@@ -411,7 +411,7 @@ module ApplicationHelper
   end
 
   def escape_query_params(query)
-    query.split('&').map{ |p| CGI::escape(p).gsub('%3D', '=') }.join('&')
+    query.split('&').map { |p| CGI.escape(p).gsub('%3D', '=') }.join('&')
   end
 
   def step_navigation_bar(steps, active)

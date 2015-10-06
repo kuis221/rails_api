@@ -42,9 +42,10 @@ RSpec.describe DataExtract::Task, type: :model do
                             user: create(:user, first_name: 'Benito', last_name: 'Camelas'))
     end
 
-    let(:subject) { described_class.new(company: company, current_user: company_user,
-                    columns: ['title', 'task_statuses', 'due_at', 'created_by', 'created_at',
-                    'assigned_to', 'comment1', 'comment2', 'comment3', 'comment4', 'comment5', 'active_state']) }
+    let(:subject) do
+      described_class.new(company: company, current_user: company_user,
+                    columns: %w(title task_statuses due_at cr          eated_by created_at assigned_to comment1 comment2 comment3 comment4 comment5 active_state))
+    end
 
     it 'returns empty if no rows are found' do
       expect(subject.rows).to be_empty

@@ -1,10 +1,10 @@
 class PercentageInput < SimpleForm::Inputs::Base
-  def input(wrapper_options)
+  def input(_wrapper_options)
     if options[:collection] && options[:collection].length > 0
       field_id = options[:field_id].to_s
       output_html = '
       <div id="progress-for-' + field_id + '" class="control-group">
-        <input class="segment-total ' + (options[:required] ? 'required' : 'optional') +'" id="total-field-' + field_id + '" name="total-field-' + field_id + '" type="text" value="" data-segment-field-id="' + field_id + '">
+        <input class="segment-total ' + (options[:required] ? 'required' : 'optional') + '" id="total-field-' + field_id + '" name="total-field-' + field_id + '" type="text" value="" data-segment-field-id="' + field_id + '">
         <div class="clearfix"></div>
         <div class="percentage-progress-bar text-success" id="progress-bar-field-' + field_id + '">
           <div class="progress progress-success">

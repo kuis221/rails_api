@@ -62,7 +62,7 @@ class Analysis::TrendsController < FilteredController
   def selected_activity_type_ids
     selected_sources
       .select { |s| s =~ /\AActivityType:[0-9]+\z/ }
-      .map{ |s| s.tr('ActivityType:', '') }
+      .map { |s| s.tr('ActivityType:', '') }
   end
 
   def selected_questions
@@ -95,7 +95,7 @@ class Analysis::TrendsController < FilteredController
 
     # fill in each missing day between the first and last days with zeros
     if data.count > 1
-      (DateTime.strptime(data[data.keys.first][0].to_s,'%Q').to_date..DateTime.strptime(data[data.keys.last][0].to_s,'%Q').to_date).each do |day|
+      (DateTime.strptime(data[data.keys.first][0].to_s, '%Q').to_date..DateTime.strptime(data[data.keys.last][0].to_s, '%Q').to_date).each do |day|
         data[day.to_s(:numeric).to_i] ||= [day.strftime('%Q').to_i, 0]
       end
     end
@@ -125,12 +125,12 @@ class Analysis::TrendsController < FilteredController
       rows = search.facet(f.name).rows.map { |fr| [fr.value, fr.count] }
     end
     if params[:state] && params[:country]
-      rows = [['Latitude', 'longitude', 'City', 'Mentions']] +
+      rows = [%w(Latitude longitude City Mentions)] +
              add_latlon_cities(params[:country], params[:state], rows) if params[:state] && params[:country]
     elsif params[:country]
       country = Country.new(params[:country])
-      rows.each{|state| state[0] = country.states[state[0]]['name'] if country.states[state[0]].present? } if country.present?
-      rows = [['State', 'Mentions']] + rows
+      rows.each { |state| state[0] = country.states[state[0]]['name'] if country.states[state[0]].present? } if country.present?
+      rows = [%w(State Mentions)] + rows
     else
       rows.each { |row| row[1], row[2] = [country.name, row[1]] if country = Country.new(row[0]) }
       rows = [['Country Code', 'Country', 'Mentions']] + rows
@@ -144,7 +144,7 @@ class Analysis::TrendsController < FilteredController
     workds_hash = Hash[words.map { |w| [w[:name], w] }]
     time_period = 2.weeks
     ratio = 10.0 / 100.0  # The differecen between periods should lower/greater than 10%  to be considered
-                          # and trending down/up
+    # and trending down/up
     facet_params = search_params.dup
     facet_params[:words] = workds_hash.keys
 

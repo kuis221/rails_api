@@ -37,12 +37,12 @@ describe Place, type: :model do
   it { is_expected.to validate_presence_of(:place_id) }
   it { is_expected.to validate_presence_of(:reference) }
 
-  it { is_expected.to allow_value(['restaurant', 'bar']).for(:types) }
+  it { is_expected.to allow_value(%w(restaurant bar)).for(:types) }
   it { is_expected.to allow_value(['political']).for(:types) }
 
   it { is_expected.to_not allow_value(nil).for(:types) }
   it { is_expected.to_not allow_value(['foo']).for(:types) }
-  it { is_expected.to_not allow_value(['foo', 'bar']).for(:types) }
+  it { is_expected.to_not allow_value(%w(foo bar)).for(:types) }
 
   it { is_expected.to allow_value(nil).for(:country) }
   it { is_expected.to allow_value('').for(:country) }
@@ -476,17 +476,20 @@ describe Place, type: :model do
 
   describe '#merge' do
     let(:campaign) { create(:campaign) }
-    let(:place1) { create(:place, route: '1st st', street_number: '12 Street', city: 'Los Angeles',
+    let(:place1) do
+      create(:place, route: '1st st', street_number: '12 Street', city: 'Los Angeles',
                                   state: 'California', country: 'US')
-    }
-    let(:place2) { create(:place, route: '2st st', street_number: '22 Street', city: 'Los Angeles',
+    end
+    let(:place2) do
+      create(:place, route: '2st st', street_number: '22 Street', city: 'Los Angeles',
                                   state: 'California', country: 'US')
-    }
+    end
     let!(:venue1) { create(:venue, company_id: campaign.company_id, place: place1) }
     let!(:venue2) { create(:venue, company_id: campaign.company_id, place: place2) }
-    let!(:event) { create(:event, place_id: place1.id, company_id: campaign.company_id, start_date: '01/23/2019',
+    let!(:event) do
+      create(:event, place_id: place1.id, company_id: campaign.company_id, start_date: '01/23/2019',
                                  end_date: '01/23/2019', start_time: '8:00am', end_time: '11:00am')
-    }
+    end
     let(:area) {  create(:area, company_id: campaign.company_id) }
 
     before do

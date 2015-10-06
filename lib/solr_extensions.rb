@@ -191,9 +191,19 @@ module Sunspot
         team_ids.concat Array(params[:team]) if params.key?(:team) && Array(params[:team]).any?
         team_ids.concat Team.with_user(params[:user]).pluck(:id) if params.key?(:user) && Array(params[:user]).any?
 
-        any_of do
-          with(:user_ids, params[:user]) if field?(:user_ids) &&  params.key?(:user) && params[:user].present?
-          with(:team_ids, team_ids) if field?(:team_ids) && team_ids.any?
+        if join_field?(:user_ids) && join_field?(:team_ids)
+          query = []
+          query << ["user_ids_im:(#{(params[:user]).join(' OR ')})"] if field?(:user_ids) && params.key?(:user) && params[:user].present?
+          query << ["team_ids_im:(#{(team_ids).join(' OR ')})"] if field?(:team_ids) && team_ids.any?
+
+          adjust_solr_params do |solr_params|
+            solr_params[:fq] << "_query_:\"{!join from=id_is to=event_id_i}#{query.join(' OR ')}\""
+          end if query.present?
+        else
+          any_of do
+            with(:user_ids, params[:user]) if field?(:user_ids) && params.key?(:user) && params[:user].present?
+            with(:team_ids, team_ids) if field?(:team_ids) && team_ids.any?
+          end
         end
       end
 
@@ -314,7 +324,7 @@ module Sunspot
       end
 
       def join_field?(name)
-        field = @setup.fields.detect{ |f| f.name ==  name }
+        field = @setup.fields.find { |f| f.name ==  name }
         field && field.is_a?(Sunspot::JoinField)
       end
 

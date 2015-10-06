@@ -44,8 +44,8 @@ describe Results::ActivitiesController, type: :controller do
     let(:event_activity) do
       without_current_user do
         create(:activity, activitable: event, activity_date: '01/01/2014',
-          campaign: campaign, created_at: DateTime.parse("2015-07-01 02:11 -07:00"),
-          updated_at: DateTime.parse("2015-07-03 02:11 -07:00"), activity_type: activity_type, company_user: company_user)
+          campaign: campaign, created_at: DateTime.parse('2015-07-01 02:11 -07:00'),
+          updated_at: DateTime.parse('2015-07-03 02:11 -07:00'), activity_type: activity_type, company_user: company_user)
       end
     end
 
@@ -59,7 +59,7 @@ describe Results::ActivitiesController, type: :controller do
 
       expect(export.reload).to have_rows([
         ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE', 'VENUE NAME',
-         'ADDRESS', 'CITY', 'STATE', 'ZIP', 'COUNTRY', 'ACTIVE STATE', "CREATED AT", "CREATED BY", "LAST MODIFIED", "MODIFIED BY"]
+         'ADDRESS', 'CITY', 'STATE', 'ZIP', 'COUNTRY', 'ACTIVE STATE', 'CREATED AT', 'CREATED BY', 'LAST MODIFIED', 'MODIFIED BY']
       ])
     end
 
@@ -83,11 +83,11 @@ describe Results::ActivitiesController, type: :controller do
 
       expect(export.reload).to have_rows([
         ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE', 'VENUE NAME',
-         'ADDRESS', 'CITY', 'STATE', 'ZIP', 'COUNTRY', 'ACTIVE STATE', "CREATED AT", "CREATED BY", "LAST MODIFIED",
-         "MODIFIED BY", 'MY NUMERIC FIELD'],
+         'ADDRESS', 'CITY', 'STATE', 'ZIP', 'COUNTRY', 'ACTIVE STATE', 'CREATED AT', 'CREATED BY', 'LAST MODIFIED',
+         'MODIFIED BY', 'MY NUMERIC FIELD'],
         ['Test Campaign FY01', user.full_name, '2014-01-01', 'My Activity Type', 'My area',
          '="443321"', 'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345', 'Los Angeles',
-         'California', '12345', 'US', 'Active', "2015-07-01 02:11", nil, "2015-07-03 02:11", "Test User", '123.0']
+         'California', '12345', 'US', 'Active', '2015-07-01 02:11', nil, '2015-07-03 02:11', 'Test User', '123.0']
       ])
 
     end
@@ -116,8 +116,8 @@ describe Results::ActivitiesController, type: :controller do
 
         expect(export.reload).to have_rows([
           ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE', 'VENUE NAME',
-           'ADDRESS', 'CITY', 'STATE', 'ZIP', 'COUNTRY', 'ACTIVE STATE', "CREATED AT", "CREATED BY", "LAST MODIFIED",
-           "MODIFIED BY", 'MY CHK FIELD: CHK OPT1', 'MY CHK FIELD: CHK OPT2']
+           'ADDRESS', 'CITY', 'STATE', 'ZIP', 'COUNTRY', 'ACTIVE STATE', 'CREATED AT', 'CREATED BY', 'LAST MODIFIED',
+           'MODIFIED BY', 'MY CHK FIELD: CHK OPT1', 'MY CHK FIELD: CHK OPT2']
         ])
       end
 
@@ -129,7 +129,7 @@ describe Results::ActivitiesController, type: :controller do
 
         expect(export.reload).to have_rows([
           ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE', 'VENUE NAME',
-           'ADDRESS', 'CITY', 'STATE', 'ZIP', 'COUNTRY', 'ACTIVE STATE', "CREATED AT", "CREATED BY", "LAST MODIFIED", "MODIFIED BY",
+           'ADDRESS', 'CITY', 'STATE', 'ZIP', 'COUNTRY', 'ACTIVE STATE', 'CREATED AT', 'CREATED BY', 'LAST MODIFIED', 'MODIFIED BY',
            'MY CHK FIELD: CHK OPT1', 'MY CHK FIELD: CHK OPT2', 'MY RADIO FIELD']
         ])
       end

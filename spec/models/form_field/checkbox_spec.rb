@@ -31,9 +31,9 @@ describe FormField::Checkbox, type: :model do
     let(:venue) { create(:venue, place: create(:place), company: company) }
     let(:activity) { create(:activity, activity_type: activity_type, activitable: venue, campaign: campaign, company_user_id: 1) }
 
-    before {
+    before do
       campaign.activity_types << activity_type
-    }
+    end
 
     it 'returns the correct values' do
       ff_result = create(:form_field_result, resultable: activity, form_field: field, value: nil, hash_value: nil)

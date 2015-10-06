@@ -39,7 +39,7 @@ class ActivitiesController < FilteredController
   end
 
   def create
-    create! do |success, failure|
+    create! do |success, _failure|
       success.html do
         flash.clear
         session["activity_create_#{params[:form_id]}"] ||= 0
@@ -50,7 +50,7 @@ class ActivitiesController < FilteredController
   end
 
   def update
-    update! do |success, failure|
+    update! do |success, _failure|
       success.html do
         flash.clear
         redirect_to url_for(resource.activitable) + '#activities-list'

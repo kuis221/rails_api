@@ -129,10 +129,10 @@ describe Event, type: :model do
 
   describe 'between_visit_date_range: visit no present' do
     it 'visit no present' do
-      event = Event.new(start_at: Time.zone.local(2016, 2, 1, 11, 5, 0),
-                        end_at: Time.zone.local(2016, 2, 1, 12, 5, 0))
+      event = described_class.new(start_at: Time.zone.local(2016, 2, 1, 11, 5, 0),
+                                  end_at: Time.zone.local(2016, 2, 1, 12, 5, 0))
 
-      expect(event.instance_eval{ between_visit_date_range }).to eql nil
+      expect(event.instance_eval { between_visit_date_range }).to eql nil
     end
   end
 
@@ -1459,14 +1459,36 @@ describe Event, type: :model do
       it 'return plan for events in the future' do
         event = create(:event, campaign: campaign)
         expect(event.plan_phases).to eql [
-          { id: :info, title: "Basic Info", complete: true, required: true },
-          { id: :contacts, title: "Contacts", complete: false, required: false },
-          { id: :tasks, title: "Tasks", complete: false, required: false },
-          { id: :documents, title: "Documents", complete: false, required: false }]
+          { id: :info, title: 'Basic Info', complete: true, required: true },
+          { id: :contacts, title: 'Contacts', complete: false, required: false },
+          { id: :tasks, title: 'Tasks', complete: false, required: false },
+          { id: :documents, title: 'Documents', complete: false, required: false }]
       end
     end
 
     describe 'execute_phases' do
+      it 'includes the PER step as complete if campaign has not required form fields' do
+        create(:form_field_number, fieldable: campaign, kpi: create(:kpi, company_id: 1), required: false)
+        event = create(:event, campaign: campaign)
+        expect(event.execute_phases.find { |s| s[:id] == :per }).to include(
+          id: :per, title: 'Post Event Recap', complete: true)
+      end
+
+      it 'includes the PER step as incomplete if campaign has required form fields without associated results' do
+        create(:form_field_number, fieldable: campaign, kpi: create(:kpi, company_id: 1), required: true)
+        event = create(:event, campaign: campaign)
+        expect(event.execute_phases.find { |s| s[:id] == :per }).to include(
+          id: :per, title: 'Post Event Recap', complete: false)
+      end
+
+      it 'includes the PER step as complete if campaign has required form fields with associated results' do
+        field = create(:form_field_number, fieldable: campaign, kpi: create(:kpi, company_id: 1), required: true)
+        event = create(:event, campaign: campaign)
+        event.results_for([field]).first.value = 100
+        expect(event.execute_phases.find { |s| s[:id] == :per }).to include(
+          id: :per, title: 'Post Event Recap', complete: true)
+      end
+
       it 'includes the activities step if campaign have any activity type' do
         event = create(:event, campaign: campaign)
         campaign.activity_types << create(:activity_type, company: company)
@@ -1542,14 +1564,14 @@ describe Event, type: :model do
 
       it 'does not mark the comments module as completed if does\'t meet the range validations' do
         event = create(:event, campaign: campaign)
-        campaign.update_attribute(:modules, 'comments' => {'settings' => { 'range_max' => 4, 'range_min' => 2 }})
+        campaign.update_attribute(:modules, 'comments' => { 'settings' => { 'range_max' => 4, 'range_min' => 2 } })
         create(:comment, commentable: event)
         expect(event.execute_phases.find { |s| s[:id] == :comments }[:complete]).to be_falsey
       end
 
       it 'marks the comments module as completed if meets the range validations' do
         event = create(:event, campaign: campaign)
-        campaign.update_attribute(:modules, 'comments' => {'settings' => { 'range_max' => 4, 'range_min' => 2 }})
+        campaign.update_attribute(:modules, 'comments' => { 'settings' => { 'range_max' => 4, 'range_min' => 2 } })
         create(:comment, commentable: event)
         create(:comment, commentable: event)
         expect(event.execute_phases.find { |s| s[:id] == :comments }[:complete]).to be_truthy
@@ -1557,14 +1579,14 @@ describe Event, type: :model do
 
       it 'does not mark the comments module as completed only a max is specified and not comments have been created' do
         event = create(:event, campaign: campaign)
-        campaign.update_attribute(:modules, 'comments' => {'settings' => { 'range_max' => 4, 'range_min' => nil }})
+        campaign.update_attribute(:modules, 'comments' => { 'settings' => { 'range_max' => 4, 'range_min' => nil } })
         expect(event.execute_phases.find { |s| s[:id] == :comments }[:complete]).to be_falsey
       end
     end
   end
 
   describe '#first_event_expense_created_at' do
-    let!(:event) { create :approved_event, created_at: Time.parse("01/01/2010 08:00") }
+    let!(:event) { create :approved_event, created_at: Time.parse('01/01/2010 08:00') }
 
     context 'when event has no expense' do
       before { expect(event.event_expenses.count).to eq 0 }
@@ -1575,8 +1597,8 @@ describe Event, type: :model do
     end
 
     context 'when event has at least one expense' do
-      let!(:event_expense1) { create :event_expense, event: event, created_at: Time.parse("01/01/2010 10:00") }
-      let!(:event_expense2) { create :event_expense, event: event, created_at: Time.parse("02/01/2010 10:00") }
+      let!(:event_expense1) { create :event_expense, event: event, created_at: Time.parse('01/01/2010 10:00') }
+      let!(:event_expense2) { create :event_expense, event: event, created_at: Time.parse('02/01/2010 10:00') }
 
       before { expect(event.event_expenses.count).to eq 2 }
 
@@ -1588,7 +1610,7 @@ describe Event, type: :model do
 
   describe '#first_event_expense_created_by' do
     let!(:user1) { create :user }
-    let!(:event) { create :approved_event, created_at: Time.parse("01/01/2010 08:00"), created_by: user1 }
+    let!(:event) { create :approved_event, created_at: Time.parse('01/01/2010 08:00'), created_by: user1 }
 
     context 'when event has no expense' do
       before { expect(event.event_expenses.count).to eq 0 }
@@ -1600,8 +1622,8 @@ describe Event, type: :model do
 
     context 'when event has at least one expense' do
       let!(:user2) { create :user }
-      let!(:event_expense1) { create :event_expense, event: event, created_at: Time.parse("01/01/2010 10:00"), created_by: user2  }
-      let!(:event_expense2) { create :event_expense, event: event, created_at: Time.parse("02/01/2010 10:00")}
+      let!(:event_expense1) { create :event_expense, event: event, created_at: Time.parse('01/01/2010 10:00'), created_by: user2  }
+      let!(:event_expense2) { create :event_expense, event: event, created_at: Time.parse('02/01/2010 10:00') }
 
       before { expect(event.event_expenses.count).to eq 2 }
 
@@ -1612,7 +1634,7 @@ describe Event, type: :model do
   end
 
   describe '#last_event_expense_updated_at' do
-    let!(:event) { create :approved_event, updated_at: Time.parse("01/01/2010 08:00") }
+    let!(:event) { create :approved_event, updated_at: Time.parse('01/01/2010 08:00') }
 
     context 'when event has no expense' do
       before { expect(event.event_expenses.count).to eq 0 }
@@ -1623,8 +1645,8 @@ describe Event, type: :model do
     end
 
     context 'when event has at least one expense' do
-      let!(:event_expense1) { create :event_expense, event: event, updated_at: Time.parse("01/01/2010 10:00") }
-      let!(:event_expense2) { create :event_expense, event: event, updated_at: Time.parse("02/01/2010 10:00") }
+      let!(:event_expense1) { create :event_expense, event: event, updated_at: Time.parse('01/01/2010 10:00') }
+      let!(:event_expense2) { create :event_expense, event: event, updated_at: Time.parse('02/01/2010 10:00') }
 
       before { expect(event.event_expenses.count).to eq 2 }
 
@@ -1636,7 +1658,7 @@ describe Event, type: :model do
 
   describe '#last_event_expense_updated_by' do
     let!(:user1) { create :user }
-    let!(:event) { create :approved_event, updated_at: Time.parse("01/01/2010 08:00"), updated_by: user1 }
+    let!(:event) { create :approved_event, updated_at: Time.parse('01/01/2010 08:00'), updated_by: user1 }
 
     context 'when event has no expense' do
       before { expect(event.event_expenses.count).to eq 0 }
@@ -1648,8 +1670,8 @@ describe Event, type: :model do
 
     context 'when event has at least one expense' do
       let!(:user2) { create :user }
-      let!(:event_expense1) { create :event_expense, event: event, updated_at: Time.parse("01/01/2010 10:00") }
-      let!(:event_expense2) { create :event_expense, event: event, updated_at: Time.parse("02/01/2010 10:00"), updated_by: user2 }
+      let!(:event_expense1) { create :event_expense, event: event, updated_at: Time.parse('01/01/2010 10:00') }
+      let!(:event_expense2) { create :event_expense, event: event, updated_at: Time.parse('02/01/2010 10:00'), updated_by: user2 }
 
       before { expect(event.event_expenses.count).to eq 2 }
 
@@ -1660,7 +1682,7 @@ describe Event, type: :model do
   end
 
   describe '#update_active_photos_count' do
-    let!(:event) { create :approved_event, active_photos_count: 0}
+    let!(:event) { create :approved_event, active_photos_count: 0 }
 
     before { allow(event).to receive_message_chain(:photos, :active, :count).and_return 10 }
 

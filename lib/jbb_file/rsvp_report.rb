@@ -45,7 +45,7 @@ module JbbFile
     end
 
     def process
-      puts "RsvpReport.process STARTED!"
+      puts 'RsvpReport.process STARTED!'
       self.created = self.failed = self.multiple_events = 0
       invalid_rows = []
       errors = { required_columns: {}, invalid_campaigns: {} }
@@ -87,7 +87,7 @@ module JbbFile
         end
         p 'ENDED!'
 
-        if errors.values.all? { |v| v.empty? }
+        if errors.values.all?(&:empty?)
           success created, invalid_rows.count, multiple_events, @new_events, invalid_rows
         else
           fail errors.values.flatten.count, invalid_rows, errors
@@ -207,7 +207,7 @@ module JbbFile
       p "Searching #{name} near #{city_or_state}, US"
       spot = Place.google_client.spots_by_query("#{name} near #{city_or_state}, US").first
       spot = nil if spot.nil? || spot.name.downcase.similar(name) < 50
-      p "NOT FOUND" if spot.nil?
+      p 'NOT FOUND' if spot.nil?
       return unless spot.present?
       place = Place.load_by_place_id(spot.place_id, spot.reference)
       place.save unless place.persisted?

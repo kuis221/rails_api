@@ -14,23 +14,22 @@ describe Api::V1::ContactsController, type: :controller do
       get :index, format: :json
       expect(response).to be_success
       expect(json.count).to eql 2
-      expect(json.find { |c| c['id'] == contact.id }).to eq({
-        'id' => contact.id,
-        'first_name' => contact.first_name,
-        'last_name' => contact.last_name,
-        'full_name' => contact.full_name,
-        'title' => contact.title,
-        'company_name' => contact.company_name,
-        'email' => contact.email,
-        'street1' => contact.street1,
-        'street2' => contact.street2,
-        'phone_number' => contact.phone_number,
-        'street_address' => contact.street_address,
-        'city' => contact.city,
-        'state' => contact.state,
-        'zip_code' => contact.zip_code,
-        'country' => contact.country,
-        'country_name' => contact.country_name })
+      expect(json.find { |c| c['id'] == contact.id }).to eq('id' => contact.id,
+                                                            'first_name' => contact.first_name,
+                                                            'last_name' => contact.last_name,
+                                                            'full_name' => contact.full_name,
+                                                            'title' => contact.title,
+                                                            'company_name' => contact.company_name,
+                                                            'email' => contact.email,
+                                                            'street1' => contact.street1,
+                                                            'street2' => contact.street2,
+                                                            'phone_number' => contact.phone_number,
+                                                            'street_address' => contact.street_address,
+                                                            'city' => contact.city,
+                                                            'state' => contact.state,
+                                                            'zip_code' => contact.zip_code,
+                                                            'country' => contact.country,
+                                                            'country_name' => contact.country_name)
     end
   end
 
@@ -138,7 +137,7 @@ describe Api::V1::ContactsController, type: :controller do
       put 'update', id: contact.to_param, contact: {
         first_name: 'William',
         last_name: 'Blake',
-        company_name: 'ACME',
+        company_name: 'ACME'
       }, format: :json
       expect(assigns(:contact)).to eq(contact)
       expect(response).to be_success

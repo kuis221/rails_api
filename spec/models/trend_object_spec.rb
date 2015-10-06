@@ -3,10 +3,12 @@ require 'rails_helper'
 describe 'TrendObject' do
   let(:campaign) { create(:campaign) }
   let(:comment) { create(:comment, commentable: event) }
-  let(:activity ) { create(:activity, activity_type: activity_type,
-        activitable: event, campaign: campaign, company_user_id: 1) }
+  let(:activity) do
+    create(:activity, activity_type: activity_type,
+                      activitable: event, campaign: campaign, company_user_id: 1)
+  end
   let(:activity_type) { create(:activity_type, company: campaign.company) }
-  let(:field) { create(:form_field, type: 'FormField::TextArea', fieldable: activity_type ) }
+  let(:field) { create(:form_field, type: 'FormField::TextArea', fieldable: activity_type) }
   let(:event) { create(:event, campaign: campaign, company: campaign.company) }
   let(:campaign) { create(:campaign) }
 

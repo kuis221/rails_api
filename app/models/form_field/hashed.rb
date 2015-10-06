@@ -21,9 +21,9 @@ class FormField::Hashed < FormField
     return [] if result.blank?
 
     keys = options_for_input.map { |_, v| v.to_s }
-    totals = Hash[keys.zip(result.map { |h| h.values_at(*keys) }.inject { |a, v| a.zip(v).map{ |sum, t| sum.to_f + t.to_f } })]
+    totals = Hash[keys.zip(result.map { |h| h.values_at(*keys) }.reduce { |a, v| a.zip(v).map { |sum, t| sum.to_f + t.to_f } })]
 
-    totals.inject({}) do |memo, (key, value)|
+    totals.reduce({}) do |memo, (key, value)|
       memo[key.to_i] = value
       memo
     end
@@ -32,14 +32,14 @@ class FormField::Hashed < FormField
   def results_for_percentage_chart_for_hash(result)
     totals = results_for_hash_values(result)
 
-    values = totals.reject { |k, v| v.nil? || v == '' || v.to_f == 0.0 }
-    options_map = Hash[options_for_input.map{|o| [o[1], o[0]] }]
+    values = totals.reject { |_k, v| v.nil? || v == '' || v.to_f == 0.0 }
+    options_map = Hash[options_for_input.map { |o| [o[1], o[0]] }]
     values.map { |k, v| [options_map[k], v] }
   end
 
   def results_for_percentage_chart_for_value(result)
-    values = result.reject { |k, v| k == nil || v.nil? || v == '' || v.to_f == 0.0 }
-    options_map = Hash[options_for_input.map{|o| [o[1], o[0]] }]
+    values = result.reject { |k, v| k.nil? || v.nil? || v == '' || v.to_f == 0.0 }
+    options_map = Hash[options_for_input.map { |o| [o[1], o[0]] }]
     values.map { |k, v| [options_map[k.to_i], v] }
   end
 
@@ -60,7 +60,7 @@ class FormField::Hashed < FormField
   end
 
   def values_by_option(hash_values)
-    options_for_input.inject([]) do |memo, option|
+    options_for_input.reduce([]) do |memo, option|
       memo << hash_values[option[1].to_s]
       memo
     end
