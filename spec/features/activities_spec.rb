@@ -230,6 +230,87 @@ feature 'Activities management' do
       end
     end
 
+    scenario 'allows the user to add and remove place in Add activity' do
+      expect_any_instance_of(CombinedSearch).to receive(:open).and_return(double(read: { results:
+        [
+          { reference: 'xxxxx', place_id: '1111', name: 'Walt Disney World Dolphin',
+            formatted_address: '' }
+        ]
+      }.to_json))
+      expect_any_instance_of(GooglePlaces::Client).to receive(:spot).with('xxxxx').and_return(double(
+        name: 'Walt Disney World Dolphin', formatted_address: '1500 Epcot Resorts Blvd',
+        lat: '1.1111', lng: '2.2222', types: ['establishment'], reference: 'xxxxx', id: '1111',
+        address_components: [
+          { 'types' => ['country'], 'short_name' => 'US' },
+          { 'types' => ['administrative_area_level_1'], 'short_name' => 'FL', 'long_name' => 'Florida' },
+          { 'types' => ['locality'], 'long_name' => 'Lake Buena Vista' },
+          { 'types' => ['route'], 'long_name' => '1500 Epcot Resorts Blvd' }
+        ]
+      ))
+
+      create(:user, company: company, first_name: 'Juanito', last_name: 'Bazooka')
+      venue = create(:venue, company: company, place: place)
+      activity_type = create(:activity_type, name: 'Activity Type #1', company: company)
+      campaign.activity_types << activity_type
+      create(:form_field, name: 'Place Field', type: 'FormField::Place', fieldable: activity_type, ordering: 1)
+
+      visit venue_path(venue)
+
+      click_js_button 'Add Activity'
+
+      within visible_modal do
+        choose('Activity Type #1')
+        click_js_button 'Create'
+      end
+      select_from_chosen(campaign.name, from: 'Campaign')
+      select_from_autocomplete 'Search for a place', 'Walt Disney World Dolphin'
+
+      expect(find('.places-autocomplete').value).to have_content('Walt Disney World Dolphin')
+
+      click_button 'Submit'
+      click_link 'Finish'
+
+      within resource_item do
+        click_js_link('Activity Details')
+      end
+
+      expect(page).to have_content('Walt Disney World Dolphin')
+
+      visit venue_path(venue)
+
+      within resource_item do
+        click_js_link('Edit')
+      end
+
+      field = find_field('Search for a place')
+      page.execute_script %{$('##{field['id']}').val('Bar la Unión').keydown().blur()}
+
+      click_button 'Save'
+
+      within resource_item do
+        click_js_link('Activity Details')
+      end
+
+      expect(page).to have_content('Walt Disney World Dolphin')
+
+      visit venue_path(venue)
+
+      within resource_item do
+        click_js_link('Edit')
+      end
+
+      field = find_field('Search for a place')
+      page.execute_script %{$('##{field['id']}').val('').keydown().blur()}
+
+      click_button 'Save'
+
+      within resource_item do
+        click_js_link('Activity Details')
+      end
+
+      expect(page).to_not have_content('Walt Disney World Dolphin')
+    end
+
     scenario 'allows the user to add an activity to a Venue, see it displayed in the Activities list and then deactivate it', search: true do
       venue = create(:venue, company: company, place: create(:place, is_custom_place: true, reference: nil))
       create(:user, company: company, first_name: 'Juanito', last_name: 'Bazooka')

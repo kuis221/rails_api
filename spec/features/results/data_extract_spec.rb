@@ -16,7 +16,7 @@ feature 'Data Extract Report', js: true do
 
       expect(page).to have_selector('#data_extract_source_chzn', count: 1)
       select_from_chosen 'Events', from: 'What type of report do you want to create?'
-      
+
       click_button 'Next'
 
       expect(page).to have_content('Available Fields')
@@ -29,7 +29,7 @@ feature 'Data Extract Report', js: true do
 
       expect(page).to have_selector('#data_extract_source_chzn', count: 1)
       select_from_chosen 'Events', from: 'What type of report do you want to create?'
-      
+
       click_button 'Next'
 
       expect(page).to have_content('Available Fields')
