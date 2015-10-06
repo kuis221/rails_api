@@ -77,8 +77,8 @@ class FormField::Dropdown < FormField::Hashed
     hash_result[:titles] << name
 
     events.each do |event|
-      options_map = Hash[options_for_input.map{|o| [o[1], o[0]] }]
-      value = event.value.nil? ? "" : options_map[event.value.to_i]
+      options_map = Hash[options_for_input.map { |o| [o[1], o[0]] }]
+      value = event.value.nil? ? '' : options_map[event.value.to_i]
       hash_result[event.resultable_id] << value
     end
     hash_result

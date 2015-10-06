@@ -456,7 +456,7 @@ class Campaign < ActiveRecord::Base
   end
 
   def campaign_brand_portfolios
-    self.brand_portfolios.pluck(:name).join(' ,')
+    brand_portfolios.pluck(:name).join(' ,')
   end
 
   class << self

@@ -4,8 +4,8 @@ module CurrentUser
   extend ActiveSupport::Concern
 
   included do
-    around_filter :scope_current_user
-    after_filter :update_user_last_activity
+    around_action :scope_current_user
+    after_action :update_user_last_activity
     helper_method :current_company, :current_company_user, :current_real_company_user,
                   :behave_as_user, :current_real_user
   end
@@ -14,9 +14,7 @@ module CurrentUser
     @current_company ||= current_company_user.company if user_signed_in?
   end
 
-  def company_users
-    current_company.company_users
-  end
+  delegate :company_users, to: :current_company
 
   def current_company_user
     @current_company_user ||=

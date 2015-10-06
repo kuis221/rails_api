@@ -52,7 +52,7 @@ describe PlacesController, type: :controller do
         .and_return(double(read: ActiveSupport::JSON.encode('results' => [
           { 'geometry' => { 'location' => { 'lat' => '1.2322', lng: '-3.23455' } } }])))
 
-      ff = create(:form_field_number, fieldable: create(:entity_form, entity: "Venue", company_id: company.id))
+      ff = create(:form_field_number, fieldable: create(:entity_form, entity: 'Venue', company_id: company.id))
       expect do
         expect do
           expect do
@@ -63,8 +63,8 @@ describe PlacesController, type: :controller do
                 { company_id: company.id, web_address: 'www.guilles.com',
                   place_price_level: '2', phone_number: '(404) 234234234',
                   hours_fields_attributes: {
-                  '0' => { day: '1', hour_open: '0600', hour_close: '0000', '_destroy' => 'false' }
-                 }, results_attributes: { '0' =>
+                    '0' => { day: '1', hour_open: '0600', hour_close: '0000', '_destroy' => 'false' }
+                  }, results_attributes: { '0' =>
                   { form_field_id: ff.id, value: 1 }
                 }
               } } }, format: :js
@@ -87,7 +87,7 @@ describe PlacesController, type: :controller do
       expect(venue.price_level).to eql 2
       expect(venue.phone_number).to eql '(404) 234234234'
       expect(venue.opening_hours.count).to eql 1
-      expect(Venue.last.results_for([ff]).first.value).to eql "1"
+      expect(Venue.last.results_for([ff]).first.value).to eql '1'
 
       expect(area.places).to match_array([place])
     end
@@ -179,7 +179,7 @@ describe PlacesController, type: :controller do
 
         expect_any_instance_of(described_class).to receive(:open).and_return(
           double(read: ActiveSupport::JSON.encode('results' => [{
-            'geometry' => { 'location' => { 'lat' => '1.2322', lng: '-3.23455' } } }])))
+                                                    'geometry' => { 'location' => { 'lat' => '1.2322', lng: '-3.23455' } } }])))
 
         expect do
           xhr :post, 'create', area_id: area.id, add_new_place: true,
@@ -318,8 +318,8 @@ describe PlacesController, type: :controller do
             xhr :patch, 'update', id: venue.place.id, add_new_place: 'false', place: { venues_attributes: { '0' =>
                 { id: venue.id, web_address: 'www.guilles.com', place_price_level: '3', phone_number: '(404) 65652114',
                   company_id: company.id, hours_fields_attributes: {
-                  '0' => { day: '1', hour_open: '0600', hour_close: '0000', '_destroy' => 'false' }
-                 } } } }, format: :js
+                    '0' => { day: '1', hour_open: '0600', hour_close: '0000', '_destroy' => 'false' }
+                  } } } }, format: :js
           end.to change(Place, :count).by(1)
         end.to change(Venue, :count).by(1)
       end.to change(HoursField, :count).by(1)
@@ -352,7 +352,7 @@ describe PlacesController, type: :controller do
                 { id: venue.id, web_address: 'www.guilles.com', company_id: company.id, hours_fields_attributes: {
                   '0' => { id: hours1.id, day: '0', hour_open: '0600', hour_close: '0000', '_destroy' => 'true' },
                   '1' => { id: hours2.id, day: '1', hour_open: '0600', hour_close: '0000', '_destroy' => 'false' }
-                 } } } }, format: :js
+                } } } }, format: :js
           end.to change(Place, :count).by(0)
         end.to change(Venue, :count).by(0)
       end.to change(HoursField, :count).by(-1)

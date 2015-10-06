@@ -436,13 +436,14 @@ describe Results::EventDataController, type: :controller do
       let(:option2) { create(:form_field_option, name: 'LikertScale Opt2') }
       let(:statement1) { create(:form_field_statement, name: 'LikertScale Stat1') }
       let(:statement2) { create(:form_field_statement, name: 'LikertScale Stat2') }
-      let(:field) { create(:form_field_likert_scale, name: 'My LikertScale Field',
-                                                     fieldable: campaign,
-                                                     multiple: false,
-                                                     options: [option1, option2],
-                                                     statements: [statement1, statement2]
+      let(:field) do
+        create(:form_field_likert_scale, name: 'My LikertScale Field',
+                                         fieldable: campaign,
+                                         multiple: false,
+                                         options: [option1, option2],
+                                         statements: [statement1, statement2]
                     )
-      }
+      end
 
       let(:place) { create(:place, name: 'Bar Prueba', city: 'Los Angeles', state: 'California', country: 'US') }
       let(:event) { build(:approved_event, campaign: campaign, place: place, start_date: '01/23/2013', end_date: '01/23/2013') }

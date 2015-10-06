@@ -25,8 +25,8 @@ module TdLinx
       logger.error "Something wrong happened in the process: #{e.message}"
       TdlinxMailer.td_linx_process_failed(e).deliver
       raise e # Raise the error so we see it on errbit
-    # ensure
-    #   drop_tdlinx_codes_table
+      # ensure
+      #   drop_tdlinx_codes_table
     end
 
     def self.process!
@@ -43,7 +43,7 @@ module TdLinx
 
       # Here it comes... read each line in the downloaded CSV file
       # and look for a match in the database
-      logger.info "Start processing venues"
+      logger.info 'Start processing venues'
       i = 0
       Place.joins(:venues).joins('LEFT JOIN events ON events.place_id=places.id')
         .select('places.*, venues.id venue_id, count(events.id) as events_count')
@@ -71,24 +71,24 @@ module TdLinx
             place.name, place.street, place.city, place.state,
             place.zipcode, place.events_count] unless place.td_linx_code
         end
-        i+=1
+        i += 1
         logger.info "#{i} rows processed" if (i % 500) == 0
       end
 
       files.values.each(&:close)
 
-      logger.info "Creating ZIP file with results"
+      logger.info 'Creating ZIP file with results'
       zip_path = Dir::Tmpname.make_tmpname('tmp/tdlinx_', nil)
       Zip::File.open(zip_path, Zip::File::CREATE) do |zip|
         paths.values.each { |p|  zip.add(File.basename(p), p) }
       end
 
-      logger.info "Delivering email with results"
+      logger.info 'Delivering email with results'
       TdlinxMailer.td_linx_process_completed(zip_path).deliver
 
       files = {}
       File.delete zip_path
-      logger.info "Process completed!!"
+      logger.info 'Process completed!!'
       paths
     ensure
       files.values.each { |f| f.close rescue true }
@@ -142,16 +142,16 @@ module TdLinx
       logger.info 'TDLINX: Preparing imported data'
       ActiveRecord::Base.connection.execute(
         'UPDATE tdlinx_codes SET street=normalize_addresss(street)')
-       ActiveRecord::Base.connection.execute(
-        'UPDATE tdlinx_codes SET street=regexp_replace('\
-          "street, ',\\s*' || city || '\\s*,\\s*' || state || '\\s*,\\s*' || zipcode || '\\s*', "\
-          "'')::varchar")
+      ActiveRecord::Base.connection.execute(
+       'UPDATE tdlinx_codes SET street=regexp_replace('\
+         "street, ',\\s*' || city || '\\s*,\\s*' || state || '\\s*,\\s*' || zipcode || '\\s*', "\
+         "'')::varchar")
       ActiveRecord::Base.connection.execute(
         "UPDATE tdlinx_codes SET street=regexp_replace(street, '^\\s*' || name || '\\s*,?\s*', '')::varchar")
     end
 
     def self.copy_data_from_file(path)
-      logger.info "TDLINX: Loading file data into database"
+      logger.info 'TDLINX: Loading file data into database'
       dbconn = ActiveRecord::Base.connection_pool.checkout
       raw  = dbconn.raw_connection
 
@@ -181,7 +181,7 @@ module TdLinx
       logger.info "TDLINX: Downloading FTP file #{file[3]}"
       begin
         ftp.gettextfile file[3], path
-      rescue Exception => e
+      rescue => e
         raise "An error has occurred when trying to download the file #{file[3]} from the FTP server: #{e.message}"
       end
     ensure

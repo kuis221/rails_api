@@ -7,7 +7,7 @@ describe CombinedSearch, type: :model do
 
     describe 'without stubbed google results' do
       it 'rescue from errors when fetching results form Google' do
-        expect_any_instance_of(described_class).to receive(:open) { raise OpenURI::HTTPError.new('', double(:io)) }
+        expect_any_instance_of(described_class).to receive(:open) { fail OpenURI::HTTPError.new('', double(:io)) }
 
         params = { q: 'qw', current_company_user: company_user }
         expect(described_class.new(params).results).to be_empty
@@ -293,9 +293,9 @@ describe CombinedSearch, type: :model do
           params = { q: 'Bayou', current_company_user: company_user }
           expect(described_class.new(params).results).to eql [
             {
-              value: "Los Angeles, Bayou Restaurant, 580 Gramatan Avenue, Mount Vernon, NY 10552, United States",
-              label: "Los Angeles, Bayou Restaurant, 580 Gramatan Avenue, Mount Vernon, NY 10552, United States",
-              id: "REFERENCE1||PLACEID1",
+              value: 'Los Angeles, Bayou Restaurant, 580 Gramatan Avenue, Mount Vernon, NY 10552, United States',
+              label: 'Los Angeles, Bayou Restaurant, 580 Gramatan Avenue, Mount Vernon, NY 10552, United States',
+              id: 'REFERENCE1||PLACEID1',
               location: { latitude: 22.22, longitude: 33.33 },
               valid: true
             }
@@ -324,9 +324,9 @@ describe CombinedSearch, type: :model do
           params = { q: 'new', current_company_user: company_user }
           expect(described_class.new(params).results).to eql [
             {
-              value: "New Jersey, USA",
-              label: "New Jersey, USA",
-              id: "REFERENCE1||PLACEID1",
+              value: 'New Jersey, USA',
+              label: 'New Jersey, USA',
+              id: 'REFERENCE1||PLACEID1',
               location: { latitude: 22.22, longitude: 33.33 },
               valid: true
             }
@@ -355,9 +355,9 @@ describe CombinedSearch, type: :model do
           params = { q: 'new', current_company_user: company_user }
           expect(described_class.new(params).results).to eql [
             {
-              value: "Trenton, New Jersey, USA",
-              label: "Trenton, New Jersey, USA",
-              id: "REFERENCE1||PLACEID1",
+              value: 'Trenton, New Jersey, USA',
+              label: 'Trenton, New Jersey, USA',
+              id: 'REFERENCE1||PLACEID1',
               location: { latitude: 22.22, longitude: 33.33 },
               valid: true
             }

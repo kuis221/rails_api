@@ -86,7 +86,7 @@ class ListExport < ActiveRecord::Base
   def build_file
     ctrl = load_controller
     zone = company_user.user.time_zone.presence || Rails.application.config.time_zone
-    path = Dir::Tmpname.create(['export-' + self.id.to_s,  '.html']) { }
+    path = Dir::Tmpname.create(['export-' + id.to_s,  '.html']) {}
     Time.use_zone(zone) { ctrl.send(:export_list, self, path) }
 
     build_file_from_path path, "#{ctrl.send(:export_file_name)}-#{id}.#{export_format}"

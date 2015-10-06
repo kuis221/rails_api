@@ -194,10 +194,14 @@ feature 'Teams', js: true do
   end
 
   feature 'export', search: true do
-    let(:team1) { create(:team, name: 'Costa Rica Team', description: 'El grupo de ticos',
-                                active: true, company: company) }
-    let(:team2) { create(:team, name: 'San Francisco Team', description: 'The guys from SF',
-                                active: true, company: company) }
+    let(:team1) do
+      create(:team, name: 'Costa Rica Team', description: 'El grupo de ticos',
+                                active: true, company: company)
+    end
+    let(:team2) do
+      create(:team, name: 'San Francisco Team', description: 'The guys from SF',
+                                active: true, company: company)
+    end
 
     before do
       team1.users << create_list(:company_user, 3, company: company)

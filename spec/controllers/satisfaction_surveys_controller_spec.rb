@@ -10,7 +10,7 @@ describe SatisfactionSurveysController, type: :controller do
   describe 'POST create' do
     let(:satisfaction_survey)do
       create(:satisfaction_survey,
-                         company_user: @company_user, session_id: request.session_options[:id], feedback: '')
+             company_user: @company_user, session_id: request.session_options[:id], feedback: '')
     end
 
     it 'should create a new satisfaction survey' do

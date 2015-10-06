@@ -1223,14 +1223,14 @@ describe Report, type: :model do
         create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
           place: place_in_tx, results: { impressions: 200, interactions: 150 })
         report = create(:report,
-                         company: company,
-                         columns: [{ 'field' => 'place:state', 'label' => 'State' },
-                                   { 'field' => 'values', 'label' => 'Values' }],
-                         rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' }],
-                         values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
-                                     'aggregate' => 'sum', 'precision' => '1' },
-                                   { 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions',
-                                     'aggregate' => 'avg', 'precision' => '3' }]
+                        company: company,
+                        columns: [{ 'field' => 'place:state', 'label' => 'State' },
+                                  { 'field' => 'values', 'label' => 'Values' }],
+                        rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' }],
+                        values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                    'aggregate' => 'sum', 'precision' => '1' },
+                                  { 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions',
+                                    'aggregate' => 'avg', 'precision' => '3' }]
         )
         page = report.fetch_page
         expect(report.report_columns).to match_array [

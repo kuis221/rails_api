@@ -45,7 +45,7 @@ describe Campaign, type: :model do
   before { Company.current = company }
 
   describe 'end_after_start validation' do
-    subject { Campaign.new(start_date: '01/22/2013') }
+    subject { described_class.new(start_date: '01/22/2013') }
 
     it { is_expected.not_to allow_value('01/21/2013').for(:end_date).with_message('must be after') }
     it { is_expected.to allow_value('01/22/2013').for(:end_date) }
@@ -101,8 +101,8 @@ describe Campaign, type: :model do
     it 'should returns global kpis + enabled modules' do
       Kpi.create_global_kpis
       create(:form_field_number,
-                         fieldable: campaign,
-                         kpi: build(:kpi, company_id: campaign.company_id))
+             fieldable: campaign,
+             kpi: build(:kpi, company_id: campaign.company_id))
 
       expect(campaign.active_global_kpis).to match_array [Kpi.events, Kpi.promo_hours, Kpi.expenses, Kpi.comments]
     end
@@ -118,8 +118,8 @@ describe Campaign, type: :model do
     it 'should returns all kpis + events, promo hours and surveys' do
       Kpi.create_global_kpis
       form_field  = create(:form_field_number,
-                                       fieldable: campaign,
-                                       kpi: build(:kpi, company_id: campaign.company_id))
+                           fieldable: campaign,
+                           kpi: build(:kpi, company_id: campaign.company_id))
 
       expect(campaign.active_kpis).to match_array [form_field.kpi, Kpi.events, Kpi.promo_hours, Kpi.surveys]
     end
@@ -135,13 +135,13 @@ describe Campaign, type: :model do
     it 'should returns all custom kpis' do
       Kpi.create_global_kpis
       form_field  = create(:form_field_number,
-                                       fieldable: campaign,
-                                       kpi: build(:kpi, company_id: campaign.company_id))
+                           fieldable: campaign,
+                           kpi: build(:kpi, company_id: campaign.company_id))
 
       # Other field associated to another campaign
       create(:form_field_number,
-                         fieldable: create(:campaign, company_id: campaign.company_id),
-                         kpi: build(:kpi, company_id: campaign.company_id))
+             fieldable: create(:campaign, company_id: campaign.company_id),
+             kpi: build(:kpi, company_id: campaign.company_id))
 
       expect(campaign.custom_kpis).to match_array [form_field.kpi]
     end
@@ -255,8 +255,8 @@ describe Campaign, type: :model do
 
       # Create another user related to another brand
       create(:company_user,
-                         brand_ids: [create(:brand, company: company).id],
-                         role: non_admin_role, company: company)
+             brand_ids: [create(:brand, company: company).id],
+             role: non_admin_role, company: company)
 
       expect(campaign.all_users_with_access).to eq([user])
     end
@@ -270,8 +270,8 @@ describe Campaign, type: :model do
 
       # Create another user related to another brand portfolio
       create(:company_user,
-                         brand_portfolio_ids: [create(:brand_portfolio, company: company).id],
-                         company: company, role: non_admin_role)
+             brand_portfolio_ids: [create(:brand_portfolio, company: company).id],
+             company: company, role: non_admin_role)
 
       expect(campaign.all_users_with_access).to eq([user])
     end
@@ -330,8 +330,8 @@ describe Campaign, type: :model do
 
       # Create another user related to another brand portfolio
       create(:company_user,
-                         brand_portfolio_ids: [create(:brand_portfolio, company: company).id],
-                         role: non_admin_role, company: company)
+             brand_portfolio_ids: [create(:brand_portfolio, company: company).id],
+             role: non_admin_role, company: company)
 
       expect(campaign.all_users_with_access).to match_array([user, user2])
     end
@@ -385,7 +385,7 @@ describe Campaign, type: :model do
       area.places << city
 
       # Because the campaing caches the locations, load a new object with the same campaign ID
-      expect(Campaign.find(campaign.id).place_allowed_for_event?(place)).to be_truthy
+      expect(described_class.find(campaign.id).place_allowed_for_event?(place)).to be_truthy
     end
 
     it 'works with places that are not yet saved' do
@@ -409,7 +409,7 @@ describe Campaign, type: :model do
       expect(campaign.place_allowed_for_event?(place)).to be_falsey
       area.places << natural_feature
       # Because the campaing caches the locations, load a new object with the same campaign ID
-      expect(Campaign.find(campaign.id).place_allowed_for_event?(place)).to be_truthy
+      expect(described_class.find(campaign.id).place_allowed_for_event?(place)).to be_truthy
     end
   end
 
@@ -669,13 +669,13 @@ describe Campaign, type: :model do
       Kpi.create_global_kpis
     end
     it 'should return empty when there are no campaigns and events' do
-      stats = Campaign.promo_hours_graph_data
+      stats = described_class.promo_hours_graph_data
       expect(stats).to be_empty
     end
 
     it 'should return empty when there are campaigns but no goals' do
       create(:campaign)
-      stats = Campaign.promo_hours_graph_data
+      stats = described_class.promo_hours_graph_data
       expect(stats).to be_empty
     end
 
@@ -686,7 +686,7 @@ describe Campaign, type: :model do
 
       create(:approved_event, start_date: '01/23/2013', end_date: '01/23/2013', campaign: campaign)
 
-      stats = Campaign.promo_hours_graph_data
+      stats = described_class.promo_hours_graph_data
       expect(stats.count).to eql 1
       expect(stats.first['id']).to eql campaign.id
       expect(stats.first['name']).to eql 'TestCmp1'
@@ -707,7 +707,7 @@ describe Campaign, type: :model do
 
       create(:approved_event, start_date: '01/23/2013', end_date: '01/23/2013', start_time: '8:00pm', end_time: '11:00pm', campaign: campaign)
 
-      stats = Campaign.promo_hours_graph_data
+      stats = described_class.promo_hours_graph_data
       expect(stats.count).to eql 1
       expect(stats.first['id']).to eql campaign.id
       expect(stats.first['name']).to eql 'TestCmp1'
@@ -729,7 +729,7 @@ describe Campaign, type: :model do
 
       create(:approved_event, start_date: '01/23/2013', end_date: '01/23/2013', start_time: '8:00pm', end_time: '11:00pm', campaign: campaign)
 
-      stats = Campaign.promo_hours_graph_data
+      stats = described_class.promo_hours_graph_data
       expect(stats.count).to eql 2
       expect(stats.first['id']).to eql campaign.id
       expect(stats.first['name']).to eql 'TestCmp1'
@@ -765,7 +765,7 @@ describe Campaign, type: :model do
       create(:submitted_event, start_time: '9:00pm', end_time: '10:00pm', campaign: campaign)
       create(:event, start_time: '9:00pm', end_time: '10:00pm', campaign: campaign)
 
-      stats = Campaign.promo_hours_graph_data
+      stats = described_class.promo_hours_graph_data
       expect(stats.count).to eql 2
       expect(stats.first['id']).to eql campaign.id
       expect(stats.first['name']).to eql 'TestCmp1'
@@ -802,7 +802,7 @@ describe Campaign, type: :model do
       create(:event, start_time: '9:00pm', end_time: '10:00pm', campaign: campaign)
 
       Timecop.travel Date.new(2014, 01, 15) do
-        stats = Campaign.promo_hours_graph_data
+        stats = described_class.promo_hours_graph_data
         expect(stats.count).to eql 2
         expect(stats.first['kpi']).to eql 'PROMO HOURS'
         expect(stats.first['today']).to eql 4.838709677419355
@@ -814,7 +814,7 @@ describe Campaign, type: :model do
       end
 
       Timecop.travel Date.new(2014, 01, 25) do
-        stats = Campaign.promo_hours_graph_data
+        stats = described_class.promo_hours_graph_data
         expect(stats.count).to eql 2
         expect(stats.first['kpi']).to eql 'PROMO HOURS'
         expect(stats.first['today']).to eql 8.064516129032258
@@ -827,7 +827,7 @@ describe Campaign, type: :model do
 
       # When the campaing end date is before the current date
       Timecop.travel Date.new(2014, 02, 25) do
-        stats = Campaign.promo_hours_graph_data
+        stats = described_class.promo_hours_graph_data
         expect(stats.count).to eql 2
         expect(stats.first['kpi']).to eql 'PROMO HOURS'
         expect(stats.first['today']).to eql 10.0
@@ -840,7 +840,7 @@ describe Campaign, type: :model do
 
       # When the campaing start date is after the current date
       Timecop.travel Date.new(2013, 12, 25) do
-        stats = Campaign.promo_hours_graph_data
+        stats = described_class.promo_hours_graph_data
         expect(stats.count).to eql 2
         expect(stats.first['kpi']).to eql 'PROMO HOURS'
         expect(stats.first['today']).to eql 0

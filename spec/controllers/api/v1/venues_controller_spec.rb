@@ -165,16 +165,16 @@ describe Api::V1::VenuesController, type: :controller do
           'id' => comment2.id,
           'content' => 'Comment #2',
           'created_at' => '2013-08-23T09:15:00.000-07:00',
-          'created_by'=>{ 'id'=>user.id, 'full_name' => user.full_name },
+          'created_by' => { 'id' => user.id, 'full_name' => user.full_name },
           'type' => 'brandscopic'
         },
         {
           'id' => comment1.id,
           'content' => 'Comment #1',
           'created_at' => '2013-08-22T11:59:00.000-07:00',
-          'created_by'=>{ 'id'=>user.id, 'full_name' => user.full_name },
+          'created_by' => { 'id' => user.id, 'full_name' => user.full_name },
           'type' => 'brandscopic'
-       }]
+        }]
     end
   end
 
@@ -215,9 +215,9 @@ describe Api::V1::VenuesController, type: :controller do
 
       people_bucket = json.select { |b| b['label'] == 'People' }.first
       expect(people_bucket['value']).to eq([{
-        'label' => '<i>Gu</i>illermo Vargas',
-        'value' => company_user.id.to_s,
-        'type' => 'user' }])
+                                             'label' => '<i>Gu</i>illermo Vargas',
+                                             'value' => company_user.id.to_s,
+                                             'type' => 'user' }])
     end
 
     it 'should return the teams in the People Bucket' do
@@ -259,9 +259,9 @@ describe Api::V1::VenuesController, type: :controller do
 
       campaigns_bucket = json.select { |b| b['label'] == 'Campaigns' }.first
       expect(campaigns_bucket['value']).to eq([{
-        'label' => '<i>Cac</i>ique para todos',
-        'value' => campaign.id.to_s,
-        'type' => 'campaign' }])
+                                                'label' => '<i>Cac</i>ique para todos',
+                                                'value' => campaign.id.to_s,
+                                                'type' => 'campaign' }])
     end
 
     it 'should return the brands in the Brands Bucket' do

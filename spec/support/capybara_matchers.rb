@@ -49,9 +49,9 @@ module Capybara
           errors.push "expected #{page.inspect} to have filter section #{@title}" unless found
 
           if expected && (!found || errors.any?)
-            raise Capybara::ExpectationNotMet, errors.join
+            fail Capybara::ExpectationNotMet, errors.join
           elsif !expected && found
-            raise Capybara::ExpectationNotMet, "expected #{page.inspect} to not have filter section #{@args[:title]}"
+            fail Capybara::ExpectationNotMet, "expected #{page.inspect} to not have filter section #{@args[:title]}"
           end
         end
         true
@@ -86,9 +86,9 @@ module Capybara
           found = page.all('.filter-item', text: @title).count > 0
 
           if expected && !found
-            raise Capybara::ExpectationNotMet, "expected #{page.inspect} to have filter tag #{@title}"
+            fail Capybara::ExpectationNotMet, "expected #{page.inspect} to have filter tag #{@title}"
           elsif !expected && found
-            raise Capybara::ExpectationNotMet, "expected #{page.inspect} to not have filter tag  #{@title}"
+            fail Capybara::ExpectationNotMet, "expected #{page.inspect} to not have filter tag  #{@title}"
           end
         end
         true

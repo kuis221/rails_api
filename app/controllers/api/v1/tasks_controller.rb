@@ -79,8 +79,8 @@ class Api::V1::TasksController < Api::V1::FilteredController
 
   def permitted_search_params
     params.permit(:event_id,
-      start_date: [], end_date: [], status: [], task_status: [],
-      campaign: [], user: [], team: [])
+                  start_date: [], end_date: [], status: [], task_status: [],
+                  campaign: [], user: [], team: [])
   end
 
   def search_params

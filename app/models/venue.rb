@@ -42,7 +42,7 @@ class Venue < ActiveRecord::Base
   validates :place, presence: true, uniqueness: { scope: :company_id }
 
   before_validation :smart_add_url_protocol
-  validates_format_of :web_address, :with => URI::regexp, allow_blank: true
+  validates_format_of :web_address, with: URI.regexp, allow_blank: true
 
   has_many :events, through: :place
   has_many :activities, -> { order('activity_date ASC') }, as: :activitable do
@@ -79,7 +79,7 @@ class Venue < ActiveRecord::Base
   scope :top_venue, -> { where(top_venue: true) }
   scope :jameson_locals, -> { where(jameson_locals: true) }
   scope :accessible_by_user, ->(user) { in_company(user.company_id) }
-  scope :filters_between_dates, ->(start_date, end_date) { where(created_at: DateTime.parse(start_date)..DateTime.parse(end_date))}
+  scope :filters_between_dates, ->(start_date, end_date) { where(created_at: DateTime.parse(start_date)..DateTime.parse(end_date)) }
 
   before_destroy :check_for_associations
 
@@ -161,7 +161,7 @@ class Venue < ActiveRecord::Base
     if reindex_neighbors_venues && neighbors_establishments_search
       Venue.where(
         id: neighbors_establishments_search.hits.map(&:primary_key)
-      ).where.not(id: self.id).update_all(score_dirty: true)
+      ).where.not(id: id).update_all(score_dirty: true)
     end
 
     true
@@ -204,10 +204,10 @@ class Venue < ActiveRecord::Base
         with(:avg_impressions_hour).greater_than(0)
 
         stat(:avg_impressions_hour, type: 'stddev')
-        #stat(:avg_impressions_hour, type: 'mean')
+        # stat(:avg_impressions_hour, type: 'mean')
 
         stat(:avg_impressions_cost, type: 'stddev')
-        #stat(:avg_impressions_cost, type: 'mean')
+        # stat(:avg_impressions_cost, type: 'mean')
       end
     end
   end
@@ -451,7 +451,7 @@ class Venue < ActiveRecord::Base
 
   def venue_opening_hours
     return nil if hours_fields.blank?
-    periods = hours_fields.inject([]) do |memo, hour|
+    periods = hours_fields.reduce([]) do |memo, hour|
       if hour.day.present? && hour.hour_open.present? || hour.hour_close.present?
         hash = {}
         hash.merge!('open' => { 'day' => hour.day, 'time' => hour.hour_open }) if hour.hour_open.present?
@@ -467,6 +467,6 @@ class Venue < ActiveRecord::Base
 
   def smart_add_url_protocol
     return true if web_address.blank? || web_address[/\Ahttp:\/\//] || web_address[/\Ahttps:\/\//]
-    self.web_address = "http://#{self.web_address}"
+    self.web_address = "http://#{web_address}"
   end
 end

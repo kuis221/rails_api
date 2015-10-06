@@ -55,7 +55,7 @@ class CombinedSearch
   end
 
   def filter_duplicated(results, place_ids)
-    merged_ids = Place.where.not(merged_with_place_id: nil).where(place_id: results.map{ |r| r[:id] }).pluck(:place_id)
+    merged_ids = Place.where.not(merged_with_place_id: nil).where(place_id: results.map { |r| r[:id] }).pluck(:place_id)
     results.reject do |p|
       reference, id = p[:id].split('||')
       place_ids.include?(reference) || place_ids.include?(id) || merged_ids.include?(id)
@@ -64,7 +64,7 @@ class CombinedSearch
 
   def filter_merged(solr_results, google_results)
     # Get places id for places merged with results from Solr
-    merged_ids = Place.where(merged_with_place_id: solr_results.map{ |r| r[:id] }).pluck(:place_id).uniq
+    merged_ids = Place.where(merged_with_place_id: solr_results.map { |r| r[:id] }).pluck(:place_id).uniq
     # Remove results from Google that were merged with results from Solr
     results = []
     google_results.each do |r|

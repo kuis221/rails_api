@@ -23,7 +23,7 @@ RSpec.shared_examples 'a fieldable element' do
   scenario 'user can add paragraph fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
-    page.execute_script "window.scrollBy(0,500)"
+    page.execute_script 'window.scrollBy(0,500)'
     text_area_field.drag_to form_builder
 
     expect(form_builder).to have_form_field('Paragraph')
@@ -484,7 +484,7 @@ RSpec.shared_examples 'a fieldable element' do
   scenario 'user can add brand fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
-    page.execute_script "window.scrollBy(0,500)"
+    page.execute_script 'window.scrollBy(0,500)'
     brand_field.drag_to form_builder
 
     expect(form_builder).to have_form_field('Brand')
@@ -546,7 +546,7 @@ RSpec.shared_examples 'a fieldable element' do
   scenario 'user can add marque fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
-    page.execute_script "window.scrollBy(0,500)"
+    page.execute_script 'window.scrollBy(0,500)'
     marque_field.drag_to form_builder
 
     expect(form_builder).to have_form_field('Marque')
@@ -752,7 +752,7 @@ RSpec.shared_examples 'a fieldable element' do
     end
 
     confirm_prompt 'Removing this option will remove all the entered data/answers associated with it. '
-                   'Are you sure you want to do this? This cannot be undone'
+    'Are you sure you want to do this? This cannot be undone'
 
     within form_field_settings_for 'My Summation Field' do
       expect(page).to have_no_content('Second Option')
@@ -898,7 +898,7 @@ RSpec.shared_examples 'a fieldable element' do
     end
 
     confirm_prompt 'Removing this option will remove all the entered data/answers associated with it. '
-                   'Are you sure you want to do this? This cannot be undone'
+    'Are you sure you want to do this? This cannot be undone'
 
     within form_field_settings_for 'My Likert scale Field' do
       within('.field-options[data-type="option"]') { expect(page).to have_no_content('Second Option') }
@@ -923,7 +923,7 @@ RSpec.shared_examples 'a fieldable element' do
       end
     end
     confirm_prompt 'Removing this statement will remove all the entered data/answers associated with it. '
-                   'Are you sure you want to do this? This cannot be undone'
+    'Are you sure you want to do this? This cannot be undone'
     within form_field_settings_for 'My Likert scale Field' do
       within('.field-options[data-type="statement"]') { expect(page).to have_no_content('Second Option') }
     end
@@ -1256,7 +1256,7 @@ RSpec.shared_examples 'a fieldable element that accept modules' do
     end
 
     confirm_prompt 'Removing this module will remove all the entered data associated with it. '
-                   'Are you sure you want to do this?'
+    'Are you sure you want to do this?'
 
     expect(find('.form-wrapper')).to have_no_selector('.form-section.module[data-type=Photos]')
     click_js_button 'Save'

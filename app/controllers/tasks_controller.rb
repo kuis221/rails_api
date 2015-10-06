@@ -44,7 +44,7 @@ class TasksController < FilteredController
 
   def collection_to_csv
     CSV.generate do |csv|
-      csv << ['TITLE', 'DATE', 'CAMPAIGN', 'STATUSES', 'EMPLOYEE']
+      csv << %w(TITLE DATE CAMPAIGN STATUSES EMPLOYEE)
       each_collection_item do |task|
         csv << [task.title, task.due_date, task.campaign_name, task.statuses.join(' '), task.user_full_name]
       end

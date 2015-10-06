@@ -90,7 +90,7 @@ class Place < ActiveRecord::Base
   after_commit :reindex_associated
   scope :accessible_by_user, ->(user) { in_company(user.company_id) }
   scope :in_company, ->(company) { joins(:venues).where(venues: { company_id: company }) }
-  scope :filters_between_dates, ->(start_date, end_date) { where(venues: { created_at: DateTime.parse(start_date)..DateTime.parse(end_date)})}
+  scope :filters_between_dates, ->(start_date, end_date) { where(venues: { created_at: DateTime.parse(start_date)..DateTime.parse(end_date) }) }
 
   accepts_nested_attributes_for :venues
 
@@ -293,7 +293,7 @@ class Place < ActiveRecord::Base
     fail 'Cannot merge place with itself' if id == place.id
     self.class.connection.transaction do
       Event.where(place_id: place.id).each do |event|
-        event.update_attribute(:place_id, id) or fail('cannot update event')
+        event.update_attribute(:place_id, id) || fail('cannot update event')
       end
 
       Venue.where(place_id: place.id).each do |venue|
@@ -350,9 +350,9 @@ class Place < ActiveRecord::Base
 
     def latlon_for_city(name, state, country)
       points = Rails.cache.fetch("latlon_#{name.parameterize('_')}_#{state.parameterize('_')}_#{country.parameterize('_')}") do
-        data = JSON.parse(open(URI.encode("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI::encode(name)}&components=country:#{URI::encode(country)}|administrative_area:#{URI::encode(state)}&sensor=false")).read)
+        data = JSON.parse(open(URI.encode("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(name)}&components=country:#{URI.encode(country)}|administrative_area:#{URI.encode(state)}&sensor=false")).read)
         if data['results'].count > 0
-          result = data['results'].detect { |r| r['geometry'].present? && r['geometry']['location'].present? }
+          result = data['results'].find { |r| r['geometry'].present? && r['geometry']['location'].present? }
           [result['geometry']['location']['lat'],  result['geometry']['location']['lng']] if result
         else
           nil
@@ -502,7 +502,7 @@ class Place < ActiveRecord::Base
 
   def normalize_names
     self.city = self.city.gsub(/^st\.?\s/i, 'Saint ') if self.city.present?
-    self.neighborhoods = self.neighborhoods.map { |x| x.gsub(/^st\.?\s/i, 'Saint ') } if self.neighborhoods.is_a?(Array)
+    self.neighborhoods = neighborhoods.map { |x| x.gsub(/^st\.?\s/i, 'Saint ') } if neighborhoods.is_a?(Array)
     true
   end
 

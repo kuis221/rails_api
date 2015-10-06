@@ -67,9 +67,9 @@ class FormField::LikertScale < FormField::Hashed
     )
   end
 
-  def grouped_results(campaign, event_scope)
+  def grouped_results(campaign, _event_scope)
     events = form_field_results.for_event_campaign(campaign)
-    result = events.map { |event| event.hash_value }.compact
+    result = events.map(&:hash_value).compact
     return [] if result.blank?
 
     totals = initialize_totals_likert_scale
@@ -90,7 +90,7 @@ class FormField::LikertScale < FormField::Hashed
       hash_result[:titles] << "#{name} - #{statement.name}"
     end
     events.each do |event|
-      value = event.hash_value.nil? ? "" : event.hash_value
+      value = event.hash_value.nil? ? '' : event.hash_value
       hash_result[event.resultable_id].concat(values_by_option(value)) unless hash_result[event.resultable_id].nil?
     end
     hash_result
@@ -113,10 +113,10 @@ class FormField::LikertScale < FormField::Hashed
   end
 
   def initialize_totals_likert_scale
-    statements.inject({}) do |memo, (statement)|
+    statements.reduce({}) do |memo, (statement)|
       memo[statement.id] = {
         name: statement.name,
-        totals: options.inject({}) do |m, (option)|
+        totals: options.reduce({}) do |m, (option)|
           m[option.id] = { name: option.name, total: 0 }
           m
         end
@@ -126,12 +126,12 @@ class FormField::LikertScale < FormField::Hashed
   end
 
   def totals_likert_scale(totals)
-    values = totals.reject{ |_, v| v[:total].nil? || v[:total] == '' || v[:total].to_f == 0.0 }
+    values = totals.reject { |_, v| v[:total].nil? || v[:total] == '' || v[:total].to_f == 0.0 }
     values.map { |_, v| [v[:name], v[:total]] }
   end
 
   def values_by_option(hash_values)
-    statements.inject([]) do |memo, statement|
+    statements.reduce([]) do |memo, statement|
       opt = hash_values[statement.id.to_s]
       object_option = options.find(opt.to_i) unless opt.nil?
       value = object_option.nil? ? '' : object_option.name

@@ -81,12 +81,12 @@ class Kpi < ActiveRecord::Base
 
   def self.campaign_eq(campaigns)
     joins(:form_fields)
-      .where( form_fields: {
-        fieldable_type: 'Campaign',
-        fieldable_id: campaigns })
+      .where(form_fields: {
+               fieldable_type: 'Campaign',
+               fieldable_id: campaigns })
   end
 
-  def self.ransackable_scopes(auth_object = nil)
+  def self.ransackable_scopes(_auth_object = nil)
     [:campaign_eq]
   end
 
@@ -108,7 +108,7 @@ class Kpi < ActiveRecord::Base
     capture_mechanism == 'currency'
   end
 
-  def self.ransackable_scopes(auth_object = nil)
+  def self.ransackable_scopes(_auth_object = nil)
     [:campaign_eq]
   end
 
@@ -236,15 +236,15 @@ class Kpi < ActiveRecord::Base
       end
 
       ['< 12', '12 – 17', '18 – 24', '25 – 34', '35 – 44', '45 – 54', '55 – 64', '65+'].each do |segment|
-        self.age.kpis_segments.create(text: segment)
+        age.kpis_segments.create(text: segment)
       end
 
       %w(Female Male).each do |segment|
-        self.gender.kpis_segments.create(text: segment)
+        gender.kpis_segments.create(text: segment)
       end
 
       ['Asian', 'Black / African American', 'Hispanic / Latino', 'Native American', 'White'].each do |segment|
-        self.ethnicity.kpis_segments.create(text: segment)
+        ethnicity.kpis_segments.create(text: segment)
       end
     end
 

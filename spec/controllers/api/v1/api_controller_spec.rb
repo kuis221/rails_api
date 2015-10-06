@@ -4,7 +4,7 @@ describe Api::V1::ApiController, type: :controller do
   let(:user) { sign_in_as_user }
   let(:company) { user.companies.first }
 
-  controller(Api::V1::ApiController) do
+  controller(described_class) do
     skip_authorize_resource
     skip_authorization_check
     skip_load_and_authorize_resource

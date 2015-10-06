@@ -1,6 +1,5 @@
 require 'resque/tasks'
 
-
 namespace :resque do
   # this task will get called before resque:pool:setup
   # and preload the rails environment in the pool manager
@@ -15,7 +14,7 @@ namespace :resque do
     end
   end
 
-  desc "Kill all stale workers running longer than X seconds"
+  desc 'Kill all stale workers running longer than X seconds'
   task kill_stale: :environment do
     kill_time = ENV['kill_time'] || 7200  # Default 2 hours
     Resque.workers.each do |w|
@@ -24,7 +23,7 @@ namespace :resque do
     end
   end
 
-  desc "Kill all workers running longer than 25 hours"
+  desc 'Kill all workers running longer than 25 hours'
   task kill_zombies: :environment do
     Resque.workers.each { |w| w.unregister_worker if w.started < 25.hours.ago }
   end

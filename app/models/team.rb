@@ -99,6 +99,6 @@ class Team < ActiveRecord::Base
   end
 
   def filter_subitems
-    self.users.joins(:user).pluck('company_users.id, users.first_name || \' \' || users.last_name as name, \'user\'')
+    users.joins(:user).pluck('company_users.id, users.first_name || \' \' || users.last_name as name, \'user\'')
   end
 end

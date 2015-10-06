@@ -72,7 +72,7 @@ class DataExtract < ActiveRecord::Base
   end
 
   def columns_with_names
-    columns.map { |c| [c, exportable_columns.find { |ec| ec[0] == c }.try(:[], 1) ] }
+    columns.map { |c| [c, exportable_columns.find { |ec| ec[0] == c }.try(:[], 1)] }
   end
 
   def rows(page = 1, per_page: DEFAULT_LIMIT)

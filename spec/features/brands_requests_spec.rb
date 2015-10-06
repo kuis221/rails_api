@@ -55,7 +55,7 @@ feature 'Brands', js: true do
 
       expect(page).to have_content '1 brand found for: Inactive'
 
-       within resource_item do
+      within resource_item do
         expect(page).to have_content('Brand 1')
         click_js_button 'Activate Brand'
       end

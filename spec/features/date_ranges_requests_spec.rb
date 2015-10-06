@@ -162,12 +162,16 @@ feature 'DateRanges', search: true, js: true do
   end
 
   feature 'export' do
-    let(:date_range1) { create(:date_range,
-                              company: @company, name: 'Weekdays',
-                              description: 'From monday to friday', active: true) }
-    let(:date_range2) { create(:date_range,
-                              company: @company, name: 'Weekends',
-                              description: 'Saturday and Sunday', active: true) }
+    let(:date_range1) do
+      create(:date_range,
+             company: @company, name: 'Weekdays',
+             description: 'From monday to friday', active: true)
+    end
+    let(:date_range2) do
+      create(:date_range,
+             company: @company, name: 'Weekends',
+             description: 'Saturday and Sunday', active: true)
+    end
 
     before do
       # make sure tasks are created before

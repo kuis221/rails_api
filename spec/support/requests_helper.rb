@@ -3,11 +3,11 @@ require 'rexml/document'
 require 'open-uri'
 
 module CapybaraBrandscopicHelpers
-  def wait_for_ajax(timeout = Capybara.default_wait_time)
+  def wait_for_ajax(timeout = Capybara.default_max_wait_time)
     wait_until(timeout) { page.evaluate_script '((typeof jQuery == "undefined") || (jQuery.active == 0))' }
   end
 
-  def wait_until(timeout = Capybara.default_wait_time)
+  def wait_until(timeout = Capybara.default_max_wait_time)
     Timeout.timeout(timeout) do
       sleep(0.1) until value = yield
       value
@@ -22,7 +22,7 @@ module CapybaraBrandscopicHelpers
     self
   end
 
-  def wait_for_download_to_complete(timeout = Capybara.default_wait_time)
+  def wait_for_download_to_complete(timeout = Capybara.default_max_wait_time)
     count = ListExport.count
     yield
     Timeout.timeout(timeout) do
@@ -32,7 +32,7 @@ module CapybaraBrandscopicHelpers
     end
   end
 
-  def wait_for_photo_to_process(timeout = Capybara.default_wait_time)
+  def wait_for_photo_to_process(timeout = Capybara.default_max_wait_time)
     last_modified = AttachedAsset.last.try(:updated_at)
     count = AttachedAsset.count
     yield
@@ -61,7 +61,7 @@ module CapybaraBrandscopicHelpers
     self
   end
 
-  def show_all_filters()
+  def show_all_filters
     find(:link, 'Show filters').trigger('click') # Use this if using capybara-webkit instead of selenium
     expect(page).to have_link('Hide filters')
   end
@@ -285,7 +285,7 @@ module RequestsHelper
     visit(path) unless current_path == path
   end
 
-  def resource_item(resource=1, list: nil)
+  def resource_item(resource = 1, list: nil)
     root = page
     root = find(list) unless list.nil?
     item =

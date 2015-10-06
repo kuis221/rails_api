@@ -28,10 +28,10 @@ RSpec.describe DataExtract::EventData, type: :model do
   let(:campaign) { create(:campaign, name: 'Campaign Absolut FY12', company: company) }
 
   describe '#exportable_columns' do
-    let(:subject) { described_class.new(company: company, current_user: user,
-                    columns: ['campaign_name', 'start_date', 'start_time', 'end_date',
-                              'end_time', 'event_status', 'street', 'place_city', 'place_name', 'place_state',
-                              'place_zipcode', 'created_by', 'created_at']) }
+    let(:subject) do
+      described_class.new(company: company, current_user: user,
+                    columns: %w(campaign_name start_date start_time end_date end_time event_status street place_city place_name place_state place_zipcode created_by created_at))
+    end
 
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql([
@@ -88,11 +88,11 @@ RSpec.describe DataExtract::EventData, type: :model do
       subject.params = { 'campaign_id' => [campaign.id] }
 
       percentage_field = create(:form_field_percentage,
-        fieldable: campaign, name: 'My percentage field',
-        options: [
-          option2 = create(:form_field_option, name: 'Opt 2', ordering: 1),
-          option1 = create(:form_field_option, name: 'Opt 1', ordering: 3),
-          option3 = create(:form_field_option, name: 'Opt 3', ordering: 2)]
+                                fieldable: campaign, name: 'My percentage field',
+                                options: [
+                                  option2 = create(:form_field_option, name: 'Opt 2', ordering: 1),
+                                  option1 = create(:form_field_option, name: 'Opt 1', ordering: 3),
+                                  option3 = create(:form_field_option, name: 'Opt 3', ordering: 2)]
       )
       numeric_field = create(:form_field_number, name: 'My Numeric Field', fieldable: campaign)
 
@@ -106,10 +106,10 @@ RSpec.describe DataExtract::EventData, type: :model do
   end
 
   describe '#rows' do
-    let(:subject) { described_class.new(company: company, current_user: user,
-                                        columns: ['campaign_name', 'end_date', 'end_time', 'start_date', 'start_time',
-                                        'place_street','place_city', 'place_name', 'place_state', 'place_zipcode',
-                                        'event_team_members', 'event_status', 'status']) }
+    let(:subject) do
+      described_class.new(company: company, current_user: user,
+                                        columns: %w(campaign_name end_date end_time start_date start_time place_street place_city place_name place_state place_zipcode event_team_members event_status status))
+    end
 
     it 'returns empty if no rows are found' do
       expect(subject.rows).to be_empty

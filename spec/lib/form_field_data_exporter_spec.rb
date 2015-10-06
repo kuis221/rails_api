@@ -13,7 +13,7 @@ describe FormFieldDataExporter, type: :model do
 
   let(:resource_class) { Event }
 
-  let(:subject) { FormFieldDataExporter.new(company_user, params, resource_class) }
+  let(:subject) { described_class.new(company_user, params, resource_class) }
 
   describe '#custom_fields_to_export_values and #custom_fields_to_export_headers' do
     describe 'for event data' do
@@ -51,7 +51,7 @@ describe FormFieldDataExporter, type: :model do
         expect(event.save).to be_truthy
 
         expect(subject.custom_fields_to_export_headers).to eq(['MY CHK FIELD: CHK OPT1', 'MY CHK FIELD: CHK OPT2'])
-        expect(subject.custom_fields_to_export_values(event)).to eq(['Yes', 'Yes'])
+        expect(subject.custom_fields_to_export_values(event)).to eq(%w(Yes Yes))
       end
 
       it 'return empty if no options were selected in checkbox fields' do
@@ -60,7 +60,7 @@ describe FormFieldDataExporter, type: :model do
             option1 = create(:form_field_option, name: 'Chk Opt1'),
             option2 = create(:form_field_option, name: 'Chk Opt2')])
 
-        event.results_for([field]).first.value = { }
+        event.results_for([field]).first.value = {}
         event.save
         expect(event.save).to be_truthy
 
@@ -119,13 +119,14 @@ describe FormFieldDataExporter, type: :model do
         let(:option2) { create(:form_field_option, name: 'LikertScale Opt2') }
         let(:statement1) { create(:form_field_statement, name: 'LikertScale Stat1') }
         let(:statement2) { create(:form_field_statement, name: 'LikertScale Stat2') }
-        let(:field) { create(:form_field_likert_scale, name: 'My LikertScale Field',
-                                                       fieldable: campaign,
-                                                       multiple: false,
-                                                       options: [option1, option2],
-                                                       statements: [statement1, statement2]
+        let(:field) do
+          create(:form_field_likert_scale, name: 'My LikertScale Field',
+                                           fieldable: campaign,
+                                           multiple: false,
+                                           options: [option1, option2],
+                                           statements: [statement1, statement2]
                       )
-        }
+        end
 
         it 'includes single answer LIKERT SCALE fields that are not linked to a KPI' do
           event.results_for([field]).first.value = { statement1.id.to_s => option1.id.to_s,
@@ -213,7 +214,7 @@ describe FormFieldDataExporter, type: :model do
           'My Brand Marque'])
       end
 
-      describe "form fields merging" do
+      describe 'form fields merging' do
         let(:campaign2) { create(:campaign, company: company) }
         let(:params) { { campaign: [campaign.id, campaign2.id] } }
 
@@ -470,10 +471,7 @@ describe FormFieldDataExporter, type: :model do
         expect(activity.save).to be_truthy
 
         expect(subject.custom_fields_to_export_headers).to eq(['MY CHK FIELD: CHK OPT1', 'MY CHK FIELD: CHK OPT2'])
-        expect(subject.custom_fields_to_export_values(activity)).to eq([
-          'Yes',
-          'Yes'
-        ])
+        expect(subject.custom_fields_to_export_values(activity)).to eq(%w(Yes Yes))
       end
 
       it 'includes DROPDOWN fields' do
@@ -523,7 +521,7 @@ describe FormFieldDataExporter, type: :model do
 
       it 'includes BRAND fields' do
         field = create(:form_field_brand, name: 'My Brand Field',
-          fieldable: activity_type)
+                                          fieldable: activity_type)
         brand = create(:brand, name: 'My Brand', company: company)
         campaign.brands << brand
 
@@ -561,13 +559,14 @@ describe FormFieldDataExporter, type: :model do
         let(:option2) { create(:form_field_option, name: 'LikertScale Opt2') }
         let(:statement1) { create(:form_field_statement, name: 'LikertScale Stat1') }
         let(:statement2) { create(:form_field_statement, name: 'LikertScale Stat2') }
-        let(:field) { create(:form_field_likert_scale, name: 'My LikertScale Field',
-                                                       fieldable: activity_type,
-                                                       multiple: false,
-                                                       options: [option1, option2],
-                                                       statements: [statement1, statement2]
+        let(:field) do
+          create(:form_field_likert_scale, name: 'My LikertScale Field',
+                                           fieldable: activity_type,
+                                           multiple: false,
+                                           options: [option1, option2],
+                                           statements: [statement1, statement2]
                       )
-        }
+        end
 
         it 'includes single answer LIKERT SCALE fields that are not linked to a KPI' do
           activity.results_for([field]).first.value = { statement1.id.to_s => option1.id.to_s,
