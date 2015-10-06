@@ -80,8 +80,11 @@ describe 'TrendObject' do
   describe 'solr_index', search: true do
     before { campaign.activity_types << activity_type }
 
+    let(:venue) { create(:venue, company: campaign.company) }
+
     it 'works' do
       event_field = create(:form_field_text, fieldable: campaign)
+      venue_field = create(:form_field_text, fieldable: create(:entity_form, entity: 'Venue', company: campaign.company))
 
       event.results_for([event_field]).first.value = 'this have a value'
       event.save
@@ -90,6 +93,9 @@ describe 'TrendObject' do
 
       activity.results_for([field]).first.value = 'this have a value'
       activity.save
+
+      venue.results_for([venue_field]).first.value = 'this have a value'
+      venue.save
 
       TrendObject.reindex
       Sunspot.commit
