@@ -76,7 +76,6 @@ group :development do
   gem 'pry-rails'
   gem 'haml'
   gem 'nkss-rails', github: 'nadarei/nkss-rails'
-  gem 'parallel_tests'
 end
 
 # Gems that are only required for the web process, to prevent
@@ -107,6 +106,7 @@ group :test, :development do
   gem 'faker'
   gem 'rubocop', require: false
   gem 'rubocop-rspec', require: false
+  gem 'parallel_tests'
 end
 
 group :test do
@@ -120,7 +120,7 @@ group :test do
   gem 'sunspot_matchers'
   # gem 'launchy'
   gem 'sunspot_test'
-  #gem 'sunspot-rails-tester'
+  # gem 'sunspot-rails-tester'
   gem 'resque_spec'
   gem 'simplecov', require: false
   gem 'capybara-screenshot'
@@ -129,8 +129,8 @@ group :test do
   # gem 'sms-spec', '~> 0.1.9'
   gem 'sms-spec'
   gem 'pdf-reader'
-#  gem 'vcr'
-  #gem 'webmock'
+  # gem 'vcr'
+  # gem 'webmock'
 end
 
 group :production do
