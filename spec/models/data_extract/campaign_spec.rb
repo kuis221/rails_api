@@ -43,7 +43,8 @@ RSpec.describe DataExtract::Campaign, type: :model do
     end
     let(:subject) do
       described_class.new(company: company, current_user: company_user,
-                    columns: %w(name description brands_list campaign_          brand_portfolios start_date end_date color created_by created_at active_state))
+                    columns: %w(name description brands_list campaign_brand_portfolios
+                                start_date end_date color created_by created_at active_state))
     end
 
     it 'returns empty if no rows are found' do
@@ -52,13 +53,15 @@ RSpec.describe DataExtract::Campaign, type: :model do
 
     describe 'with data' do
       before do
-        create(:campaign, name: 'Campaign Absolut FY12', description: 'Description campaign', company: company,
-                          created_by_id: company_user.user.id, color: '#de4d43', created_at: Time.zone.local(2013, 8, 23, 9, 15))
+        create(:campaign, name: 'Campaign Absolut FY12', description: 'Description campaign',
+                          company: company, created_by_id: company_user.user.id,
+                          color: '#de4d43', created_at: Time.zone.local(2013, 8, 23, 9, 15))
       end
 
       it 'returns all the events in the company with all the columns' do
         expect(subject.rows).to eql [
-          ['Campaign Absolut FY12', 'Description campaign', '', '', nil, nil, '#de4d43', 'Benito Camelas', '08/23/2013', 'Active']
+          ['Campaign Absolut FY12', 'Description campaign', '', '', nil, nil, '#de4d43',
+           'Benito Camelas', '08/23/2013', 'Active']
         ]
       end
 
@@ -68,7 +71,8 @@ RSpec.describe DataExtract::Campaign, type: :model do
 
         subject.filters = { 'status' => ['active'] }
         expect(subject.rows).to eql [
-          ['Campaign Absolut FY12', 'Description campaign', '', '', nil, nil, '#de4d43', 'Benito Camelas', '08/23/2013', 'Active']
+          ['Campaign Absolut FY12', 'Description campaign', '', '', nil, nil, '#de4d43',
+           'Benito Camelas', '08/23/2013', 'Active']
         ]
       end
     end
