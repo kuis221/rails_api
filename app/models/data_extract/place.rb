@@ -42,14 +42,15 @@ class DataExtract::Place < DataExtract
   end
 
   def add_filter_conditions_to_scope(s)
+    s = s.where('places.merged_with_place_id IS NULL')
     return s if filters.nil? || filters.empty?
-    s = s.where(venues: { events_count: filters['events_count']['min']..filters['events_count']['max']}) if filters['events_count'].present?
-    s = s.where(venues: { impressions: filters['impressions']['min']..filters['impressions']['max']}) if filters['impressions'].present?
-    s = s.where(venues: { interactions: filters['interactions']['min']..filters['interactions']['max']}) if filters['interactions'].present?
-    s = s.where(venues: { promo_hours: filters['promo_hours']['min']..filters['promo_hours']['max']}) if filters['promo_hours'].present?
-    s = s.where(venues: { sampled: filters['sampled']['min']..filters['sampled']['max']}) if filters['sampled'].present?
-    s = s.where(venues: { score: filters['venue_score']['min']..filters['venue_score']['max']}) if filters['venue_score'].present?
-    s = s.where(venues: { spent: filters['spent']['min']..filters['spent']['max']}) if filters['spent'].present?
+    s = s.where(venues: { events_count: filters['events_count']['min']..filters['events_count']['max'] }) if filters['events_count'].present?
+    s = s.where(venues: { impressions: filters['impressions']['min']..filters['impressions']['max'] }) if filters['impressions'].present?
+    s = s.where(venues: { interactions: filters['interactions']['min']..filters['interactions']['max'] }) if filters['interactions'].present?
+    s = s.where(venues: { promo_hours: filters['promo_hours']['min']..filters['promo_hours']['max'] }) if filters['promo_hours'].present?
+    s = s.where(venues: { sampled: filters['sampled']['min']..filters['sampled']['max'] }) if filters['sampled'].present?
+    s = s.where(venues: { score: filters['venue_score']['min']..filters['venue_score']['max'] }) if filters['venue_score'].present?
+    s = s.where(venues: { spent: filters['spent']['min']..filters['spent']['max'] }) if filters['spent'].present?
     s = s.where("places.price_level IN (#{filters['event_status'].join(', ')})") if filters['event_status'].present?
     s = s.filters_between_dates(filters['start_date'].to_s, filters['end_date'].to_s) if filters['start_date'].present? && filters['end_date'].present?
     s = in_areas(s, filters['area']) if  filters['area'].present?
