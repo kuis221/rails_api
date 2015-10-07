@@ -25,6 +25,7 @@ class FormField < ActiveRecord::Base
   belongs_to :fieldable, polymorphic: true
 
   TRENDING_FIELDS_TYPES = %w(FormField::Text FormField::TextArea)
+  TRENDING_FIELDABLES = %w(ActivityType Campaign)
 
   has_many :options, -> { order('form_field_options.ordering ASC').where(option_type: 'option') }, class_name: 'FormFieldOption', dependent: :destroy, inverse_of: :form_field, foreign_key: :form_field_id
   has_many :statements, -> { order('form_field_options.ordering ASC').where(option_type: 'statement') }, class_name: 'FormFieldOption', dependent: :destroy, inverse_of: :form_field, foreign_key: :form_field_id
@@ -49,6 +50,10 @@ class FormField < ActiveRecord::Base
 
   scope :for_campaigns, ->(campaigns) { where(fieldable_type: 'Campaign', fieldable_id: campaigns) }
   scope :for_activity_types, ->(activity_types) { where(fieldable_type: 'ActivityType', fieldable_id: activity_types) }
+  def  self.trendeable
+    where(type: FormField::TRENDING_FIELDS_TYPES,
+          fieldable_type: FormField::TRENDING_FIELDABLES)
+  end
 
   def self.for_events_in_company(companies)
     joins(
@@ -180,7 +185,8 @@ class FormField < ActiveRecord::Base
   end
 
   def trendeable?
-    TRENDING_FIELDS_TYPES.include?(type)
+    TRENDING_FIELDS_TYPES.include?(type) &&
+      TRENDING_FIELDABLES.include?(fieldable_type)
   end
 
   def type_name
