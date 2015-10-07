@@ -32,7 +32,7 @@ class Autocomplete
 
   # Autocomplete helper methods
   def autocomplete_buckets(list)
-    search_classes = list.values.map{ |c| c['classes'] }.flatten.compact
+    search_classes = list.values.map { |c| c['classes'] }.flatten.compact
     options = items_to_show(format: :string).map(&:capitalize)
 
     return [] unless options.any?
@@ -91,7 +91,7 @@ class Autocomplete
     end
 
     { label: I18n.translate("filters.#{bucket_name}"),
-      value:  value}
+      value:  value }
   end
 
   def build_bucket(search, bucket_name, klasess)
@@ -120,7 +120,7 @@ class Autocomplete
 
   def items_to_show(format: :boolean)
     if format == :string
-      user.filter_setting_present('show_inactive_items', scope) ? ['active', 'inactive'] : ['active']
+      user.filter_setting_present('show_inactive_items', scope) ? %w(active inactive) : ['active']
     else
       user.filter_setting_present('show_inactive_items', scope) ? [true, false] : [true]
     end

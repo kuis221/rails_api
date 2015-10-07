@@ -27,7 +27,7 @@ describe FormField::Brand, type: :model do
 
   describe '#field_options' do
     it 'should return all brands for company campaigns if it is a new record' do
-      field = FormField::Brand.new(settings: {})
+      field = described_class.new(settings: {})
       brands = []
       brands << create(:brand, company: company)
       brands << create(:brand, company: company)
@@ -72,7 +72,7 @@ describe FormField::Brand, type: :model do
   end
 
   describe '#format_html' do
-    it 'should return the correct values' do
+    it 'returns the correct values' do
       expect(field.format_html(build(:form_field_result, value: nil, form_field_id: field.id))).to eql nil
       expect(field.format_html(build(:form_field_result, value: create(:brand, name: 'BrandT1').id, form_field_id: field.id))).to eql 'BrandT1'
       expect(field.format_html(build(:form_field_result, value: '', form_field_id: field.id))).to eql nil

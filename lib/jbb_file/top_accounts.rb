@@ -1,6 +1,5 @@
 module JbbFile
   class TopAccounts < JbbFile::Base
-
     VALID_COLUMNS = ['TDLinx Store Code', 'Retailer', 'City', 'Address', 'State']
 
     attr_accessor :created, :existed

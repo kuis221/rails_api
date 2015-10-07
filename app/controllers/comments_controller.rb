@@ -9,7 +9,7 @@ class CommentsController < InheritedResources::Base
 
   belongs_to :task, :event, polymorphic: true
 
-  after_filter :mark_comments_as_readed, only: :index
+  after_action :mark_comments_as_readed, only: :index
 
   authorize_resource except: [:index]
 

@@ -133,6 +133,7 @@ describe Results::EventDataController, type: :controller do
          "http://test.host/events/#{event.id}", '2013-01-23 10:00', '2013-01-23 12:00', nil, nil, '2.00',
          '0', '9876.0']
       ])
+      Campaign.find(campaign.id)
     end
 
     it 'includes any custom fields for the campaigns in the custom filter' do
@@ -342,6 +343,7 @@ describe Results::EventDataController, type: :controller do
       expect do
         xhr :get, 'index', campaign: [campaign.id, campaign2.id], format: :csv
       end.to change(ListExport, :count).by(1)
+
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'CITY',
@@ -434,13 +436,14 @@ describe Results::EventDataController, type: :controller do
       let(:option2) { create(:form_field_option, name: 'LikertScale Opt2') }
       let(:statement1) { create(:form_field_statement, name: 'LikertScale Stat1') }
       let(:statement2) { create(:form_field_statement, name: 'LikertScale Stat2') }
-      let(:field) { create(:form_field_likert_scale, name: 'My LikertScale Field',
-                                                     fieldable: campaign,
-                                                     multiple: false,
-                                                     options: [option1, option2],
-                                                     statements: [statement1, statement2]
+      let(:field) do
+        create(:form_field_likert_scale, name: 'My LikertScale Field',
+                                         fieldable: campaign,
+                                         multiple: false,
+                                         options: [option1, option2],
+                                         statements: [statement1, statement2]
                     )
-      }
+      end
 
       let(:place) { create(:place, name: 'Bar Prueba', city: 'Los Angeles', state: 'California', country: 'US') }
       let(:event) { build(:approved_event, campaign: campaign, place: place, start_date: '01/23/2013', end_date: '01/23/2013') }

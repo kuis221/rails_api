@@ -138,7 +138,6 @@ class Api::V1::InvitesController < Api::V1::ApiController
     end
   end
 
-
   api :PUT, '/api/v1/events/:id', 'Update a event\'s details'
   param :event_id, :number, required: false, desc: 'Event ID'
   param :venue_id, :number, required: false, desc: 'Venue ID'

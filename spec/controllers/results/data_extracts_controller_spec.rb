@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Results::DataExtractsController, :type => :controller do
+RSpec.describe Results::DataExtractsController, type: :controller do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.companies.first
@@ -17,13 +17,13 @@ RSpec.describe Results::DataExtractsController, :type => :controller do
       expect(response).to render_template('_form_select_data_source')
     end
     it 'Not select data source' do
-      xhr :get, 'new', step: 2, data_extract: {source: ''}, format: :js
+      xhr :get, 'new', step: 2, data_extract: { source: '' }, format: :js
       expect(response).to be_success
       expect(response).to render_template('new')
       expect(response).to render_template('_form_configure')
     end
     it 'select data source' do
-      xhr :get, 'new', step: 2, data_extract: {source: 'event'}, format: :js
+      xhr :get, 'new', step: 2, data_extract: { source: 'event' }, format: :js
       expect(response).to be_success
       expect(response).to render_template('new')
       expect(response).to render_template('_form_configure')
@@ -99,17 +99,17 @@ RSpec.describe Results::DataExtractsController, :type => :controller do
     it 'should succeed' do
       expect do
         xhr :post, 'create', data_extract: {
-            name: 'Test data extract report',
-            description: 'Test data extract report description',
-            source: 'activity',
-            params: { activity_type_id: 1 }},
+          name: 'Test data extract report',
+          description: 'Test data extract report description',
+          source: 'activity',
+          params: { activity_type_id: 1 } },
           step: 4, format: :js
       end.to change(DataExtract, :count).by(1)
       expect(response).to redirect_to results_reports_path
 
       report = DataExtract.last
       expect(report.name).to eql 'Test data extract report'
-      expect(report.params).to eql({ 'activity_type_id' => 1, 'campaign_id' => nil })
+      expect(report.params).to eql('activity_type_id' => 1, 'campaign_id' => nil)
       expect(report.description).to eql 'Test data extract report description'
     end
 

@@ -49,12 +49,12 @@ class InvitesController < InheritedResources::Base
       cols = for_event ? name_col : ['EVENT DATE', 'CAMPAIGN']
       if export_individual?
         cols.concat ['REGISTRANT ID', 'DATE ADDED', 'EMAIL',
-                   'MOBILE PHONE', 'MOBILE SIGN UP', 'FIRST NAME', 'LAST NAME',
-                   'ATTENDED PREVIOUS BARTENDER BALL', 'OPT IN TO FUTURE COMMUNICATION',
-                   'PRIMARY REGISTRANT ID', 'BARTENDER HOW LONG', 'BARTENDER ROLE',
-                   'DATE OF BIRTH', 'ZIP CODE']
+                     'MOBILE PHONE', 'MOBILE SIGN UP', 'FIRST NAME', 'LAST NAME',
+                     'ATTENDED PREVIOUS BARTENDER BALL', 'OPT IN TO FUTURE COMMUNICATION',
+                     'PRIMARY REGISTRANT ID', 'BARTENDER HOW LONG', 'BARTENDER ROLE',
+                     'DATE OF BIRTH', 'ZIP CODE']
       else
-        cols.concat ['INVITES', 'RSVPs', 'ATTENDEES']
+        cols.concat %w(INVITES RSVPs ATTENDEES)
       end
       csv << cols
       each_collection_item do |item|
@@ -86,7 +86,7 @@ class InvitesController < InheritedResources::Base
   end
 
   def export_individual?
-     params[:format] == 'csv' && params[:export_mode] == 'individual'
+    params[:format] == 'csv' && params[:export_mode] == 'individual'
   end
 
   def invite_params

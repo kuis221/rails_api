@@ -39,14 +39,14 @@ class CollectionFilter
 
   def items_to_show(format: :boolean)
     if format == :string
-      user.filter_setting_present('show_inactive_items', scope) ? ['active', 'inactive'] : ['active']
+      user.filter_setting_present('show_inactive_items', scope) ? %w(active inactive) : ['active']
     else
       user.filter_setting_present('show_inactive_items', scope) ? [true, false] : [true]
     end
   end
 
   def expand(type, id)
-    if (type.eql? 'cfid')
+    if type.eql? 'cfid'
       [{
         id: id,
         filters: custom_filter_subitems(id),
@@ -223,6 +223,7 @@ class CollectionFilter
       {}
     end
   end
+
   def build_filter_item(options)
     options[:selected] ||=
       params.key?(options[:name]) &&

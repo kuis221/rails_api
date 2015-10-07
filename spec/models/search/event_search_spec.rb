@@ -176,7 +176,6 @@ describe Event, type: :model, search: true do
     event2 = create(:event, campaign: campaign2, place: place2,
                             start_date: '03/22/2013', end_date: '03/22/2013')
 
-
     area = create(:area, company: company)
     area.places << create(:city, name: 'Los Angeles', state: 'California', country: 'US')
 

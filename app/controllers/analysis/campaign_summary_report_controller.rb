@@ -43,7 +43,7 @@ class Analysis::CampaignSummaryReportController < InheritedResources::Base
     s = Event.accessible_by_user(current_company_user).where(active: true).uniq
     s = s.in_areas(params['area']) if params['area'].present?
     s = in_places(s, params['place']) if params['place'].present?
-    s = s.where(aasm_state: params['event_status'].map { |f| f.downcase}) if params['event_status'].present?
+    s = s.where(aasm_state: params['event_status'].map(&:downcase)) if params['event_status'].present?
     s = s.filters_between_dates(params['start_date'].to_s, params['end_date'].to_s) if params['start_date'].present? && params['end_date'].present?
     s = s.joins('LEFT JOIN brands_campaigns ON brands_campaigns.campaign_id=events.campaign_id')
             .where("brands_campaigns.brand_id IN (#{params['brand'].join(', ')})").uniq if params['brand'].present?
@@ -57,9 +57,7 @@ class Analysis::CampaignSummaryReportController < InheritedResources::Base
     render layout: false
   end
 
-  def collection_count
-    collection.count
-  end
+  delegate :count, to: :collection, prefix: true
 
   def collection
     @campaign.present? ? @campaign.events.merge(results_scope) : []
@@ -85,7 +83,7 @@ class Analysis::CampaignSummaryReportController < InheritedResources::Base
 
   def initialize_results_csv
     hash_result = { titles: [] }
-    collection.inject(hash_result) do |hash, event|
+    collection.reduce(hash_result) do |hash, event|
       hash[event.id] = []
       hash
     end
@@ -104,7 +102,7 @@ class Analysis::CampaignSummaryReportController < InheritedResources::Base
   end
 
   def set_cache_header
-    response.headers['Cache-Control']='private, max-age=0, no-cache'
+    response.headers['Cache-Control'] = 'private, max-age=0, no-cache'
   end
 
   def initialize_campaign

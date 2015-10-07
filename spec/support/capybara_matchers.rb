@@ -49,9 +49,9 @@ module Capybara
           errors.push "expected #{page.inspect} to have filter section #{@title}" unless found
 
           if expected && (!found || errors.any?)
-            raise Capybara::ExpectationNotMet, errors.join
+            fail Capybara::ExpectationNotMet, errors.join
           elsif !expected && found
-            raise Capybara::ExpectationNotMet, "expected #{page.inspect} to not have filter section #{@args[:title]}"
+            fail Capybara::ExpectationNotMet, "expected #{page.inspect} to not have filter section #{@args[:title]}"
           end
         end
         true
@@ -86,9 +86,9 @@ module Capybara
           found = page.all('.filter-item', text: @title).count > 0
 
           if expected && !found
-            raise Capybara::ExpectationNotMet, "expected #{page.inspect} to have filter tag #{@title}"
+            fail Capybara::ExpectationNotMet, "expected #{page.inspect} to have filter tag #{@title}"
           elsif !expected && found
-            raise Capybara::ExpectationNotMet, "expected #{page.inspect} to not have filter tag  #{@title}"
+            fail Capybara::ExpectationNotMet, "expected #{page.inspect} to not have filter tag  #{@title}"
           end
         end
         true
@@ -160,27 +160,30 @@ RSpec::Matchers.define :have_form_field do |name, filter = {}|
     @errors = []
 
     found = false
-    page.all('.field').each do |wrapper|
-      label = wrapper.all('label.control-label', text: name)
-      unless label.nil? || label.count == 0
-        found = true
-        if filter[:with_options].present?
-          filter[:with_options].each do |option|
-            elements = case wrapper['data-type']
-            when 'Radio'
-              wrapper.all(:field, option, type: 'radio')
-            when 'Checkbox'
-              wrapper.all(:field, option, type: 'checkbox')
-            when 'Summation', 'Percentage'
-              wrapper.all(:field, option)
-            when 'LikertScale'
-              wrapper.all('th', option)
-            else
-              # False because chosen hides the select and display a list instead
-              wrapper.all('option', option, visible: false)
-            end
-            if elements.count == 0
-              @errors.push "Cannot find \"#{option}\" for #{name}"
+    # Gives time to render the field once dropped
+    if have_content(name).matches?(actual)
+      page.all('.field').each do |wrapper|
+        label = wrapper.all('label.control-label', text: name)
+        unless label.nil? || label.count == 0
+          found = true
+          if filter[:with_options].present?
+            filter[:with_options].each do |option|
+              elements = case wrapper['data-type']
+              when 'Radio'
+                wrapper.all(:field, option, type: 'radio')
+              when 'Checkbox'
+                wrapper.all(:field, option, type: 'checkbox')
+              when 'Summation', 'Percentage'
+                wrapper.all(:field, option)
+              when 'LikertScale'
+                wrapper.all('th', option)
+              else
+                # False because chosen hides the select and display a list instead
+                wrapper.all('option', option, visible: false)
+              end
+              if elements.count == 0
+                @errors.push "Cannot find \"#{option}\" for #{name}"
+              end
             end
           end
         end

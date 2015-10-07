@@ -42,7 +42,7 @@ class Venue < ActiveRecord::Base
   validates :place, presence: true, uniqueness: { scope: :company_id }
 
   before_validation :smart_add_url_protocol
-  validates_format_of :web_address, :with => URI::regexp, allow_blank: true
+  validates_format_of :web_address, with: URI.regexp, allow_blank: true
 
   has_many :events, through: :place
   has_many :activities, -> { order('activity_date ASC') }, as: :activitable do
@@ -76,10 +76,10 @@ class Venue < ActiveRecord::Base
            :opening_hours, :td_linx_code, :merged_with_place_id, :state_code,
            to: :place
 
-  scope :top_venue, ->{ where(top_venue: true) }
-  scope :jameson_locals, ->{ where(jameson_locals: true) }
+  scope :top_venue, -> { where(top_venue: true) }
+  scope :jameson_locals, -> { where(jameson_locals: true) }
   scope :accessible_by_user, ->(user) { in_company(user.company_id) }
-  scope :filters_between_dates, ->(start_date, end_date) { where(created_at: DateTime.parse(start_date)..DateTime.parse(end_date))}
+  scope :filters_between_dates, ->(start_date, end_date) { where(created_at: DateTime.parse(start_date)..DateTime.parse(end_date)) }
 
   before_destroy :check_for_associations
 
@@ -161,7 +161,7 @@ class Venue < ActiveRecord::Base
     if reindex_neighbors_venues && neighbors_establishments_search
       Venue.where(
         id: neighbors_establishments_search.hits.map(&:primary_key)
-      ).where.not(id: self.id).update_all(score_dirty: true)
+      ).where.not(id: id).update_all(score_dirty: true)
     end
 
     true
@@ -171,14 +171,16 @@ class Venue < ActiveRecord::Base
   def compute_scoring
     self.score = nil
     if neighbors_establishments_search && neighbors_establishments_search.respond_to?(:stat_response)
-      unless neighbors_establishments_search.stat_response['stats_fields']['avg_impressions_hour_es'].nil?
-        mean = neighbors_establishments_search.stat_response['stats_fields']['avg_impressions_hour_es']['mean']
-        stddev = neighbors_establishments_search.stat_response['stats_fields']['avg_impressions_hour_es']['stddev']
+      neighbors_establishments_search.tap do |s|
+        break if s.nil? || s.stat_response['stats_fields']['avg_impressions_hour_es'].nil?
+        stats = s.stat_response['stats_fields']
+        mean = stats['avg_impressions_hour_es']['mean']
+        stddev = stats['avg_impressions_hour_es']['stddev']
 
         self.score_impressions = (normdist((avg_impressions_hour - mean) / stddev) * 100).round if stddev != 0.0
 
-        mean = neighbors_establishments_search.stat_response['stats_fields']['avg_impressions_cost_es']['mean']
-        stddev = neighbors_establishments_search.stat_response['stats_fields']['avg_impressions_cost_es']['stddev']
+        mean = stats['avg_impressions_cost_es']['mean']
+        stddev = stats['avg_impressions_cost_es']['stddev']
 
         self.score_cost = 100 - (normdist((avg_impressions_cost - mean) / stddev) * 100).round if stddev != 0.0
 
@@ -202,20 +204,20 @@ class Venue < ActiveRecord::Base
         with(:avg_impressions_hour).greater_than(0)
 
         stat(:avg_impressions_hour, type: 'stddev')
-        stat(:avg_impressions_hour, type: 'mean')
+        # stat(:avg_impressions_hour, type: 'mean')
 
         stat(:avg_impressions_cost, type: 'stddev')
-        stat(:avg_impressions_cost, type: 'mean')
+        # stat(:avg_impressions_cost, type: 'mean')
       end
     end
   end
 
   def price_level(fetch_from_google: false)
-    self.place_price_level || place.price_level
+    place_price_level || place.price_level(fetch_from_google: fetch_from_google)
   end
 
   def website
-    self.web_address || place.website
+    web_address || place.website
   end
 
   def opening_hours
@@ -442,23 +444,22 @@ class Venue < ActiveRecord::Base
   end
 
   def check_for_associations
-    if events.any? || activities.any? || invites.any?
-      errors.add(:base, "cannot delete venue because it have events, invites or activites associated")
-      return false
-    end
+    return true unless events.count > 0 || activities.any? || invites.any?
+    errors.add(:base, 'cannot delete venue because it have events, invites or activites associated')
+    false
   end
 
   def venue_opening_hours
     return nil if hours_fields.blank?
-    periods = hours_fields.inject([]) do |memo, hour|
-                if hour.day.present? && hour.hour_open.present? || hour.hour_close.present?
-                  hash = {}
-                  hash.merge!('open' => { 'day' => hour.day, 'time' => hour.hour_open }) if hour.hour_open.present?
-                  hash.merge!('close' => { 'day' => hour.day, 'time' => hour.hour_close }) if hour.hour_close.present? && hour.hour_open.present?
-                  memo << hash unless hash.blank?
-                end
-                memo
-              end
+    periods = hours_fields.reduce([]) do |memo, hour|
+      if hour.day.present? && hour.hour_open.present? || hour.hour_close.present?
+        hash = {}
+        hash.merge!('open' => { 'day' => hour.day, 'time' => hour.hour_open }) if hour.hour_open.present?
+        hash.merge!('close' => { 'day' => hour.day, 'time' => hour.hour_close }) if hour.hour_close.present? && hour.hour_open.present?
+        memo << hash unless hash.blank?
+      end
+      memo
+    end
     { 'periods' => periods }
   end
 
@@ -466,6 +467,6 @@ class Venue < ActiveRecord::Base
 
   def smart_add_url_protocol
     return true if web_address.blank? || web_address[/\Ahttp:\/\//] || web_address[/\Ahttps:\/\//]
-    self.web_address = "http://#{self.web_address}"
+    self.web_address = "http://#{web_address}"
   end
 end

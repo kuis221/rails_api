@@ -42,25 +42,24 @@ describe ActivityType, type: :model do
     end
   end
 
-  describe "with_trending_fields" do
+  describe 'with_trending_fields' do
     let(:activity_type) { FactoryGirl.create(:activity_type) }
-    let(:field) { FactoryGirl.create(:form_field, type: 'FormField::TextArea', fieldable: activity_type ) }
+    let(:field) { FactoryGirl.create(:form_field, type: 'FormField::TextArea', fieldable: activity_type) }
 
-
-    it "results empty if no activity types have the needed fields" do
-      expect(ActivityType.with_trending_fields).to be_empty
+    it 'results empty if no activity types have the needed fields' do
+      expect(described_class.with_trending_fields).to be_empty
     end
 
-    it "results the activity type if have a text area field" do
+    it 'results the activity type if have a text area field' do
       field.save
-      expect(ActivityType.with_trending_fields).to match_array [activity_type]
+      expect(described_class.with_trending_fields).to match_array [activity_type]
     end
 
-    it "should return each activity type only once" do
+    it 'should return each activity type only once' do
       field.save
-      field2 = FactoryGirl.create(:form_field, type: 'FormField::TextArea', fieldable: activity_type )
+      field2 = FactoryGirl.create(:form_field, type: 'FormField::TextArea', fieldable: activity_type)
 
-      expect(ActivityType.with_trending_fields).to match_array [activity_type]
+      expect(described_class.with_trending_fields).to match_array [activity_type]
     end
   end
 end

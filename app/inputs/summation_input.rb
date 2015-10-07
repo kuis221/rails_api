@@ -1,5 +1,5 @@
 class SummationInput < SimpleForm::Inputs::Base
-  def input
+  def input(_wrapper_options)
     total = 0
     values = object.send(attribute_name)
     group = "#{object_name}_#{attribute_name}".gsub(/[\[\]]+\z/, '').gsub(/[\[\]]+/, '_').gsub(/_+/, '_')

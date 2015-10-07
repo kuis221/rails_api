@@ -20,7 +20,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Invite, :type => :model do
+RSpec.describe Invite, type: :model do
   it { is_expected.to belong_to(:event) }
   it { is_expected.to belong_to(:venue) }
   it { is_expected.to belong_to(:area) }

@@ -51,7 +51,7 @@ class FormField
 
     def format_json(result)
       super.merge!(
-        if result.nil? || result.value.empty?
+        if result.nil? || result.value.blank?
           { value: nil }
         else
           { value: result.value,

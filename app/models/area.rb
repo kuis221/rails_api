@@ -163,7 +163,7 @@ class Area < ActiveRecord::Base
   end
 
   def filter_subitems
-    self.places.pluck('places.id, places.name, \'place\'')
+    places.pluck('places.id, places.name, \'place\'')
   end
 
   protected

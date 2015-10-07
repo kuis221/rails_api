@@ -62,14 +62,18 @@ describe Venue, type: :model do
 
   describe 'compute_scoring', search: true do
     it 'should correctly compute the scoring based on the venues in a radius of 5KM' do
-      place1 = create(:venue, place: create(:place, lonlat: 'POINT(-84.050045 9.930713)'),
-        avg_impressions_hour: 142, avg_impressions_cost: 167)
-      place2 = create(:venue, place: create(:place, lonlat: 'POINT(-84.050045 9.929967)'),
-        avg_impressions_hour: 183, avg_impressions_cost: 217)
-      place3 = create(:venue, place: create(:place, lonlat: 'POINT(-84.044348 9.931795)'),
-        avg_impressions_hour: 217, avg_impressions_cost: 183)
-      place4 = create(:venue, place: create(:place, lonlat: 'POINT(-84.044348 9.931795)'),
-        avg_impressions_hour: 167, avg_impressions_cost: 142)
+      place1 = create(:venue,
+                      place: create(:place, lonlat: 'POINT(-84.050045 9.930713)'),
+                      avg_impressions_hour: 142, avg_impressions_cost: 167)
+      place2 = create(:venue,
+                      place: create(:place, lonlat: 'POINT(-84.050045 9.929967)'),
+                      avg_impressions_hour: 183, avg_impressions_cost: 217)
+      place3 = create(:venue,
+                      place: create(:place, lonlat: 'POINT(-84.044348 9.931795)'),
+                      avg_impressions_hour: 217, avg_impressions_cost: 183)
+      place4 = create(:venue,
+                      place: create(:place, lonlat: 'POINT(-84.044348 9.931795)'),
+                      avg_impressions_hour: 167, avg_impressions_cost: 142)
 
       described_class.reindex
       Sunspot.commit
@@ -182,7 +186,7 @@ describe Venue, type: :model do
           set_event_results(event, impressions: 100)
           create(:event_expense, amount: 1000, event: event)
 
-          data = Venue.find(venue.id).overall_graphs_data
+          data = described_class.find(venue.id).overall_graphs_data
           expect(data[:impressions_promo][0].round).to eq(0)
           expect(data[:impressions_promo][1].round).to eq(0)
           expect(data[:impressions_promo][2].round).to eq(57)   # 4h * 100 / 7h
@@ -297,13 +301,13 @@ describe Venue, type: :model do
 
   describe '#smart_add_url_protocol' do
     it 'should validate smart add url protocol' do
-      venue = Venue.new(:web_address => 'www.test.com')
+      venue = described_class.new(web_address: 'www.test.com')
       venue.valid?
       expect(venue.web_address).to eq('http://www.test.com')
     end
 
     it 'not should validate smart add url protocol if is null' do
-      venue = Venue.new()
+      venue = described_class.new
       venue.valid?
       expect(venue.web_address).to eq(nil)
     end
@@ -311,49 +315,49 @@ describe Venue, type: :model do
 
   describe '#venue_opening_hours' do
     it 'hours fields are blank' do
-      venue = Venue.new()
+      venue = described_class.new
       expect(venue.venue_opening_hours).to eq(nil)
     end
 
     it 'hours fields are day present' do
-      venue = Venue.new()
+      venue = described_class.new
       venue.hours_fields << HoursField.new(day: '1')
-      expect(venue.venue_opening_hours).to eq({ 'periods' => [] })
+      expect(venue.venue_opening_hours).to eq('periods' => [])
     end
 
     it 'hours fields are not day present and hour open present' do
-      venue = Venue.new()
+      venue = described_class.new
       venue.hours_fields << HoursField.new(hour_open: '1200')
-      expect(venue.venue_opening_hours).to eq({ 'periods' => [] })
+      expect(venue.venue_opening_hours).to eq('periods' => [])
     end
 
     it 'hours fields are not day present and hour close present' do
-      venue = Venue.new()
+      venue = described_class.new
       venue.hours_fields << HoursField.new(hour_close: '1200')
-      expect(venue.venue_opening_hours).to eq({ 'periods' => [] })
+      expect(venue.venue_opening_hours).to eq('periods' => [])
     end
 
     it 'hours fields are day present and hour close present' do
-      venue = Venue.new()
+      venue = described_class.new
       venue.hours_fields << HoursField.new(day: '1', hour_close: '1200')
-      expect(venue.venue_opening_hours).to eq({ 'periods' => [] })
+      expect(venue.venue_opening_hours).to eq('periods' => [])
     end
 
     it 'hours fields are day present and hour open present' do
-      venue = Venue.new()
+      venue = described_class.new
       venue.hours_fields << HoursField.new(day: '1', hour_open: '1200')
-      expect(venue.venue_opening_hours).to eq({ 'periods' => [
-                                                  { "open"=>{ "day"=>1, "time"=>"1200" } }
-                                                ]})
+      expect(venue.venue_opening_hours).to eq('periods' => [
+        { 'open' => { 'day' => 1, 'time' => '1200' } }
+      ])
     end
 
     it 'hours fields are day present, hour open and close present' do
-      venue = Venue.new()
+      venue = described_class.new
       venue.hours_fields << HoursField.new(day: '1', hour_open: '1400', hour_close: '0200')
-      expect(venue.venue_opening_hours).to eq({ 'periods' => [
-                                                  { "open"=>{ "day"=>1, "time"=>"1400" },
-                                                    "close"=>{ "day"=>1, "time"=>"0200" } }
-                                                ]})
+      expect(venue.venue_opening_hours).to eq('periods' => [
+        { 'open' => { 'day' => 1, 'time' => '1400' },
+          'close' => { 'day' => 1, 'time' => '0200' } }
+      ])
     end
   end
 end

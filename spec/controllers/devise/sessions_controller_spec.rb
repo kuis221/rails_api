@@ -9,9 +9,9 @@ describe Devise::SessionsController, type: :controller do
     describe 'an active user' do
       before(:each) do
         @user = create(:company_user,
-                                   user:    create(:user, password: 'Test12345!', password_confirmation: 'Test12345!'),
-                                   company: company,
-                                   role:    create(:role, company: company)).user
+                       user:    create(:user, password: 'Test12345!', password_confirmation: 'Test12345!'),
+                       company: company,
+                       role:    create(:role, company: company)).user
       end
       it 'should be able to login' do
         expect do

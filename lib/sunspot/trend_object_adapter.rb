@@ -6,11 +6,11 @@ module Sunspot
         Sunspot::Adapters::DataAccessor.register(DataAccessor, base)
         Sunspot::Adapters::InstanceAdapter.register(InstanceAdapter, base)
 
-        def self.before_save(*args); end
+        def self.before_save(*_args); end
 
-        def self.after_save(*args);  end
+        def self.after_save(*_args);  end
 
-        def self.after_destroy(*args); end
+        def self.after_destroy(*_args); end
       end
     end
 

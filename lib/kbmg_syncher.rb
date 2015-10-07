@@ -17,7 +17,6 @@ class KbmgSyncher
     end
   end
 
-
   # Synch the RSVPs for a single event. As a requirement, the event's
   # kbmg_event_id attribute should be set to a valid KBMG's Event ID
   def synch_event_rsvps(event)
@@ -125,7 +124,7 @@ class KbmgSyncher
   end
 
   def log_api_error(response)
-     logger.info "Failed to fetch the results with error: #{response['Error']['ErrorCode']} #{response['Error']['ErrorMessage']}. #{response['Error']['ExceptionMessage']}"
+    logger.info "Failed to fetch the results with error: #{response['Error']['ErrorCode']} #{response['Error']['ErrorMessage']}. #{response['Error']['ExceptionMessage']}"
   end
 
   # Tests the API key by performing a test call and checking for the error code

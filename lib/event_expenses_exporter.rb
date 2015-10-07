@@ -25,7 +25,7 @@ class EventExpensesExporter < BaseExporter
     return [0] if categories.empty?
     @columns_hash ||= Hash[categories.map { |c| [c, nil] }]
 
-    #Clear hash of values
+    # Clear hash of values
     @columns_hash.each { |k, _| @columns_hash[k] = nil }
     expenses.each { |k, v| @columns_hash[k] = v if @columns_hash.key?(k) }
     values = @columns_hash.values

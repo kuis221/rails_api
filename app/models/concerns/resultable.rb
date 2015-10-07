@@ -13,10 +13,10 @@ module Resultable
     accepts_nested_attributes_for :results, allow_destroy: true
 
     scope :with_results_for, ->(fields) {
-      select("DISTINCT #{self.table_name}.*").
-      joins(:results).
-      where(form_field_results: { form_field_id: fields }).
-      where('form_field_results.value is not NULL AND form_field_results.value !=\'\'')
+      select("DISTINCT #{table_name}.*")
+      .joins(:results)
+      .where(form_field_results: { form_field_id: fields })
+      .where('form_field_results.value is not NULL AND form_field_results.value !=\'\'')
     }
   end
 

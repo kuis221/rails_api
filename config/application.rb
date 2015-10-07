@@ -27,7 +27,7 @@ module Brandscopic
     # config.active_record.observers = :cacher, :garbage_collector, :forum_observer
     config.active_record.observers = :notification_sweeper
 
-    config.serve_static_assets = true
+    config.serve_static_files = true
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
@@ -61,6 +61,8 @@ module Brandscopic
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
+
+    config.active_record.raise_in_transactional_callbacks = true
 
     config.before_configuration do
       env_file = File.join(Rails.root, 'config', 'local_env.yml')

@@ -21,7 +21,7 @@ module JbbFile
     end
 
     def download_files(dir)
-      puts "Downloading files"
+      puts 'Downloading files'
       files = find_files
       unless files.any?
         puts "No files found #{files}"
@@ -44,7 +44,7 @@ module JbbFile
 
     def archive_file(file)
       begin
-        ftp_connecion.mkdir('OLD') unless ftp_connecion.list("*").any? { |dir| dir.match(/\sOLD$/) }
+        ftp_connecion.mkdir('OLD') unless ftp_connecion.list('*').any? { |dir| dir.match(/\sOLD$/) }
       rescue Net::FTPPermError
         p 'Archive directory already exists'
       end
@@ -81,8 +81,8 @@ module JbbFile
       "#{dir}/#{name}"
     end
 
-    def each_sheet(file, &block)
-      file.instance_variable_get(:@workbook_doc).xpath("//xmlns:sheet").each do |s|
+    def each_sheet(file, &_block)
+      file.instance_variable_get(:@workbook_doc).xpath('//xmlns:sheet').each do |s|
         next if s.attributes['state'].to_s == 'hidden' # Ignore hidden sheets
         file.default_sheet = s['name']
         yield file
@@ -101,7 +101,7 @@ module JbbFile
     end
 
     def invalid_format
-      mailer.invalid_format(self.invalid_files, self::class::VALID_COLUMNS, @invalid_columns).deliver
+      mailer.invalid_format(invalid_files, self.class::VALID_COLUMNS, @invalid_columns).deliver
       false
     end
 
@@ -110,9 +110,9 @@ module JbbFile
       @ftp_connecion ||= Net::FTP.new(ftp_server).tap do |ftp|
         ftp.passive = true
         ftp.login(ftp_username, ftp_password)
-        puts "Changing directory to #{self.ftp_folder}" if self.ftp_folder
-        Rails.logger.info "Changing directory to #{self.ftp_folder}" if self.ftp_folder
-        ftp.chdir(self.ftp_folder) if self.ftp_folder
+        puts "Changing directory to #{ftp_folder}" if ftp_folder
+        Rails.logger.info "Changing directory to #{ftp_folder}" if ftp_folder
+        ftp.chdir(ftp_folder) if ftp_folder
         ftp.binary = true
         ftp
       end

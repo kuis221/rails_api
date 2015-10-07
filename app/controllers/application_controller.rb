@@ -7,10 +7,6 @@ class ApplicationController < ActionController::Base
   include ReturnableControllerHelper
   protect_from_forgery
 
-  skip_before_action :verify_authenticity_token, if: lambda {
-    params[:authenticity_token].present? && params[:authenticity_token] == 'S3CR37Master70k3N'
-  }
-
   before_action :authenticate_user_by_token
   before_action :authenticate_user!
 

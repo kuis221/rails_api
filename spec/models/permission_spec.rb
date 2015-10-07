@@ -10,10 +10,8 @@
 #  mode          :string(255)      default("none")
 #
 
-class Permission < ActiveRecord::Base
-  belongs_to :role
+require 'rails_helper'
 
-  validates :action, uniqueness: { scope: [:role_id, :subject_class] }
-
-  after_save { role.clear_cached_permissions }
+describe Permission, type: :model do
+  it { is_expected.to belong_to(:role) }
 end

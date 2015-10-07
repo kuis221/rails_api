@@ -42,9 +42,11 @@ RSpec.describe DataExtract::Task, type: :model do
                             user: create(:user, first_name: 'Benito', last_name: 'Camelas'))
     end
 
-    let(:subject) { described_class.new(company: company, current_user: company_user,
-                    columns: ['title', 'task_statuses', 'due_at', 'created_by', 'created_at',
-                    'assigned_to', 'comment1', 'comment2', 'comment3', 'comment4', 'comment5', 'active_state']) }
+    let(:subject) do
+      described_class.new(company: company, current_user: company_user,
+                    columns: %w(title task_statuses due_at created_by created_at assigned_to
+                                comment1 comment2 comment3 comment4 comment5 active_state))
+    end
 
     it 'returns empty if no rows are found' do
       expect(subject.rows).to be_empty
@@ -56,17 +58,18 @@ RSpec.describe DataExtract::Task, type: :model do
         task = create(:task, event_id: event.id, due_at: Time.zone.local(2013, 2, 10, 9, 15),
                              created_at: Time.zone.local(2013, 8, 23, 9, 15), company_user: company_user,
                              created_by: company_user.user)
-        comment1 = create(:comment, content: 'Comment #1', commentable: task, created_at: Time.zone.local(2013, 8, 15, 11, 59))
-        comment2 = create(:comment, content: 'Comment #2', commentable: task, created_at: Time.zone.local(2013, 8, 16, 9, 15))
-        comment2 = create(:comment, content: 'Comment #3', commentable: task, created_at: Time.zone.local(2013, 8, 17, 9, 15))
-        comment2 = create(:comment, content: 'Comment #4', commentable: task, created_at: Time.zone.local(2013, 8, 18, 9, 15))
-        comment2 = create(:comment, content: 'Comment #5', commentable: task, created_at: Time.zone.local(2013, 8, 23, 9, 15))
+        create(:comment, content: 'Comment #1', commentable: task, created_at: Time.zone.local(2013, 8, 15, 11, 59))
+        create(:comment, content: 'Comment #2', commentable: task, created_at: Time.zone.local(2013, 8, 16, 9, 15))
+        create(:comment, content: 'Comment #3', commentable: task, created_at: Time.zone.local(2013, 8, 17, 9, 15))
+        create(:comment, content: 'Comment #4', commentable: task, created_at: Time.zone.local(2013, 8, 18, 9, 15))
+        create(:comment, content: 'Comment #5', commentable: task, created_at: Time.zone.local(2013, 8, 23, 9, 15))
       end
 
       it 'returns all the events in the company with all the columns' do
         expect(subject.rows).to eql [
-          ['MyString', 'Active, Assigned, Incomplete, Late', '02/10/2013', 'Benito Camelas', '08/23/2013', 'Benito Camelas',
-           'Comment #1', 'Comment #2', 'Comment #3', 'Comment #4', 'Comment #5', 'Active']
+          ['MyString', 'Active, Assigned, Incomplete, Late', '02/10/2013', 'Benito Camelas',
+           '08/23/2013', 'Benito Camelas', 'Comment #1', 'Comment #2', 'Comment #3', 'Comment #4',
+           'Comment #5', 'Active']
         ]
       end
 

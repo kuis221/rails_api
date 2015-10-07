@@ -26,13 +26,13 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
       param :expense_date, %r{\A\d{1,2}/\d{1,2}/\d{4}\z}, required: true, desc: 'Event date. Must be in format MM/DD/YYYY.'
       param :amount, String, required: true, desc: 'Event expense amount. Must be a number greater than 0'
       param :brand_id, String, required: false, desc: 'A valid brand id'
-      param :reimbursable, ['true', 'false'], required: false, desc: 'Reimbursable attribute'
-      param :billable, ['true', 'false'], required: false, desc: 'Billable attribute'
+      param :reimbursable, %w(true false), required: false, desc: 'Reimbursable attribute'
+      param :billable, %w(true false), required: false, desc: 'Billable attribute'
       param :merchant, String, required: false, desc: 'Merchant attribute'
       param :description, String, required: false, desc: 'Event expense description'
       param :receipt_attributes, Hash do
         param :direct_upload_url, String, desc: "The receipt URL. This should be a valid Amazon S3's URL."
-        param :_destroy, ['1'], desc: "Indicates that the receipt should be removed from the expense"
+        param :_destroy, ['1'], desc: 'Indicates that the receipt should be removed from the expense'
       end
     end
   end

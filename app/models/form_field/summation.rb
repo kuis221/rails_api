@@ -74,7 +74,7 @@ class FormField::Summation < FormField::Hashed
 
   def grouped_results(campaign, event_scope)
     events = form_field_results.for_event_campaign(campaign).merge(event_scope)
-    result = events.map { |event| event.hash_value }.compact
+    result = events.map(&:hash_value).compact
     results_for_hash_values(result)
   end
 
@@ -84,14 +84,14 @@ class FormField::Summation < FormField::Hashed
       hash_result[:titles] << "#{name} - #{field_option.name}"
     end
     events.each do |event|
-      value = event.hash_value.nil? ? "" : event.hash_value
+      value = event.hash_value.nil? ? '' : event.hash_value
       hash_result[event.resultable_id].concat(values_by_option(value)) unless hash_result[event.resultable_id].nil?
     end
     hash_result
   end
 
   def values_by_option(hash_values)
-    options.inject([]) do |memo, field_option|
+    options.reduce([]) do |memo, field_option|
       memo << hash_values[field_option.id.to_s]
       memo
     end

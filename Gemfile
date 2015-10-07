@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 
-ruby ENV['CUSTOM_RUBY_VERSION'] || '2.2.0'
+ruby ENV['CUSTOM_RUBY_VERSION'] || '2.2.3'
 
-gem 'rails', '4.1.9'
+gem 'rails', '4.2.4'
 gem 'rails-observers'
 gem 'activerecord-session_store'
 gem 'rack-timeout'
@@ -26,12 +26,12 @@ gem 'countries'
 gem 'company_scoped', path: 'vendor/gems/company_scoped'
 gem 'legacy', path: 'vendor/gems/legacy', require: false
 gem 'newrelic_rpm'
-gem 'paperclip', '~> 4.1'
+gem 'paperclip', '~> 4.3'
 gem 'aws-sdk'
 gem 'google_places'
 gem 'timeliness'
 gem 'american_date'
-gem 'sunspot_rails', :git => 'https://github.com/sunspot/sunspot.git'
+gem 'sunspot_rails', git: 'https://github.com/sunspot/sunspot.git'
 gem 'sunspot_stats'
 gem 'sunspot-queue', github: 'guilleva/sunspot-queue'
 gem 'progress_bar', require: false
@@ -52,7 +52,7 @@ gem 'heroku-resque-workers-scaler', github: 'guilleva/heroku-resque-workers-scal
 gem 'twilio-ruby'
 gem 'nested_form'
 gem 'wicked_pdf'
-gem 'rack-cors', :require => 'rack/cors'
+gem 'rack-cors', require: 'rack/cors'
 gem 'roo'
 gem 'similar_text'
 gem 'activerecord-postgis-adapter'
@@ -60,7 +60,9 @@ gem 'clockwork', require: false
 gem 'pgbackups-archive'
 gem 'active_model_serializers'
 gem 'rgeo-geojson'
-gem 'paper_trail', '~> 4.0.0.rc'
+gem 'paper_trail', '~> 4.0.0'
+gem 'simple_form', '~> 3.2.0'
+gem 'country_select', '2.0.0.rc1'
 
 # For memory debugging
 # gem "allocation_stats"
@@ -82,8 +84,6 @@ group :web do
   gem 'font_assets', path: 'vendor/gems/font_assets'
   gem 'activeadmin', github: 'activeadmin/active_admin'
   gem 'unicorn'
-  gem 'simple_form', '3.0.3'
-  gem 'country_select', '2.0.0.rc1'
 end
 
 # Gems used only for assets and not required
@@ -99,15 +99,13 @@ group :test, :development do
   gem 'spring'
   gem 'spring-commands-rspec'
   gem 'factory_girl_rails'
-  gem 'rspec-rails', '~> 3.0.0'
+  gem 'rspec-rails', '~> 3.3.3'
   gem 'populator'
-  gem 'sunspot_solr', :git => 'https://github.com/sunspot/sunspot.git'
+  gem 'sunspot_solr', git: 'https://github.com/sunspot/sunspot.git'
   gem 'timecop'
   gem 'faker'
   gem 'rubocop', require: false
   gem 'rubocop-rspec', require: false
-  gem 'pry-rescue'
-  gem 'pry-stack_explorer'
 end
 
 group :test do

@@ -20,8 +20,8 @@ class CustomFilter < ActiveRecord::Base
 
   # TODO: Make this list be loaded form the the filters.yml file
   APPLY_TO_OPTIONS = %w(events venues tasks visits company_users teams roles campaigns brands
-    activity_types areas brand_portfolios date_ranges day_parts event_data activities results_comments
-    results_expenses results_photos surveys)
+                        activity_types areas brand_portfolios date_ranges day_parts event_data activities results_comments
+                        results_expenses results_photos surveys)
 
   # Required fields
   validates :owner, presence: true

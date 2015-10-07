@@ -5,7 +5,7 @@ module Brandscopic
       # Receives a file hanlder. This allows to send the $stdin from the
       # rake file. The file loaded in an array to allow go through
       # it more than once
-      def initialize(file, options={})
+      def initialize(file, options = {})
         @rows = []
         opts = { row_sep: "\n", col_sep: ',', skip_blanks: true }.merge(options)
         CSV(file, opts) do |csv|
@@ -85,7 +85,7 @@ module Brandscopic
       end
 
       def split_row(row)
-        @column_index.map { |k, i| row[i]  }
+        @column_index.map { |_k, i| row[i]  }
       end
 
       def logger

@@ -12,4 +12,3 @@ module Brandscopic
     end
   end
 end
-

@@ -42,9 +42,11 @@ RSpec.describe DataExtract::Contact, type: :model do
                             user: create(:user, first_name: 'Benito', last_name: 'Camelas'))
     end
 
-    let(:subject) { described_class.new(company: company, current_user: company_user,
-                    columns: ['first_name', 'last_name', 'title', 'email', 'phone_number', 'street1',
-                      'street2', 'country', 'state', 'city', 'zip_code', 'created_by', 'created_at']) }
+    let(:subject) do
+      described_class.new(company: company, current_user: company_user,
+                    columns: %w(first_name last_name title email phone_number street1 street2
+                                country state city zip_code created_by created_at))
+    end
 
     it 'returns empty if no rows are found' do
       expect(subject.rows).to be_empty
@@ -67,9 +69,10 @@ RSpec.describe DataExtract::Contact, type: :model do
 
       it 'allows to sort the results' do
         contact
-        create(:contact, first_name: 'Ana', last_name: 'Soto', email: 'ana_soto@email.com', company: company,
-                         created_at: Time.zone.local(2014, 2, 12, 9, 15))
-        create(:contact, first_name: 'Mariela', last_name: 'Castro', email: 'mariela_castro@email.com', company: company,
+        create(:contact, first_name: 'Ana', last_name: 'Soto', email: 'ana_soto@email.com',
+                         company: company, created_at: Time.zone.local(2014, 2, 12, 9, 15))
+        create(:contact, first_name: 'Mariela', last_name: 'Castro',
+                         email: 'mariela_castro@email.com', company: company,
                          created_at: Time.zone.local(2015, 2, 12, 9, 15))
 
         subject.columns = %w(first_name last_name email, created_at)

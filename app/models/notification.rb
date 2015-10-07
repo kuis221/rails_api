@@ -27,7 +27,7 @@ class Notification < ActiveRecord::Base
   scope :new_tasks, -> { where(message: 'new_task').where("params ? 'task_id'") }
   scope :new_events, -> { where(message: 'new_event').where("params ? 'event_id'") }
   scope :new_team_events, -> { where(message: 'new_team_event').where("params ? 'event_id'") }
-  scope :events, -> { where(message: ['new_event', 'new_team_event']).where("params ? 'event_id'") }
+  scope :events, -> { where(message: %w(new_event new_team_event)).where("params ? 'event_id'") }
   scope :new_campaigns, -> { where(message: 'new_campaign').where("params ? 'campaign_id'") }
 
   scope :grouped_notifications, -> {

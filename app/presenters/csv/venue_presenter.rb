@@ -1,7 +1,7 @@
 module Csv
   class VenuePresenter < BasePresenter
     def td_linx_code
-      @model.td_linx_code if !!(@model.td_linx_code =~ /^[0-9]+$/)
+      @model.td_linx_code if @model.td_linx_code =~ /^[0-9]+$/
     end
 
     def score

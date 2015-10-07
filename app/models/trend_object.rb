@@ -37,7 +37,7 @@ class TrendObject
     string :source
   end
 
-  def initialize(resource, result=nil)
+  def initialize(resource, result = nil)
     @id = TrendObject.object_to_id(result || resource)
     @resource = resource
     @result = result
@@ -122,7 +122,7 @@ class TrendObject
   end
 
   def self.inspect
-    "#<#{self.to_s} id: #{ @id }, object: #{ @resource.inspect }>"
+    "#<#{self} id: #{ @id }, object: #{ @resource.inspect }>"
   end
 
   def self.logger
@@ -131,17 +131,17 @@ class TrendObject
 
   def self.load_objects(ids)
     ids_by_class = {}
-    ids.each do|id|
+    ids.each do |id|
       clazz_name, object_id = id.split(':')
       ids_by_class[clazz_name] ||= []
       ids_by_class[clazz_name].push object_id
     end
 
-    ids_by_class.map do |clazz_name, ids|
+    ids_by_class.map do |clazz_name, ids_of_clazz|
       if clazz_name == 'comment'
-        Comment.preload(commentable: :campaign).where(id: ids).map{ |o| TrendObject.new(o) }
+        Comment.preload(commentable: :campaign).where(id: ids_of_clazz).map { |o| TrendObject.new(o) }
       elsif clazz_name == 'form_field_result'
-        FormFieldResult.includes(:resultable).where(id: ids).map{ |o| TrendObject.new(o.resultable, o) }
+        FormFieldResult.includes(:resultable).where(id: ids_of_clazz).map { |o| TrendObject.new(o.resultable, o) }
       end
     end.flatten
   end
@@ -162,8 +162,8 @@ class TrendObject
     end
   end
 
-  def self.do_search(params, include_facets=true, &block)
-    ss = solr_search do
+  def self.do_search(params, include_facets = true, &_block)
+    solr_search do
       with :company_id, params[:company_id]
 
       with :source, params[:source] unless params[:source].nil?
@@ -175,18 +175,18 @@ class TrendObject
         end
       end
 
-      with :campaign_id, params[:campaign] if params.has_key?(:campaign) && params[:campaign].present?
+      with :campaign_id, params[:campaign] if params.key?(:campaign) && params[:campaign].present?
 
       if params[:area].present?
         any_of do
-          with :place_id, Area.where(id: params[:area]).joins(:places).where(places: {is_location: false}).pluck('places.id').uniq + [0]
-          with :location, Area.where(id: params[:area]).map{|a| a.locations.map(&:id) }.flatten + [0]
+          with :place_id, Area.where(id: params[:area]).joins(:places).where(places: { is_location: false }).pluck('places.id').uniq + [0]
+          with :location, Area.where(id: params[:area]).map { |a| a.locations.map(&:id) }.flatten + [0]
         end
       end
 
-      if params.has_key?(:brand) && params[:brand].present?
-        campaign_ids = Campaign.joins(:brands).where(brands: {id: params[:brand]}, company_id: params[:company_id]).pluck('DISTINCT(campaigns.id)')
-        with "campaign_id", campaign_ids + [0]
+      if params.key?(:brand) && params[:brand].present?
+        campaign_ids = Campaign.joins(:brands).where(brands: { id: params[:brand] }, company_id: params[:company_id]).pluck('DISTINCT(campaigns.id)')
+        with 'campaign_id', campaign_ids + [0]
       end
 
       if params[:start_date].present? && params[:end_date].present?
@@ -209,12 +209,12 @@ class TrendObject
       end
 
       if include_facets
-        if term = params[:term]
+        if (term = params[:term])
           with(:description, term)
           facet :start_at,
                 time_range: (Time.parse('2009-06-01 00:00:00 -0400')..Date.today.end_of_day),
-                time_interval: 86400
-        elsif words = params[:words]
+                time_interval: 86_400
+        elsif (words = params[:words])
           facet :description, sort: :count, limit: (params[:limit] || 50), only: words
         else
           facet :description, sort: :count, limit: (params[:limit] || 50), prefix: params[:prefix]
@@ -228,7 +228,7 @@ class TrendObject
     end
   end
 
-  def self.solr_index(opts={})
+  def self.solr_index(opts = {})
     options = {
       batch_size: Sunspot.config.indexing.default_batch_size,
       batch_commit: true,
