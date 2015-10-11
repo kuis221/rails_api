@@ -1197,6 +1197,60 @@ feature 'Events section' do
         end
       end
 
+      feature 'close event details' do
+        scenario 'allows to close event details' do
+          campaign = create(:campaign, name: 'ABSOLUT Vodka FY2012', company: company)
+          field = create(:form_field,
+                         name: 'Custom Single Text',
+                         type: 'FormField::Text',
+                         settings: { 'range_format' => 'characters', 'range_min' => '5', 'range_max' => '20' },
+                         fieldable: campaign,
+                         required: false)
+          event = create(:event,
+                         start_date: Date.today.to_s(:slashes), end_date: Date.today.to_s(:slashes),
+                         campaign: campaign, place: place)
+
+          Sunspot.commit
+          visit events_path
+
+          within resource_item(1) do
+            click_js_link 'Event Details'
+          end
+
+          fill_in 'Custom Single Text', with: 'Testing Single'
+
+          click_js_button 'Save'
+
+          wait_for_ajax
+
+          click_js_button 'Submit'
+
+          wait_for_ajax
+
+          click_js_link('Close Event')
+
+          expect(page).to have_content('Today To The Future')
+
+          within resource_item(1) do
+            click_js_link 'Event Details'
+          end
+
+          click_link('Edit event data')
+
+          wait_for_ajax
+
+          click_js_button 'Save'
+
+          wait_for_ajax
+
+          click_js_button 'Approve'
+
+          click_js_link('Close Event')
+
+          expect(page).to have_content('Today To The Future')
+        end
+      end
+
       feature 'with timezone suport turned ON' do
         before do
           company.update_column(:timezone_support, true)

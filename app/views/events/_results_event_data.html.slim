@@ -5,7 +5,7 @@
     .pull-left
       h5.module-title
         = "POST EVENT RECAP"
-        = link_to '', edit_data_event_path(resource), remote: true, id: 'edit-event-data-btn', class: 'icon-edit', title: 'Edit event data' if can?(:edit_data, resource)
+        = link_to '', edit_data_event_path(resource, return: url_return_path), remote: true, id: 'edit-event-data-btn', class: 'icon-edit', title: 'Edit event data' if can?(:edit_data, resource)
     .pull-right
       .dropdown.btn-download
         a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
