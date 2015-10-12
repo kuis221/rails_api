@@ -29,7 +29,7 @@ class DataExtract::EventData < DataExtract
   def form_fields
     return [] unless params.present? && params['campaign_id'].present?
     @form_fields ||= FormField.for_campaigns(params['campaign_id'])
-                     .where.not(type: ['FormField::UserDate', 'FormField::Photo', 'FormField::Attachment'] )
+                     .where.not(type: ['FormField::UserDate', 'FormField::Photo', 'FormField::Attachment'])
   end
 
   def add_filter_conditions_to_scope(s)

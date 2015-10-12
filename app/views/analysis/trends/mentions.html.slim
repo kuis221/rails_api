@@ -6,7 +6,7 @@ div data-content="items" data-total="#{collection_count}" data-pages="#{total_pa
         p.mention= highlight_trend_words(resource.content, @term)
         = render partial: 'photos', locals: { photos: resource.commentable.photos.to_a } if resource.commentable.photos.any?
         p.consumer
-          span' Consumer comment
+          span> Consumer comment
           - unless resource.commentable.campaign.nil?
             ' for
             span=> resource.commentable.campaign_name

@@ -60,8 +60,8 @@ describe ActivitiesController, type: :controller do
 
     it 'should correctly save all the values for percentage field' do
       form_field = create(:form_field,
-                                      fieldable: activity_type, type: 'FormField::Percentage',
-                                      options: [create(:form_field_option, name: 'Option 1', ordering: 0), create(:form_field_option, name: 'Option 1', ordering: 1)])
+                          fieldable: activity_type, type: 'FormField::Percentage',
+                          options: [create(:form_field_option, name: 'Option 1', ordering: 0), create(:form_field_option, name: 'Option 1', ordering: 1)])
 
       expect do
         post 'create', venue_id: venue.to_param, activity: {

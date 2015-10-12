@@ -7,7 +7,7 @@ describe EventExpensesExporter, type: :model do
   let(:company_user) { create(:company_user, company: campaign.company) }
   let(:params) { { campaign: [campaign.id] } }
 
-  let(:subject) { EventExpensesExporter.new(company_user, params) }
+  let(:subject) { described_class.new(company_user, params) }
 
   describe '#expenses_columns' do
     it 'returns only column for the total expenses have been created' do

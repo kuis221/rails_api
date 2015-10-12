@@ -85,7 +85,7 @@ describe Api::V1::CampaignsController, type: :controller do
     it 'return a list of expense categories for the campaign' do
       categories = %w(Phone Entertainment Fuel Other)
       campaign.update_attribute(:modules, 'expenses' => {
-        'settings' => { 'categories' => categories } })
+                                  'settings' => { 'categories' => categories } })
 
       get :expense_categories, id: campaign.to_param, format: :json
       expect(response).to be_success

@@ -19,9 +19,9 @@ describe Api::V1::DocumentsController, type: :controller do
 
       expect(json.count).to eq(5)
       expect(json.first.keys).to match_array(%w(
-      active content_type created_at file_name file_size id name parent
-      thumbnail type updated_at url))
-      expect(json.map { |d| d['parent'] }.uniq).to match_array ['campaign', 'event']
+        active content_type created_at file_name file_size id name parent
+        thumbnail type updated_at url))
+      expect(json.map { |d| d['parent'] }.uniq).to match_array %w(campaign event)
     end
   end
 

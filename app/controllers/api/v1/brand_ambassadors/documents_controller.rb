@@ -94,7 +94,7 @@ module Api
         protected
 
         def permitted_search_params
-          params.permit(:page, :start_date, :end_date, { campaign: [] })
+          params.permit(:page, :start_date, :end_date, campaign: [])
         end
 
         def skip_default_validation

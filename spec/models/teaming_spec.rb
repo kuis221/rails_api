@@ -63,7 +63,7 @@ describe Teaming, type: :model do
       expect do
         expect do
           campaign.teams.destroy(team)
-        end.to change(Teaming, :count).by(-1)
+        end.to change(described_class, :count).by(-1)
       end.to change(Goal, :count).by(-1)
     end
   end

@@ -285,9 +285,14 @@ class User < ActiveRecord::Base
     # If the user is already confirmed, create an error for the user
     # Options must have the confirmation_token
     def confirm_by_token(confirmation_token)
-      confirmable = find_or_initialize_with_error_by(:confirmation_token, confirmation_token)
+      confirmable = find_first_by_auth_conditions(confirmation_token: confirmation_token)
+      unless confirmable
+        confirmation_digest = Devise.token_generator.digest(self, :confirmation_token, confirmation_token)
+        confirmable = find_or_initialize_with_error_by(:confirmation_token, confirmation_digest)
+      end
       confirmable.inviting_user = true
-      confirmable.confirm! if confirmable.persisted?
+      confirmable.confirmation_token = nil
+      confirmable.confirm if confirmable.persisted?
       confirmable
     end
 
@@ -317,7 +322,7 @@ class User < ActiveRecord::Base
         invitable = find_or_initialize_with_error_by(:invitation_token, original_token)
       end
       invitable.errors.add(:invitation_token, :invalid) if invitable.invitation_token && invitable.persisted? && !invitable.valid_invitation?
-      invitable.errors.add(:invitation_token, :invalid) if invitable.persisted? && invitable.company_users.all?{ |cu| cu.active == false }
+      invitable.errors.add(:invitation_token, :invalid) if invitable.persisted? && invitable.company_users.all? { |cu| cu.active == false }
       invitable.invitation_token = original_token
       invitable unless only_valid && invitable.errors.present?
     end
@@ -325,7 +330,7 @@ class User < ActiveRecord::Base
 
   # Resend the invitation email and reset the invitation_sent_at
   def resend_invitation
-    self.update_attribute :invitation_sent_at, Time.now.utc
+    update_attribute :invitation_sent_at, Time.now.utc
     send_devise_notification(:invitation_instructions, @raw_invitation_token)
   end
 

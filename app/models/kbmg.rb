@@ -8,8 +8,8 @@ class KBMG
     @api_token = api_token
   end
 
-  def events(params=nil)
-    self.class.get("/Events/EventsGet", query_options(params))
+  def events(params = nil)
+    self.class.get('/Events/EventsGet', query_options(params))
   end
 
   def event(event_id, params = {})
@@ -39,14 +39,13 @@ class KBMG
     return unless response && response['Success'] == true
     fail "expected response to return 1 place but returned #{response['Data']['Places'].count}" if response['Data']['Places'].count != 1
     response['Data']['Places'][0]
-
   end
 
   private
 
   def query_options(params = {})
     {
-      query: { apiToken: self.api_token }.merge(build_request(params)),
+      query: { apiToken: api_token }.merge(build_request(params)),
       headers: {
         'content-type'     => 'application/x-www-form-urlencoded',
         'accept'           => 'application/json',
@@ -62,7 +61,7 @@ class KBMG
     options << "Include:[\"#{Array(params[:include]).join('","')}\"]" if params.key?(:include)
     options << "SearchString:\"#{params[:search_string]}\"" if params.key?(:search_string)
     if options.any?
-      {request: "{#{options.join(',')}}" } if options.any?
+      { request: "{#{options.join(',')}}" } if options.any?
     else
       {}
     end

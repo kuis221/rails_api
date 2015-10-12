@@ -635,9 +635,9 @@ feature 'Campaigns', js: true do
           fill_in 'Search', with: 'Activity Type #1'
           within '.resource-list' do
             expect(page).to have_content('Activity Type #1')
-            hover_and_click '.resource-item', 'Add Activity Type'
-            expect(page).not_to have_content('Activity Type #1')
+            hover_and_click resource_item(activity_type), 'Add Activity Type'
           end
+          expect(page).to have_no_content('Activity Type #1')
         end
         close_modal
 
@@ -763,10 +763,14 @@ feature 'Campaigns', js: true do
   end
 
   feature 'export', search: true do
-    let(:campaign1) { create(:campaign, name: 'Cacique FY13',
-                                description: 'Test campaign for guaro Cacique', company: company) }
-    let(:campaign2) { create(:campaign, name: 'New Brand Campaign',
-                                description: 'Campaign for another brand', company: company) }
+    let(:campaign1) do
+      create(:campaign, name: 'Cacique FY13',
+                                description: 'Test campaign for guaro Cacique', company: company)
+    end
+    let(:campaign2) do
+      create(:campaign, name: 'New Brand Campaign',
+                                description: 'Campaign for another brand', company: company)
+    end
 
     before do
       create(:event, start_date: '08/21/2013', end_date: '08/21/2013',

@@ -27,7 +27,7 @@ feature 'Events section', js: true do
     before do
       campaign.brands << [brand1, brand2]
       event.campaign.update_attribute(:modules, 'expenses' => {
-        'settings' => { 'categories' => %w(Phone) } })
+                                        'settings' => { 'categories' => %w(Phone) } })
     end
 
     scenario 'user can attach a expense to event' do
@@ -86,7 +86,8 @@ feature 'Events section', js: true do
     before do
       campaign.brands << [brand1, brand2]
       event.campaign.update_attribute(:modules, 'expenses' => {
-        'settings' => { 'categories' => %w(Phone Other) } })
+                                        'settings' => {
+                                          'categories' => %w(Phone Other) } })
     end
 
     feature 'new expense' do

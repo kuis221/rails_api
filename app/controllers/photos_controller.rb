@@ -45,7 +45,7 @@ class PhotosController < InheritedResources::Base
 
   def return_path
     super || (if @photo
-      event_path(@photo)
+                event_path(@photo)
     else
       events_path
     end)

@@ -1,3 +1,7 @@
+require 'form_field/date'
+require 'form_field/time'
+require 'form_field/place'
+
 # == Schema Information
 #
 # Table name: form_fields
@@ -35,7 +39,7 @@ FactoryGirl.define do
     ordering 1
   end
 
-  factory :form_field_date, class: FormField::Date do
+  factory :form_field_date, class: ::FormField::Date do
     sequence(:name) { |n| "Form Field Date #{n}" }
     type 'FormField::Date'
     ordering 1
@@ -119,7 +123,7 @@ FactoryGirl.define do
     ordering 1
   end
 
-  factory :form_field_place, class: FormField::Place do
+  factory :form_field_place, class: ::FormField::Place do
     sequence(:name) { |n| "Place #{n}" }
     type 'FormField::Place'
     ordering 1
@@ -131,7 +135,7 @@ FactoryGirl.define do
     ordering 1
   end
 
-  factory :form_field_time, class: FormField::Time do
+  factory :form_field_time, class: ::FormField::Time do
     sequence(:name) { |n| "Form Field Time #{n}" }
     type 'FormField::Time'
     ordering 1

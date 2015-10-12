@@ -47,7 +47,7 @@ describe Membership, type: :model do
       expect do
         expect do
           campaign.users.destroy(user)
-        end.to change(Membership, :count).by(-1)
+        end.to change(described_class, :count).by(-1)
       end.to change(Goal, :count).by(-1)
     end
   end

@@ -67,8 +67,8 @@ class Analysis::AttendanceController < ApplicationController
     InviteRsvp.for_event(event).without_locations.where.not(zip_code: nil)
       .where.not(zip_code: '')
       .pluck('DISTINCT invite_rsvps.zip_code').each do |zipcode|
-        next unless zipcode.match(/\A[0-9]{5}(-[0-9]+)?\z/)
-        InviteRsvp.update_zip_code_location(zipcode)
+      next unless zipcode.match(/\A[0-9]{5}(-[0-9]+)?\z/)
+      InviteRsvp.update_zip_code_location(zipcode)
     end
   end
 

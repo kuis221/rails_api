@@ -45,7 +45,6 @@ class DataExtract::Activity < DataExtract
                  modified_at: proc { "to_char(activities.updated_at, 'MM/DD/YYYY')" },
                  modified_by: '(SELECT trim(us.first_name || \' \' || us.last_name) FROM users as us WHERE activities.updated_by_id=us.id)'
 
-
   def add_filter_conditions_to_scope(s)
     return s if filters.nil? || filters.empty?
     s = s.where(campaign_id: filters['campaign']) if filters['campaign'].present?
@@ -63,7 +62,7 @@ class DataExtract::Activity < DataExtract
     s = s.joins(:campaign) if columns.include?('campaign_name')
     s = s.joins(:activity_type) if columns.include?('activity_type')
     s = s.joins(company_user: :user) if columns.include?('user')
-    if columns.any? { |c| c.match(/^event_/) || c == 'status' } || filtered_by?(['brand', 'campaign', 'area'])
+    if columns.any? { |c| c.match(/^event_/) || c == 'status' } || filtered_by?(%w(brand campaign area))
       s = s.joins('LEFT JOIN events ON events.id=activities.activitable_id AND activities.activitable_type=\'Event\'')
     end
     if columns.any? { |c| c.match(/^place_/)  }
@@ -80,7 +79,7 @@ class DataExtract::Activity < DataExtract
   def form_fields
     return [] unless params.present? && params['activity_type_id'].present?
     @form_fields ||= FormField.for_activity_types(params['activity_type_id'])
-                     .where.not(type: ['FormField::UserDate', 'FormField::Photo', 'FormField::Attachment'] )
+                     .where.not(type: ['FormField::UserDate', 'FormField::Photo', 'FormField::Attachment'])
   end
 
   def filters_scope

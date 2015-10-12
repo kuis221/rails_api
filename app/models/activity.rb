@@ -76,9 +76,9 @@ class Activity < ActiveRecord::Base
   end
 
   def self.in_company(company)
-    joins('LEFT JOIN events ue ON activitable_type=\'Event\' AND ue.id=activitable_id').
-    joins('LEFT JOIN venues uv ON activitable_type=\'Venue\' AND uv.id=activitable_id').
-    where('ue.company_id=:company OR uv.company_id=:company', company: company)
+    joins('LEFT JOIN events ue ON activitable_type=\'Event\' AND ue.id=activitable_id')
+    .joins('LEFT JOIN venues uv ON activitable_type=\'Venue\' AND uv.id=activitable_id')
+    .where('ue.company_id=:company OR uv.company_id=:company', company: company)
   end
 
   def activate!

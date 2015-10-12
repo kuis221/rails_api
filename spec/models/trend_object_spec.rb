@@ -3,10 +3,12 @@ require 'rails_helper'
 describe 'TrendObject' do
   let(:campaign) { create(:campaign) }
   let(:comment) { create(:comment, commentable: event) }
-  let(:activity ) { create(:activity, activity_type: activity_type,
-        activitable: event, campaign: campaign, company_user_id: 1) }
+  let(:activity) do
+    create(:activity, activity_type: activity_type,
+                      activitable: event, campaign: campaign, company_user_id: 1)
+  end
   let(:activity_type) { create(:activity_type, company: campaign.company) }
-  let(:field) { create(:form_field, type: 'FormField::TextArea', fieldable: activity_type ) }
+  let(:field) { create(:form_field, type: 'FormField::TextArea', fieldable: activity_type) }
   let(:event) { create(:event, campaign: campaign, company: campaign.company) }
   let(:campaign) { create(:campaign) }
 
@@ -78,8 +80,11 @@ describe 'TrendObject' do
   describe 'solr_index', search: true do
     before { campaign.activity_types << activity_type }
 
+    let(:venue) { create(:venue, company: campaign.company) }
+
     it 'works' do
       event_field = create(:form_field_text, fieldable: campaign)
+      venue_field = create(:form_field_text, fieldable: create(:entity_form, entity: 'Venue', company: campaign.company))
 
       event.results_for([event_field]).first.value = 'this have a value'
       event.save
@@ -88,6 +93,9 @@ describe 'TrendObject' do
 
       activity.results_for([field]).first.value = 'this have a value'
       activity.save
+
+      venue.results_for([venue_field]).first.value = 'this have a value'
+      venue.save
 
       TrendObject.reindex
       Sunspot.commit

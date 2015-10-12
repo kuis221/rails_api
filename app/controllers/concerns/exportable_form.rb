@@ -52,6 +52,6 @@ module ExportableForm
   end
 
   def set_cache_header
-    response.headers['Cache-Control']='private, max-age=0, no-cache'
+    response.headers['Cache-Control'] = 'private, max-age=0, no-cache'
   end
 end

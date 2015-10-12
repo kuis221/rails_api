@@ -30,11 +30,11 @@ describe Company, type: :model do
 
     it 'should return all active users and teams' do
       u1 = create(:company_user, company: company,
-                                             user: create(:user, first_name: 'Guillermo', last_name: 'Vargas'))
+                                 user: create(:user, first_name: 'Guillermo', last_name: 'Vargas'))
       u2 = create(:company_user, company: company,
-                                             user: create(:user, first_name: 'Pablo', last_name: 'Baltodano'))
+                                 user: create(:user, first_name: 'Pablo', last_name: 'Baltodano'))
       u3 = create(:company_user, company: company,
-                                             user: create(:user, first_name: 'Ujarrás', last_name: 'Zalomé'))
+                                 user: create(:user, first_name: 'Ujarrás', last_name: 'Zalomé'))
 
       team1 = create(:team, name: 'A-Team', company: company)
       team2 = create(:team, name: 'Team 1', company: company)

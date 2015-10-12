@@ -95,7 +95,7 @@ class Event < ActiveRecord::Base
   scope :by_campaigns, ->(campaigns) { where(campaign_id: campaigns) }
   scope :in_past, -> { where('events.end_at < ?', Time.now) }
   scope :with_team, ->(team) { joins(:teamings).where(teamings: { team_id: team }) }
-  scope :filters_between_dates, ->(start_date, end_date) { where(start_at: DateTime.parse(start_date)..DateTime.parse(end_date))}
+  scope :filters_between_dates, ->(start_date, end_date) { where(start_at: DateTime.parse(start_date)..DateTime.parse(end_date)) }
 
   def self.between_dates(start_date, end_date)
     prefix = ''
@@ -138,8 +138,8 @@ class Event < ActiveRecord::Base
     else
       where('events.place_id in (?) OR events.place_id in (
               select place_id FROM locations_places where location_id in (?))',
-             company_user.accessible_places + [0],
-             company_user.accessible_locations + [0]
+            company_user.accessible_places + [0],
+            company_user.accessible_locations + [0]
       )
     end
   end
@@ -169,7 +169,7 @@ class Event < ActiveRecord::Base
     subquery = subquery.to_sql
 
     if has_inclusions
-      subquery += " UNION " + Place.select('DISTINCT places.location_id')
+      subquery += ' UNION ' + Place.select('DISTINCT places.location_id')
                               .where(is_location: true, id: area_campaign.inclusions).to_sql
     end
 
@@ -232,7 +232,7 @@ class Event < ActiveRecord::Base
   validates :company_id, presence: true, numericality: true
   validates :start_at, presence: true
   validates :end_at, presence: true, date: { on_or_after: :start_at, message: 'must be after' }
-  validate :between_visit_date_range, before: [:create, :update], if: :visit
+  validate :between_visit_date_range, on: [:create, :update], if: :visit
 
   DATE_FORMAT = %r{\A[0-1]?[0-9]/[0-3]?[0-9]/[0-2]0[0-9][0-9]\z}
   validates :start_date, format: { with: DATE_FORMAT, message: 'MM/DD/YYYY' }

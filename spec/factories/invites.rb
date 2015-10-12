@@ -28,7 +28,7 @@ FactoryGirl.define do
     rsvps_count 0
     attendees 1
     market nil
-    final_date "2014-12-30"
+    final_date '2014-12-30'
     active true
     area_id nil
   end

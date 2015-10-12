@@ -456,7 +456,7 @@ describe AutocompleteController, type: :controller, search: true do
       expect(json.map { |b| b['label'] }).to eq(['Tasks', 'Campaigns', 'Task Status', 'Active State'])
     end
 
-    it "should return the correct buckets in the right order for team tasks" do
+    it 'should return the correct buckets in the right order for team tasks' do
       get 'show', id: 'teams_tasks', format: :json
       expect(response).to be_success
 
@@ -628,9 +628,9 @@ describe AutocompleteController, type: :controller, search: true do
 
       people_bucket = json.select { |b| b['label'] == 'People' }.first
       expect(people_bucket['value']).to eq([{
-        'label' => '<i>Gu</i>illermo Vargas',
-        'value' => company_user.id.to_s,
-        'type' => 'user' }])
+                                             'label' => '<i>Gu</i>illermo Vargas',
+                                             'value' => company_user.id.to_s,
+                                             'type' => 'user' }])
     end
 
     it 'should return the teams in the People Bucket' do
@@ -672,9 +672,9 @@ describe AutocompleteController, type: :controller, search: true do
 
       campaigns_bucket = json.select { |b| b['label'] == 'Campaigns' }.first
       expect(campaigns_bucket['value']).to eq([{
-        'label' => '<i>Cac</i>ique para todos',
-        'value' => campaign.id.to_s,
-        'type' => 'campaign' }])
+                                                'label' => '<i>Cac</i>ique para todos',
+                                                'value' => campaign.id.to_s,
+                                                'type' => 'campaign' }])
     end
 
     it 'should return the brands in the Brands Bucket' do
@@ -701,7 +701,7 @@ describe AutocompleteController, type: :controller, search: true do
 
     it 'should return the venues in the Places Bucket' do
       venue = create(:venue, company_id: company.id,
-                     place: create(:place, name: 'Guanacaste'))
+                             place: create(:place, name: 'Guanacaste'))
       Sunspot.commit
 
       get 'show', id: 'venues', q: 'gua', format: :json

@@ -26,11 +26,11 @@ describe Comment, type: :model do
     let(:campaign) { create(:campaign) }
     let(:event) { create(:event, campaign: campaign) }
 
-    describe "when a max is set for the campaign" do
+    describe 'when a max is set for the campaign' do
       before do
         event.campaign.update_attribute(
-          :modules, {'comments' => {'settings' => { 'range_min' => '1',
-                                                    'range_max' => '2' }}})
+          :modules, 'comments' => { 'settings' => { 'range_min' => '1',
+                                                    'range_max' => '2' } })
       end
 
       it 'should not allow create more than two comments for the event' do
@@ -43,7 +43,7 @@ describe Comment, type: :model do
 
       it 'correctly displays a message when max is set to 1' do
         event.campaign.update_attribute(
-          :modules, {'comments' => {'settings' => { 'range_max' => '1' }}})
+          :modules, 'comments' => { 'settings' => { 'range_max' => '1' } })
         create(:comment, commentable: event)
         comment = build(:comment, commentable: event)
         expect(comment.save).to be_falsey
@@ -52,11 +52,11 @@ describe Comment, type: :model do
       end
     end
 
-    describe "when a max is not set for the campaing" do
+    describe 'when a max is not set for the campaing' do
       before do
         event.campaign.update_attribute(
-          :modules, {'comments' => {'settings' => { 'range_min' => '1',
-                                                    'range_max' => '' }}})
+          :modules, 'comments' => { 'settings' => { 'range_min' => '1',
+                                                    'range_max' => '' } })
       end
 
       it 'should not allow create any number of comments for the event' do

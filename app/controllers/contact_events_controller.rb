@@ -25,7 +25,7 @@ class ContactEventsController < InheritedResources::Base
   end
 
   def create
-    create! do |success, failure|
+    create! do |success, _failure|
       success.js do
         session["create_count_#{params[:form_id]}"] ||= 0
         @count = session["create_count_#{params[:form_id]}"] += 1

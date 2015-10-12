@@ -54,7 +54,6 @@ class Ability
       can :cities, Area
     end
 
-
     # AdminUsers (logged in on Active Admin)
     if user.is_a?(AdminUser)
       # ActiveAdmin users
@@ -131,12 +130,12 @@ class Ability
         can?(:edit, object)
       end
 
-      can :create, Invite do |invite|
+      can :create, Invite do |_invite|
         role.has_permission?(:create_invite, Event) ||
         role.has_permission?(:create_invite, Venue)
       end
 
-      can :update, Invite do |invite|
+      can :update, Invite do |_invite|
         role.has_permission?(:edit_invite, Event) ||
         role.has_permission?(:edit_invite, Venue)
       end
@@ -430,8 +429,8 @@ class Ability
       # end
       can :create, AttachedAsset do |asset|
         asset.attachable.is_a?(Event) && can?(:show, asset.attachable) && (
-          ( asset.asset_type == 'document' && can?(:create_document, asset.attachable) ) ||
-          ( asset.asset_type == 'photo' && can?(:create_photo, asset.attachable) )
+          (asset.asset_type == 'document' && can?(:create_document, asset.attachable)) ||
+          (asset.asset_type == 'photo' && can?(:create_photo, asset.attachable))
         )
       end
 
@@ -503,8 +502,8 @@ class Ability
       end
 
       can :split, EventExpense do |expense|
-       (expense.new_record? && can?(:create_expense, expense.event)) ||
-       (expense.persisted? && can?(:edit_expense, expense.event))
+        (expense.new_record? && can?(:create_expense, expense.event)) ||
+        (expense.persisted? && can?(:edit_expense, expense.event))
       end
 
       # Surveys permissions

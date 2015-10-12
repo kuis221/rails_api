@@ -232,7 +232,7 @@ feature 'Dashboard', search: true, js: true do
   feature 'Admin User' do
     let(:role) { create(:role, company: company) }
 
-    #it_behaves_like 'a user that can view the upcoming events module'
+    # it_behaves_like 'a user that can view the upcoming events module'
 
     it_behaves_like 'a user that can view the recent comments module'
 

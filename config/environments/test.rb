@@ -13,7 +13,7 @@ Brandscopic::Application.configure do
   config.eager_load = true
 
   # Configure static asset server for tests with Cache-Control for performance.
-  config.serve_static_assets  = true
+  config.serve_static_files  = true
   config.static_cache_control = 'public, max-age=3600'
 
   # Show full error reports and disable caching.
@@ -39,6 +39,7 @@ Brandscopic::Application.configure do
   ENV['REDISTOGO_URL'] = 'redis://localhost:9999'
 
   config.cache_store = :null_store
+  #config.cache_store = :file_store, Rails.root.join("tmp", "cache", "paralleltests#{ENV['TEST_ENV_NUMBER']}")
 
   ENV['TWILIO_SID'] = 'XXXXXXXXXXXXXXXXXXXXX'
   ENV['TWILIO_AUTH_TOKEN'] = '11111111111111111'

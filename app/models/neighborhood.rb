@@ -15,9 +15,9 @@ class Neighborhood < ActiveRecord::Base
   # This is how shp2pgsql generates the table
   self.primary_key = 'gid'
 
-  # By default, use the GEOS implementation for spatial columns.
-  self.rgeo_factory_generator = RGeo::Geos.factory_generator
+  # # By default, use the GEOS implementation for spatial columns.
+  # self.rgeo_factory_generator = RGeo::Geos.factory_generator
 
-  # But use a geographic implementation for the :lonlat column.
-  set_rgeo_factory_for_column(:geog, RGeo::Geographic.spherical_factory(:srid => 4326))
+  # # But use a geographic implementation for the :lonlat column.
+  # set_rgeo_factory_for_column(:geog, RGeo::Geographic.spherical_factory(:srid => 4326))
 end

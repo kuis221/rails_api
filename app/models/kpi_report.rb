@@ -95,7 +95,7 @@ class KpiReport < ActiveRecord::Base
         show_progress(i += 1, total)
         brands = campaign.brands.map(&:name).to_sentence
         scoped_events = ::Event.where(campaign_id: campaign.id).active.approved
-        places = Place.where(id: scoped_events.select('DISTINCT(place_id) as place_id'))
+        places = Place.where(id: scoped_events.pluck('DISTINCT(place_id)'))
         places.each do |place|
           place_events = scoped_events.where(place_id: place)
           place_events_fytd = place_events.between_dates(fytd_start, fytd_end)

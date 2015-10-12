@@ -660,7 +660,7 @@ feature 'Brand Ambassadors Visits' do
     scenario 'if the visit doesn\'t have an area, display all events matching the other criteria'  do
       cities = [
         create(:city, name: 'San Francisco', state: 'CA'),
-        create(:city, name: 'New York', state: 'NY'),
+        create(:city, name: 'New York', state: 'NY')
       ]
       company_user.places << cities
       campaign.places << cities
@@ -685,11 +685,11 @@ feature 'Brand Ambassadors Visits' do
       end
 
       ba_visit1 = create(:brand_ambassadors_visit,
-                        company: company,
-                        start_date: '02/01/2014', end_date: '02/02/2014',
-                        visit_type: 'Formal Market Visit', description: 'Visit1 description',
-                        campaign: campaign, area: nil,
-                        company_user: company_user, active: true)
+                         company: company,
+                         start_date: '02/01/2014', end_date: '02/02/2014',
+                         visit_type: 'Formal Market Visit', description: 'Visit1 description',
+                         campaign: campaign, area: nil,
+                         company_user: company_user, active: true)
 
       Sunspot.commit
       visit brand_ambassadors_visit_path(ba_visit1)
@@ -741,10 +741,10 @@ feature 'Brand Ambassadors Visits' do
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'DURATION', 'VENUE NAME', 'ADDRESS', 'CITY',
          'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL'],
-        ['ABSOLUT Vodka', '', "2014-02-01 09:00","2014-02-01 11:00", '2.00', 'My Place 3',
+        ['ABSOLUT Vodka', '', '2014-02-01 09:00', '2014-02-01 11:00', '2.00', 'My Place 3',
          'My Place 3, 11 Main St., New York, NY, 12345', 'New York', 'NY', '12345', 'Active', 'Unsent',
          'Test User', '', "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event3.id}"],
-        ['ABSOLUT Vodka', '', "2014-02-01 10:00","2014-02-01 11:00", '1.00', 'My Place 1',
+        ['ABSOLUT Vodka', '', '2014-02-01 10:00', '2014-02-01 11:00', '1.00', 'My Place 1',
          'My Place 1, 11 Main St., New York, NY, 12345', 'New York', 'NY', '12345', 'Active', 'Unsent',
          'Test User', '', "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event1.id}"]
       ])

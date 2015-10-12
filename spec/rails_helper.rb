@@ -4,7 +4,7 @@ ENV['RAILS_ENV'] ||= 'test'
 require 'spec_helper'
 require 'simplecov'
 
-unless ENV['CI']
+unless ENV['CI'] || ENV.key?('TEST_ENV_NUMBER')
   SimpleCov.start 'rails' do
     add_filter 'lib/legacy'
   end
@@ -61,8 +61,8 @@ RSpec.configure do |config|
   config.include RequestsHelper, type: :feature
 
   config.before(:suite) do
-    ActiveRecord::Base.connection.execute(IO.read("db/functions.sql"))
-    ActiveRecord::Base.connection.execute(IO.read("db/views.sql"))
+    ActiveRecord::Base.connection.execute(IO.read('db/functions.sql'))
+    ActiveRecord::Base.connection.execute(IO.read('db/views.sql'))
   end
 
   config.before(:each) do |example|
@@ -75,14 +75,14 @@ RSpec.configure do |config|
     Time.zone = Rails.application.config.time_zone
 
     Rails.logger.debug "\n\n\n\n\n\n\n\n\n\n"
-    Rails.logger.debug '**************************************************************************************'
+    Rails.logger.debug '*' * 80
     Rails.logger.debug "***** EXAMPLE: #{example.full_description}"
-    Rails.logger.debug '**************************************************************************************'
+    Rails.logger.debug '*' * 80
   end
 
   config.after(:each, js: true) do
     wait_for_ajax
-    page.execute_script("window.localStorage.clear()")
+    page.execute_script('window.localStorage.clear()')
   end
 
   config.include(SmsSpec::Helpers)

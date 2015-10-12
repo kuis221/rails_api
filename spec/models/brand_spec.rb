@@ -80,7 +80,7 @@ describe Brand, type: :model do
     let!(:brand2) { create :brand, active: true }
     let!(:brand3) { create :brand, active: true }
 
-    let(:collection) { Brand.accessible_by_user(company_user).all }
+    let(:collection) { described_class.accessible_by_user(company_user).all }
 
     context 'when user is an admin' do
       before { allow(company_user).to receive(:is_admin?).and_return true }

@@ -51,17 +51,17 @@ RSpec.describe BrandAmbassadors::VisitsController, type: :controller do
 
     it 'should include the event results' do
       visit_user = create(:company_user,
-                                      user: create(:user, first_name: 'Michale', last_name: 'Jackson'),
-                                      company: company, role: user.role)
+                          user: create(:user, first_name: 'Michale', last_name: 'Jackson'),
+                          company: company, role: user.role)
 
       brand = create(:brand, name: 'Imperial', company_id: company.to_param)
 
       area = create(:area, name: 'Area 1', company_id: company.to_param)
 
       visit = create(:brand_ambassadors_visit,
-                                 visit_type: 'PTO', description: 'Test Visit description', company_user: visit_user,
-                                 start_date: '01/23/2014', end_date: '01/24/2014', campaign: campaign, area: area,
-                                 city: 'Test City', company: company)
+                     visit_type: 'PTO', description: 'Test Visit description', company_user: visit_user,
+                     start_date: '01/23/2014', end_date: '01/24/2014', campaign: campaign, area: area,
+                     city: 'Test City', company: company)
       Sunspot.commit
 
       expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)

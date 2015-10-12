@@ -49,9 +49,9 @@ RSpec.describe DataExtract::Comment, type: :model do
     end
     let(:subject) do
       described_class.new(company: company, current_user: company_user,
-                          columns: ['comment', 'campaign_name', 'start_date', 'start_time', 'end_date',
-                          'end_time', 'event_status', 'street', 'place_city', 'place_name', 'place_state',
-                          'place_zipcode', 'created_by', 'created_at'])
+                          columns: %w(comment campaign_name start_date start_time end_date end_time
+                                      event_status street place_city place_name place_state
+                                      place_zipcode created_by created_at))
     end
 
     it 'returns empty if no rows are found' do
@@ -68,7 +68,8 @@ RSpec.describe DataExtract::Comment, type: :model do
       it 'returns all the comments in the company with all the columns' do
         expect(subject.rows).to eql [
           ['Comment #1', 'Test Campaign FY01', '01/01/2014', '06:00 PM', '01/01/2014',
-           '08:00 PM', 'Unsent', '11 Main St.', 'New York City', 'Place 1', 'NY', '12345', 'Benito Camelas', '08/22/2013']
+           '08:00 PM', 'Unsent', '11 Main St.', 'New York City', 'Place 1', 'NY', '12345',
+           'Benito Camelas', '08/22/2013']
         ]
       end
 

@@ -50,7 +50,6 @@ class Comment < ActiveRecord::Base
   after_save :send_notifications
 
   def for_task?
-    p commentable.inspect
     commentable.is_a?(Task)
   end
 

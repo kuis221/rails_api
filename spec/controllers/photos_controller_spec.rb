@@ -22,8 +22,8 @@ describe PhotosController, type: :controller do
       expect_any_instance_of(Paperclip::Attachment).to receive(:path).and_return('/attached_assets/original/test.jpg')
       expect do
         xhr :post, 'create', event_id: event.to_param, attached_asset: {
-              direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg'
-            }, format: :js
+          direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg'
+        }, format: :js
       end.to change(AttachedAsset, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template('_photo')

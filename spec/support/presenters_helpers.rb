@@ -11,7 +11,7 @@ module Brandscopic
         self
       end
 
-      def present(obj, stubs={})
+      def present(obj, stubs = {})
         stubs.each do |k, v|
           allow(@@view_context).to receive(k).and_return(v)
         end

@@ -18,13 +18,13 @@ class CustomFiltersCategoriesController < InheritedResources::Base
       end
     list = groups.map do |group, filters|
       { label: group,
-         items: filters.map do |cf|
-          {
-            id: cf.id,
-            filters: cf.filters,
-            name: cf.name
-          }
-        end }
+        items: filters.map do |cf|
+                 {
+                   id: cf.id,
+                   filters: cf.filters,
+                   name: cf.name
+                 }
+               end }
     end
     render json: list
   end

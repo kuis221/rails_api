@@ -84,8 +84,8 @@ describe CommentsController, type: :controller do
             user_attributes: { phone_number_verified: true })
 
           other_user = create(:company_user, company_id: @company.id,
-                                                         notifications_settings: ['new_team_comment_sms'],
-                                                         user_attributes: { phone_number_verified: true })
+                                             notifications_settings: ['new_team_comment_sms'],
+                                             user_attributes: { phone_number_verified: true })
 
           task.update_attributes(event_id: event.to_param)
           event.users << @company_user

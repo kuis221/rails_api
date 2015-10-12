@@ -109,7 +109,7 @@ class EventsCalendar
     campaign_ids = campaign_names.keys
     events_users = Hash.new { |hash, key| hash[key] = [] }
     company.events.joins_for_user_teams
-           .where(id: search_events_for_month.hits.map { |h| h.stored(:id) } )
+           .where(id: search_events_for_month.hits.map { |h| h.stored(:id) })
            .pluck('events.id, company_users.id, users.first_name || \' \' || users.last_name').each do |row|
       events_users[row[0]].push([row[1], row[2]]) if row[1]
     end

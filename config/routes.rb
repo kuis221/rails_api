@@ -130,8 +130,8 @@ Brandscopic::Application.routes.draw do
 
         resources :tasks, only: [:update, :create, :show], concerns: [:commentable] do
           collection do
-            get :mine, to: :index, defaults: { scope: 'user' }, constraints: { scope: 'user' }
-            get :team, to: :index, defaults: { scope: 'teams' }, constraints: { scope: 'teams' }
+            get :mine, action: :index, defaults: { scope: 'user' }, constraints: { scope: 'user' }
+            get :team, action: :index, defaults: { scope: 'teams' }, constraints: { scope: 'teams' }
           end
         end
 
@@ -240,7 +240,7 @@ Brandscopic::Application.routes.draw do
         get :filters
         get :search
       end
-      get 't/:term', on: :collection, to: :show
+      get 't/:term', on: :collection, action: :show
       get 't/:term/:action', on: :collection
     end
 
@@ -379,7 +379,7 @@ Brandscopic::Application.routes.draw do
     get :calendar, on: :collection
     get :edit_data, on: :member
     get :edit_surveys, on: :member
-    get :calendar_dates, on: :collection, to: :calendar_highlights
+    get :calendar_dates, on: :collection, action: :calendar_highlights
     resources :tasks, only: [:create, :new], concerns: [:deactivatable]
 
     resources :invites, only: [:create, :edit, :update, :index], concerns: [:deactivatable]
@@ -422,8 +422,8 @@ Brandscopic::Application.routes.draw do
     collection do
       get ':scope/items', to: 'tasks#items', constraints: { scope: /user|teams/ }, format: :json
 
-      get :mine, to: :index, defaults: { scope: 'user' }, constraints: { scope: 'user' }
-      get :my_teams, to: :index, defaults: { scope: 'teams' }, constraints: { scope: 'teams' }
+      get :mine, action: :index, defaults: { scope: 'user' }, constraints: { scope: 'user' }
+      get :my_teams, action: :index, defaults: { scope: 'teams' }, constraints: { scope: 'teams' }
     end
     resources :comments, only: [:create, :index]
   end
