@@ -36,8 +36,6 @@ class FormField < ActiveRecord::Base
   accepts_nested_attributes_for :options, allow_destroy: true
   accepts_nested_attributes_for :statements, allow_destroy: true
 
-  serialize :settings
-
   validates :fieldable_id, presence: true, numericality: true
   validates :fieldable_type, presence: true
   validates :name, presence: true

@@ -17,7 +17,8 @@
 #
 
 class FormField::Calculation < FormField::Hashed
-  store :settings, accessors: [:calculation_label, :operation], coder: YAML
+  store_accessor :settings, :calculation_label, :operation
+
   MIN_OPTIONS_ALLOWED = 2
   def field_options(result)
     {
