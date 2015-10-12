@@ -9,7 +9,7 @@
     = update_event_details_bar(resource)
     |
       $('#edit_event_data_form').remove();
-      $('.box_event_data').html("#{escape_javascript(render('results_event_data'))}").show();
+      $('.box_event_data').html("#{escape_javascript(render(partial: 'results_event_data', locals: {url_return_path: "#{return_path || collection_path}" }))}").show();
       window.EventDetails.showMessage("#{j I18n.translate('instructive_messages.execute.per.completed')}", 'green');
       smoothScrollTo($('#event-per'));
       setTimeout(function(){ $(window).resize() });
