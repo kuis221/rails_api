@@ -55,73 +55,63 @@ feature 'Post Event Data' do
       company_user.places << venue.place
 
       # Create some custom fields of different types
-      create(:form_field,
+      create(:form_field_place,
              name: 'Custom Place',
-             type: 'FormField::Place',
              fieldable: campaign,
              required: false)
 
-      create(:form_field,
+      create(:form_field_text,
              name: 'Custom Single Text',
-             type: 'FormField::Text',
              settings: { 'range_format' => 'characters', 'range_min' => '5', 'range_max' => '20' },
              fieldable: campaign,
              required: false)
 
-      create(:form_field,
+      create(:form_field_text_area,
              name: 'Custom TextArea',
-             type: 'FormField::TextArea',
              settings: { 'range_format' => 'words', 'range_min' => '2', 'range_max' => '4' },
              fieldable: campaign,
              required: false)
 
-      create(:form_field,
+      create(:form_field_number,
              name: 'Custom Numeric',
-             type: 'FormField::Number',
              settings: { 'range_format' => 'value', 'range_min' => '5', 'range_max' => '20' },
              fieldable: campaign,
              required: false)
 
-      create(:form_field,
+      create(:form_field_date,
              name: 'Custom Date',
-             type: 'FormField::Date',
              fieldable: campaign,
              required: false)
 
-      create(:form_field,
+      create(:form_field_time,
              name: 'Custom Time',
-             type: 'FormField::Time',
              fieldable: campaign,
              required: false)
 
-      create(:form_field,
+      create(:form_field_currency,
              name: 'Custom Currency',
-             type: 'FormField::Currency',
              settings: { 'range_format' => 'digits', 'range_min' => '2', 'range_max' => '4' },
              fieldable: campaign,
              required: false)
 
-      create(:form_field,
+      create(:form_field_calculation,
              name: 'Custom Calculation',
-             type: 'FormField::Calculation',
              options: [
                create(:form_field_option, name: 'Calculation Opt1'),
                create(:form_field_option, name: 'Calculation Opt2')],
              fieldable: campaign,
              required: false)
 
-      create(:form_field,
+      create(:form_field_percentage,
              name: 'Custom Percentage',
-             type: 'FormField::Percentage',
              options: [
                create(:form_field_option, name: 'Percentage Opt1', ordering: 1),
                create(:form_field_option, name: 'Percentage Opt2', ordering: 2)],
              fieldable: campaign,
              required: false)
 
-      create(:form_field,
+      create(:form_field_likert_scale,
              name: 'Custom LikertScale',
-             type: 'FormField::LikertScale',
              options: [
                create(:form_field_option, name: 'LikertScale Opt1'),
                create(:form_field_option, name: 'LikertScale Opt2')],
@@ -131,33 +121,29 @@ feature 'Post Event Data' do
              fieldable: campaign,
              required: false)
 
-      create(:form_field,
+      create(:form_field_checkbox,
              name: 'Custom Checkbox',
-             type: 'FormField::Checkbox',
              options: [
                create(:form_field_option, name: 'Checkbox Opt1', ordering: 1),
                create(:form_field_option, name: 'Checkbox Opt2', ordering: 2)],
              fieldable: campaign,
              required: false)
 
-      create(:form_field,
+      create(:form_field_radio,
              name: 'Custom Radio',
-             type: 'FormField::Radio',
              options: [
                create(:form_field_option, name: 'Radio Opt1', ordering: 1),
                create(:form_field_option, name: 'Radio Opt2', ordering: 2)],
              fieldable: campaign,
              required: false)
 
-      create(:form_field,
+      create(:form_field_brand,
              name: 'Brand',
-             type: 'FormField::Brand',
              fieldable: campaign,
              required: false)
 
-      create(:form_field,
+      create(:form_field_marque,
              name: 'Marque',
-             type: 'FormField::Marque',
              fieldable: campaign,
              required: false)
 

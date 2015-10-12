@@ -19,6 +19,9 @@
 class FormField::Calculation < FormField::Hashed
   store_accessor :settings, :calculation_label, :operation
 
+  validates :operation, presence: true
+  validates :calculation_label, presence: true
+
   MIN_OPTIONS_ALLOWED = 2
   def field_options(result)
     {

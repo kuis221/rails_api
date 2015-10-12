@@ -90,7 +90,8 @@ FactoryGirl.define do
   factory :form_field_calculation, class: FormField::Calculation do
     sequence(:name) { |n| "Form Field Calculation #{n}" }
     type 'FormField::Calculation'
-    settings 'operation' => '+'
+    operation '+'
+    calculation_label 'TOTAL'
     ordering 1
   end
 
