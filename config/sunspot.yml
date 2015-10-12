@@ -20,10 +20,9 @@ development:
 
 test:
   solr:
-    hostname: 127.0.0.1
+    hostname: localhost
     port: 8981
     log_level: DEBUG
-    path: /solr/test
+    path: /solr/test<%= ENV['TEST_ENV_NUMBER'].to_i %>
   auto_commit_after_request: true
   auto_commit_after_delete_request: true
-    
