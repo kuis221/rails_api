@@ -55,73 +55,63 @@ feature 'Post Event Data' do
       company_user.places << venue.place
 
       # Create some custom fields of different types
-      create(:form_field,
+      create(:form_field_place,
              name: 'Custom Place',
-             type: 'FormField::Place',
              fieldable: campaign,
              required: false)
 
-      create(:form_field,
+      create(:form_field_text,
              name: 'Custom Single Text',
-             type: 'FormField::Text',
              settings: { 'range_format' => 'characters', 'range_min' => '5', 'range_max' => '20' },
              fieldable: campaign,
              required: false)
 
-      create(:form_field,
+      create(:form_field_text_area,
              name: 'Custom TextArea',
-             type: 'FormField::TextArea',
              settings: { 'range_format' => 'words', 'range_min' => '2', 'range_max' => '4' },
              fieldable: campaign,
              required: false)
 
-      create(:form_field,
+      create(:form_field_number,
              name: 'Custom Numeric',
-             type: 'FormField::Number',
              settings: { 'range_format' => 'value', 'range_min' => '5', 'range_max' => '20' },
              fieldable: campaign,
              required: false)
 
-      create(:form_field,
+      create(:form_field_date,
              name: 'Custom Date',
-             type: 'FormField::Date',
              fieldable: campaign,
              required: false)
 
-      create(:form_field,
+      create(:form_field_time,
              name: 'Custom Time',
-             type: 'FormField::Time',
              fieldable: campaign,
              required: false)
 
-      create(:form_field,
+      create(:form_field_currency,
              name: 'Custom Currency',
-             type: 'FormField::Currency',
              settings: { 'range_format' => 'digits', 'range_min' => '2', 'range_max' => '4' },
              fieldable: campaign,
              required: false)
 
-      create(:form_field,
-             name: 'Custom Summation',
-             type: 'FormField::Summation',
+      create(:form_field_calculation,
+             name: 'Custom Calculation',
              options: [
-               create(:form_field_option, name: 'Summation Opt1'),
-               create(:form_field_option, name: 'Summation Opt2')],
+               create(:form_field_option, name: 'Calculation Opt1'),
+               create(:form_field_option, name: 'Calculation Opt2')],
              fieldable: campaign,
              required: false)
 
-      create(:form_field,
+      create(:form_field_percentage,
              name: 'Custom Percentage',
-             type: 'FormField::Percentage',
              options: [
                create(:form_field_option, name: 'Percentage Opt1', ordering: 1),
                create(:form_field_option, name: 'Percentage Opt2', ordering: 2)],
              fieldable: campaign,
              required: false)
 
-      create(:form_field,
+      create(:form_field_likert_scale,
              name: 'Custom LikertScale',
-             type: 'FormField::LikertScale',
              options: [
                create(:form_field_option, name: 'LikertScale Opt1'),
                create(:form_field_option, name: 'LikertScale Opt2')],
@@ -131,33 +121,29 @@ feature 'Post Event Data' do
              fieldable: campaign,
              required: false)
 
-      create(:form_field,
+      create(:form_field_checkbox,
              name: 'Custom Checkbox',
-             type: 'FormField::Checkbox',
              options: [
                create(:form_field_option, name: 'Checkbox Opt1', ordering: 1),
                create(:form_field_option, name: 'Checkbox Opt2', ordering: 2)],
              fieldable: campaign,
              required: false)
 
-      create(:form_field,
+      create(:form_field_radio,
              name: 'Custom Radio',
-             type: 'FormField::Radio',
              options: [
                create(:form_field_option, name: 'Radio Opt1', ordering: 1),
                create(:form_field_option, name: 'Radio Opt2', ordering: 2)],
              fieldable: campaign,
              required: false)
 
-      create(:form_field,
+      create(:form_field_brand,
              name: 'Brand',
-             type: 'FormField::Brand',
              fieldable: campaign,
              required: false)
 
-      create(:form_field,
+      create(:form_field_marque,
              name: 'Marque',
-             type: 'FormField::Marque',
              fieldable: campaign,
              required: false)
 
@@ -202,8 +188,8 @@ feature 'Post Event Data' do
       fill_in 'Custom Date', with: '08/13/2013'
       select_time '2:30am', from: 'Custom Time'
 
-      fill_in 'Summation Opt1', with: '100'
-      fill_in 'Summation Opt2', with: '2000'
+      fill_in 'Calculation Opt1', with: '100'
+      fill_in 'Calculation Opt2', with: '2000'
 
       fill_in 'Percentage Opt1', with: '75'
       fill_in 'Percentage Opt2', with: '25'
@@ -256,8 +242,8 @@ feature 'Post Event Data' do
         expect(page).to have_content('Custom Date TUE Aug 13, 2013')
         expect(page).to have_content('Custom Time 02:30 AM')
 
-        expect(page).to have_content('Summation Opt1 100')
-        expect(page).to have_content('Summation Opt2 2,000')
+        expect(page).to have_content('Calculation Opt1 100')
+        expect(page).to have_content('Calculation Opt2 2,000')
         expect(page).to have_content('TOTAL:2,100.0')
       end
 
@@ -275,8 +261,8 @@ feature 'Post Event Data' do
       fill_in 'Impressions', with: '3333'
       fill_in 'Interactions', with: '222222'
       fill_in 'Samples', with: '4444444'
-      fill_in 'Summation Opt1', with: '0.75'
-      fill_in 'Summation Opt2', with: '0.5'
+      fill_in 'Calculation Opt1', with: '0.75'
+      fill_in 'Calculation Opt2', with: '0.5'
 
       click_js_button 'Save'
 
@@ -284,8 +270,8 @@ feature 'Post Event Data' do
         expect(page).to have_content('3,333')
         expect(page).to have_content('222,222')
         expect(page).to have_content('4,444,444')
-        expect(page).to have_content('Summation Opt1 0.75')
-        expect(page).to have_content('Summation Opt2 0.5')
+        expect(page).to have_content('Calculation Opt1 0.75')
+        expect(page).to have_content('Calculation Opt2 0.5')
         expect(page).to have_content('TOTAL:1.25')
       end
     end

@@ -4,8 +4,28 @@ A markup for fields
 Styleguide 8.1
 */
 
-.summation-field{
-	tr {
+.calculation-field{
+	tr.field-option {
+		td[data-operation] {
+			position: relative;
+			padding-right: 20px;
+			&:after {
+				position: absolute;
+				right: 5px;
+				top: 10px;
+				content: attr(data-operation);
+				font-size: 	20px;
+				font-weight: bold;
+				color: $silver;
+			}
+		}
+		&:first-child td[data-operation] {
+			padding-right: 0px;
+			&:after {
+				content: '';
+			}
+		}
+
 		&:last-child{
 			border-top: 2px solid silver;
 			td{
@@ -14,12 +34,33 @@ Styleguide 8.1
 		}
 		td:not(.error-col){
 			&:last-child{
-				padding-left: 25px;
-				width: 200px;
+				width: 160px;
 			}
 		}
 	}
-	input{
-		width: 210px;
+	.field-option{
+		height: 50px;
+		input[type="text"]{
+			float: right;
+			width: 160px;
+		}
+		label{
+			height: 40px;
+			line-height: 38px;
+			font-weight:normal;
+			white-space: nowrap;
+		}
+	}
+	.calculation-total-field{
+		border-top: 2px solid $user_menu;
+		padding-top: 15px;
+		margin-top: 10px;
+		font-weight: bold;
+		.calculation{
+			font-weight: bold;
+			&:first-of-type{
+				margin-top: 0;
+			}
+		}
 	}
 }

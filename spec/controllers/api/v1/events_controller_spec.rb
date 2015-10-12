@@ -467,7 +467,7 @@ describe Api::V1::EventsController, type: :controller do
       create(:form_field_photo, fieldable: campaign)
       create(:form_field_radio, fieldable: campaign)
       create(:form_field_section, fieldable: campaign)
-      create(:form_field_summation, fieldable: campaign)
+      create(:form_field_calculation, fieldable: campaign)
       create(:form_field_text, fieldable: campaign)
       create(:form_field_text_area, fieldable: campaign)
       create(:form_field_time, fieldable: campaign)

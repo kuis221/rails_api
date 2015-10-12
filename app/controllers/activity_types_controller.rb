@@ -62,7 +62,8 @@ class ActivityTypesController < FilteredController
       :name, :description,
       { form_fields_attributes: [
         :id, :name, :field_type, :ordering, :required, :multiple, :_destroy,
-        { settings: [:description, :range_min, :range_max, :range_format] },
+        { settings: [:description, :range_min, :range_max, :range_format,
+                     :operation, :calculation_label] },
         { options_attributes: [:id, :name, :_destroy, :ordering] },
         { statements_attributes: [:id, :name, :_destroy, :ordering] }] },
       { goals_attributes: [

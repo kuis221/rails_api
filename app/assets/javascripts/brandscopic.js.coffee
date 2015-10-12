@@ -133,20 +133,22 @@ jQuery ->
 		true
 
 
-	updateSummationTotals = () ->
-		for wrapper in $('.form_field_summation')
-			$wrapper = $(wrapper)
-			$options = $wrapper.find('.field-option:not(.summation-total-field)')
-			$total   = $wrapper.find('.summation-total-field input')
-			$options.keyup () ->
-				siblings = $('.field-option[data-field-id=' + $(this).data('field-id') + ']:not(.summation-total-field) input')
-				total = $.map(siblings, (input) ->
-				  parseFloat($(input).val(), 10) || 0
-				).reduce((a, b) ->
-					a + b
-				, 0)
-				$('.summation-total-field[data-field-id=' + $(this).data('field-id') + '] input').val(total)
-			true
+	updateCalculationTotals = () ->
+		for wrapper in $('.form_field_calculation')
+			((w) ->
+				$wrapper = $(w)
+				$options = $wrapper.find('.field-option:not(.calculation-total-field)')
+				$total   = $wrapper.find('.calculation-total-amount')
+				operation   = $wrapper.find('.calculation-field').data('operation')
+				$options.keyup () ->
+					siblings = $('.field-option[data-field-id=' + $(this).data('field-id') + ']:not(.calculation-total-field) input')
+					total = $.map(siblings, (input) ->
+					  parseFloat($(input).val(), 10) || 0
+					).reduce (a, b) ->
+						eval "a #{operation} b"
+					$total.text(total)
+				true
+			)(wrapper)
 
 	attachPluginsToElements = () ->
 		$('input.datepicker').datepicker
@@ -192,7 +194,7 @@ jQuery ->
 
 		$("abbr.timeago").timeago();
 
-		updateSummationTotals()
+		updateCalculationTotals()
 
 	window.smoothScrollTo = (element, link) ->
 		return if element.length is 0
@@ -695,7 +697,7 @@ jQuery ->
 		fieldId = $(this).data('segment-field-id')
 		clearTimeout percentageTimeouts[fieldId] if percentageTimeouts[fieldId]
 
-	$(document).on 'blur', 'input.summation-field', () ->
+	$(document).on 'blur', 'input.calculation-field', () ->
 		if !$(this).val()
 			$(this).val(0).valid()
 
@@ -741,7 +743,7 @@ jQuery ->
 		return (value == '' || (/^[0-9]+$/.test(value) && parseInt(value) <= 100));
 	, ' ');
 
-	$.validator.addMethod("summation-field", (value, element) ->
+	$.validator.addMethod("calculation-field", (value, element) ->
 		if !$(element).val()
 			$(element).val(0).valid()
 		return true;

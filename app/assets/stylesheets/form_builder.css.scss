@@ -467,7 +467,7 @@ $margin-right: 240px;
 	border: 1px solid $gray-light;
 	box-sizing: border-box;
 	padding: 15px 15px 5px 15px;
-	width: 300px;
+	width: 275px;
 
 	.checker{
 		background-color: #c2c2c2;
@@ -668,6 +668,24 @@ $margin-right: 240px;
 
 	.field-not-customizable-message {
 		padding: 40px 50px;
+	}
+
+	.calculation-operations .btn-group a.btn {
+	 	width: 60.5px;
+		display: inline-block;
+		color: $gray;
+		font-size: 14px;
+		&.active {
+			background-color: white;
+			border-top: 1px solid $silver;
+    		border-bottom: 1px solid $silver;
+			&:first-child {
+				border-left: 1px solid $silver;
+			}
+			&:last-child {
+				border-right: 1px solid $silver;
+			}
+		}
 	}
 }
 

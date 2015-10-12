@@ -96,8 +96,8 @@ describe FormFieldDataExporter, type: :model do
         expect(subject.custom_fields_to_export_values(event)).to eq([0.3,  0.7])
       end
 
-      it 'includes SUMMATION fields that are not linked to a KPI' do
-        field = create(:form_field_summation, name: 'My Summation Field',
+      it 'includes CALCULATION fields that are not linked to a KPI' do
+        field = create(:form_field_calculation, name: 'My Calculation Field',
           fieldable: campaign, options: [
             option1 = create(:form_field_option, name: 'Sum Opt1'),
             option2 = create(:form_field_option, name: 'Sum Opt2')])
@@ -107,7 +107,7 @@ describe FormFieldDataExporter, type: :model do
         expect(event.save).to be_truthy
 
         expect(subject.custom_fields_to_export_headers).to eq([
-          'MY SUMMATION FIELD: SUM OPT1', 'MY SUMMATION FIELD: SUM OPT2', 'MY SUMMATION FIELD: TOTAL'
+          'MY CALCULATION FIELD: SUM OPT1', 'MY CALCULATION FIELD: SUM OPT2', 'MY CALCULATION FIELD: TOTAL'
         ])
         expect(subject.custom_fields_to_export_values(event)).to eq([
           '20', '50', 70.0
@@ -501,8 +501,8 @@ describe FormFieldDataExporter, type: :model do
         expect(subject.custom_fields_to_export_values(activity)).to eq([0.3, 0.7])
       end
 
-      it 'includes SUMMATION fields that are not linked to a KPI' do
-        field = create(:form_field_summation, name: 'My Summation Field',
+      it 'includes CALCULATION fields that are not linked to a KPI' do
+        field = create(:form_field_calculation, name: 'My Calculation Field',
           fieldable: activity_type, options: [
             option1 = create(:form_field_option, name: 'Sum Opt1'),
             option2 = create(:form_field_option, name: 'Sum Opt2')])
@@ -512,7 +512,7 @@ describe FormFieldDataExporter, type: :model do
         expect(activity.save).to be_truthy
 
         expect(subject.custom_fields_to_export_headers).to eq([
-          'MY SUMMATION FIELD: SUM OPT1', 'MY SUMMATION FIELD: SUM OPT2', 'MY SUMMATION FIELD: TOTAL'
+          'MY CALCULATION FIELD: SUM OPT1', 'MY CALCULATION FIELD: SUM OPT2', 'MY CALCULATION FIELD: TOTAL'
         ])
         expect(subject.custom_fields_to_export_values(activity)).to eq([
           '20', '50', 70.0

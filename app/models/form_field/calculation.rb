@@ -16,16 +16,23 @@
 #  multiple       :boolean
 #
 
-class FormField::Summation < FormField::Hashed
+class FormField::Calculation < FormField::Hashed
+  store_accessor :settings, :calculation_label, :operation
+
+  validates :operation, presence: true
+  validates :calculation_label, presence: true
+
   MIN_OPTIONS_ALLOWED = 2
   def field_options(result)
     {
-      as: :summation,
+      as: :calculation,
       collection: options.order(:ordering),
       label: name, field_id: id,
       label_html: { class: 'control-group-label' },
       options: settings,
       required: required,
+      calculation_label: calculation_label,
+      operation: operation,
       input_html: {
         value: result.value,
         class: field_classes,
@@ -61,9 +68,9 @@ class FormField::Summation < FormField::Hashed
     super.merge(
       value: result ? result.value.map { |s| s[1].to_f }.reduce(0, :+) : nil,
       segments: options_for_input(result).map do |s|
-        { id: s[1],
-          text: s[0],
-          value: result ? result.value[s[1].to_s] : nil }
+        val = result ? result.value[s[1].to_s] : nil
+        val = convert_string_to_int_or_float(val) unless val.blank?
+        { id: s[1], text: s[0], value: val }
       end
     )
   end
