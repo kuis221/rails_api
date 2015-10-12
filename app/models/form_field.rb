@@ -19,6 +19,8 @@
 class FormField < ActiveRecord::Base
   has_paper_trail
 
+  store :settings, accessors: [:range_format, :range_min, :range_max], coder: YAML
+
   MIN_OPTIONS_ALLOWED = 1
   MIN_STATEMENTS_ALLOWED = 1
   VALID_RANGE_FORMATS = %w(digits characters words value)
@@ -91,7 +93,7 @@ class FormField < ActiveRecord::Base
 
   def self.selectable_as_report_field
     where.not(type: [
-      'FormField::UserDate', 'FormField::Section', 'FormField::Summation', 'FormField::LikertScale'
+      'FormField::UserDate', 'FormField::Section', 'FormField::Calculation', 'FormField::LikertScale'
     ])
   end
 
@@ -133,11 +135,7 @@ class FormField < ActiveRecord::Base
   end
 
   def result_value(result)
-    if settings.present? && settings.key?('multiple') && settings['multiple']
-      result['value'].try(:split, ',')
-    else
-      result['value']
-    end
+    result['value']
   end
 
   def format_json(result)
@@ -249,8 +247,13 @@ class FormField < ActiveRecord::Base
 
   def string_to_value(value)
     return value || [] unless is_numeric? && value_is_numeric?(value)
+    return convert_string_to_int_or_float(value)
+  end
+
+  def convert_string_to_int_or_float(value)
     return value.to_i if Integer(value) rescue false
     return value.to_f if Float(value) rescue false
+    value
   end
 
   def range_message

@@ -39,7 +39,7 @@ FactoryGirl.define do
     ordering 1
   end
 
-  factory :form_field_date, class: ::FormField::Date do
+  factory :form_field_date, class: FormField::Date do
     sequence(:name) { |n| "Form Field Date #{n}" }
     type 'FormField::Date'
     ordering 1
@@ -87,9 +87,10 @@ FactoryGirl.define do
     ordering 1
   end
 
-  factory :form_field_summation, class: FormField::Summation do
-    sequence(:name) { |n| "Form Field Summation #{n}" }
-    type 'FormField::Summation'
+  factory :form_field_calculation, class: FormField::Calculation do
+    sequence(:name) { |n| "Form Field Calculation #{n}" }
+    type 'FormField::Calculation'
+    settings 'operation' => '+'
     ordering 1
   end
 

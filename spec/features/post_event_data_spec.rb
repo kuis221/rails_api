@@ -102,11 +102,11 @@ feature 'Post Event Data' do
              required: false)
 
       create(:form_field,
-             name: 'Custom Summation',
-             type: 'FormField::Summation',
+             name: 'Custom Calculation',
+             type: 'FormField::Calculation',
              options: [
-               create(:form_field_option, name: 'Summation Opt1'),
-               create(:form_field_option, name: 'Summation Opt2')],
+               create(:form_field_option, name: 'Calculation Opt1'),
+               create(:form_field_option, name: 'Calculation Opt2')],
              fieldable: campaign,
              required: false)
 
@@ -202,8 +202,8 @@ feature 'Post Event Data' do
       fill_in 'Custom Date', with: '08/13/2013'
       select_time '2:30am', from: 'Custom Time'
 
-      fill_in 'Summation Opt1', with: '100'
-      fill_in 'Summation Opt2', with: '2000'
+      fill_in 'Calculation Opt1', with: '100'
+      fill_in 'Calculation Opt2', with: '2000'
 
       fill_in 'Percentage Opt1', with: '75'
       fill_in 'Percentage Opt2', with: '25'
@@ -256,8 +256,8 @@ feature 'Post Event Data' do
         expect(page).to have_content('Custom Date TUE Aug 13, 2013')
         expect(page).to have_content('Custom Time 02:30 AM')
 
-        expect(page).to have_content('Summation Opt1 100')
-        expect(page).to have_content('Summation Opt2 2,000')
+        expect(page).to have_content('Calculation Opt1 100')
+        expect(page).to have_content('Calculation Opt2 2,000')
         expect(page).to have_content('TOTAL:2,100.0')
       end
 
@@ -275,8 +275,8 @@ feature 'Post Event Data' do
       fill_in 'Impressions', with: '3333'
       fill_in 'Interactions', with: '222222'
       fill_in 'Samples', with: '4444444'
-      fill_in 'Summation Opt1', with: '0.75'
-      fill_in 'Summation Opt2', with: '0.5'
+      fill_in 'Calculation Opt1', with: '0.75'
+      fill_in 'Calculation Opt2', with: '0.5'
 
       click_js_button 'Save'
 
@@ -284,8 +284,8 @@ feature 'Post Event Data' do
         expect(page).to have_content('3,333')
         expect(page).to have_content('222,222')
         expect(page).to have_content('4,444,444')
-        expect(page).to have_content('Summation Opt1 0.75')
-        expect(page).to have_content('Summation Opt2 0.5')
+        expect(page).to have_content('Calculation Opt1 0.75')
+        expect(page).to have_content('Calculation Opt2 0.5')
         expect(page).to have_content('TOTAL:1.25')
       end
     end

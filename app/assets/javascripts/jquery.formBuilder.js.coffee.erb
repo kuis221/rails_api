@@ -466,11 +466,26 @@ Class.extend = (prop) ->
 FormField = Class.extend {
 	getSaveAttributes: () ->
 		if @attributes._destroy? && @attributes._destroy is true
-			{id: @attributes.id, _destroy: true }
+			id: @attributes.id
+			_destroy: true
 		else if @attributes.kpi_id
-			{id: @attributes.id, name: @attributes.name, ordering: @attributes.ordering, required: @attributes.required, kpi_id: @attributes.kpi_id, field_type: @fieldType(), settings: @attributes.settings}
+			id: @attributes.id
+			name: @attributes.name
+			ordering: @attributes.ordering
+			required: @attributes.required
+			kpi_id: @attributes.kpi_id
+			field_type: @fieldType()
+			settings: @attributes.settings
 		else
-			{id: @attributes.id, name: @attributes.name, ordering: @attributes.ordering, required: @attributes.required, field_type: @fieldType(), settings: @attributes.settings, multiple: @attributes.multiple, options_attributes: @getOptionsAttributes(), statements_attributes: @getStatementsAttributes() }
+			id: @attributes.id
+			name: @attributes.name
+			ordering: @attributes.ordering
+			required: @attributes.required
+			field_type: @fieldType()
+			settings: @attributes.settings
+			multiple: @attributes.multiple
+			options_attributes: @getOptionsAttributes()
+			statements_attributes: @getStatementsAttributes()
 
 	getId: () ->
 		@attributes.id
@@ -816,10 +831,25 @@ UserDateField = FormField.extend {
 		@
 
 	_renderField: () ->
-		'<div class="row-fluid">'+
-			'<div class="span8"><div class="control-group select required activity_company_user_id"><label class="select required control-label" for="activity_company_user_id">User</label><div class="controls"><select class="select" id="activity_company_user_id" name="activity[company_user_id]" disabled="disabled"></select></div></div></div>'+
-			'<div class="span4"><div class="control-group date_picker required activity_activity_date"><label class="date_picker required control-label" for="activity_activity_date">Date</label><div class="controls"><input class="date_picker required field-type-date datepicker hasDatepicker" id="activity_activity_date" readonly="readonly" name="activity[activity_date]" size="30" type="text" value="mm/dd/yyyy"></div></div></div>' +
-		'</div>'
+		'<div class="row-fluid">
+			<div class="span8">
+				<div class="control-group select required activity_company_user_id">
+					<label class="select required control-label" for="activity_company_user_id">User</label>
+					<div class="controls">
+						<select class="select" id="activity_company_user_id" name="activity[company_user_id]"
+										disabled="disabled"></select>
+					</div>
+				</div>
+			</div>
+			<div class="span4"><div class="control-group date_picker required activity_activity_date">
+				<label class="date_picker required control-label" for="activity_activity_date">Date</label>
+				<div class="controls">
+					<input class="date_picker required field-type-date datepicker hasDatepicker"
+								 id="activity_activity_date" readonly="readonly" name="activity[activity_date]"
+								 size="30" type="text" value="mm/dd/yyyy"></div>
+				</div>
+			</div>
+		</div>'
 
 	attributesForm: () ->
 		false
@@ -1149,17 +1179,17 @@ AttachmentField = FormField.extend {
 		]
 }
 
-SummationField = FormField.extend {
-	type: 'Summation',
+CalculationField = FormField.extend {
+	type: 'Calculation',
 
 	init: (form, attributes) ->
 		@form = form
 		@attributes = $.extend({
-			name: 'Summation',
+			name: 'Calculation',
 			id: null,
 			min_options_allowed: 2,
 			required: false,
-			type: 'FormField::Summation',
+			type: 'FormField::Calculation',
 			settings: {},
 			options: []
 		}, attributes)
@@ -1170,33 +1200,41 @@ SummationField = FormField.extend {
 				{id: null, name: 'Option 2', ordering: 1}
 			]
 		@attributes.settings ||= {}
+		@attributes.settings.operation ||= '+'
+		@attributes.settings.calculation_label ||= 'TOTAL'
 
 		@
 
 	_renderField: () ->
 		fieldId = ''+ (Math.floor(Math.random() * 1000) + 1)
+		opperatorsMap =
+			'*': 'x'
+			'/': '/'
+			'-': '&#8211;'
+			'+': '+'
+
 		[
 			$('<label class="control-label control-group-label">').text(@attributes.name),
 			$('<div class="controls">').append(
-				$('<table class="summation-field">').append(
+				$('<table class="calculation-field">').append(
 					$('<tbody>').append(
 						$.map @attributes.options, (option, index) =>
 							if option._destroy isnt '1' and not @_optionIsExcluded(option)
 								$('<tr class="field-option">').append(
-									$('<td>').append(
-										$('<label for="option-'+fieldId+index+'">').addClass('summation').text(option.name+ ' ')
+									$('<td data-operation="'+opperatorsMap[@attributes.settings.operation]+'">').append(
+										$('<label for="option-'+fieldId+index+'">').addClass('calculation').text(option.name+ ' ')
 									),
 									$('<td>').append(
-										$('<input name="option-'+fieldId+index+'" id="option-'+fieldId+index+'" type="text" readonly="readonly">')
+										$('<input name="option-'+fieldId+index+'" '+
+													    'id="option-'+fieldId+index+'" ' +
+													    'type="text" readonly="readonly">')
 									)
 								)
 					).append(
-						$('<tr class="field-option summation-total-field">').append(
-							$('<td>').append(
-								$('<label>').addClass('summation').text('TOTAL ')
-							),
-							$('<td>').append(
-								$('<input type="text" readonly="readonly">')
+						$('<tr class="field-option calculation-total-field">').append(
+							$('<td colspan="2" class="text-right">').append(
+								$('<label>').addClass('calculation').text(@attributes.settings.calculation_label + ':'),
+								$('<span class="calculation-total-amount">0.00</span>')
 							)
 						)
 					)
@@ -1204,11 +1242,41 @@ SummationField = FormField.extend {
 			)
 		]
 
+	calculationLabelField: () ->
+		$('<div class="control-group">').append([
+			$('<label class="control-label" for="field_name">').text('Calculation label'),
+			$('<div class="controls">').append $('<input type="text" id="calculation_label" name="calculation_label">').val(@attributes.settings.calculation_label).on 'keyup', (e) =>
+					input = $(e.target)
+					@attributes.settings.calculation_label = input.val()
+					@form.setModified()
+					@refresh()
+					true
+		])
+
+	operationField: () ->
+		oper = @attributes.settings.operation
+		$('<div class="control-group calculation-operations">').append(
+			$('<div class="btn-group">
+			    <a class="btn '+(if oper is  '+' then 'active' else '')+'" data-operation="+" href="#">+</a>
+			    <a class="btn '+(if oper is  '-' then 'active' else '')+'" data-operation="-" href="#">&#8211;</a>
+			    <a class="btn '+(if oper is  '*' then 'active' else '')+'" data-operation="*" href="#">x</a>
+			    <a class="btn '+(if oper is  '/' then 'active' else '')+'" data-operation="/" href="#">/</a>
+			  </div>')
+		).on 'click', 'a.btn', (e) =>
+			e.preventDefault();
+			$(e.currentTarget).closest('.btn-group').find('.active').removeClass('active').end().end().addClass('active')
+			@attributes.settings.operation = $(e.currentTarget).data('operation')
+			@form.setModified()
+			@refresh()
+			false
+
 	attributesForm: () ->
 		[
-			$('<h4>').text('Summation'),
+			$('<h4>').text('Calculation'),
 			@labelField(),
-			@optionsField('option')
+			@operationField(),
+			@optionsField('option'),
+			@calculationLabelField(),
 			@requiredField()
 		]
 }
@@ -1562,11 +1630,15 @@ SurveysField = Module.extend {
 			$('<h4>').text('Surveys'),
 			$('<div class="control-group">').append [
 				$('<label class="control-label">').text('Brands'),
-				$('<div class="controls">').append $('<input type="text" name="brands" class="select2-field">').hide().val(if @attributes.settings? && @attributes.settings.brands  then  @attributes.settings.brands else '').on "change", (e) =>
-					input = $(e.target)
-					@attributes.settings.brands = input.select2("val")
-					@form.setModified()
-					true
+				$('<div class="controls">').append(
+					$('<input type="text" name="brands" class="select2-field">').hide().val(
+						if @attributes.settings? and @attributes.settings.brands then @attributes.settings.brands else ''
+					).on "change", (e) =>
+						input = $(e.target)
+						@attributes.settings.brands = input.select2("val")
+						@form.setModified()
+						true
+				)
 			]
 		]
 }
