@@ -5,7 +5,7 @@
 - if can?(:view_data, resource) && resource.campaign.form_fields.any?
   #event-results-form
     #event-results-container.details_box.box_event_data
-      = render 'results_event_data'
+      = render partial: 'results_event_data', locals: { url_return_path: "#{return_path || collection_path}" }
 
 - if (can?(:show, Activity) && resource.campaign.activity_types.any?) || \
      (can?(:index_invites, resource) && resource.campaign.activity_types.any? || enabled_modules.include?('attendance'))
