@@ -1,6 +1,6 @@
-require 'form_field/date'
+FormField unless defined? FormField
 require 'form_field/time'
-require 'form_field/place'
+require 'form_field/date'
 
 # == Schema Information
 #
