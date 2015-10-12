@@ -703,25 +703,24 @@ RSpec.shared_examples 'a fieldable element' do
     end.to change(FormFieldOption, :count).by(-1)
   end
 
-  scenario 'user can add/delete summation fields to form' do
+  scenario 'user can add/delete calculation fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
-    summation_field.drag_to form_builder
+    calculation_field.drag_to form_builder
 
-    expect(form_builder).to have_form_field('Summation',
-                                            with_options: ['Option 1', 'Option 2']
-      )
+    expect(form_builder).to have_form_field('Calculation',
+                                            with_options: ['Option 1', 'Option 2'])
 
-    within form_field_settings_for 'Summation' do
-      fill_in 'Field label', with: 'My Summation Field'
+    within form_field_settings_for 'Calculation' do
+      fill_in 'Field label', with: 'My Calculation Field'
       fill_in 'option[0][name]', with: 'First Option'
       within('.field-option:nth-child(2)') { click_js_link 'Add option after this' } # Create another option
+
       fill_in 'option[1][name]', with: 'Second Option'
     end
 
-    expect(form_builder).to have_form_field('My Summation Field',
-                                            with_options: ['First Option', 'Second Option']
-      )
+    expect(form_builder).to have_form_field('My Calculation Field',
+                                            with_options: ['First Option', 'Second Option'])
 
     # Close the field settings form
     form_builder.trigger 'click'
@@ -735,17 +734,27 @@ RSpec.shared_examples 'a fieldable element' do
       end.to change(FormField, :count).by(1)
     end.to change(FormFieldOption, :count).by(3)
     field = FormField.last
-    expect(field.name).to eql 'My Summation Field'
-    expect(field.type).to eql 'FormField::Summation'
+    expect(field.name).to eql 'My Calculation Field'
+    expect(field.type).to eql 'FormField::Calculation'
+    expect(field.settings['operation']).to eql '+'
+    expect(field.settings['calculation_label']).to eql 'TOTAL'
     expect(field.options.map(&:name)).to eql ['First Option', 'Second Option', 'Option 2']
     expect(field.options.map(&:ordering)).to eql [0, 1, 2]
 
+    within form_field_settings_for 'My Calculation Field' do
+      click_js_link 'x'
+    end
+    click_js_button 'Save'
+    wait_for_ajax
+    field.reload
+    expect(field.settings['operation']).to eql '*'
+
     # Remove fields
-    expect(form_builder).to have_form_field('My Summation Field',
+    expect(form_builder).to have_form_field('My Calculation Field',
                                             with_options: ['First Option', 'Second Option']
     )
 
-    within form_field_settings_for 'My Summation Field' do
+    within form_field_settings_for 'My Calculation Field' do
       # Remove the second option (the first one doesn't have the link)
       within('.field-option:nth-child(2)') { click_js_link 'Add option after this' }
       within('.field-option:nth-child(2)') { click_js_link 'Remove this option' }
@@ -754,16 +763,16 @@ RSpec.shared_examples 'a fieldable element' do
     confirm_prompt 'Removing this option will remove all the entered data/answers associated with it. '
     'Are you sure you want to do this? This cannot be undone'
 
-    within form_field_settings_for 'My Summation Field' do
+    within form_field_settings_for 'My Calculation Field' do
       expect(page).to have_no_content('Second Option')
     end
 
-    within form_field_settings_for 'My Summation Field' do
+    within form_field_settings_for 'My Calculation Field' do
       within('.field-option:nth-child(3)') { click_js_link 'Remove this option' }
     end
 
     confirm_prompt 'Are you sure you want to remove this option?'
-    within form_field_settings_for 'My Summation Field' do
+    within form_field_settings_for 'My Calculation Field' do
       expect(page).to have_no_content('Option 3')
     end
 
@@ -1537,8 +1546,8 @@ def attachment_field
   find('.fields-wrapper .field', text: 'Attachment')
 end
 
-def summation_field
-  find('.fields-wrapper .field', text: 'Summation')
+def calculation_field
+  find('.fields-wrapper .field', text: 'Calculation')
 end
 
 def likert_scale_field

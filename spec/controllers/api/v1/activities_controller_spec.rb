@@ -83,7 +83,7 @@ RSpec.describe Api::V1::ActivitiesController, type: :controller do
                                   create(:form_field_option, name: 'Option C')
                                 ])
       create(:form_field_section, fieldable: activity_type, ordering: 16)
-      create(:form_field_summation, fieldable: activity_type, ordering: 17)
+      create(:form_field_calculation, fieldable: activity_type, ordering: 17)
       create(:form_field_text_area, fieldable: activity_type, ordering: 18)
       create(:form_field_time, fieldable: activity_type, ordering: 19)
 
@@ -94,7 +94,7 @@ RSpec.describe Api::V1::ActivitiesController, type: :controller do
         'FormField::Brand', 'FormField::Currency', 'FormField::Date', 'FormField::Dropdown',
         'FormField::LikertScale', 'FormField::Marque', 'FormField::Number', 'FormField::Percentage',
         'FormField::Photo', 'FormField::Place', 'FormField::Radio', 'FormField::Section',
-        'FormField::Summation', 'FormField::TextArea', 'FormField::Time']
+        'FormField::Calculation', 'FormField::TextArea', 'FormField::Time']
     end
   end
 
@@ -163,7 +163,7 @@ RSpec.describe Api::V1::ActivitiesController, type: :controller do
                                   create(:form_field_option, name: 'Option C')
                                 ])
       create(:form_field_section, fieldable: activity_type, ordering: 16)
-      create(:form_field_summation, fieldable: activity_type, ordering: 17)
+      create(:form_field_calculation, fieldable: activity_type, ordering: 17)
       create(:form_field_text_area, fieldable: activity_type, ordering: 18)
       create(:form_field_time, fieldable: activity_type, ordering: 19)
       activity.save
@@ -174,7 +174,7 @@ RSpec.describe Api::V1::ActivitiesController, type: :controller do
         'FormField::Brand', 'FormField::Currency', 'FormField::Date', 'FormField::Dropdown',
         'FormField::LikertScale', 'FormField::Marque', 'FormField::Number', 'FormField::Percentage',
         'FormField::Photo', 'FormField::Place', 'FormField::Radio', 'FormField::Section',
-        'FormField::Summation', 'FormField::TextArea', 'FormField::Time']
+        'FormField::Calculation', 'FormField::TextArea', 'FormField::Time']
     end
   end
 end

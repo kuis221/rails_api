@@ -56,7 +56,7 @@ $.widget 'brandscopic.activityForm', {
 				marques.trigger('liszt:updated')
 			return
 
-		@element.on "keyup.activity", "input.summation", ->
+		@element.on "keyup.activity", "input.calculation", ->
 			sum = 0
 			group = $(this).data("group")
 			$.each $("input[data-group=\"#{group}\"][name!=\"total\"]"), (e) ->

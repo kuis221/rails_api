@@ -8,7 +8,7 @@ class Analysis::CampaignSummaryReportController < InheritedResources::Base
   set_callback :export
   respond_to :csv, only: [:index]
 
-  FIELD_TYPE = ['FormField::Number', 'FormField::Currency', 'FormField::Summation',
+  FIELD_TYPE = ['FormField::Number', 'FormField::Currency', 'FormField::Calculation',
                 'FormField::LikertScale', 'FormField::Percentage', 'FormField::Checkbox',
                 'FormField::Radio', 'FormField::Dropdown', 'FormField::Brand']
 

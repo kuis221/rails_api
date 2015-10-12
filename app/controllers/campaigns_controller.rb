@@ -154,7 +154,7 @@ class CampaignsController < FilteredController
         form_fields_attributes: [
           :id, :name, :field_type, :ordering, :required, :multiple, :_destroy, :kpi_id,
           { settings: [:description, :range_min, :range_max, :range_format, :campaigns,
-                       { disabled_segments: [] }] },
+                       :operation, :calculation_label, { disabled_segments: [] }] },
           { options_attributes: [:id, :name, :_destroy, :ordering] },
           { statements_attributes: [:id, :name, :_destroy, :ordering] }])
     end

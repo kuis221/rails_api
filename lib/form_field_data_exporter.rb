@@ -1,8 +1,8 @@
 class FormFieldDataExporter < BaseExporter
   SEGMENTED_FIELD_TYPES = ['FormField::Percentage', 'FormField::Checkbox',
-                           'FormField::Summation', 'FormField::LikertScale']
+                           'FormField::Calculation', 'FormField::LikertScale']
   PERCENTAGE_TYPE = 'FormField::Percentage'.freeze
-  SUMMATION_TYPE = 'FormField::Summation'.freeze
+  CALCULATION_TYPE = 'FormField::Calculation'.freeze
   LIKERT_SCALE_TYPE = 'FormField::LikertScale'.freeze
   CHECKBOX_TYPE = 'FormField::Checkbox'.freeze
   NUMBER = 'Number'.freeze
@@ -74,7 +74,7 @@ class FormFieldDataExporter < BaseExporter
             key = @fields_mapping["#{@result.form_field.id}_#{option[1]}"]
             resource_values[key] = value
           end
-          if @result.form_field.type == SUMMATION_TYPE
+          if @result.form_field.type == CALCULATION_TYPE
             resource_values[@fields_mapping["#{@result.form_field.id}__TOTAL"]] = sum
           end
         end
@@ -195,7 +195,7 @@ class FormFieldDataExporter < BaseExporter
           else
             s = field.options_for_input.sort { |left, right| left[1] <=> right[1] }
             s.map! { |option| ["#{field.id}_#{option[1]}", "#{field.name}: #{option[0]}"] }
-            s.push(["#{field.id}__TOTAL", "#{field.name}: TOTAL"]) if field.type == SUMMATION_TYPE
+            s.push(["#{field.id}__TOTAL", "#{field.name}: TOTAL"]) if field.type == CALCULATION_TYPE
           end
           s
         else

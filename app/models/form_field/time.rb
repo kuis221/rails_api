@@ -16,16 +16,18 @@
 #  multiple       :boolean
 #
 
-class FormField::Time < FormField
-  def field_options(result)
-    { as: :time_picker, label: name, field_id: id, options: settings, required: required, input_html: { value: result.value, class: field_classes, step: 'any', required: (self.required? ? 'required' : nil) } }
-  end
+class FormField
+  class Time < FormField
+    def field_options(result)
+      { as: :time_picker, label: name, field_id: id, options: settings, required: required, input_html: { value: result.value, class: field_classes, step: 'any', required: (self.required? ? 'required' : nil) } }
+    end
 
-  def field_classes
-    ['field-type-time']
-  end
+    def field_classes
+      ['field-type-time']
+    end
 
-  def format_html(result)
-    Timeliness.parse(result.value).strftime('%H:%M <i>%p</i>').html_safe rescue nil  if result.value
+    def format_html(result)
+      Timeliness.parse(result.value).strftime('%H:%M <i>%p</i>').html_safe rescue nil  if result.value
+    end
   end
 end

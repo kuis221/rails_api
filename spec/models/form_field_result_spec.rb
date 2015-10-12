@@ -456,9 +456,9 @@ describe FormFieldResult, type: :model do
       end
     end
 
-    describe 'for summation fields' do
+    describe 'for calculation fields' do
       let(:form_field) do
-        create(:form_field_summation,
+        create(:form_field_calculation,
                options: [create(:form_field_option, name: 'Opt1'), create(:form_field_option, name: 'Opt2')],
                fieldable: create(:activity_type, company_id: 1),
                required: false)
