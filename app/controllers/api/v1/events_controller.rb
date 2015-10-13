@@ -447,7 +447,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
                                 end)
       elsif field.type == 'FormField::Calculation'
         result.merge!(value: r.value.map { |s| s[1].to_f }.reduce(0, :+),
-                      segments: field.options_for_input.map { |s| { id: s[1], text: s[0], value: r.value[s[1].to_s] } })
+                      segments: field.options_for_input.map { |s| { id: s[1], text: s[0], value: r.value[s[1].to_s] } },
+                      settings: field.settings)
       elsif field.type == 'FormField::LikertScale'
         result.merge!(statements: field.statements.order(:ordering).map { |s| { id: s.id, text: s.name, value: r.value[s.id.to_s] } },
                       segments: field.options_for_input.map { |s| { id: s[1], text: s[0] } })
