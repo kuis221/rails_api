@@ -427,48 +427,49 @@ class Api::V1::EventsController < Api::V1::FilteredController
     resource.results_for(fields).each { |r| r.save(validate: false) if r.new_record? }
 
     results = fields.map do |field|
-      r = resource.results_for([field]).first
-      result = { name: field.name, ordering: field.ordering, type: field.type, required: field.required?, description: nil }
-      result[:module] = field.kpi.module unless field.kpi.nil?
-      result[:goal] = resource.kpi_goals[field.kpi_id] unless field.is_optionable?
-      result[:module] ||= 'custom'
-      result[:id] = r.id
-      if field.type == 'FormField::Percentage'
-        result.merge!(segments: field.options_for_input.map do|s|
-                                  { id: s[1], text: s[0], value: r.present? && r.value.present? ? r.value[s[1].to_s].to_i : nil, goal: (resource.kpi_goals.key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][s[1]] : nil) }
-                                end)
-      elsif field.type == 'FormField::Checkbox'
-        result.merge!(value: r.value || [],
-                      segments: field.options_for_input.map { |s| { id: s[1], text: s[0], value: r.value.include?(s[1]) } })
-      elsif field.type == 'FormField::Brand' || field.type == 'FormField::Marque'
-        result.merge!(value: r.value.to_i,
-                      segments: field.options_for_field(r).map do|s|
-                                  { id: s[1], text: s[0] }
-                                end)
-      elsif field.type == 'FormField::Calculation'
-        result.merge!(value: r.value.map { |s| s[1].to_f }.reduce(0, :+),
-                      segments: field.options_for_input.map { |s| { id: s[1], text: s[0], value: r.value[s[1].to_s] } },
-                      settings: field.settings)
-      elsif field.type == 'FormField::LikertScale'
-        result.merge!(statements: field.statements.order(:ordering).map { |s| { id: s.id, text: s.name, value: r.value[s.id.to_s] } },
-                      segments: field.options_for_input.map { |s| { id: s[1], text: s[0] } })
-      else
-        if field.is_optionable?
-          result.merge!(segments: field.options_for_input.map { |s| { id: s[1], text: s[0], goal: (field.kpi_id.present? && resource.kpi_goals.key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][s[1]] : nil) } })
-        end
-        v = field.string_to_value(r.value)
-        if field.settings && field.settings.key?('range_format') && (!field.settings['range_min'].blank? || !field.settings['range_max'].blank?)
-          result[:range] = { format: field.settings['range_format'],
-                             min: field.settings['range_min'].present? ? field.settings['range_min'].to_i : nil,
-                             max: field.settings['range_max'].present? ? field.settings['range_max'].to_i : nil }
-        end
-        result.merge!(value: v)
-      end
+      # r = resource.results_for([field]).first
+      # result = { name: field.name, ordering: field.ordering, type: field.type, required: field.required?, description: nil }
+      # result[:module] = field.kpi.module unless field.kpi.nil?
+      # result[:goal] = resource.kpi_goals[field.kpi_id] unless field.is_optionable?
+      # result[:module] ||= 'custom'
+      # result[:id] = r.id
+      # if field.type == 'FormField::Percentage'
+      #   result.merge!(segments: field.options_for_input.map do|s|
+      #                             { id: s[1], text: s[0], value: r.present? && r.value.present? ? r.value[s[1].to_s].to_i : nil, goal: (resource.kpi_goals.key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][s[1]] : nil) }
+      #                           end)
+      # elsif field.type == 'FormField::Checkbox'
+      #   result.merge!(value: r.value || [],
+      #                 segments: field.options_for_input.map { |s| { id: s[1], text: s[0], value: r.value.include?(s[1]) } })
+      # elsif field.type == 'FormField::Brand' || field.type == 'FormField::Marque'
+      #   result.merge!(value: r.value.to_i,
+      #                 segments: field.options_for_field(r).map do|s|
+      #                             { id: s[1], text: s[0] }
+      #                           end)
+      # elsif field.type == 'FormField::Calculation'
+      #   result.merge!(value: r.value.map { |s| s[1].to_f }.reduce(0, :+),
+      #                 segments: field.options_for_input.map { |s| { id: s[1], text: s[0], value: r.value[s[1].to_s] } },
+      #                 settings: field.settings)
+      # elsif field.type == 'FormField::LikertScale'
+      #   result.merge!(statements: field.statements.order(:ordering).map { |s| { id: s.id, text: s.name, value: r.value[s.id.to_s] } },
+      #                 segments: field.options_for_input.map { |s| { id: s[1], text: s[0] } })
+      # else
+      #   if field.is_optionable?
+      #     result.merge!(segments: field.options_for_input.map { |s| { id: s[1], text: s[0], goal: (field.kpi_id.present? && resource.kpi_goals.key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][s[1]] : nil) } })
+      #   end
+      #   v = field.string_to_value(r.value)
+      #   if field.settings && field.settings.key?('range_format') && (!field.settings['range_min'].blank? || !field.settings['range_max'].blank?)
+      #     result[:range] = { format: field.settings['range_format'],
+      #                        min: field.settings['range_min'].present? ? field.settings['range_min'].to_i : nil,
+      #                        max: field.settings['range_max'].present? ? field.settings['range_max'].to_i : nil }
+      #   end
+      #   result.merge!(value: v)
+      # end
 
-      result.merge!(description: field.kpi.description) if field.kpi.present?
-      result.merge!(description: field.settings['description']) if field.settings && field.settings.key?('description')
+      # result.merge!(description: field.kpi.description) if field.kpi.present?
+      # result.merge!(description: field.settings['description']) if field.settings && field.settings.key?('description')
 
-      result
+      result = resource.results_for([field]).first
+      field.format_json(result)
     end
 
     grouped = []
@@ -476,7 +477,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     results.each do |result|
       if group.nil? || result[:module] != group[:module]
         group = { module: result[:module], fields: [], label:  I18n.translate("form_builder.modules.#{result[:module]}") }
-        if result[:module] != 'custom' && exising = grouped.find { |g| g[:module] == result[:module] } # Try to find the module in the current list
+        if result[:module] != 'custom' && (exising = grouped.find { |g| g[:module] == result[:module] }) # Try to find the module in the current list
           group = exising
         else
           grouped.push group

@@ -177,9 +177,7 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
   def serialize_fields_for_edit(results)
     results.map do |result|
       field = result.form_field
-      serialize_field(field, result).merge(
-        id: result.id
-      )
+      serialize_field(field, result)
     end
   end
 

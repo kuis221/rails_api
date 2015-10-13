@@ -436,11 +436,12 @@ describe Api::V1::EventsController, type: :controller do
         create(:form_field_option, name: 'Option 2'),
         create(:form_field_option, name: 'Option 3')
       ])
-      create(:form_field_number, fieldable: campaign, required: true, settings: {
-               'range_format' => 'value',
-               'range_min' => '1',
-               'range_max' => '100'
-             })
+      f = create(:form_field_number, fieldable: campaign, required: true, settings: {
+                   'range_format' => 'value',
+                   'range_min' => '1',
+                   'range_max' => '100'
+                 })
+      event.results_for([f]).first.value = 10
       create(:form_field_section, fieldable: campaign, settings: {
                'description' => 'This is a section description'
              })
@@ -467,10 +468,16 @@ describe Api::V1::EventsController, type: :controller do
       create(:form_field_photo, fieldable: campaign)
       create(:form_field_radio, fieldable: campaign)
       create(:form_field_section, fieldable: campaign)
-      create(:form_field_calculation, fieldable: campaign)
+      f = create(:form_field_calculation, name: 'Fruits', fieldable: campaign, options: [
+        o1 = create(:form_field_option, name: 'Apples'),
+        o2 = create(:form_field_option, name: 'Oranges'),
+        o3 = create(:form_field_option, name: 'Bananas')
+      ])
+      event.results_for([f]).first.value = { o1.id.to_s => 2, o2.id.to_s => 3, o3.id.to_s => 5 }
       create(:form_field_text, fieldable: campaign)
       create(:form_field_text_area, fieldable: campaign)
       create(:form_field_time, fieldable: campaign)
+      expect(event.save).to be_truthy
       get 'results', id: event.to_param, format: :json
       expect(json.first['fields'].count).to eql 15
     end

@@ -19,7 +19,7 @@
 class FormField < ActiveRecord::Base
   has_paper_trail
 
-  store :settings, accessors: [:range_format, :range_min, :range_max], coder: YAML
+  store :settings, accessors: [:description, :range_format, :range_min, :range_max], coder: YAML
 
   MIN_OPTIONS_ALLOWED = 1
   MIN_STATEMENTS_ALLOWED = 1
@@ -144,10 +144,14 @@ class FormField < ActiveRecord::Base
       type: type,
       value: value,
       ordering: ordering,
-      required: required
+      required: required?
     }
     base[:settings] = settings if settings.present?
     base[:kpi_id] = kpi_id if kpi.present?
+    base[:description] = kpi.description if kpi.present?
+    base[:description] = description unless description.blank?
+    base[:module] = kpi.nil? || kpi.module.blank? ? 'custom' : kpi.module
+    base[:id] = result.id if result && result.persisted?
     base
   end
 

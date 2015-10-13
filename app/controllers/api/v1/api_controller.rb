@@ -5,7 +5,7 @@ class Api::V1::ApiController < ActionController::Base
 
   rescue_from 'Api::V1::InvalidAuthToken', with: :invalid_token
   rescue_from 'Api::V1::InvalidCompany', with: :invalid_company
-  rescue_from 'ActiveRecord::RecordNotFound', with: :record_not_found
+  #rescue_from 'ActiveRecord::RecordNotFound', with: :record_not_found
   rescue_from 'Apipie::ParamInvalid', with: :invalid_argument
   rescue_from 'Apipie::ParamMissing', with: :invalid_argument
   rescue_from 'CanCan::AccessDenied', with: :access_denied
