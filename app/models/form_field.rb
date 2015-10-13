@@ -148,7 +148,7 @@ class FormField < ActiveRecord::Base
       required: required?
     }
     base[:settings] = settings if settings.present?
-    base[:goal] = resource.kpi_goals[field.kpi_id] unless !resource.respond_to?(:kpi_goals) || is_optionable?
+    base[:goal] = resource.kpi_goals[kpi_id] unless !resource.respond_to?(:kpi_goals) || is_optionable?
     base[:kpi_id] = kpi_id if kpi.present?
     base[:description] = kpi.description if kpi.present?
     base[:description] = description unless description.blank?
