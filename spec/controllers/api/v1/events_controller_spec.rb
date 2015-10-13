@@ -398,8 +398,8 @@ describe Api::V1::EventsController, type: :controller do
           'value' => "#{segments.first.id}",
           'description' => 'some description to show',
           'segments' => [
-            { 'id' => segments.first.id, 'text' => 'Yes', 'goal' => nil },
-            { 'id' => segments.last.id, 'text' => 'No', 'goal' => nil }
+            { 'id' => segments.first.id, 'text' => 'Yes', 'value' => true, 'goal' => nil },
+            { 'id' => segments.last.id, 'text' => 'No', 'value' => false, 'goal' => nil }
           ]
         )
     end

@@ -38,7 +38,7 @@ RSpec.describe Api::V1::ActivitiesController, type: :controller do
       expect(json['data'].count).to eql 1
       expect(json['data'].first).to include(
         'name' => 'User/Date', 'value' => nil,
-        'type' => 'FormField::UserDate', 'ordering' => 1, 'required' => nil)
+        'type' => 'FormField::UserDate', 'ordering' => 1, 'required' => false)
     end
 
     it 'returns the fields have been aded to the activity type', show_in_doc: true do
@@ -114,7 +114,7 @@ RSpec.describe Api::V1::ActivitiesController, type: :controller do
       expect(json['data'].count).to eql 1
       expect(json['data'].first).to include(
         'name' => 'User/Date', 'value' => [],
-        'type' => 'FormField::UserDate', 'ordering' => 1, 'required' => nil)
+        'type' => 'FormField::UserDate', 'ordering' => 1, 'required' => false)
     end
 
     it 'returns the fields have been aded to the activity type', :show_in_doc do
