@@ -33,7 +33,7 @@ describe FormField::Calculation, type: :model do
       let(:json) { field.format_json(result) }
 
       it 'returns the correct values' do
-        expect(json[:value]).to eql 0
+        expect(json[:value]).to eql nil
         expect(json[:segments].map { |s| s[:value] }).to eql [nil, nil]
       end
     end
@@ -48,6 +48,24 @@ describe FormField::Calculation, type: :model do
 
       it 'returns the correct values' do
         expect(json[:value]).to eql 30.5
+        expect(json[:segments].map { |s| s[:value] }).to eql [10, 20.5]
+      end
+
+      it 'calculates the correct total for multiply operations' do
+        field.update_attributes(operation: '*')
+        expect(json[:value]).to eql 205.0
+        expect(json[:segments].map { |s| s[:value] }).to eql [10, 20.5]
+      end
+
+      it 'calculates the correct total for subtract operations' do
+        field.update_attributes(operation: '-')
+        expect(json[:value]).to eql(-10.5)
+        expect(json[:segments].map { |s| s[:value] }).to eql [10, 20.5]
+      end
+
+      it 'calculates the correct total for divide operations' do
+        field.update_attributes(operation: '/')
+        expect(json[:value]).to eql 0.4878048780487805
         expect(json[:segments].map { |s| s[:value] }).to eql [10, 20.5]
       end
     end

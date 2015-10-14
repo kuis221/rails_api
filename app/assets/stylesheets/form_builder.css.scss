@@ -535,6 +535,7 @@ $margin-right: 240px;
 		color: $text;
 		padding-left: 15px;
 		padding-right: 15px;
+		margin-bottom: 0px;
 	}
 
 	textarea{
@@ -553,7 +554,7 @@ $margin-right: 240px;
 	}
 	.field-options {
 		input[type=text] {
-			width: 210px;
+			width: 195px;
 		}
 		.field-option{
 			margin-bottom: 10px;
@@ -564,6 +565,7 @@ $margin-right: 240px;
 		display: inline-block;
 		position: relative;
 		vertical-align: text-bottom;
+		line-height: 0px;
 		.option-wrapper {
 			background-color: $white;
 			border-radius: 100%;
@@ -671,21 +673,33 @@ $margin-right: 240px;
 	}
 
 	.calculation-operations .btn-group a.btn {
+		background-color: #CCCCCC;
 	 	width: 60.5px;
+	 	line-height: 24px;
 		display: inline-block;
 		color: $gray;
 		font-size: 14px;
+		border-left: 1px solid rgba(152,152,152,0.3);
+		border-top: 1px solid transparent;
+    	border-bottom: 1px solid transparent;
 		&.active {
 			background-color: white;
 			border-top: 1px solid $silver;
     		border-bottom: 1px solid $silver;
 			&:first-child {
 				border-left: 1px solid $silver;
+				border-right: 0;
 			}
 			&:last-child {
 				border-right: 1px solid $silver;
 			}
 		}
+	}
+
+	.calculation-label {
+		border-top: 1px solid $brand;
+		padding-top: 10px;
+		margin-top: 20px;
 	}
 }
 
