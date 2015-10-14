@@ -6,30 +6,34 @@ Styleguide 8.1
 
 .calculation-field{
 	tr.field-option {
-		td[data-operation] {
+		td.operation {
 			position: relative;
 			padding-right: 20px;
 			&:after {
 				position: absolute;
 				right: 5px;
 				top: 10px;
-				content: attr(data-operation);
 				font-size: 	20px;
 				font-weight: bold;
 				color: $silver;
 			}
+			&.add:after {
+				content: asset-url('add-24.svg');
+			}
+			&.subtract:after {
+				content: asset-url('subtract-24.svg');
+			}
+			&.divide:after {
+				content: asset-url('divide-24.svg');
+			}
+			&.multiply:after {
+				content: asset-url('multiply-24.svg');
+			}
 		}
-		&:first-child td[data-operation] {
+		&:first-child td.operation {
 			padding-right: 0px;
 			&:after {
 				content: '';
-			}
-		}
-
-		&:last-child{
-			border-top: 2px solid silver;
-			td{
-				padding-top: 10px;
 			}
 		}
 		td:not(.error-col){
@@ -46,21 +50,33 @@ Styleguide 8.1
 		}
 		label{
 			height: 40px;
+			line-height: 40px;
 			line-height: 38px;
 			font-weight:normal;
 			white-space: nowrap;
+			min-width: 255px;
+			margin: 0;
 		}
 	}
 	.calculation-total-field{
-		border-top: 2px solid $user_menu;
-		padding-top: 15px;
-		margin-top: 10px;
-		font-weight: bold;
+		&>td>div {
+			border-top: 2px solid $user_menu;
+			padding-top: 5px;
+			margin-top: 10px;
+			font-weight: bold;			
+		}
 		.calculation{
 			font-weight: bold;
+			color: $brand;
 			&:first-of-type{
 				margin-top: 0;
 			}
+		}
+		.calculation-total-amount {
+			margin-right: 10px;
+			margin-left: 10px;
+			min-width: 80px;
+    		display: inline-block;
 		}
 	}
 }

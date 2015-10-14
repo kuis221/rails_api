@@ -107,6 +107,7 @@ group :test, :development do
   gem 'rubocop', require: false
   gem 'rubocop-rspec', require: false
   gem 'parallel_tests'
+  gem 'rspec-retry'
 end
 
 group :test do
@@ -129,7 +130,6 @@ group :test do
   # gem 'sms-spec', '~> 0.1.9'
   gem 'sms-spec'
   gem 'pdf-reader'
-  gem 'rspec-retry'
   # gem 'vcr'
   # gem 'webmock'
 end

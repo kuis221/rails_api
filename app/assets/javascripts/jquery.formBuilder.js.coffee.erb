@@ -570,12 +570,13 @@ FormField = Class.extend {
 			)
 		])
 
-	optionsField: (type='option') ->
+	optionsField: (type='option', title=null) ->
 		list = if type is 'statement' then @attributes.statements else @attributes.options
 		min_fields_allowed = if type is 'statement' then @attributes.min_statements_allowed else @attributes.min_options_allowed
 		visible_items = list.filter (item) -> not item._destroy
 		titles = {'option': ['Option','Options'], 'statement': ['Statement', 'Statements']}
-		$('<div class="control-group field-options" data-type="'+type+'">').append($('<label class="control-label">').text(titles[type][1])).append(
+		title ||= titles[type][1]
+		$('<div class="control-group field-options" data-type="'+type+'">').append($('<label class="control-label">').text(title)).append(
 			$.map list, (option, index) =>
 				optionHidden = option._destroy is '1'
 				$('<div class="controls field-option">').addClass(if @_optionIsExcluded(option) then 'disabled-option' else '' ).data('option', option).append([
@@ -774,7 +775,7 @@ SectionField = FormField.extend {
 
 	attributesForm: () ->
 		[
-			$('<h4>').text('Section'),
+			$('<h4>').text('Field Settings'),
 			@labelField(),
 			@descriptionField()
 		]
@@ -806,7 +807,7 @@ TextAreaField = FormField.extend {
 
 	attributesForm: () ->
 		[
-			$('<h4>').text('Paragraph'),
+			$('<h4>').text('Field Settings'),
 			@labelField(),
 			@rangeField({characters: 'Characters', words: 'Words'})
 			@requiredField()
@@ -880,7 +881,7 @@ TextField = FormField.extend {
 
 	attributesForm: () ->
 		[
-			$('<h4>').text('Single line text'),
+			$('<h4>').text('Field Settings'),
 			@labelField(),
 			@rangeField({characters: 'Characters', words: 'Words'})
 			@requiredField()
@@ -912,7 +913,7 @@ NumberField = FormField.extend {
 
 	attributesForm: () ->
 		[
-			$('<h4>').text('Number'),
+			$('<h4>').text('Field Settings'),
 			@labelField(),
 			@rangeField({digits: 'Digits', value: 'Value'})
 			@requiredField()
@@ -944,7 +945,7 @@ CurrencyField = FormField.extend {
 
 	attributesForm: () ->
 		[
-			$('<h4>').text('Price'),
+			$('<h4>').text('Field Settings'),
 			@labelField(),
 			@rangeField({digits: 'Digits', value: 'Value'})
 			@requiredField()
@@ -986,7 +987,7 @@ DropdownField = FormField.extend {
 
 	attributesForm: () ->
 		[
-			$('<h4>').text('Dropdown'),
+			$('<h4>').text('Field Settings'),
 			@labelField(),
 			@optionsField('option'),
 			@requiredField()
@@ -1030,7 +1031,7 @@ RadioField = FormField.extend {
 
 	attributesForm: () ->
 		[
-			$('<h4>').text('Multiple Choice'),
+			$('<h4>').text('Field Settings'),
 			@labelField(),
 			@optionsField('option'),
 			@requiredField()
@@ -1084,7 +1085,7 @@ PercentageField = FormField.extend {
 
 	attributesForm: () ->
 		[
-			$('<h4>').text('Percent'),
+			$('<h4>').text('Field Settings'),
 			@labelField(),
 			@optionsField('option'),
 			@requiredField()
@@ -1129,7 +1130,7 @@ PhotoField = FormField.extend {
 
 	attributesForm: () ->
 		[
-			$('<h4>').text('Photo'),
+			$('<h4>').text('Field Settings'),
 			@labelField(),
 			@requiredField()
 		]
@@ -1173,7 +1174,7 @@ AttachmentField = FormField.extend {
 
 	attributesForm: () ->
 		[
-			$('<h4>').text('Attachment'),
+			$('<h4>').text('Field Settings'),
 			@labelField(),
 			@requiredField()
 		]
@@ -1181,6 +1182,24 @@ AttachmentField = FormField.extend {
 
 CalculationField = FormField.extend {
 	type: 'Calculation',
+
+	operations:
+		'+':
+			name: 'add'
+			tooltip: 'Add'
+			icon: '<%= asset_path 'add-24.svg' %>'
+		'-':
+			name: 'subtract'
+			tooltip: 'Subtract'
+			icon: '<%= asset_path 'subtract-24.svg' %>'
+		'*':
+			name: 'multiply'
+			tooltip: 'Multiply'
+			icon: '<%= asset_path 'multiply-24.svg' %>'
+		'/':
+			name: 'divide'
+			tooltip: 'Divide'
+			icon: '<%= asset_path 'divide-24.svg' %>'
 
 	init: (form, attributes) ->
 		@form = form
@@ -1207,11 +1226,6 @@ CalculationField = FormField.extend {
 
 	_renderField: () ->
 		fieldId = ''+ (Math.floor(Math.random() * 1000) + 1)
-		opperatorsMap =
-			'*': 'x'
-			'/': '/'
-			'-': '&#8211;'
-			'+': '+'
 
 		[
 			$('<label class="control-label control-group-label">').text(@attributes.name),
@@ -1221,20 +1235,22 @@ CalculationField = FormField.extend {
 						$.map @attributes.options, (option, index) =>
 							if option._destroy isnt '1' and not @_optionIsExcluded(option)
 								$('<tr class="field-option">').append(
-									$('<td data-operation="'+opperatorsMap[@attributes.settings.operation]+'">').append(
+									$('<td class="operation '+@operations[@attributes.settings.operation]['name']+'">').append(
 										$('<label for="option-'+fieldId+index+'">').addClass('calculation').text(option.name+ ' ')
 									),
 									$('<td>').append(
 										$('<input name="option-'+fieldId+index+'" '+
-													    'id="option-'+fieldId+index+'" ' +
-													    'type="text" readonly="readonly">')
+															'id="option-'+fieldId+index+'" ' +
+															'type="text" readonly="readonly">')
 									)
 								)
 					).append(
 						$('<tr class="field-option calculation-total-field">').append(
 							$('<td colspan="2" class="text-right">').append(
-								$('<label>').addClass('calculation').text(@attributes.settings.calculation_label + ':'),
-								$('<span class="calculation-total-amount">0.00</span>')
+								$('<div>').append(
+									$('<label>').addClass('calculation').text(@attributes.settings.calculation_label + ':'),
+									$('<span class="calculation-total-amount">0.00</span>')
+								)
 							)
 						)
 					)
@@ -1243,7 +1259,7 @@ CalculationField = FormField.extend {
 		]
 
 	calculationLabelField: () ->
-		$('<div class="control-group">').append([
+		$('<div class="control-group calculation-label">').append([
 			$('<label class="control-label" for="field_name">').text('Calculation label'),
 			$('<div class="controls">').append $('<input type="text" id="calculation_label" name="calculation_label">').val(@attributes.settings.calculation_label).on 'keyup', (e) =>
 					input = $(e.target)
@@ -1255,13 +1271,11 @@ CalculationField = FormField.extend {
 
 	operationField: () ->
 		oper = @attributes.settings.operation
+		items = $(Object.keys(@operations)).map (index, operation) =>
+			'<a class="has-tooltip btn '+(if oper is operation then 'active' else '')+'" title="'+@operations[operation]['tooltip']+'" data-operation="'+operation+'" href="#"><img src="'+@operations[operation]['icon']+'" /></a>'
 		$('<div class="control-group calculation-operations">').append(
-			$('<div class="btn-group">
-			    <a class="btn '+(if oper is  '+' then 'active' else '')+'" data-operation="+" href="#">+</a>
-			    <a class="btn '+(if oper is  '-' then 'active' else '')+'" data-operation="-" href="#">&#8211;</a>
-			    <a class="btn '+(if oper is  '*' then 'active' else '')+'" data-operation="*" href="#">x</a>
-			    <a class="btn '+(if oper is  '/' then 'active' else '')+'" data-operation="/" href="#">/</a>
-			  </div>')
+			$('<label class="control-label" for="field_name">').text('Operation'),
+			$('<div class="btn-group"></div>').html(items.get().join(''))
 		).on 'click', 'a.btn', (e) =>
 			e.preventDefault();
 			$(e.currentTarget).closest('.btn-group').find('.active').removeClass('active').end().end().addClass('active')
@@ -1272,10 +1286,10 @@ CalculationField = FormField.extend {
 
 	attributesForm: () ->
 		[
-			$('<h4>').text('Calculation'),
+			$('<h4>').text('Field Settings'),
 			@labelField(),
 			@operationField(),
-			@optionsField('option'),
+			@optionsField('option', 'Items'),
 			@calculationLabelField(),
 			@requiredField()
 		]
@@ -1345,7 +1359,7 @@ LikertScaleField = FormField.extend {
 
 	attributesForm: () ->
 		[
-			$('<h4>').text('Likert scale'),
+			$('<h4>').text('Field Settings'),
 			@labelField(),
 			$('<div class="control-group">').append(
 				@optionsField('statement'),
@@ -1397,7 +1411,7 @@ CheckboxField = FormField.extend {
 
 	attributesForm: () ->
 		[
-			$('<h4>').text('Checkboxes'),
+			$('<h4>').text('Field Settings'),
 			@labelField(),
 			@optionsField('option'),
 			@requiredField()
@@ -1432,7 +1446,7 @@ BrandField = FormField.extend {
 
 	attributesForm: () ->
 		[
-			$('<h4>').text('Brand'),
+			$('<h4>').text('Field Settings'),
 			@requiredField()
 		]
 }
@@ -1464,7 +1478,7 @@ MarqueField = FormField.extend {
 
 	attributesForm: () ->
 		[
-			$('<h4>').text('Marque'),
+			$('<h4>').text('Field Settings'),
 			@requiredField()
 		]
 }
@@ -1494,7 +1508,7 @@ DateField = FormField.extend {
 
 	attributesForm: () ->
 		[
-			$('<h4>').text('Date'),
+			$('<h4>').text('Field Settings'),
 			@labelField(),
 			@requiredField()
 		]
@@ -1525,7 +1539,7 @@ TimeField = FormField.extend {
 
 	attributesForm: () ->
 		[
-			$('<h4>').text('Time'),
+			$('<h4>').text('Field Settings'),
 			@labelField(),
 			@requiredField()
 		]
@@ -1556,7 +1570,7 @@ PlaceField = FormField.extend {
 
 	attributesForm: () ->
 		[
-			$('<h4>').text('Place'),
+			$('<h4>').text('Field Settings'),
 			@labelField(),
 			@requiredField()
 		]
@@ -1627,7 +1641,7 @@ SurveysField = Module.extend {
 		, 100
 
 		[
-			$('<h4>').text('Surveys'),
+			$('<h4>').text('Field Settings'),
 			$('<div class="control-group">').append [
 				$('<label class="control-label">').text('Brands'),
 				$('<div class="controls">').append(
@@ -1667,7 +1681,7 @@ CommentsField = Module.extend {
 
 	attributesForm: () ->
 		[
-			$('<h4>').text('Module Settings'),
+			$('<h4>').text('Field Settings'),
 			@rangeField()
 		]
 }
@@ -1696,7 +1710,7 @@ PhotosField = Module.extend {
 
 	attributesForm: () ->
 		[
-			$('<h4>').text('Module Settings'),
+			$('<h4>').text('Field Settings'),
 			@rangeField()
 		]
 }
@@ -1731,7 +1745,7 @@ ExpensesField = Module.extend {
 		, 100
 
 		[
-			$('<h4>').text('Module Settings'),
+			$('<h4>').text('Field Settings'),
 			@rangeField(),
 			@requiredField('Receipts required'),
 			$('<div class="control-group">').append [
@@ -1770,7 +1784,7 @@ AttendanceField = Module.extend {
 
 	attributesForm: () ->
 		[
-			$('<h4>').text('Module Settings'),
+			$('<h4>').text('Field Settings'),
 			$('<div class="control-group">').append [
 				$('<label class="control-label" for="attendance_display_by">').text('Display attendance by'),
 				$('<select id="attendance_display_by" name="attendance_display">').append(
@@ -1795,3 +1809,4 @@ AttendanceField = Module.extend {
 applyFormUiFormatsTo = (element) ->
 	element.find('select').chosen()
 	element.find("input:checkbox, input:radio, input:file").uniform()
+	element.find('.has-tooltip').tooltip({html: true, delay: 0, animation: false})

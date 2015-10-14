@@ -60,13 +60,13 @@ class FormField::Calculation < FormField::Hashed
       total += (result.value[option.id.to_s].to_i || 0)
       "<span>#{result.value[option.id.to_s] || 0}</span> #{option.name}"
     end.join('<br /> ') +
-    "<br/><span>#{total}</span> TOTAL"
+    "<br/><span>#{total}</span> #{calculation label}"
     ).html_safe
   end
 
   def format_json(result)
     super.merge(
-      value: result ? result.value.map { |s| s[1].to_f }.reduce(0, :+) : nil,
+      value: result ? result.value.map { |s| s[1].to_f }.reduce(operation.to_sym) : nil,
       segments: options_for_input(result).map do |s|
         val = result ? result.value[s[1].to_s] : nil
         val = convert_string_to_int_or_float(val) unless val.blank?

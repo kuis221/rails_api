@@ -742,7 +742,7 @@ RSpec.shared_examples 'a fieldable element' do
     expect(field.options.map(&:ordering)).to eql [0, 1, 2]
 
     within form_field_settings_for 'My Calculation Field' do
-      click_js_link 'x'
+      find('a[data-operation="*"]').click
     end
     click_js_button 'Save'
     wait_for_ajax
