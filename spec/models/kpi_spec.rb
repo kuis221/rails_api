@@ -381,11 +381,12 @@ describe Kpi, type: :model do
         end.to change(described_class, :count).by(-1)
       end.to_not change(FormFieldResult, :count)
 
+      kpi  = described_class.where(id: [kpi1.id, kpi2.id]).first
       event1 = Event.find(event1.id) # Load a fresh copy of the event
-      expect(event1.result_for_kpi(kpi1).to_html).to eq('Uno')
+      expect(event1.result_for_kpi(kpi).to_html).to eq('Uno')
 
       event2 = Event.find(event2.id) # Load a fresh copy of the event
-      expect(event2.result_for_kpi(kpi1).to_html).to eq('Dos')
+      expect(event2.result_for_kpi(kpi).to_html).to eq('Dos')
     end
 
     it 'correctly merge the values for events of fields of the type :percentage when the kpis are in differnet campaigns' do
