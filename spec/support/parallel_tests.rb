@@ -14,6 +14,9 @@ if ENV.key?('TEST_ENV_NUMBER')
     SunspotTest.send(:wait_until_solr_starts)
   end
 
-
   ParallelTests.first_process? ? launch_solr : wait_until_solr_starts
+
+  at_exit do
+    ParallelTests.wait_for_other_processes_to_finish if ParallelTests.first_process?
+  end
 end
