@@ -177,8 +177,8 @@ feature 'Attendance', js: true, search: true do
 
       ensure_modal_was_closed
       expect(ListExport.last).to have_rows([
-        ['MARKET', 'INVITES', 'RSVPs', 'ATTENDEES'],
-        ['California', '12', '0', '0']
+        %w(MARKET INVITES RSVPs ATTENDEES),
+        %w(California 12 0 0)
       ])
     end
   end

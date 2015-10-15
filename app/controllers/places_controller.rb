@@ -44,7 +44,7 @@ class PlacesController < FilteredController
       :name, :types, :street_number, :route, :city, :state, :zipcode, :country, :reference,
       venues_attributes: [:id, :web_address, :company_id, :place_price_level, :phone_number,
                           hours_fields_attributes: [:id, :day, :hour_close, :hour_open, :_destroy],
-      results_attributes: [:id, :value, :form_field_id]]
+                          results_attributes: [:id, :value, :form_field_id]]
     ])[:place].tap do |whielisted|
       unless whielisted.nil? || whielisted[:venues_attributes].nil?
         whielisted[:venues_attributes].each do |vk, venue_attrs|

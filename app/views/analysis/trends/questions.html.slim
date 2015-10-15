@@ -14,6 +14,6 @@
       .
     #questions-list.resource-list.without-actions.select-list.single-line.max-items-4
       = f.collection_check_boxes :questions, available_questions.pluck(:name, :id), :second, :first, label: false, item_wrapper_class: 'resource-item', item_wrapper_tag: :div  do |b|
-        =  b.label(class: 'resource-item-link', for: "question_#{b.value}") { check_box_tag('question[]', b.value, selected_questions.include?(b.value), id: "question_#{b.value}") + b.text }
+        =  b.label(class: 'resource-item-link', for: "trends_report_questions_#{b.value}") { check_box_tag('question[]', b.value, selected_questions.include?(b.value), id: "trends_report_questions_#{b.value}") + b.text }
     .form-actions
       = f.button :submit, 'Done', class: 'btn btn-primary'

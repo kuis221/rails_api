@@ -1470,7 +1470,7 @@ feature 'Events section' do
                                           'comments' => {
                                             'name' => 'comments', 'field_type' => 'module',
                                             'settings' => { 'range_min' => '1',
-                                                            'range_max' => '2'} } }))
+                                                            'range_max' => '2' } } }))
 
         visit event_path(event)
 
@@ -1478,7 +1478,7 @@ feature 'Events section' do
 
         click_js_button 'Add Comment'
         within visible_modal do
-          fill_in "comment[content]", with: 'This is a test comment'
+          fill_in 'comment[content]', with: 'This is a test comment'
           click_js_button 'Create'
         end
         expect(page).to have_content 'Looks good. Your comment has been saved.'

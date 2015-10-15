@@ -46,7 +46,7 @@ describe Contact, type: :model do
 
   describe 'state validation' do
     describe 'with United States as country' do
-      subject { Contact.new(country: 'US') }
+      subject { described_class.new(country: 'US') }
 
       it { is_expected.to allow_value('CA').for(:state) }
       it { is_expected.not_to allow_value('ON').for(:state).with_message('is not valid') }

@@ -32,11 +32,11 @@ namespace :brandscopic do
         next
       end
       (at.file.styles.keys + [:original]).each do |style_name|
-        key = at.file.path(style_name).gsub(/^\//,'')
+        key = at.file.path(style_name).gsub(/^\//, '')
         begin
           if s3.buckets[origin_bucket].objects[key].exists?
             s3.buckets[origin_bucket].objects[key].copy_to(
-              key, :bucket_name => ENV['S3_BUCKET_NAME'], acl: :public_read)
+              key, bucket_name: ENV['S3_BUCKET_NAME'], acl: :public_read)
           end
         rescue
         end

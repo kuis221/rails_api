@@ -1,6 +1,5 @@
 module Html
   class EventGuidedMessagePresenter < BasePresenter
-
     def plan_info
     end
 

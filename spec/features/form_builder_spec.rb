@@ -23,7 +23,7 @@ RSpec.shared_examples 'a fieldable element' do
   scenario 'user can add paragraph fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
-    page.execute_script "window.scrollBy(0,500)"
+    page.execute_script 'window.scrollBy(0,500)'
     text_area_field.drag_to form_builder
 
     expect(form_builder).to have_form_field('Paragraph')
@@ -484,7 +484,7 @@ RSpec.shared_examples 'a fieldable element' do
   scenario 'user can add brand fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
-    page.execute_script "window.scrollBy(0,500)"
+    page.execute_script 'window.scrollBy(0,500)'
     brand_field.drag_to form_builder
 
     expect(form_builder).to have_form_field('Brand')
@@ -546,7 +546,7 @@ RSpec.shared_examples 'a fieldable element' do
   scenario 'user can add marque fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
-    page.execute_script "window.scrollBy(0,500)"
+    page.execute_script 'window.scrollBy(0,500)'
     marque_field.drag_to form_builder
 
     expect(form_builder).to have_form_field('Marque')
@@ -752,7 +752,7 @@ RSpec.shared_examples 'a fieldable element' do
     end
 
     confirm_prompt 'Removing this option will remove all the entered data/answers associated with it. '
-                   'Are you sure you want to do this? This cannot be undone'
+    'Are you sure you want to do this? This cannot be undone'
 
     within form_field_settings_for 'My Summation Field' do
       expect(page).to have_no_content('Second Option')
@@ -783,8 +783,7 @@ RSpec.shared_examples 'a fieldable element' do
 
     expect(form_builder).to have_form_field('Likert scale',
                                             with_options: ['Strongly Disagree', 'Disagree',
-                                                           'Agree', 'Strongly Agree']
-      )
+                                                           'Agree', 'Strongly Agree'])
 
     within form_field_settings_for 'Likert scale' do
       fill_in 'Field label', with: 'My Likert scale Field'
@@ -873,7 +872,8 @@ RSpec.shared_examples 'a fieldable element' do
                                       place: create(:place),
                                       start_date: '01/23/2013',
                                       end_date: '01/23/2013')
-      activity = create(:activity, activity_type: fieldable, activitable: event, company_user: create(:company_user, company: fieldable.company))
+      activity = create(:activity, activity_type: fieldable, activitable: event,
+                                   company_user: create(:company_user, company: fieldable.company))
       activity.results_for([field]).first.value = { field.statements.first.id.to_s => field.options.first.id.to_s }
       expect(activity.save).to be_truthy
     end
@@ -889,12 +889,16 @@ RSpec.shared_examples 'a fieldable element' do
     # Remove fields
     within form_field_settings_for 'My Likert scale Field' do
       # Remove the second option (the first one doesn't have the link)
-      within('.field-options[data-type="option"] .field-option:nth-child(2)') { click_js_link 'Add option after this' }
-      within('.field-options[data-type="option"] .field-option:nth-child(4)') { click_js_link 'Remove this option' }
+      within('.field-options[data-type="option"] .field-option:nth-child(2)') do
+        click_js_link 'Add option after this'
+      end
+      within('.field-options[data-type="option"] .field-option:nth-child(4)') do
+        click_js_link 'Remove this option'
+      end
     end
 
     confirm_prompt 'Removing this option will remove all the entered data/answers associated with it. '
-                   'Are you sure you want to do this? This cannot be undone'
+    'Are you sure you want to do this? This cannot be undone'
 
     within form_field_settings_for 'My Likert scale Field' do
       within('.field-options[data-type="option"]') { expect(page).to have_no_content('Second Option') }
@@ -911,16 +915,22 @@ RSpec.shared_examples 'a fieldable element' do
 
     within form_field_settings_for 'My Likert scale Field' do
       # Remove the second statement (the first one doesn't have the link)
-      within('.field-options[data-type="statement"] .field-option:nth-child(2)') { click_js_link 'Add option after this' }
-      within('.field-options[data-type="statement"] .field-option:nth-child(4)') { click_js_link 'Remove this option' }
+      within('.field-options[data-type="statement"] .field-option:nth-child(2)') do
+        click_js_link 'Add option after this'
+      end
+      within('.field-options[data-type="statement"] .field-option:nth-child(4)') do
+        click_js_link 'Remove this option'
+      end
     end
     confirm_prompt 'Removing this statement will remove all the entered data/answers associated with it. '
-                   'Are you sure you want to do this? This cannot be undone'
+    'Are you sure you want to do this? This cannot be undone'
     within form_field_settings_for 'My Likert scale Field' do
       within('.field-options[data-type="statement"]') { expect(page).to have_no_content('Second Option') }
     end
     within form_field_settings_for 'My Likert scale Field' do
-      within('.field-options[data-type="statement"] .field-option:nth-child(3)') { click_js_link 'Remove this option' }
+      within('.field-options[data-type="statement"] .field-option:nth-child(3)') do
+        click_js_link 'Remove this option'
+      end
     end
     confirm_prompt 'Are you sure you want to remove this statement?'
     within form_field_settings_for 'My Likert scale Field' do
@@ -1246,7 +1256,7 @@ RSpec.shared_examples 'a fieldable element that accept modules' do
     end
 
     confirm_prompt 'Removing this module will remove all the entered data associated with it. '
-                   'Are you sure you want to do this?'
+    'Are you sure you want to do this?'
 
     expect(find('.form-wrapper')).to have_no_selector('.form-section.module[data-type=Photos]')
     click_js_button 'Save'

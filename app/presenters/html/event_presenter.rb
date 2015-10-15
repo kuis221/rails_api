@@ -20,7 +20,7 @@ module Html
       members_list.html_safe if members_list.present?
     end
 
-    def date_range_basic_info(options={})
+    def date_range_basic_info(options = {})
       return if start_at.nil?
       return format_date_with_time(start_at) if end_at.nil?
       options[:date_separator] ||= ' - '
@@ -57,7 +57,7 @@ module Html
       end
     end
 
-    def date_range(options={})
+    def date_range(options = {})
       return if start_at.nil?
       return format_date_with_time(start_at) if end_at.nil?
       options[:date_separator] ||= '<br />'
@@ -139,7 +139,7 @@ module Html
     def users_tags
       return if users.nil?
       users.map do |team_member|
-        h.content_tag(:div, class: 'user-tag has-tooltip', data: { title: h.contact_info_tooltip(team_member).to_str, trigger: :click, container: 'body' } ) do
+        h.content_tag(:div, class: 'user-tag has-tooltip', data: { title: h.contact_info_tooltip(team_member).to_str, trigger: :click, container: 'body' }) do
           h.content_tag(:div, class: 'user-type') do
             h.content_tag(:i, '', class: 'icon-user')
           end +
@@ -153,10 +153,10 @@ module Html
       current_phase_index = phases[:phases].keys.index(phases[:current_phase])
       steps.map do |step|
         button = h.content_tag(:div,
-                                class: phase_step_clasess(step, steps.last[:id], steps.first[:id]),
-                                data: { toggle: 'tooltip',
-                                        title: step[:title].upcase,
-                                        placement: 'top'} ) do
+                               class: phase_step_clasess(step, steps.last[:id], steps.first[:id]),
+                               data: { toggle: 'tooltip',
+                                       title: step[:title].upcase,
+                                       placement: 'top' }) do
           h.content_tag(:div, class: 'icon-connect') do
             h.content_tag(:i, '', class: "#{step[:complete] ? 'icon-check-circle' : 'icon-circle'}")
           end +
@@ -218,14 +218,14 @@ module Html
       index_phase = phases[:phases].keys.index(phases[:current_phase])
       completed = i < index_phase
       h.link_to_if(i <= index_phase,
-        h.content_tag(:div, class: phase_clasess(phase, i, index_phase)) do
-          (if completed
-             h.content_tag(:div, '', class: 'icon-check-circle')
-           else
-             phase_number = "#{i + 1}#{icon(:lock) if i > index_phase}".html_safe
-             h.content_tag(:span, phase_number.html_safe, class: 'id')
-           end) + phase[0].upcase
-        end, h.phase_event_path(@model, phase: phase[0], return: h.return_path)) + phase_steps(phase[0], i, phase[1])
+                   h.content_tag(:div, class: phase_clasess(phase, i, index_phase)) do
+                     (if completed
+                        h.content_tag(:div, '', class: 'icon-check-circle')
+                      else
+                        phase_number = "#{i + 1}#{icon(:lock) if i > index_phase}".html_safe
+                        h.content_tag(:span, phase_number.html_safe, class: 'id')
+                      end) + phase[0].upcase
+                   end, h.phase_event_path(@model, phase: phase[0], return: h.return_path)) + phase_steps(phase[0], i, phase[1])
     end
 
     def phase_clasess(phase, i, index_phase)

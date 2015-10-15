@@ -1,6 +1,6 @@
 module Html
   class CampaignPresenter < BasePresenter
-    def date_range(options={})
+    def date_range(options = {})
       start_date_at = start_date || first_event_at
       end_date_at = end_date || last_event_at
       return if start_date_at.nil?
@@ -20,8 +20,8 @@ module Html
     end
 
     def gender_total(data)
-      male = data.detect { |n| n[0] == 'Male' }
-      female = data.detect { |n| n[0] == 'Female' }
+      male = data.find { |n| n[0] == 'Male' }
+      female = data.find { |n| n[0] == 'Female' }
 
       total_male = male.present? ? male[1].round : 0
       total_female = female.present? ? female[1].round : 0

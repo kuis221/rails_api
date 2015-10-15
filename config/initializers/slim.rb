@@ -1,1 +1,1 @@
-Slim::Engine.default_options[:pretty] = Rails.env.development?
+Slim::Engine.options[:pretty] = Rails.env.development?

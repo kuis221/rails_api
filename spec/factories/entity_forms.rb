@@ -14,7 +14,7 @@
 
 FactoryGirl.define do
   factory :entity_form do
-    entity "MyString"
+    entity 'MyString'
     company nil
   end
 end

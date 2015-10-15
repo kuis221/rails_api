@@ -4,5 +4,14 @@
     <core name="default"     instanceDir="." dataDir="data/default/data"/>
     <core name="development" instanceDir="." dataDir="data/development/data"/>
     <core name="test"        instanceDir="." dataDir="data/test/data"/>
+    <core name="test0"        instanceDir="." dataDir="data/test/0/data"/>
+    <core name="test1"        instanceDir="." dataDir="data/test/1/data"/>
+    <core name="test2"        instanceDir="." dataDir="data/test/2/data"/>
+    <core name="test3"        instanceDir="." dataDir="data/test/3/data"/>
+    <core name="test4"        instanceDir="." dataDir="data/test/4/data"/>
+    <core name="test5"        instanceDir="." dataDir="data/test/5/data"/>
+    <core name="test6"        instanceDir="." dataDir="data/test/6/data"/>
+    <core name="test7"        instanceDir="." dataDir="data/test/7/data"/>
+    <core name="test8"        instanceDir="." dataDir="data/test/8/data"/>
   </cores>
 </solr>

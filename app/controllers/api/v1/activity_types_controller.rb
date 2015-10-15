@@ -34,7 +34,7 @@ class Api::V1::ActivityTypesController < Api::V1::ApiController
       activity_types.push [:attendance, 'Invitations']
     end
     activity_types.sort! { |a, b| a[1] <=> b[1] }
-    render json: activity_types.map{ |at| { id: at[0], name: at[1] } }
+    render json: activity_types.map { |at| { id: at[0], name: at[1] } }
   end
 
   api :GET, '/api/v1/activity_types/:activity_type_id/campaigns', 'Get a list the campaings for a specific activity type'
@@ -55,7 +55,7 @@ class Api::V1::ActivityTypesController < Api::V1::ApiController
     ]
   EOS
   def campaigns
-    render json: resource.campaigns.active.accessible_by_user(current_company_user).order(:name).map{ |at| { id: at.id, name: at.name } }
+    render json: resource.campaigns.active.accessible_by_user(current_company_user).order(:name).map { |at| { id: at.id, name: at.name } }
   end
 
   protected
@@ -69,6 +69,6 @@ class Api::V1::ActivityTypesController < Api::V1::ApiController
     return if current_company.campaigns.active.accessible_by_user(current_company_user)
                 .where(id: params[:campaign_id]).any?
 
-    raise CanCan::AccessDenied
+    fail CanCan::AccessDenied
   end
 end

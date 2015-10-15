@@ -165,10 +165,14 @@ feature 'DayParts', js: true, search: true do
   end
 
   feature 'export' do
-    let(:day_part1) { create(:day_part, company: company,
-                              name: 'Morningns', description: 'From 8 to 11am', active: true) }
-    let(:day_part2) { create(:day_part, company: company,
-                              name: 'Afternoons', description: 'From 1 to 6pm', active: true) }
+    let(:day_part1) do
+      create(:day_part, company: company,
+                              name: 'Morningns', description: 'From 8 to 11am', active: true)
+    end
+    let(:day_part2) do
+      create(:day_part, company: company,
+                              name: 'Afternoons', description: 'From 1 to 6pm', active: true)
+    end
 
     before do
       # make sure tasks are created before

@@ -9,7 +9,7 @@ unless defined?(CLOCKWORK_DEFINED)
 
   # Runs every 1st of each month
   every 1.day, 'Synching Jameson Locals', at: '6:00', tz: 'Pacific Time (US & Canada)', if: lambda { |t| t.day == 1 } do
-     Resque.enqueue JbbWorker, 'JbbFile::JamesonLocalsAccount'
+    Resque.enqueue JbbWorker, 'JbbFile::JamesonLocalsAccount'
   end
 
   # Runs every 1st of each month

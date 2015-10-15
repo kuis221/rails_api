@@ -43,7 +43,7 @@ describe FormField, type: :model do
     it { is_expected.not_to allow_value('range_min' => '', 'range_max' => 'xx').for(:settings) }
   end
 
-  let(:field) { FormField.new }
+  let(:field) { described_class.new }
   describe '#field_options' do
     it 'should return basic options' do
       expect(field.field_options(FormFieldResult.new)).to eql(as: :string)
@@ -182,11 +182,11 @@ describe FormField, type: :model do
   end
 
   describe '#format_html' do
-    it 'should return the values as is' do
+    it 'returns the values as is' do
       expect(field.format_html(build(:form_field_result, value: nil, form_field: field))).to eql nil
-      expect(field.format_html(build(:form_field_result, value: 1, form_field: field))).to eql 1
+      expect(field.format_html(build(:form_field_result, value: 1, form_field: field))).to eql '1'
       expect(field.format_html(build(:form_field_result, value: 'two', form_field: field))).to eql 'two'
-      expect(field.format_html(build(:form_field_result, value: 1.2, form_field: field))).to eql 1.2
+      expect(field.format_html(build(:form_field_result, value: 1.2, form_field: field))).to eql '1.2'
     end
   end
 end

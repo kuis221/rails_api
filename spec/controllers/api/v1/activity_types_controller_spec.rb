@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::ActivityTypesController, :type => :controller do
+RSpec.describe Api::V1::ActivityTypesController, type: :controller do
   let(:user) { sign_in_as_user }
   let(:company) { user.company_users.first.company }
   let(:campaign) { create(:campaign,  company: company) }

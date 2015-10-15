@@ -108,7 +108,7 @@ if ENV['WEB']
     #   config.namespace :without_comments do |without_comments|
     #     without_comments.allow_comments = false
     #   end
-    config.allow_comments = false
+    config.comments = false
 
     # == Batch Actions
     #

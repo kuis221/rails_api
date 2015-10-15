@@ -31,23 +31,22 @@ describe FormField::Checkbox, type: :model do
     let(:venue) { create(:venue, place: create(:place), company: company) }
     let(:activity) { create(:activity, activity_type: activity_type, activitable: venue, campaign: campaign, company_user_id: 1) }
 
-    before {
+    before do
       campaign.activity_types << activity_type
-    }
+    end
 
-    it 'should return the correct values' do
+    it 'returns the correct values' do
       ff_result = create(:form_field_result, resultable: activity, form_field: field, value: nil, hash_value: nil)
-      expect(ff_result.value).to eql []
+      expect(field.result_value(ff_result)).to eql []
 
       ff_result.update_attribute(:value, '')
-      expect(ff_result.value).to eql []
+      expect(field.result_value(ff_result)).to eql []
 
       ff_result.update_attribute(:hash_value, '"925"=>"1"')
-      expect(ff_result.value).to eql [925]
+      expect(field.result_value(ff_result)).to eql [925]
 
       ff_result.update_attribute(:hash_value, '"925"=>"1", "926"=>"1"')
-      expect(ff_result.value).to eql [925, 926]
+      expect(field.result_value(ff_result)).to eql [925, 926]
     end
   end
-
 end

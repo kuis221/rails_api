@@ -58,7 +58,7 @@ class VenuesController < FilteredController
     return [] if spots.empty?
     merged_ids = Place.where.not(merged_with_place_id: nil)
                   .joins('LEFT JOIN places nmp ON nmp.merged_with_place_id IS NULL AND nmp.place_id=places.place_id')
-                  .where(place_id: spots.map{ |s| s.place_id })
+                  .where(place_id: spots.map(&:place_id))
                   .where('nmp.id is null')
                   .pluck(:place_id)
     spots.reject { |s| merged_ids.include?(s.place_id) }

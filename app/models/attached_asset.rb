@@ -41,24 +41,24 @@ class AttachedAsset < ActiveRecord::Base
   enum status: { queued: 0, processing: 1, processed: 2,  failed: 3 }
 
   has_attached_file :file,
-      PAPERCLIP_SETTINGS.merge(
-        styles: ->(a) {
-          if a.instance.pdf?
-            a.options[:convert_options] = {
-              thumbnail: '-quality 85 -strip -gravity north -thumbnail 300x400^ -extent 300x400'
-            }
-            { thumbnail: ['300x400>', :jpg] }
-          else
-            { small: '', thumbnail: '', medium: '800x800>' }
-          end
-        },
-        processors: ->(instance) { instance.pdf? ? [:ghostscript, :thumbnail] : [:thumbnail] },
-        convert_options: {
-          small: '-quality 85 -strip -gravity north -thumbnail 180x180^ -extent 180x120',
-          thumbnail: '-quality 85 -strip -gravity north -thumbnail 400x400^ -extent 400x267',
-          medium: '-quality 85 -strip'
-        }
-      )
+                    PAPERCLIP_SETTINGS.merge(
+                      styles: ->(a) do
+                        if a.instance.pdf?
+                          a.options[:convert_options] = {
+                            thumbnail: '-quality 85 -strip -gravity north -thumbnail 300x400^ -extent 300x400'
+                          }
+                          { thumbnail: ['300x400>', :jpg] }
+                        else
+                          { small: '', thumbnail: '', medium: '800x800>' }
+                        end
+                      end,
+                      processors: ->(instance) { instance.pdf? ? [:ghostscript, :thumbnail] : [:thumbnail] },
+                      convert_options: {
+                        small: '-quality 85 -strip -gravity north -thumbnail 180x180^ -extent 180x120',
+                        thumbnail: '-quality 85 -strip -gravity north -thumbnail 400x400^ -extent 400x267',
+                        medium: '-quality 85 -strip'
+                      }
+                    )
 
   do_not_validate_attachment_file_type :file
 
@@ -71,8 +71,8 @@ class AttachedAsset < ActiveRecord::Base
   before_validation :set_upload_attributes
 
   after_commit :queue_processing
-  after_save    :update_active_photos_count, if: -> { self.attachable.is_a?(Event) && self.photo? }
-  after_destroy :update_active_photos_count, if: -> { self.attachable.is_a?(Event) && self.photo? }
+  after_save :update_active_photos_count, if: -> { attachable.is_a?(Event) && self.photo? }
+  after_destroy :update_active_photos_count, if: -> { attachable.is_a?(Event) && self.photo? }
   after_update :rename_existing_file, if: :processed?
   before_post_process :post_process_required?
 
@@ -156,7 +156,7 @@ class AttachedAsset < ActiveRecord::Base
                response_content_disposition: "attachment; filename=#{file_file_name}").to_s
   end
 
-  def preview_url(style_name = :medium, opts={})
+  def preview_url(style_name = :medium, opts = {})
     if pdf?
       file.url(:thumbnail, opts)
     else

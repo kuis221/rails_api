@@ -1,5 +1,5 @@
 class LocationInput < SimpleForm::Inputs::Base
-  def input
+  def input(_wrapper_options)
     data = input_html_options.delete(:data)
     hidden = @builder.hidden_field(attribute_name, input_html_options).to_s
     match = hidden.match(/\s+id="([^"]+)"\s+/)

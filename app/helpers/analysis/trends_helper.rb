@@ -15,7 +15,7 @@ module Analysis::TrendsHelper
   end
 
   def available_data_sources
-    [['Comments', 'Comment']] +
-    current_company.activity_types.active.with_trending_fields.pluck(:name, :id).map{ |r| [r[0], "ActivityType:#{r[1]}"] }
+    [%w(Comments Comment)] +
+    current_company.activity_types.active.with_trending_fields.pluck(:name, :id).map { |r| [r[0], "ActivityType:#{r[1]}"] }
   end
 end

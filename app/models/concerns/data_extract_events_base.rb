@@ -39,7 +39,7 @@ module DataExtractEventsBase
     s = s.where(campaign_id: filters['campaign']) if filters['campaign'].present?
     s = s.in_areas(filters['area']) if filters['area'].present?
     s = in_places(s, filters['place']) if filters['place'].present?
-    s = s.where(aasm_state: filters['event_status'].map { |f| f.downcase}) if filters['event_status'].present?
+    s = s.where(aasm_state: filters['event_status'].map(&:downcase)) if filters['event_status'].present?
     s = s.where(active: filters['status'].map { |f| f.downcase == 'active' ? true : false }) if filters['status'].present?
     s = s.filters_between_dates(filters['start_date'].to_s, filters['end_date'].to_s) if filters['start_date'].present? && filters['end_date'].present?
     s = s.joins('LEFT JOIN brands_campaigns ON brands_campaigns.campaign_id=events.campaign_id')

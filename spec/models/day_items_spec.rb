@@ -19,12 +19,12 @@ describe DayItem, type: :model do
 
   describe '#label' do
     it 'returns a valid description when has start_time and end_time' do
-      time = DayItem.new(start_time: '6:00 AM', end_time: '2:00 PM')
+      time = described_class.new(start_time: '6:00 AM', end_time: '2:00 PM')
       expect(time.label).to eq('From  6:00 AM to  2:00 PM')
     end
 
     it 'returns a valid description when only have a start_time' do
-      time = DayItem.new(start_time: '8:00 AM')
+      time = described_class.new(start_time: '8:00 AM')
       expect(time.label).to eq('At  8:00 AM')
     end
   end

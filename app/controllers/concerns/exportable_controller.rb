@@ -137,7 +137,7 @@ module ExportableController
           size = bytesize(chunk)
           next if size == 0
 
-          #chunk = chunk.dup.force_encoding(Encoding::BINARY) if chunk.respond_to?(:force_encoding)
+          chunk = chunk.dup.force_encoding('UTF-8') if chunk.respond_to?(:force_encoding)
           f.write chunk
         end
       end

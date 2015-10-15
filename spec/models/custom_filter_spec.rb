@@ -31,7 +31,7 @@ describe CustomFilter, type: :model do
       cf3 = create(:custom_filter, owner: owner, name: 'Custom Filter 3', apply_to: 'brands')
       cf4 = create(:custom_filter, owner: owner, name: 'Custom Filter 4', apply_to: 'events')
 
-      expect(CustomFilter.by_type('events')).to match_array [cf1, cf4]
+      expect(described_class.by_type('events')).to match_array [cf1, cf4]
     end
   end
 end

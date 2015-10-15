@@ -103,11 +103,14 @@ RSpec.describe DataExtract::Activity, type: :model do
   end
 
   describe '#rows' do
-    let(:subject) { described_class.new(company: company, current_user: user,
-                    columns: ['activity_type', 'user', 'activity_date', 'campaign_name',
-                    'event_start_date', 'event_start_time', 'event_end_date', 'event_end_time',
-                    'place_street', 'place_city', 'place_name', 'place_state', 'place_zipcode',
-                    'event_status', 'status']) }
+    let(:subject) do
+      described_class.new(company: company,
+                          current_user: user,
+                          columns: %w(activity_type user activity_date campaign_name
+                                      event_start_date event_start_time event_end_date
+                                      event_end_time place_street place_city place_name
+                                      place_state place_zipcode event_status status))
+    end
 
     it 'returns empty if no rows are found' do
       expect(subject.rows).to be_empty
@@ -133,8 +136,9 @@ RSpec.describe DataExtract::Activity, type: :model do
 
       it 'returns all the activites in the company with all the columns' do
         expect(subject.rows).to eql [
-          ['My Activity Type', 'Test User', '02/05/2014 12:09 AM', 'Campaign Absolut FY12', '01/01/2014', '10:00 PM',
-           '01/01/2014', '11:00 PM', nil, nil, nil, nil, nil, 'Unsent', 'Active']
+          ['My Activity Type', 'Test User', '02/05/2014 12:09 AM', 'Campaign Absolut FY12',
+           '01/01/2014', '10:00 PM', '01/01/2014', '11:00 PM', nil, nil, nil, nil, nil, 'Unsent',
+           'Active']
         ]
       end
 
@@ -221,9 +225,9 @@ RSpec.describe DataExtract::Activity, type: :model do
 
         subject.filters = { 'campaign' => [campaign.id] }
         expect(subject.rows).to eql [
-          ['My Activity Type', 'Test User', '02/05/2014 12:09 AM', 'Campaign Absolut FY12', '01/01/2014', '10:00 PM',
-           '01/01/2014', '11:00 PM', nil, nil, nil, nil, nil, 'Unsent', 'Active']
-        ]
+          ['My Activity Type', 'Test User', '02/05/2014 12:09 AM', 'Campaign Absolut FY12',
+           '01/01/2014', '10:00 PM', '01/01/2014', '11:00 PM', nil, nil, nil, nil, nil, 'Unsent',
+           'Active']]
       end
 
       it 'allows to sort the results' do

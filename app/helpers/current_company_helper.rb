@@ -1,7 +1,5 @@
 module CurrentCompanyHelper
-  def company_users
-    current_company.company_users
-  end
+  delegate :company_users, to: :current_company
 
   def company_roles
     current_company.roles
@@ -19,7 +17,5 @@ module CurrentCompanyHelper
     @current_company ||= current_user.try(:company)
   end
 
-  def current_company_user
-    current_user.current_company_user
-  end
+  delegate :current_company_user, to: :current_user
 end

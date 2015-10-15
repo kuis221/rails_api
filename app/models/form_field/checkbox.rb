@@ -67,19 +67,27 @@ class FormField::Checkbox < FormField::Hashed
     true
   end
 
+  def result_value(result)
+    (
+      result['hash_value'].try(:keys) ||
+      (result['value'] if result['value'].present?) ||
+      []
+    ).map(&:to_i)
+  end
+
   def store_value(values)
     if values.is_a?(Hash)
       values
     elsif values.is_a?(Array)
       Hash[values.reject { |v| v.nil? || (v.respond_to?(:empty?) && v.empty?) }.map { |v| [v, 1] }]
-    else
+    elsif !values.blank?
       { values => nil }
     end
   end
 
   def validate_result(result)
     if required? && (result.hash_value.nil? || result.hash_value.keys.empty?)
-      result.errors.add(:value, I18n.translate('errors.messages.blank'))
+      result.errors.add :value, :blank
     elsif result.hash_value.present?
       if result.hash_value.any? { |k, v| v != '' && !is_valid_value_for_key?(k, v) }
         result.errors.add :value, :invalid
@@ -91,7 +99,7 @@ class FormField::Checkbox < FormField::Hashed
 
   def grouped_results(campaign, event_scope)
     events = form_field_results.for_event_campaign(campaign).merge(event_scope)
-    result = events.map { |event| event.hash_value }.compact
+    result = events.map(&:hash_value).compact
     results_for_percentage_chart_for_hash(result)
   end
 end

@@ -1,5 +1,5 @@
 class FolderSelectInput < SimpleForm::Inputs::Base
-  def input
+  def input(_wrapper_options)
     children = options[:root_folder].document_folders.root_children.active
     document_folder_tree(options[:root_folder], children) if children.any?
   end

@@ -69,8 +69,8 @@ feature 'Brand Ambassadors Documents', js: true do
           expect(page).to have_content('DRAG & DROP')
           attach_file 'file', 'spec/fixtures/file.pdf'
           wait_for_ajax(30) # For the file to upload to S3
-          expect(page).to_not have_content('DRAG & DROP')
         end
+        expect(page).to have_no_content('DRAG & DROP')
 
         document = BrandAmbassadors::Document.last
 

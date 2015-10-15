@@ -324,7 +324,7 @@ module Sunspot
       end
 
       def join_field?(name)
-        field = @setup.fields.detect{ |f| f.name ==  name }
+        field = @setup.fields.find { |f| f.name ==  name }
         field && field.is_a?(Sunspot::JoinField)
       end
 

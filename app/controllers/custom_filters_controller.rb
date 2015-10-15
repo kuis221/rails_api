@@ -21,7 +21,7 @@ class CustomFiltersController < InheritedResources::Base
   end
 
   def default_view
-    begin_of_association_chain.custom_filters.where(apply_to: resource.apply_to).update_all("default_view = false")
+    begin_of_association_chain.custom_filters.where(apply_to: resource.apply_to).update_all('default_view = false')
     resource.update_attribute(:default_view, true)
     render json: { result: 'OK' }
   end
@@ -46,13 +46,13 @@ class CustomFiltersController < InheritedResources::Base
   end
 
   def prepare_create
-    qs = ""
+    qs = ''
     if params[:custom_filter][:start_date].present?
-      qs = "#{encode_uri("start_date")}=#{encode_uri(params[:custom_filter][:start_date])}"
+      qs = "#{encode_uri('start_date')}=#{encode_uri(params[:custom_filter][:start_date])}"
     end
     if params[:custom_filter][:end_date].present?
       qs += qs ?  '&' : ''
-      qs += "#{encode_uri("end_date")}=#{encode_uri(params[:custom_filter][:end_date])}"
+      qs += "#{encode_uri('end_date')}=#{encode_uri(params[:custom_filter][:end_date])}"
     end
     params[:custom_filter][:filters] = qs
   end

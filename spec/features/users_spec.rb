@@ -477,10 +477,14 @@ feature 'Users', js: true do
 
   feature 'export', search: true do
     let(:role) { create(:role, name: 'TestRole', company: company) }
-    let(:user1) { create(:user, first_name: 'Pablo', last_name: 'Baltodano', email: 'email@hotmail.com',
-                          city: 'Los Angeles', state: 'CA', country: 'US', company: company, role_id: role.id) }
-    let(:user2) { create(:user, first_name: 'Juanito', last_name: 'Bazooka', email: 'bazooka@gmail.com',
-                          city: 'New York', state: 'NY', country: 'US', company: company, role_id: role.id) }
+    let(:user1) do
+      create(:user, first_name: 'Pablo', last_name: 'Baltodano', email: 'email@hotmail.com',
+                          city: 'Los Angeles', state: 'CA', country: 'US', company: company, role_id: role.id)
+    end
+    let(:user2) do
+      create(:user, first_name: 'Juanito', last_name: 'Bazooka', email: 'bazooka@gmail.com',
+                          city: 'New York', state: 'NY', country: 'US', company: company, role_id: role.id)
+    end
 
     before do
       # make sure users are created before

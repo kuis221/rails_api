@@ -37,7 +37,7 @@ module EventPhases
     phase = execute_phases.dup
     if current_phase == :execute
       phase.push(id: :per, title: 'Submit',
-                  complete: false, required: false) if phase.all?{ |p| p[:complete] }
+                  complete: false, required: false) if phase.all? { |p| p[:complete] }
     end
     phase
   end

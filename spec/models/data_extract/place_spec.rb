@@ -42,9 +42,8 @@ RSpec.describe DataExtract::Place, type: :model do
     end
     let(:subject) do
       described_class.new(company: company,
-        current_user: company_user,
-        columns: ['name', 'venues_types', 'street', 'city', 'state_name', 'country_name',
-                  'zipcode', 'td_linx_code', 'created_by', 'created_at'])
+                          current_user: company_user,
+                          columns: %w(name venues_types street city state_name country_name zipcode td_linx_code created_by created_at))
     end
 
     it 'returns empty if no rows are found' do

@@ -1,5 +1,5 @@
 class SelectListInput < SimpleForm::Inputs::Base
-  def input
+  def input(_wrapper_options)
     value = object.send(attribute_name)
     template.text_field_tag('q', '', class: 'search-box select-list-seach-box',
                                      placeholder: options[:search_box_placeholder],

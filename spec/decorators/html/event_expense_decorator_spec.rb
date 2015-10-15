@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe Html::EventExpensePresenter, type: :presenter do
 
-  describe "#amount" do
+  describe '#amount' do
     it 'formats the amount' do
       presenter = present(build(:event_expense, amount: 20))
       expect(presenter.amount).to eql '$20.00'

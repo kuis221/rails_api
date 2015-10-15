@@ -35,11 +35,11 @@ describe EventExpense, type: :model do
     let(:campaign) { create(:campaign) }
     let(:event) { create(:event, campaign: campaign) }
 
-    describe "when a max is set for the campaign" do
+    describe 'when a max is set for the campaign' do
       before do
         event.campaign.update_attribute(
-          :modules, {'expenses' => {'settings' => { 'range_min' => '1',
-                                                  'range_max' => '2' }}})
+          :modules, 'expenses' => { 'settings' => { 'range_min' => '1',
+                                                    'range_max' => '2' } })
       end
 
       it 'should not allow create more than two event_expenses for the event' do
@@ -52,7 +52,7 @@ describe EventExpense, type: :model do
 
       it 'correctly displays a message when max is set to 1' do
         event.campaign.update_attribute(
-          :modules, {'expenses' => {'settings' => { 'range_max' => '1' }}})
+          :modules, 'expenses' => { 'settings' => { 'range_max' => '1' } })
         create(:event_expense, event: event)
         event_expense = build(:event_expense, event: event)
         expect(event_expense.save).to be_falsey
@@ -61,11 +61,11 @@ describe EventExpense, type: :model do
       end
     end
 
-    describe "when a max is not set for the campaing" do
+    describe 'when a max is not set for the campaing' do
       before do
         event.campaign.update_attribute(
-          :modules, {'expenses' => {'settings' => { 'range_min' => '1',
-                                                    'range_max' => '' }}})
+          :modules, 'expenses' => { 'settings' => { 'range_min' => '1',
+                                                    'range_max' => '' } })
       end
 
       it 'allows create any number of comments for the event' do

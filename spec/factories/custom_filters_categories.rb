@@ -13,7 +13,7 @@
 
 FactoryGirl.define do
   factory :custom_filters_category do
-    name "My Filters"
+    name 'My Filters'
     company_id nil
   end
 end

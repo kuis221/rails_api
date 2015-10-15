@@ -49,7 +49,6 @@ module Api
         @areas = current_company.areas.active.accessible_by_user(current_company_user).order(:name)
       end
 
-
       api :GET, '/api/v1/areas/:id/cities', 'Get a list of cities for an Area'
       param :id, :number, required: true, desc: "The area's ID."
       see 'areas#index'

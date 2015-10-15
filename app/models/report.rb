@@ -222,7 +222,7 @@ class Report < ActiveRecord::Base
         values = empty_values.dup
       end
       value_fields.each do |name, label|
-        k = column_fields.map { |c| if c == VALUES then label else result[c] end }.join('||')
+        k = column_fields.map { |c| c == VALUES ? label : result[c] }.join('||')
         values[k] = result[name].to_f if values.key?(k)
       end
       previous_key = key
@@ -664,9 +664,9 @@ class Report < ActiveRecord::Base
   def scoped_columns(s, c, prefix = '', index = 0)
     begin
       if c.any? && column = c.first
-        if column['field'] == VALUES
+        if column['field'.freeze] == VALUES
           values.map do |v|
-            if v.kpi.present? && (v.kpi.is_segmented? || v.kpi.kpi_type == 'count')
+            if v.kpi.present? && (v.kpi.is_segmented? || v.kpi.kpi_type == 'count'.freeze)
               v.kpi.kpis_segments.map { |segment| scoped_columns(s, c.slice(1, c.count), "#{prefix}#{v['label']}: #{segment.text}||") }
             elsif v.form_field.present? && v.form_field.is_optionable?
               v.form_field.options.map { |option| scoped_columns(s, c.slice(1, c.count), "#{prefix}#{v['label']}: #{option.name}||") }
@@ -675,7 +675,9 @@ class Report < ActiveRecord::Base
             end
           end
         else
-          values = ActiveRecord::Base.connection.select_values(s.select("DISTINCT(#{column.table_column[0]}) as value").order('1'))
+          values = ActiveRecord::Base.connection.select_values(
+            s.select("DISTINCT(#{column.table_column[0]}) as value").order('1').to_sql
+          )
           values.map do |v|
             scoped_columns(s.where(column.table_column[0] => v), c.slice(1, c.count), "#{prefix}#{v}||", index + 1)
           end
