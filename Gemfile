@@ -98,7 +98,7 @@ gem 'jquery-rails'
 group :test, :development do
   gem 'spring'
   gem 'spring-commands-rspec'
-  gem 'factory_girl_rails'
+  gem 'factory_girl_rails', require: false
   gem 'rspec-rails', '~> 3.3.3'
   gem 'populator'
   gem 'sunspot_solr', git: 'https://github.com/sunspot/sunspot.git'
