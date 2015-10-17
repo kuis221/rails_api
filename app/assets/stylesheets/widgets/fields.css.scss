@@ -73,10 +73,16 @@ Styleguide 8.1
 			}
 		}
 		.calculation-total-amount {
-			margin-right: 10px;
+			margin-right: 11px;
 			margin-left: 10px;
 			min-width: 80px;
     		display: inline-block;
+		}
+	}
+	input.calculation-field {
+		text-align: right;
+		&:focus {
+			text-align: left;
 		}
 	}
 }
