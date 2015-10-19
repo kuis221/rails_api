@@ -19,6 +19,7 @@ require 'database_cleaner'
 require 'capybara-screenshot'
 require 'capybara-screenshot/rspec'
 require 'sms-spec'
+require 'factory_girl'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.

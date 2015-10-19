@@ -92,7 +92,7 @@ jQuery ->
 
 		for element in $('[data-segment-field-id="' + segmentFieldId + '"].segment-field')
 			if $(element).val().match(/^[0-9]+$/)
-			  total += parseInt($(element).val(), 10)
+				total += parseInt($(element).val(), 10)
 
 		progressClass = (if total == 100 then 'progress-success' else (total < 100 ? 'progress-info' : 'progress-danger'))
 		textClass = (if total == 100 then 'text-success' else (total < 100 ? 'text-info' : 'text-error'))
@@ -100,9 +100,9 @@ jQuery ->
 		progressBarError = $('#progress-error-' + segmentFieldId)
 
 		progressBarItem
-		  .removeClass('text-success text-error text-info').addClass(textClass)
-		  .find('.progress').removeClass('progress-success progress-info progress-danger').addClass(progressClass).end()
-		  .find('.bar').css({width: total+'%'}).end().find('.counter').text(total+'%');
+			.removeClass('text-success text-error text-info').addClass(textClass)
+			.find('.progress').removeClass('progress-success progress-info progress-danger').addClass(progressClass).end()
+			.find('.bar').css({width: total+'%'}).end().find('.counter').text(total+'%');
 
 		$("#total-field-" + segmentFieldId).val(if total then total else '')
 		true
@@ -142,13 +142,25 @@ jQuery ->
 				operation   = $wrapper.find('.calculation-field').data('operation')
 				$options.keyup () ->
 					siblings = $('.field-option[data-field-id=' + $(this).data('field-id') + ']:not(.calculation-total-field) input')
-					total = $.map(siblings, (input) ->
-					  parseFloat($(input).val(), 10) || 0
-					).reduce (a, b) ->
-						eval "a #{operation} b"
+					values =  $.map $.map(siblings, (input)-> $(input).val()).filter((v)-> v != '' && typeof v isnt 'undefined'), (v) ->
+						parseFloat(v, 10) || 0
+					if values.length > 0
+						total = values.reduce (a, b) ->
+							eval "a #{operation} b"
+					else
+						total = ''
+					total = '' if operation in ['/', '*'] && values.length < 2
+					if isNaN(total)
+						total = ''
+					else if total && isFinite(total)
+						total = ((total) + 0.00001).toFixed(4)
+					total = (total + '').replace(/\.([^0]*)0+/, '.$1').replace(/\.$/, '')
 					$total.text(total)
 				true
 			)(wrapper)
+
+	$(document).on 'propertychange input', '.calculation-field', () ->
+		$(this).val($(this).val().replace(/[^\d\.]+/g,''));
 
 	attachPluginsToElements = () ->
 		$('input.datepicker').datepicker
@@ -615,7 +627,7 @@ jQuery ->
 		$filterSidebar.positioning = false
 		$window.bind("scroll resize DOMSubtreeModified", () ->
 			now = new Date().getTime() # Add a small delay between each execution because FF seems to
-									   # trigger this too frequently drastically affecting the performance
+										 # trigger this too frequently drastically affecting the performance
 			if $.loadingContent is 0 && lastTimestamp < (now - 50)
 				lastTimestamp = now
 				if $window.width() >= 979 # For the responsive design
@@ -700,6 +712,7 @@ jQuery ->
 	$(document).on 'blur', 'input.calculation-field', () ->
 		if !$(this).val()
 			$(this).val(0).valid()
+			$(this).keyup()
 
 	$(document).on 'change', 'select.select', () ->
 		$(this).valid()
@@ -732,7 +745,7 @@ jQuery ->
 	, "Field cannot exceed 100%");
 
 	$.validator.addMethod('greaterthan',  (value, el, param) ->
-	    return value > param;
+			return value > param;
 	,  jQuery.validator.format("Must be greater than {0}"));
 
 	$.validator.addClassRules("segment-total", { segmentTotalMax: true, segmentTotalRequired: true });
@@ -743,11 +756,10 @@ jQuery ->
 		return (value == '' || (/^[0-9]+$/.test(value) && parseInt(value) <= 100));
 	, ' ');
 
-	$.validator.addMethod("calculation-field", (value, element) ->
-		if !$(element).val()
-			$(element).val(0).valid()
-		return true;
-	, ' ');
+	$.validator.addMethod("calculation-field-divide", (value, element) ->
+		index = $(element).data('index')
+		return $(element).val() == '' || parseFloat($(element).val(), 10) > 0 || index is 0
+	, 'You must divide by a number greater than zero');
 
 	$.validator.addMethod("likert-field", (value, element) ->
 		if $('.likert-scale-' + $(element).data('likert-error-id')).closest('.form_field_likert_scale').find('label').hasClass('optional')
