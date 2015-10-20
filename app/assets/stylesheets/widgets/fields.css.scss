@@ -12,22 +12,24 @@ Styleguide 8.1
 			&:after {
 				position: absolute;
 				right: 5px;
-				top: 10px;
+				top: calc(50% - 11px);
 				font-size: 	20px;
 				font-weight: bold;
 				color: $silver;
+				font-family: 'icons';
+				font-size: 10px;
 			}
 			&.add:after {
-				content: asset-url('add-24.svg');
+				content: "\e800";
 			}
 			&.subtract:after {
-				content: asset-url('subtract-24.svg');
+				content: "\e803";
 			}
 			&.divide:after {
-				content: asset-url('divide-24.svg');
+				content: "\e801";
 			}
 			&.multiply:after {
-				content: asset-url('multiply-24.svg');
+				content: "\e802";
 			}
 		}
 		&:first-child td.operation {

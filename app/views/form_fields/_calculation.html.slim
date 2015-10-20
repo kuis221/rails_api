@@ -1,11 +1,15 @@
 - total = 0
 span.form-result-label= form_field.name
-- form_field.options.each do |field_option|
-  - total += (result.value[field_option.id.to_s].to_f || 0)
-  .calculation-segment
-    label.pull-left= field_option.name
-    .segment-value= number_with_delimiter(result.value[field_option.id.to_s] || 0)
+table.calculation-field
+  - form_field.options.each do |field_option|
+    - total += (result.value[field_option.id.to_s].to_f || 0)
+    tr.field-option.calculation-segment
+      td.operation class="#{CalculationInput::OPERATOR_CLASSES[form_field.operation]}"
+        = field_option.name
+      td.segment-value= number_with_delimiter(result.value[field_option.id.to_s] || 0)
 
-.calculation-segment.calculation-total
-  label TOTAL:
-  .segment-value= number_with_delimiter(total || 0)
+  tr.field-option.calculation-total-field
+    td colspan=2
+     div
+      span.calculation-label= form_field.calculation_label + ':'
+      span.calculation-total-amount= number_with_precision(form_field.result_total(result) || 0, strip_insignificant_zeros: true, delimiter: ',')

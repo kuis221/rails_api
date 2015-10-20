@@ -1,7 +1,7 @@
-# FormField unless defined? FormField
-# require 'form_field/time'
-# require 'form_field/date'
-# require 'form_field/place'
+FormField unless defined? FormField
+require 'form_field/time'
+require 'form_field/date'
+require 'form_field/place'
 
 # == Schema Information
 #

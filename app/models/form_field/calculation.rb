@@ -65,14 +65,19 @@ class FormField::Calculation < FormField::Hashed
   end
 
   def format_json(result)
+    value = result_total(result)
     super.merge(
-      value: result ? result.value.map { |s| s[1].to_f }.reduce(operation.to_sym) : nil,
+      value: value ? convert_string_to_int_or_float(value.to_s) : nil,
       segments: options_for_input(result).map do |s|
         val = result ? result.value[s[1].to_s] : nil
         val = convert_string_to_int_or_float(val) unless val.blank?
         { id: s[1], text: s[0], value: val }
       end
     )
+  end
+
+  def result_total(result)
+    result ? result.value.map { |s| s[1].to_f }.reduce(operation.to_sym) : nil
   end
 
   def min_options_allowed
