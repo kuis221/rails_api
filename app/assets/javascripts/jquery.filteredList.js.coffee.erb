@@ -30,7 +30,8 @@ $.widget 'nmk.filteredList', {
 		emptyFilterResultsMessage: 'There are no results matching the filtering criteria you selected.',
 		emptyFilterResultsMessageLine2: 'Please select different filtering criteria.',
 		emptyStateImage: null,
-		canCreatePermission: false
+		canCreatePermission: false,
+		watchURLParams: true
 	},
 
 	_create: () ->
@@ -149,7 +150,7 @@ $.widget 'nmk.filteredList', {
 
 		@listContainer = $(@options.listContainer)
 
-		if window.location.search
+		if window.location.search && @options.watchURLParams
 			@_parseQueryString window.location.search
 		else
 			@_parseQueryString @options.defaultParams
@@ -649,7 +650,7 @@ $.widget 'nmk.filteredList', {
 
 	paramsQueryString: () ->
 		@_paramsQueryString ||=
-			if document.location.search
+			if document.location.search && @options.watchURLParams
 				document.location.search.replace(/^\?/, '')
 			else if not @initialized && @options.defaultParams
 				@options.defaultParams
