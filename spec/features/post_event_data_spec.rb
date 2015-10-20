@@ -261,7 +261,7 @@ feature 'Post Event Data' do
 
         expect(page).to have_content('Sum Opt1 100')
         expect(page).to have_content('Sum Opt2 2,000')
-        expect(page).to have_content('TOTAL:2,100.0')
+        expect(page).to have_content('TOTAL:2,100')
       end
 
       visit event_path(event)

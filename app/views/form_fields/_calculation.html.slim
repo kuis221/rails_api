@@ -12,4 +12,4 @@ table.calculation-field
     td colspan=2
      div
       span.calculation-label= form_field.calculation_label + ':'
-      span.calculation-total-amount= number_with_precision(form_field.result_total(result) || 0, strip_insignificant_zeros: true)
+      span.calculation-total-amount= number_with_precision(form_field.result_total(result) || 0, strip_insignificant_zeros: true, delimiter: ',')

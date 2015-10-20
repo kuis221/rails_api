@@ -570,13 +570,12 @@ FormField = Class.extend {
 			)
 		])
 
-	optionsField: (type='option', title=null) ->
+	optionsField: (type='option', titles=null) ->
 		list = if type is 'statement' then @attributes.statements else @attributes.options
 		min_fields_allowed = if type is 'statement' then @attributes.min_statements_allowed else @attributes.min_options_allowed
 		visible_items = list.filter (item) -> not item._destroy
-		titles = {'option': ['Option','Options'], 'statement': ['Statement', 'Statements']}
-		title ||= titles[type][1]
-		$('<div class="control-group field-options" data-type="'+type+'">').append($('<label class="control-label">').text(title)).append(
+		titles ||= {'option': ['Option','Options'], 'statement': ['Statement', 'Statements']}[type]
+		$('<div class="control-group field-options" data-type="'+type+'">').append($('<label class="control-label">').text(titles[1])).append(
 			$.map list, (option, index) =>
 				optionHidden = option._destroy is '1'
 				$('<div class="controls field-option">').addClass(if @_optionIsExcluded(option) then 'disabled-option' else '' ).data('option', option).append([
@@ -599,7 +598,7 @@ FormField = Class.extend {
 										if @attributes.settings.disabled_segments
 											index = @attributes.settings.disabled_segments.indexOf("#{option.id}")
 											@attributes.settings.disabled_segments.splice(index, 1)
-											$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
+											$('.field-options[data-type='+type+']').replaceWith @optionsField(type, titles)
 											@refresh()
 											@form.setModified()
 										false
@@ -612,7 +611,7 @@ FormField = Class.extend {
 												@attributes.settings ||= {}
 												@attributes.settings.disabled_segments ||= []
 												@attributes.settings.disabled_segments.push "#{option.id}"
-												$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
+												$('.field-options[data-type='+type+']').replaceWith @optionsField(type, titles)
 												@refresh()
 												@form.setModified()
 										false
@@ -624,9 +623,9 @@ FormField = Class.extend {
 									$('<div class="option-wrapper"><a href="#" class="icon-plus-sign" title="Add option after this"></a></div>').on 'click', (e) =>
 										option = $(e.target).closest('.field-option').data('option')
 										index = list.indexOf(option)+1
-										list.splice(index,0, {id: null, name: titles[type][0] + ' ' + (list.length+1), ordering: index})
+										list.splice(index,0, {id: null, name: titles[0] + ' ' + (list.length+1), ordering: index})
 										item.ordering = i for item,i in list
-										$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
+										$('.field-options[data-type='+type+']').replaceWith @optionsField(type, titles)
 										@refresh()
 										@form.setModified()
 										false
@@ -641,14 +640,14 @@ FormField = Class.extend {
 											bootbox.confirm "Removing this " + type + " will remove all the entered data/answers associated with it.<br/>&nbsp;<p>Are you sure you want to do this? This cannot be undone</p>", (result) =>
 												if result
 													option._destroy = '1'
-													$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
+													$('.field-options[data-type='+type+']').replaceWith @optionsField(type, titles)
 													@refresh()
 													@form.setModified()
 										else
 											bootbox.confirm "Are you sure you want to remove this " + type + "?", (result) =>
 												if result
 													list.splice(list.indexOf(option),1)
-													$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
+													$('.field-options[data-type='+type+']').replaceWith @optionsField(type, titles)
 													@refresh()
 													@form.setModified()
 										false
@@ -1285,7 +1284,7 @@ CalculationField = FormField.extend {
 			$('<h4>').text('Field Settings'),
 			@labelField(),
 			@operationField(),
-			@optionsField('option', 'Items'),
+			@optionsField('option', ['Item', 'Items']),
 			@calculationLabelField(),
 			@requiredField()
 		]

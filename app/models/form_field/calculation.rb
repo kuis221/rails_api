@@ -65,8 +65,9 @@ class FormField::Calculation < FormField::Hashed
   end
 
   def format_json(result)
+    value = result_total(result)
     super.merge(
-      value: convert_string_to_int_or_float(result_total(result).to_s),
+      value: value ? convert_string_to_int_or_float(value.to_s) : nil,
       segments: options_for_input(result).map do |s|
         val = result ? result.value[s[1].to_s] : nil
         val = convert_string_to_int_or_float(val) unless val.blank?
