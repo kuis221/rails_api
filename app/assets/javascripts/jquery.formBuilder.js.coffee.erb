@@ -1187,19 +1187,15 @@ CalculationField = FormField.extend {
 		'+':
 			name: 'add'
 			tooltip: 'Add'
-			icon: '<%= asset_path 'add-24.svg' %>'
 		'-':
 			name: 'subtract'
 			tooltip: 'Subtract'
-			icon: '<%= asset_path 'subtract-24.svg' %>'
 		'*':
 			name: 'multiply'
 			tooltip: 'Multiply'
-			icon: '<%= asset_path 'multiply-24.svg' %>'
 		'/':
 			name: 'divide'
 			tooltip: 'Divide'
-			icon: '<%= asset_path 'divide-24.svg' %>'
 
 	init: (form, attributes) ->
 		@form = form
@@ -1272,7 +1268,7 @@ CalculationField = FormField.extend {
 	operationField: () ->
 		oper = @attributes.settings.operation
 		items = $(Object.keys(@operations)).map (index, operation) =>
-			'<a class="has-tooltip btn '+(if oper is operation then 'active' else '')+'" title="'+@operations[operation]['tooltip']+'" data-operation="'+operation+'" href="#"><img src="'+@operations[operation]['icon']+'" /></a>'
+			'<a class="has-tooltip btn '+(if oper is operation then 'active' else '')+'" title="'+@operations[operation]['tooltip']+'" data-operation="'+operation+'" href="#"><i class="icon icon-calculation-'+@operations[operation]['name']+'"></i></a>'
 		$('<div class="control-group calculation-operations">').append(
 			$('<label class="control-label" for="field_name">').text('Operation'),
 			$('<div class="btn-group"></div>').html(items.get().join(''))

@@ -3228,30 +3228,31 @@ body.events.index {
 			.form-result-label {
 				margin-bottom: 20px;
 			}
+			table {
+				width: 450px;
+			}
 			.calculation-segment {
 				min-height: 30px;
-				width: 300px;
+				height: auto;
 				.segment-value {
+					width: 10px;
 					color: $primary-blue;
 					text-align: right;
-					font-weight: bold;
+					font-weight: normal;
 					font-size: 16px;
+					white-space: nowrap;
+					padding-left: 20px;
+				}
+				.operation:after {
+					color: $primary-blue;
+					font-weight: normal;
 				}
 			}
-			.calculation-total {
-				border-top: 2px solid $gray-lighter;
-				margin-top: 5px;
-				padding-top: 10px;
+			.calculation-total-field {
 				text-align: right;
-				label {
-					display: inline-block;
-					width: auto;
-					margin-right: 20px;
-				}
-				.segment-value {
-					font-size: 22px;
-					display: inline-block;
-				}
+			}
+			.calculation-total-amount {
+				color: $primary-blue;
 			}
 		}
 		&.result_percentage {

@@ -672,26 +672,39 @@ $margin-right: 240px;
 		padding: 40px 50px;
 	}
 
-	.calculation-operations .btn-group a.btn {
-		background-color: #CCCCCC;
-	 	width: 60.5px;
-	 	line-height: 24px;
-		display: inline-block;
-		color: $gray;
-		font-size: 14px;
-		border-left: 1px solid rgba(152,152,152,0.3);
-		border-top: 1px solid transparent;
-    	border-bottom: 1px solid transparent;
-		&.active {
-			background-color: white;
-			border-top: 1px solid $silver;
-    		border-bottom: 1px solid $silver;
+	.calculation-operations .btn-group {
+		.tooltip {
+			min-width: 61px;
+			.tooltip-inner {
+				text-align: center;
+			}
+		}
+		a.btn {
+			background-color: #CCCCCC;
+			width: 60.5px;
+			line-height: 24px;
+			display: inline-block;
+			color: $gray;
+			font-size: 14px;
+			border-left: 1px solid rgba(152,152,152,0.3);
+			border-top: 1px solid transparent;
+			border-bottom: 1px solid transparent;
+			font-size: 10px;
 			&:first-child {
-				border-left: 1px solid $silver;
 				border-right: 0;
 			}
-			&:last-child {
-				border-right: 1px solid $silver;
+			&.active {
+				background-color: white;
+				border-top: 1px solid $silver;
+				border-bottom: 1px solid $silver;
+				border-left: 0;
+				&:first-child {
+					border-left: 1px solid $silver;
+					border-right: 0;
+				}
+				&:last-child {
+					border-right: 1px solid $silver;
+				}
 			}
 		}
 	}

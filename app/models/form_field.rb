@@ -15,7 +15,6 @@
 #  kpi_id         :integer
 #  multiple       :boolean
 #
-
 class FormField < ActiveRecord::Base
   has_paper_trail
 
