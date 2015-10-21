@@ -501,7 +501,7 @@ describe FormFieldDataExporter, type: :model do
         expect(subject.custom_fields_to_export_values(activity)).to eq([0.3, 0.7])
       end
 
-      it 'includes CALCULATION fields that are not linked to a KPI' do
+      it 'includes CALCULATION(ADD) fields that are not linked to a KPI' do
         field = create(:form_field_calculation, name: 'My Calculation Field',
           fieldable: activity_type, options: [
             option1 = create(:form_field_option, name: 'Sum Opt1'),
@@ -516,6 +516,63 @@ describe FormFieldDataExporter, type: :model do
         ])
         expect(subject.custom_fields_to_export_values(activity)).to eq([
           '20', '50', 70.0
+        ])
+      end
+
+      it 'includes CALCULATION(SUBTRACT) fields that are not linked to a KPI' do
+        field = create(:form_field_calculation, name: 'My Calculation Field',
+          operation: '-',
+          fieldable: activity_type, options: [
+            option1 = create(:form_field_option, name: 'Subtract Opt1'),
+            option2 = create(:form_field_option, name: 'Subtract Opt2')])
+
+        activity.results_for([field]).first.value = { option1.id.to_s => 80, option2.id.to_s => 10 }
+        activity.save
+        expect(activity.save).to be_truthy
+
+        expect(subject.custom_fields_to_export_headers).to eq([
+          'MY CALCULATION FIELD: SUBTRACT OPT1', 'MY CALCULATION FIELD: SUBTRACT OPT2', 'MY CALCULATION FIELD: TOTAL'
+        ])
+        expect(subject.custom_fields_to_export_values(activity)).to eq([
+          '80', '10', 70.0
+        ])
+      end
+
+      it 'includes CALCULATION(DIVIDE) fields that are not linked to a KPI' do
+        field = create(:form_field_calculation, name: 'My Calculation Field',
+          operation: '/',
+          fieldable: activity_type, options: [
+            option1 = create(:form_field_option, name: 'Divide Opt1'),
+            option2 = create(:form_field_option, name: 'Divide Opt2')])
+
+        activity.results_for([field]).first.value = { option1.id.to_s => 140, option2.id.to_s => 2 }
+        activity.save
+        expect(activity.save).to be_truthy
+
+        expect(subject.custom_fields_to_export_headers).to eq([
+          'MY CALCULATION FIELD: DIVIDE OPT1', 'MY CALCULATION FIELD: DIVIDE OPT2', 'MY CALCULATION FIELD: TOTAL'
+        ])
+        expect(subject.custom_fields_to_export_values(activity)).to eq([
+          '140', '2', 70.0
+        ])
+      end
+
+      it 'includes CALCULATION(MULTIPLY) fields that are not linked to a KPI' do
+        field = create(:form_field_calculation, name: 'My Calculation Field',
+          operation: '*',
+          fieldable: activity_type, options: [
+            option1 = create(:form_field_option, name: 'Multiply Opt1'),
+            option2 = create(:form_field_option, name: 'Multiply Opt2')])
+
+        activity.results_for([field]).first.value = { option1.id.to_s => 35, option2.id.to_s => 2 }
+        activity.save
+        expect(activity.save).to be_truthy
+
+        expect(subject.custom_fields_to_export_headers).to eq([
+          'MY CALCULATION FIELD: MULTIPLY OPT1', 'MY CALCULATION FIELD: MULTIPLY OPT2', 'MY CALCULATION FIELD: TOTAL'
+        ])
+        expect(subject.custom_fields_to_export_values(activity)).to eq([
+          '35', '2', 70.0
         ])
       end
 

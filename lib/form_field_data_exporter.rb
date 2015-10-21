@@ -67,15 +67,14 @@ class FormFieldDataExporter < BaseExporter
             end
           end if @result.value.is_a?(Hash)
         else
-          sum = 0
           @result.form_field.options_for_input.each do |option|
             value = @result.value[option[1].to_s]
-            sum += value.to_f if value
             key = @fields_mapping["#{@result.form_field.id}_#{option[1]}"]
             resource_values[key] = value
           end
           if @result.form_field.type == CALCULATION_TYPE
-            resource_values[@fields_mapping["#{@result.form_field.id}__TOTAL"]] = sum
+            total = @result.form_field.result_total(@result)
+            resource_values[@fields_mapping["#{@result.form_field.id}__TOTAL"]] = total
           end
         end
       else
