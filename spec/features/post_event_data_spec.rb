@@ -202,7 +202,10 @@ feature 'Post Event Data' do
       expect(page).to have_content 'SUBTRACT TOTAL: 100'
 
       fill_in 'Divide Opt1', with: '20'
+      fill_in 'Divide Opt2', with: '0'
+      expect(page).to have_content 'You must divide by a number different than 0'
       fill_in 'Divide Opt2', with: '2'
+      expect(page).to_not have_content 'You must divide by a number different than 0'
       expect(page).to have_content 'DIVIDE TOTAL: 10'
 
       fill_in 'Multiply Opt1', with: '2'

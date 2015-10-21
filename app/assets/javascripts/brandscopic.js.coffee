@@ -138,7 +138,6 @@ jQuery ->
 			((w) ->
 				$wrapper = $(w)
 				$options = $wrapper.find('.field-option:not(.calculation-total-field)')
-				$total   = $wrapper.find('.calculation-total-amount')
 				operation   = $wrapper.find('.calculation-field').data('operation')
 				$options.keyup () ->
 					siblings = $('.field-option[data-field-id=' + $(this).data('field-id') + ']:not(.calculation-total-field) input')
@@ -155,12 +154,13 @@ jQuery ->
 					else if total && isFinite(total)
 						total = ((total) + 0.00001).toFixed(4)
 					total = (total + '').replace(/\.([^0]*)0+/, '.$1').replace(/\.$/, '')
-					$total.text(total)
+					$wrapper.find('.calculation-total-amount').text(total)
+					$wrapper.find('.calculation-total').val(total).valid()
 				true
 			)(wrapper)
 
 	$(document).on 'propertychange input', '.calculation-field', () ->
-		$(this).val($(this).val().replace(/[^\d\.]+/g,''));
+		$(this).val($(this).val().replace(/[^\d\.\-]+/g,''));
 
 	attachPluginsToElements = () ->
 		$('input.datepicker').datepicker
@@ -240,6 +240,10 @@ jQuery ->
 			if element[0].value == '' && element.closest(".control-group").find("span.help-inline").length > 0
 				$.noop
 			else
+				container = element.closest('.control-group').find('.field-error-container')
+				if container.length
+					container.html('').append error
+					return
 				label = element.closest(".control-group").find("label.control-label[for=\"#{element.attr('id')}\"]")
 				label = element.closest(".control-group").find("label.control-label") if label.length is 0
 				if element.is('input[type=file]')
@@ -756,10 +760,18 @@ jQuery ->
 		return (value == '' || (/^[0-9]+$/.test(value) && parseInt(value) <= 100));
 	, ' ');
 
-	$.validator.addMethod("calculation-field-divide", (value, element) ->
+	$.validator.addMethod("calculation-field-segment-divide", (value, element) ->
 		index = $(element).data('index')
-		return $(element).val() == '' || parseFloat($(element).val(), 10) > 0 || index is 0
-	, 'You must divide by a number greater than zero');
+		return $(element).val() == '' || parseFloat($(element).val(), 10) isnt 0 || index is 0
+	, ' ');
+
+	$.validator.addMethod("calculation-field-divide", (value, element) ->
+		group = $(element).data('group')
+		for element, index in $('[data-group="'+group+'"]').get()
+			if index > 0 && $(element).val() is '0'
+				return false
+		true
+	, 'You must divide by a number different than 0');
 
 	$.validator.addMethod("likert-field", (value, element) ->
 		if $('.likert-scale-' + $(element).data('likert-error-id')).closest('.form_field_likert_scale').find('label').hasClass('optional')

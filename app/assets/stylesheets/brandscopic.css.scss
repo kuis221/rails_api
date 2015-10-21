@@ -99,6 +99,10 @@ h1, h2, h3{
 	text-transform: uppercase;
 }
 
+.inline-block {
+	display: inline-block;
+}
+
 
 
 // GENERAL STYLES
@@ -2848,8 +2852,12 @@ ul.ui-widget-content{
 			margin-bottom: 15px;
 		}
 	}
-	.form_field_percentage,
 	.form_field_calculation {
+		input.calculation-total {
+			display: none;
+		}
+	}
+	.form_field_percentage {
 		.help-inline {
 			float: left;
 			padding-left: 0;
