@@ -194,7 +194,7 @@ class FormFieldDataExporter < BaseExporter
           else
             s = field.options_for_input.sort { |left, right| left[1] <=> right[1] }
             s.map! { |option| ["#{field.id}_#{option[1]}", "#{field.name}: #{option[0]}"] }
-            s.push(["#{field.id}__TOTAL", "#{field.name}: TOTAL"]) if field.type == CALCULATION_TYPE
+            s.push(["#{field.id}__TOTAL", "#{field.name}: #{field.calculation_label}"]) if field.type == CALCULATION_TYPE
           end
           s
         else
