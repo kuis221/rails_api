@@ -78,7 +78,7 @@ class FormField
     end
 
     def result_total(result)
-      return if result.nil? || result.value.blank?
+      return if result.nil? || result.value.blank? || result.value.is_a?(String)
       result ? result.value.map { |s| s[1].to_f }.reduce(operation.to_sym) : nil
     end
 
