@@ -71,7 +71,7 @@ class FormField::Checkbox < FormField::Hashed
   def result_value(result)
     (
       result['hash_value'].try(:keys) ||
-      (result['value'] if result['value'].present?) ||
+      (Array(result['value']) if result['value'].present?) ||
       []
     ).map(&:to_i)
   end
