@@ -7,6 +7,7 @@ class FormFieldDataExporter < BaseExporter
   CHECKBOX_TYPE = 'FormField::Checkbox'.freeze
   NUMBER = 'Number'.freeze
   STRING = 'String'.freeze
+  YES = 'Yes'.freeze
 
   attr_accessor :params, :company_user, :resource_class
 
@@ -47,7 +48,7 @@ class FormFieldDataExporter < BaseExporter
         elsif @result.form_field.type == CHECKBOX_TYPE
           @result.value.each do |v|
             key = @fields_mapping["#{@result.form_field.id}_#{v}"]
-            resource_values[key] = 'Yes'
+            resource_values[key] = YES
           end
         elsif @result.form_field.type == LIKERT_SCALE_TYPE
           @likert_statements_mapping[@result.form_field.id] ||= Hash[@result.form_field.statements.map { |s| [s.id.to_s, s.name] }]
@@ -186,13 +187,15 @@ class FormFieldDataExporter < BaseExporter
             else
               s = []
               field.statements.pluck(:name, :id).each do |statement|
-                o = field.options_for_input.sort { |left, right| left[1] <=> right[1] }
+                o = field.options_for_input.dup
+                o.sort! { |left, right| left[1] <=> right[1] }  unless campaign_ids.count == 1
                 o.map! { |option| ["#{field.id}_#{statement[1]}_#{option[1]}", "#{field.name}: #{statement[0]} - #{option[0]}"] }
                 s.concat o
               end
             end
           else
-            s = field.options_for_input.sort { |left, right| left[1] <=> right[1] }
+            s = field.options_for_input.dup
+            s.sort! { |left, right| left[1] <=> right[1] } unless campaign_ids.count == 1
             s.map! { |option| ["#{field.id}_#{option[1]}", "#{field.name}: #{option[0]}"] }
             s.push(["#{field.id}__TOTAL", "#{field.name}: #{field.calculation_label}"]) if field.type == CALCULATION_TYPE
           end
