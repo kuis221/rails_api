@@ -57,8 +57,8 @@ describe FormFieldDataExporter, type: :model do
       it 'return empty if no options were selected in checkbox fields' do
         field = create(:form_field_checkbox, name: 'My Chk Field',
           fieldable: campaign, options: [
-            option1 = create(:form_field_option, name: 'Chk Opt1'),
-            option2 = create(:form_field_option, name: 'Chk Opt2')])
+            create(:form_field_option, name: 'Chk Opt1'),
+            create(:form_field_option, name: 'Chk Opt2')])
 
         event.results_for([field]).first.value = {}
         event.save
@@ -212,6 +212,43 @@ describe FormFieldDataExporter, type: :model do
         expect(subject.custom_fields_to_export_values(event)).to eq([
           'My Brand',
           'My Brand Marque'])
+      end
+
+      describe 'form field option sorting' do
+        describe 'when only one campaign is selected' do
+          it 'orders the options by the ordering field' do
+            create(:form_field_checkbox, name: 'Chk',
+              fieldable: campaign, options: [
+                create(:form_field_option, name: 'OPT X', ordering: 2),
+                create(:form_field_option, name: 'OPT Y', ordering: 3),
+                create(:form_field_option, name: 'OPT Z', ordering: 1)])
+
+            expect(subject.custom_fields_to_export_headers).to eq([
+              'CHK: OPT Z', 'CHK: OPT X', 'CHK: OPT Y'])
+          end
+        end
+
+        describe 'when more than one campaign is selected' do
+          let(:campaign2) { create(:campaign, company: company) }
+          let(:params) { { campaign: [campaign.id, campaign2.id] } }
+
+          it 'orders the options by id' do
+            create(:form_field_checkbox, name: 'Chk',
+              fieldable: campaign, options: [
+                create(:form_field_option, name: 'OPT X', ordering: 2),
+                create(:form_field_option, name: 'OPT Y', ordering: 3),
+                create(:form_field_option, name: 'OPT Z', ordering: 1)])
+
+            create(:form_field_checkbox, name: 'Chk',
+              fieldable: campaign2, options: [
+                create(:form_field_option, name: 'OPT B', ordering: 1),
+                create(:form_field_option, name: 'OPT A', ordering: 2),
+                create(:form_field_option, name: 'OPT C', ordering: 3)])
+
+            expect(subject.custom_fields_to_export_headers).to eq([
+              'CHK: OPT X', 'CHK: OPT Y', 'CHK: OPT Z', 'CHK: OPT B', 'CHK: OPT A', 'CHK: OPT C'])
+          end
+        end
       end
 
       describe 'form fields merging' do
