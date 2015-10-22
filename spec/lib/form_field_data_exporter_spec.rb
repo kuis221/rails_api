@@ -503,6 +503,7 @@ describe FormFieldDataExporter, type: :model do
 
       it 'includes CALCULATION(ADD) fields that are not linked to a KPI' do
         field = create(:form_field_calculation, name: 'My Calculation Field',
+          calculation_label: 'GRAND TOTAL',
           fieldable: activity_type, options: [
             option1 = create(:form_field_option, name: 'Sum Opt1'),
             option2 = create(:form_field_option, name: 'Sum Opt2')])
@@ -512,7 +513,7 @@ describe FormFieldDataExporter, type: :model do
         expect(activity.save).to be_truthy
 
         expect(subject.custom_fields_to_export_headers).to eq([
-          'MY CALCULATION FIELD: SUM OPT1', 'MY CALCULATION FIELD: SUM OPT2', 'MY CALCULATION FIELD: TOTAL'
+          'MY CALCULATION FIELD: SUM OPT1', 'MY CALCULATION FIELD: SUM OPT2', 'MY CALCULATION FIELD: GRAND TOTAL'
         ])
         expect(subject.custom_fields_to_export_values(activity)).to eq([
           '20', '50', 70.0
@@ -521,7 +522,7 @@ describe FormFieldDataExporter, type: :model do
 
       it 'includes CALCULATION(SUBTRACT) fields that are not linked to a KPI' do
         field = create(:form_field_calculation, name: 'My Calculation Field',
-          operation: '-',
+          operation: '-', calculation_label: 'REMAINING',
           fieldable: activity_type, options: [
             option1 = create(:form_field_option, name: 'Subtract Opt1'),
             option2 = create(:form_field_option, name: 'Subtract Opt2')])
@@ -531,7 +532,7 @@ describe FormFieldDataExporter, type: :model do
         expect(activity.save).to be_truthy
 
         expect(subject.custom_fields_to_export_headers).to eq([
-          'MY CALCULATION FIELD: SUBTRACT OPT1', 'MY CALCULATION FIELD: SUBTRACT OPT2', 'MY CALCULATION FIELD: TOTAL'
+          'MY CALCULATION FIELD: SUBTRACT OPT1', 'MY CALCULATION FIELD: SUBTRACT OPT2', 'MY CALCULATION FIELD: REMAINING'
         ])
         expect(subject.custom_fields_to_export_values(activity)).to eq([
           '80', '10', 70.0
