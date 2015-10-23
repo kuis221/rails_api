@@ -29,13 +29,15 @@ describe FormField::Dropdown, type: :model do
         fieldable: campaign, options: [
           option1 = create(:form_field_option, name: 'Ddwon Opt1'),
           option2 = create(:form_field_option, name: 'Ddwon Opt2'),
-          option3 = create(:form_field_option, name: 'Ddwon Opt3')])
+          option3 = create(:form_field_option, name: 'Ddwon Opt3'),
+          option4 = create(:form_field_option, name: 'Ddwon Opt4')])
 
       event1 = create(:approved_event, campaign: campaign)
       event2 = create(:approved_event, campaign: campaign)
       event3 = create(:approved_event, campaign: campaign)
       event4 = create(:approved_event, campaign: campaign)
       event5 = create(:approved_event, campaign: campaign)
+      event6 = create(:approved_event, campaign: campaign)
 
       event1.results_for([field]).first.value = option1.id
       event1.save
@@ -47,12 +49,17 @@ describe FormField::Dropdown, type: :model do
       event4.save
       event5.results_for([field]).first.value = option3.id
       event5.save
+      event6.results_for([field]).first.value = option4.id
+      event6.save
+
+      FormFieldOption.destroy(option4)
 
       result = field.form_field_results.for_event_campaign(campaign).group(:value).count
 
       expect(result[option1.id.to_s]).to eq(1)
       expect(result[option2.id.to_s]).to eq(1)
       expect(result[option3.id.to_s]).to eq(2)
+      expect(result[option4.id.to_s]).to eq(1)
       expect(result['']).to eq(1)
 
       values =  field.results_for_percentage_chart_for_value(result).sort
