@@ -47,7 +47,7 @@ DROP VIEW IF EXISTS event_data_results;
 CREATE OR REPLACE VIEW event_data_results AS 
 SELECT r.resultable_id event_id, ff.id form_field_id, CASE 
                     WHEN ff.type = 'FormField::Dropdown' OR ff.type = 'FormField::Radio' THEN hstore('value', CASE WHEN ff.kpi_id IS NULL THEN ffo.name ELSE k.text END)
-                    WHEN ff.type = 'FormField::Percentage' OR ff.type = 'FormField::LikertScale' OR ff.type = 'FormField::Summation' THEN r.hash_value
+                    WHEN ff.type = 'FormField::Percentage' OR ff.type = 'FormField::LikertScale' OR ff.type = 'FormField::Calculation' THEN r.hash_value
                     WHEN ff.type = 'FormField::Checkbox' THEN hstore('value', array_to_string(array_agg(CASE WHEN ff.kpi_id IS NULL THEN ffc.name ELSE kc.text END), ', '))
                     ELSE hstore('value', r.value)
                   END as value
@@ -65,7 +65,7 @@ DROP VIEW IF EXISTS activity_results;
 CREATE OR REPLACE VIEW activity_results AS 
 SELECT r.resultable_id activity_id, ff.id form_field_id, CASE 
                     WHEN ff.type = 'FormField::Dropdown' OR ff.type = 'FormField::Radio' THEN hstore('value', ffo.name)
-                    WHEN ff.type = 'FormField::Percentage' OR ff.type = 'FormField::LikertScale' OR ff.type = 'FormField::Summation' THEN r.hash_value
+                    WHEN ff.type = 'FormField::Percentage' OR ff.type = 'FormField::LikertScale' OR ff.type = 'FormField::Calculation' THEN r.hash_value
                     WHEN ff.type = 'FormField::Checkbox' THEN hstore('value', array_to_string(array_agg(ffc.name), ', '))
                     ELSE hstore('value', r.value)
                   END as value

@@ -54,7 +54,7 @@ RSpec.describe DataExtract::EventData, type: :model do
         ["ff_#{field.id}", 'My Numeric Field']])
     end
 
-    it 'returns percentage segments as separte columns' do
+    it 'returns percentage segments as separate columns' do
       subject.params = { 'campaign_id' => [campaign.id] }
       field = create(:form_field_percentage,
                      fieldable: campaign, name: 'My percentage field',
@@ -64,10 +64,28 @@ RSpec.describe DataExtract::EventData, type: :model do
                        option3 = create(:form_field_option, name: 'Opt 3', ordering: 2)]
       )
 
-      expect(subject.exportable_columns.slice(-3, 3)).to eql ([
+      expect(subject.exportable_columns.slice(-3, 3)).to eql([
         ["ff_#{field.id}_#{option2.id}", 'My percentage field: Opt 2'],
         ["ff_#{field.id}_#{option3.id}", 'My percentage field: Opt 3'],
         ["ff_#{field.id}_#{option1.id}", 'My percentage field: Opt 1']])
+    end
+
+    it 'returns calcuations fields as separate columns' do
+      subject.params = { 'campaign_id' => [campaign.id] }
+      field = create(:form_field_calculation,
+                     operation: '+', calculation_label: 'GRAND TOTAL',
+                     fieldable: campaign, name: 'My sum field',
+                     options: [
+                       option2 = create(:form_field_option, name: 'Opt 2', ordering: 1),
+                       option1 = create(:form_field_option, name: 'Opt 1', ordering: 3),
+                       option3 = create(:form_field_option, name: 'Opt 3', ordering: 2)]
+      )
+
+      expect(subject.exportable_columns.slice(-4, 4)).to eql([
+        ["ff_#{field.id}_#{option2.id}", 'My sum field: Opt 2'],
+        ["ff_#{field.id}_#{option3.id}", 'My sum field: Opt 3'],
+        ["ff_#{field.id}_#{option1.id}", 'My sum field: Opt 1'],
+        ["ff_#{field.id}__TOTAL", 'My sum field: GRAND TOTAL']])
     end
 
     it 'returns name for form fields place' do
@@ -75,7 +93,7 @@ RSpec.describe DataExtract::EventData, type: :model do
       field_place1 = create(:form_field_place, name: 'Place A', fieldable: campaign)
       field_place2 = create(:form_field_place, name: 'Place B', fieldable: campaign)
 
-      expect(subject.exportable_columns.slice(-2, 2)).to eql ([
+      expect(subject.exportable_columns.slice(-2, 2)).to eql([
         ["ff_#{field_place1.id}", 'Place A'],
         ["ff_#{field_place2.id}", 'Place B']])
     end
@@ -97,10 +115,32 @@ RSpec.describe DataExtract::EventData, type: :model do
       numeric_field = create(:form_field_number, name: 'My Numeric Field', fieldable: campaign)
 
       expect(subject.columns_definitions).to include(
-        "ff_#{percentage_field.id}_#{option2.id}".to_sym => "join_ff_#{percentage_field.id}.value->'#{option2.id}'",
-        "ff_#{percentage_field.id}_#{option3.id}".to_sym => "join_ff_#{percentage_field.id}.value->'#{option3.id}'",
-        "ff_#{percentage_field.id}_#{option1.id}".to_sym => "join_ff_#{percentage_field.id}.value->'#{option1.id}'",
+        "ff_#{percentage_field.id}_#{option2.id}".to_sym => "COALESCE(NULLIF(join_ff_#{percentage_field.id}.value->'#{option2.id}', ''), '0')::float",
+        "ff_#{percentage_field.id}_#{option3.id}".to_sym => "COALESCE(NULLIF(join_ff_#{percentage_field.id}.value->'#{option3.id}', ''), '0')::float",
+        "ff_#{percentage_field.id}_#{option1.id}".to_sym => "COALESCE(NULLIF(join_ff_#{percentage_field.id}.value->'#{option1.id}', ''), '0')::float",
         "ff_#{numeric_field.id}".to_sym => "join_ff_#{numeric_field.id}.value->'value'"
+      )
+    end
+
+    it 'includes all calculation options including total' do
+      subject.params = { 'campaign_id' => [campaign.id] }
+
+      field = create(:form_field_calculation,
+                     operation: '+', calculation_label: 'GRAND TOTAL',
+                     fieldable: campaign, name: 'My sum field',
+                     options: [
+                       option2 = create(:form_field_option, name: 'Opt 2', ordering: 1),
+                       option1 = create(:form_field_option, name: 'Opt 1', ordering: 3),
+                       option3 = create(:form_field_option, name: 'Opt 3', ordering: 2)]
+      )
+
+      expect(subject.columns_definitions).to include(
+        "ff_#{field.id}_#{option2.id}".to_sym => "COALESCE(NULLIF(join_ff_#{field.id}.value->'#{option2.id}', ''), '0')::float",
+        "ff_#{field.id}_#{option3.id}".to_sym => "COALESCE(NULLIF(join_ff_#{field.id}.value->'#{option3.id}', ''), '0')::float",
+        "ff_#{field.id}_#{option1.id}".to_sym => "COALESCE(NULLIF(join_ff_#{field.id}.value->'#{option1.id}', ''), '0')::float",
+        "ff_#{field.id}__TOTAL".to_sym => "COALESCE(NULLIF(join_ff_#{field.id}.value->'#{option2.id}', ''), '0')::float+"\
+                                          "COALESCE(NULLIF(join_ff_#{field.id}.value->'#{option3.id}', ''), '0')::float+"\
+                                          "COALESCE(NULLIF(join_ff_#{field.id}.value->'#{option1.id}', ''), '0')::float"
       )
     end
   end
@@ -181,8 +221,67 @@ RSpec.describe DataExtract::EventData, type: :model do
             "ff_#{field.id}_#{option3.id}", "ff_#{field.id}_#{option1.id}"]
           subject.default_sort_by = "ff_#{field.id}_#{option2.id}"
           expect(subject.rows).to eql [
-            ['Campaign Absolut FY12',  '5', '60', '35'],
-            ['Campaign Absolut FY12',  '80', '', '20']
+            ['Campaign Absolut FY12',  5.0, 60.0, 35.0],
+            ['Campaign Absolut FY12',  80.0, 0.0, 20.0]
+          ]
+        end
+
+        it 'returns the results for calculation ADD field' do
+          subject.params = { 'campaign_id' => [campaign.id] }
+
+          field = create(:form_field_calculation,
+                         operation: '+', calculation_label: 'GRAND TOTAL', fieldable: campaign,
+                         options: [
+                           option2 = create(:form_field_option, name: 'Opt 2', ordering: 1),
+                           option1 = create(:form_field_option, name: 'Opt 1', ordering: 3),
+                           option3 = create(:form_field_option, name: 'Opt 3', ordering: 2)]
+          )
+
+          event.results_for([field]).first.value = {
+            option2.id.to_s => 5, option1.id.to_s => 35,  option3.id.to_s => '' }
+          expect(event.save).to be_truthy
+
+          event = create(:event, campaign: campaign)
+          event.results_for([field]).first.value = {
+            option2.id.to_s => 10, option1.id.to_s => 90,  option3.id.to_s => 20 }
+          expect(event.save).to be_truthy
+
+          subject.columns = [
+            'campaign_name', "ff_#{field.id}_#{option2.id}", "ff_#{field.id}_#{option3.id}",
+            "ff_#{field.id}_#{option1.id}", "ff_#{field.id}__TOTAL"]
+          subject.default_sort_by = "ff_#{field.id}_#{option2.id}"
+          expect(subject.rows).to eql [
+            ['Campaign Absolut FY12',  5.0, 0.0, 35.0, 40.0],
+            ['Campaign Absolut FY12',  10.0, 20.0, 90.0, 120.0]
+          ]
+        end
+
+        it 'returns the results for calculation MULTIPLY field' do
+          subject.params = { 'campaign_id' => [campaign.id] }
+
+          field = create(:form_field_calculation,
+                         operation: '*', calculation_label: 'GRAND TOTAL', fieldable: campaign,
+                         options: [
+                           option1 = create(:form_field_option, name: 'Opt 1', ordering: 1),
+                           option2 = create(:form_field_option, name: 'Opt 2', ordering: 2)]
+          )
+
+          event.results_for([field]).first.value = {
+            option2.id.to_s => 5, option1.id.to_s => 5 }
+          expect(event.save).to be_truthy
+
+          event = create(:event, campaign: campaign)
+          event.results_for([field]).first.value = {
+            option2.id.to_s => 10, option1.id.to_s => 90 }
+          expect(event.save).to be_truthy
+
+          subject.columns = [
+            'campaign_name', "ff_#{field.id}_#{option2.id}", "ff_#{field.id}_#{option1.id}",
+            "ff_#{field.id}__TOTAL"]
+          subject.default_sort_by = "ff_#{field.id}_#{option2.id}"
+          expect(subject.rows).to eql [
+            ['Campaign Absolut FY12',  5.0, 5.0, 25.0],
+            ['Campaign Absolut FY12',  10.0, 90.0, 900.0]
           ]
         end
 
