@@ -382,6 +382,7 @@ en:
       data_extract/attendance: "Edit Report"
       data_extract/brand_portfolio: "Edit Report"
       data_extract/brand: "Edit Report"
+      data_extract/brand_ambassadors_visit: "Edit Report"
       data_extract/campaign: "Edit Report"
       data_extract/comment: "Edit Report"
       data_extract/contact: "Edit Report"
@@ -419,6 +420,7 @@ en:
       data_extract/attendance: "Deactivate Report"
       data_extract/brand_portfolio: "Deactivate Report"
       data_extract/brand: "Deactivate Report"
+      data_extract/brand_ambassadors_visit: "Deactivate Report"
       data_extract/campaign: "Deactivate Report"
       data_extract/comment: "Deactivate Report"
       data_extract/contact: "Deactivate Report"
@@ -588,6 +590,7 @@ en:
         data_extract/attendance: "Save Report"
         data_extract/brand_portfolio: "Save Report"
         data_extract/brand: "Save Report"
+        data_extract/brand_ambassadors_visit: "Save Report"
         data_extract/campaign: "Save Report"
         data_extract/comment: "Save Report"
         data_extract/contact: "Save Report"
@@ -639,6 +642,7 @@ en:
         data_extract/attendance: "Edit Report"
         data_extract/brand_portfolio: "Edit Report"
         data_extract/brand: "Edit Report"
+        data_extract/brand_ambassadors_visit: "Edit Report"
         data_extract/campaign: "Edit Report"
         data_extract/comment: "Edit Report"
         data_extract/contact: "Edit Report"
@@ -1050,6 +1054,7 @@ en:
   data_exports:
     fields:
       campaign_name: "Campaign"
+      area_name: "Area"
       end_date: "End Date"
       end_time: "End Time"
       start_date: "Start Date"
@@ -1122,6 +1127,8 @@ en:
       reimbursable: "Reimbursable"
       billable: "Billable"
       merchant: "Merchant"
+      employee: "Employee"
+      visit_type: "Visit Type"
     descriptions:
       event:
         campaign_name: "The assigned campaign of the event"
@@ -1354,3 +1361,13 @@ en:
         modified_by: "The person who modified the day part"
         modified_at: "The date the day part was modified"
         active_state: "The active state of the day part (ex., active or inactive)"
+      brand_ambassadors_visit:
+        employee: "The user the visit is assigned to"
+        campaign_name: "The assigned campaign of the visit"
+        area_name: "The assigned area of the visit"
+        city: "The assigned city of the visit"
+        visit_type: "The assigned type of the visit"
+        start_date: "The start date of the visit"
+        end_date: "The end date of the visit"
+        created_at: "The date the visit was created"
+        modified_at: "The date the visit was modified"

@@ -32,6 +32,7 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
 
   scope :active, -> { where(active: true) }
   scope :accessible_by_user, ->(company_user) { where(company_id: company_user.company_id) }
+  scope :filters_between_dates, ->(start_date, end_date) { where(start_date: DateTime.parse(start_date)..DateTime.parse(end_date)) }
 
   has_many :brand_ambassadors_documents, -> { order('attached_assets.file_file_name ASC') },
            class_name: 'BrandAmbassadors::Document', as: :attachable, inverse_of: :attachable,
