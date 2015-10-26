@@ -14,7 +14,9 @@ module DataExtractFieldableBase
           if ff.type == 'FormField::Place'
             { "ff_#{ff.id}".to_sym => "ff_#{ff.id}_place.name" }
           elsif ff.is_hashed_value?
-            Hash[ff.options.map { |o| ["ff_#{ff.id}_#{o.id}".to_sym, "join_ff_#{ff.id}.value->'#{o.id}'"] }]
+            cols = Hash[ff.options.map { |o| ["ff_#{ff.id}_#{o.id}".to_sym, "COALESCE(NULLIF(join_ff_#{ff.id}.value->'#{o.id}', ''), '0')::float"] }]
+            cols.merge!("ff_#{ff.id}__TOTAL".to_sym => cols.values.join(ff.operation)) if ff.type == 'FormField::Calculation'
+            cols
           else
             { "ff_#{ff.id}".to_sym => "join_ff_#{ff.id}.value->'value'" }
           end
@@ -28,11 +30,14 @@ module DataExtractFieldableBase
       form_fields.order(:name).map do |ff|
         if ff.is_hashed_value?
           cols.concat ff.options.map { |o| ["ff_#{ff.id}_#{o.id}", "#{ff.name}: #{o.name}"] }
+          cols.concat [["ff_#{ff.id}__TOTAL", "#{ff.name}: #{ff.calculation_label}"]] if ff.type == 'FormField::Calculation'
+          cols
         else
           cols << ["ff_#{ff.id}", ff.name]
         end
       end.flatten
     end
+    @form_fields_columms
   end
 
   def add_joins_to_scope(s)

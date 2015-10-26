@@ -62,7 +62,8 @@ class FormField::Dropdown < FormField::Hashed
       segments: options_for_input.map do |s|
         { id: s[1],
           text: s[0],
-          value: result ? result.value.to_i.eql?(s[1]) : false }
+          value: result ? result.value.to_i.eql?(s[1]) : false,
+          goal: segment_goal(result, s) }
       end
     )
   end

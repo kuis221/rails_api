@@ -648,7 +648,7 @@ feature 'Brand Ambassadors Visits' do
       end
       Sunspot.commit
 
-      visit brand_ambassadors_visit_path(ba_visit)
+      visit brand_ambassadors_visit_path(ba_visit, test: '22') #test fix watchURLParams in jquery.filteredList.js
 
       within '#events-list' do
         expect(page).to have_content('My Place 1')

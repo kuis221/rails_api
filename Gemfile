@@ -75,6 +75,9 @@ group :development do
   gem 'oink'
   gem 'pry-rails'
   gem 'haml'
+  gem 'better_errors'
+  gem 'binding_of_caller'
+
   gem 'nkss-rails', github: 'nadarei/nkss-rails'
 end
 

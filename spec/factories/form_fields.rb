@@ -126,7 +126,7 @@ FactoryGirl.define do
     ordering 1
   end
 
-  factory :form_field_place, class: ::FormField::Place do
+  factory :form_field_place, class: FormField::Place do
     sequence(:name) { |n| "Place #{n}" }
     type 'FormField::Place'
     ordering 1
@@ -138,7 +138,7 @@ FactoryGirl.define do
     ordering 1
   end
 
-  factory :form_field_time, class: ::FormField::Time do
+  factory :form_field_time, class: FormField::Time do
     sequence(:name) { |n| "Form Field Time #{n}" }
     type 'FormField::Time'
     ordering 1

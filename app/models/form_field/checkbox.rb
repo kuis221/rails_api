@@ -54,7 +54,8 @@ class FormField::Checkbox < FormField::Hashed
       segments: options_for_input.map do |s|
                   { id: s[1],
                     text: s[0],
-                    value: result ? result.value.include?(s[1]) : false }
+                    value: result ? result.value.include?(s[1]) : false,
+                    goal: segment_goal(result, s) }
                 end
     )
   end
@@ -70,7 +71,7 @@ class FormField::Checkbox < FormField::Hashed
   def result_value(result)
     (
       result['hash_value'].try(:keys) ||
-      (result['value'] if result['value'].present?) ||
+      (Array(result['value']) if result['value'].present?) ||
       []
     ).map(&:to_i)
   end

@@ -18,7 +18,7 @@
 class FormField < ActiveRecord::Base
   has_paper_trail
 
-  store :settings, accessors: [:range_format, :range_min, :range_max], coder: YAML
+  store :settings, accessors: [:description, :range_format, :range_min, :range_max], coder: YAML
 
   MIN_OPTIONS_ALLOWED = 1
   MIN_STATEMENTS_ALLOWED = 1
@@ -137,16 +137,22 @@ class FormField < ActiveRecord::Base
 
   def format_json(result)
     value = result ? string_to_value(result.value) : nil
+    resource = result ? result.resultable : nil
     base = {
       field_id: id,
       name: name,
       type: type,
       value: value,
       ordering: ordering,
-      required: required
+      required: required?
     }
     base[:settings] = settings if settings.present?
+    base[:goal] = resource.kpi_goals[kpi_id] unless !resource.respond_to?(:kpi_goals) || is_optionable?
     base[:kpi_id] = kpi_id if kpi.present?
+    base[:description] = kpi.description if kpi.present?
+    base[:description] = description unless description.blank?
+    base[:module] = kpi.nil? || kpi.module.blank? ? 'custom' : kpi.module
+    base[:id] = result.id if result && result.persisted?
     base
   end
 
@@ -317,5 +323,11 @@ class FormField < ActiveRecord::Base
                                       value_is_numeric?(settings['range_min']) &&
                                       value_is_numeric?(settings['range_max']) &&
                                       settings['range_min'].to_i > settings['range_max'].to_i
+  end
+
+  def segment_goal(result, segment)
+    return unless result && kpi.present?
+    resource = result.resultable
+    resource.kpi_goals.key?(kpi_id) ? resource.kpi_goals[kpi_id][s[1]] : nil
   end
 end
