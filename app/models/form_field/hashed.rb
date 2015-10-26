@@ -40,7 +40,7 @@ class FormField::Hashed < FormField
   def results_for_percentage_chart_for_value(result)
     values = result.reject { |k, v| k.blank? || v.nil? || v == '' || v.to_f == 0.0 }
     options_map = Hash[options_for_input.map { |o| [o[1], o[0]] }]
-    values.map { |k, v| [options_map[k.to_i], v] }
+    values.map { |k, v| [options_map[k.to_i], v] unless options_map[k.to_i].blank? }.compact
   end
 
   def percent_of(n, t)
