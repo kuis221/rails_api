@@ -202,7 +202,7 @@ describe Api::V1::UsersController, type: :controller do
 
   describe "GET 'permissions'" do
     it 'should return list of permissions for the current user' do
-      company = create(:company)
+      company = create(:company, id: 99_999)
       create(:company_user, company: company, user: user, role: create(:role, company: company))
       get 'permissions', format: :json
       expect(response).to be_success
