@@ -94,7 +94,7 @@ RSpec.describe DataExtract::BrandAmbassadorsVisit, type: :model do
                                     company: company, role: company_user.role)
         create(:brand_ambassadors_visit,
                visit_type: 'Formal Market Visit', description: 'Another Visit description', company_user: another_visit_user,
-               start_date: '01/25/2015', end_date: '01/25/2015', campaign: campaign,
+               start_date: '01/25/2015', end_date: '01/25/2015', campaign: create(:campaign, name: 'Tropical Lovers', company: company),
                area: create(:area, name: 'Area 2', company_id: company.to_param),
                city: 'Another Test City', company: company)
 
@@ -103,14 +103,14 @@ RSpec.describe DataExtract::BrandAmbassadorsVisit, type: :model do
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
           ['Benito Camelas', 'Imperial FY14', 'Area 1', 'Test City', 'PTO', 'Test Visit description', '01/23/2014', '01/24/2014'],
-          ['Michael Jackson', 'Imperial FY14', 'Area 2', 'Another Test City', 'Formal Market Visit', 'Another Visit description', '01/25/2015', '01/25/2015'],
+          ['Michael Jackson', 'Tropical Lovers', 'Area 2', 'Another Test City', 'Formal Market Visit', 'Another Visit description', '01/25/2015', '01/25/2015'],
           ['Marty McFly', 'Go Pilsen', 'Area 3', 'Last Test City', 'Brand Program', 'Last Visit bla bla', '02/02/2015', '02/23/2015']
         ]
 
         subject.default_sort_by = 'employee'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
-          ['Michael Jackson', 'Imperial FY14', 'Area 2', 'Another Test City', 'Formal Market Visit', 'Another Visit description', '01/25/2015', '01/25/2015'],
+          ['Michael Jackson', 'Tropical Lovers', 'Area 2', 'Another Test City', 'Formal Market Visit', 'Another Visit description', '01/25/2015', '01/25/2015'],
           ['Marty McFly', 'Go Pilsen', 'Area 3', 'Last Test City', 'Brand Program', 'Last Visit bla bla', '02/02/2015', '02/23/2015'],
           ['Benito Camelas', 'Imperial FY14', 'Area 1', 'Test City', 'PTO', 'Test Visit description', '01/23/2014', '01/24/2014']
         ]
@@ -119,15 +119,15 @@ RSpec.describe DataExtract::BrandAmbassadorsVisit, type: :model do
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
           ['Marty McFly', 'Go Pilsen', 'Area 3', 'Last Test City', 'Brand Program', 'Last Visit bla bla', '02/02/2015', '02/23/2015'],
-          ['Michael Jackson', 'Imperial FY14', 'Area 2', 'Another Test City', 'Formal Market Visit', 'Another Visit description', '01/25/2015', '01/25/2015'],
-          ['Benito Camelas', 'Imperial FY14', 'Area 1', 'Test City', 'PTO', 'Test Visit description', '01/23/2014', '01/24/2014']
+          ['Benito Camelas', 'Imperial FY14', 'Area 1', 'Test City', 'PTO', 'Test Visit description', '01/23/2014', '01/24/2014'],
+          ['Michael Jackson', 'Tropical Lovers', 'Area 2', 'Another Test City', 'Formal Market Visit', 'Another Visit description', '01/25/2015', '01/25/2015']
         ]
 
         subject.default_sort_by = 'visit_type'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
           ['Benito Camelas', 'Imperial FY14', 'Area 1', 'Test City', 'PTO', 'Test Visit description', '01/23/2014', '01/24/2014'],
-          ['Michael Jackson', 'Imperial FY14', 'Area 2', 'Another Test City', 'Formal Market Visit', 'Another Visit description', '01/25/2015', '01/25/2015'],
+          ['Michael Jackson', 'Tropical Lovers', 'Area 2', 'Another Test City', 'Formal Market Visit', 'Another Visit description', '01/25/2015', '01/25/2015'],
           ['Marty McFly', 'Go Pilsen', 'Area 3', 'Last Test City', 'Brand Program', 'Last Visit bla bla', '02/02/2015', '02/23/2015']
         ]
       end
