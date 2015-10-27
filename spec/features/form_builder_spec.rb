@@ -750,9 +750,17 @@ RSpec.shared_examples 'a fieldable element' do
     field.reload
     expect(field.settings['operation']).to eql '*'
 
+    # Edit option label
+    within form_field_settings_for 'My Calculation Field' do
+      fill_in 'option[0][name]', with: 'other name'
+      confirm_prompt 'Are you sure you want to change this item from "First Option" to "other name"? '\
+                     'Doing so will change this everywhere in the system including reports '\
+                     'and may result in inaccurately labeled data.'
+    end
+
     # Remove fields
     expect(form_builder).to have_form_field('My Calculation Field',
-                                            with_options: ['First Option', 'Second Option']
+                                            with_options: ['other name', 'Second Option']
     )
 
     within form_field_settings_for 'My Calculation Field' do
@@ -761,8 +769,8 @@ RSpec.shared_examples 'a fieldable element' do
       within('.field-option:nth-child(2)') { click_js_link 'Remove this option' }
     end
 
-    confirm_prompt 'Removing this option will remove all the entered data/answers associated with it. '
-    'Are you sure you want to do this? This cannot be undone'
+    confirm_prompt 'Removing this option will remove all the entered data/answers associated with it. '\
+                   'Are you sure you want to do this? This cannot be undone'
 
     within form_field_settings_for 'My Calculation Field' do
       expect(page).to have_no_content('Second Option')
