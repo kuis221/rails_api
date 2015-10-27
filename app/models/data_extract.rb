@@ -60,7 +60,8 @@ class DataExtract < ActiveRecord::Base
     ['Comments', :comment], ['Contacts', :contact], ['Expenses', :event_expense],
     ['Tasks', :task], ['Venues', :place], ['Users', :company_user], ['Teams', :team],
     ['Roles', :role], ['Campaigns', :campaign], ['Brands', :brand], ['Activity Types', :activity_type],
-    ['Areas', :area], ['Brand Portfolios', :brand_portfolio], ['Date Ranges', :date_range], ['Day Parts', :day_part]
+    ['Areas', :area], ['Brand Portfolios', :brand_portfolio], ['Date Ranges', :date_range],
+    ['Day Parts', :day_part], ['Visits', :brand_ambassadors_visit]
   ]
 
   after_initialize  do
