@@ -34,4 +34,34 @@ feature 'Passwords', js: true do
     expect(current_path).to eq(passwords_thanks_path)
     expect(page).to have_content('You will receive an email with instructions about how to reset your password in a few minutes.')
   end
+
+  scenario 'should reset the user password' do
+    visit new_user_password_path
+    fill_in('user[email]', with: 'test@email.com')
+    click_button 'Reset'
+
+    # Create a token to use it later in edit_user_password_path
+    reset_token = Devise.token_generator.generate(User, :reset_password_token)
+    @user.update_attribute(:reset_password_token, reset_token[1])
+
+    visit edit_user_password_path(reset_password_token: reset_token[0])
+    fill_in 'user_password', with: 'hola'
+    fill_in 'user_password_confirmation', with: 'hola'
+    click_button 'Change'
+
+    # Make the password validatioin fails
+    expect(page).to have_content('Password is too short (minimum is 8 characters)')
+    expect(page).to have_content('Password should have at least one upper case letter')
+    expect(page).to have_content('Password should have at least one digit')
+
+    fill_in 'user_password', with: 'Hola1234'
+    fill_in 'user_password_confirmation', with: 'Hola1234'
+    click_button 'Change'
+
+    @user.reload
+    assert_nil @user.reset_password_token
+
+    expect(current_path).to eq(root_path)
+    expect(page).to have_content('Your password was changed successfully. You are now signed in.')
+  end
 end
