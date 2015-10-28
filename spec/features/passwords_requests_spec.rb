@@ -39,8 +39,11 @@ feature 'Passwords', js: true do
     visit new_user_password_path
     fill_in('user[email]', with: 'test@email.com')
     click_button 'Reset'
+    expect(current_path).to eq(passwords_thanks_path)
+    expect(page).to have_content('You will receive an email with instructions about how to reset your password in a few minutes.')
 
     # Create a token to use it later in edit_user_password_path
+    # This is because we need the token sent in the link inside the reset password email
     reset_token = Devise.token_generator.generate(User, :reset_password_token)
     @user.update_attribute(:reset_password_token, reset_token[1])
 
@@ -59,7 +62,7 @@ feature 'Passwords', js: true do
     click_button 'Change'
 
     @user.reload
-    assert_nil @user.reset_password_token
+    expect(@user.reset_password_token).to eq(nil)
 
     expect(current_path).to eq(root_path)
     expect(page).to have_content('Your password was changed successfully. You are now signed in.')
