@@ -67,6 +67,7 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do |example|
+    reset_email
     allow(Resque::Worker).to receive_messages(working: [])
 
     # make sure we star each test in a clean state
