@@ -12,7 +12,7 @@ gem 'rack-timeout'
 
 gem 'pg'
 gem 'devise'
-gem 'devise_invitable', '~> 1.3.0'
+gem 'devise_invitable'
 gem 'cancancan', '~> 1.9'
 gem 'slim-rails'
 gem 'inherited_resources'
