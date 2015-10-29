@@ -56,6 +56,9 @@ RSpec.describe DataExtract::BrandAmbassadorsVisit, type: :model do
         visit_user = create(:company_user,
                             user: create(:user, first_name: 'Marty', last_name: 'McFly'),
                             company: company, role: company_user.role)
+        other_user = create(:company_user,
+                            user: create(:user, first_name: 'Leroy', last_name: 'Lewis'),
+                            company: company, role: company_user.role)
         create(:brand_ambassadors_visit,
                visit_type: 'PTO', description: 'Test Visit description', company_user: company_user,
                start_date: '01/23/2014', end_date: '01/24/2014', campaign: campaign,
@@ -66,12 +69,19 @@ RSpec.describe DataExtract::BrandAmbassadorsVisit, type: :model do
                start_date: '02/02/2015', end_date: '02/23/2015', campaign: create(:campaign, name: 'Go Pilsen', company: company),
                area: create(:area, name: 'Area 3', company_id: company.to_param), city: 'Last Test City', company: company,
                created_at: Time.zone.local(2015, 2, 02, 8, 00), updated_at: Time.zone.local(2015, 2, 02, 8, 00))
+        create(:brand_ambassadors_visit,
+               visit_type: 'Other', description: 'Other Visit', company_user: other_user,
+               start_date: '05/03/2015', end_date: '05/03/2015', campaign: create(:campaign, name: 'My Campaign', company: company),
+               area: nil, city: nil, company: company, created_at: Time.zone.local(2015, 2, 02, 8, 00),
+               updated_at: Time.zone.local(2015, 2, 02, 8, 00))
       end
 
       it 'returns all the events in the company with all the columns' do
         expect(subject.rows).to eql [
           ['Benito Camelas', 'Imperial FY14', 'Area 1', 'Test City', 'PTO',
            'Test Visit description', '01/23/2014', '01/24/2014', '01/23/2014', '01/23/2014'],
+          ['Leroy Lewis', 'My Campaign', nil, nil, 'Other', 'Other Visit',
+           '05/03/2015', '05/03/2015', '02/02/2015', '02/02/2015'],
           ['Marty McFly', 'Go Pilsen', 'Area 3', 'Last Test City', 'Brand Program',
            'Last Visit bla bla', '02/02/2015', '02/23/2015', '02/02/2015', '02/02/2015']
         ]
@@ -102,33 +112,49 @@ RSpec.describe DataExtract::BrandAmbassadorsVisit, type: :model do
         subject.default_sort_by = 'start_date'
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
-          ['Benito Camelas', 'Imperial FY14', 'Area 1', 'Test City', 'PTO', 'Test Visit description', '01/23/2014', '01/24/2014'],
-          ['Michael Jackson', 'Tropical Lovers', 'Area 2', 'Another Test City', 'Formal Market Visit', 'Another Visit description', '01/25/2015', '01/25/2015'],
-          ['Marty McFly', 'Go Pilsen', 'Area 3', 'Last Test City', 'Brand Program', 'Last Visit bla bla', '02/02/2015', '02/23/2015']
+          ['Benito Camelas', 'Imperial FY14', 'Area 1', 'Test City', 'PTO',
+           'Test Visit description', '01/23/2014', '01/24/2014'],
+          ['Michael Jackson', 'Tropical Lovers', 'Area 2', 'Another Test City', 'Formal Market Visit',
+           'Another Visit description', '01/25/2015', '01/25/2015'],
+          ['Marty McFly', 'Go Pilsen', 'Area 3', 'Last Test City', 'Brand Program',
+           'Last Visit bla bla', '02/02/2015', '02/23/2015'],
+          ['Leroy Lewis', 'My Campaign', nil, nil, 'Other', 'Other Visit', '05/03/2015', '05/03/2015']
         ]
 
         subject.default_sort_by = 'employee'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
-          ['Michael Jackson', 'Tropical Lovers', 'Area 2', 'Another Test City', 'Formal Market Visit', 'Another Visit description', '01/25/2015', '01/25/2015'],
-          ['Marty McFly', 'Go Pilsen', 'Area 3', 'Last Test City', 'Brand Program', 'Last Visit bla bla', '02/02/2015', '02/23/2015'],
-          ['Benito Camelas', 'Imperial FY14', 'Area 1', 'Test City', 'PTO', 'Test Visit description', '01/23/2014', '01/24/2014']
+          ['Michael Jackson', 'Tropical Lovers', 'Area 2', 'Another Test City', 'Formal Market Visit',
+           'Another Visit description', '01/25/2015', '01/25/2015'],
+          ['Marty McFly', 'Go Pilsen', 'Area 3', 'Last Test City', 'Brand Program',
+           'Last Visit bla bla', '02/02/2015', '02/23/2015'],
+          ['Leroy Lewis', 'My Campaign', nil, nil, 'Other', 'Other Visit', '05/03/2015', '05/03/2015'],
+          ['Benito Camelas', 'Imperial FY14', 'Area 1', 'Test City', 'PTO',
+           'Test Visit description', '01/23/2014', '01/24/2014']
         ]
 
         subject.default_sort_by = 'campaign_name'
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
-          ['Marty McFly', 'Go Pilsen', 'Area 3', 'Last Test City', 'Brand Program', 'Last Visit bla bla', '02/02/2015', '02/23/2015'],
-          ['Benito Camelas', 'Imperial FY14', 'Area 1', 'Test City', 'PTO', 'Test Visit description', '01/23/2014', '01/24/2014'],
-          ['Michael Jackson', 'Tropical Lovers', 'Area 2', 'Another Test City', 'Formal Market Visit', 'Another Visit description', '01/25/2015', '01/25/2015']
+          ['Marty McFly', 'Go Pilsen', 'Area 3', 'Last Test City', 'Brand Program',
+           'Last Visit bla bla', '02/02/2015', '02/23/2015'],
+          ['Benito Camelas', 'Imperial FY14', 'Area 1', 'Test City', 'PTO',
+           'Test Visit description', '01/23/2014', '01/24/2014'],
+          ['Leroy Lewis', 'My Campaign', nil, nil, 'Other', 'Other Visit', '05/03/2015', '05/03/2015'],
+          ['Michael Jackson', 'Tropical Lovers', 'Area 2', 'Another Test City', 'Formal Market Visit',
+           'Another Visit description', '01/25/2015', '01/25/2015']
         ]
 
         subject.default_sort_by = 'visit_type'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
-          ['Benito Camelas', 'Imperial FY14', 'Area 1', 'Test City', 'PTO', 'Test Visit description', '01/23/2014', '01/24/2014'],
-          ['Michael Jackson', 'Tropical Lovers', 'Area 2', 'Another Test City', 'Formal Market Visit', 'Another Visit description', '01/25/2015', '01/25/2015'],
-          ['Marty McFly', 'Go Pilsen', 'Area 3', 'Last Test City', 'Brand Program', 'Last Visit bla bla', '02/02/2015', '02/23/2015']
+          ['Benito Camelas', 'Imperial FY14', 'Area 1', 'Test City', 'PTO',
+           'Test Visit description', '01/23/2014', '01/24/2014'],
+          ['Leroy Lewis', 'My Campaign', nil, nil, 'Other', 'Other Visit', '05/03/2015', '05/03/2015'],
+          ['Michael Jackson', 'Tropical Lovers', 'Area 2', 'Another Test City', 'Formal Market Visit',
+           'Another Visit description', '01/25/2015', '01/25/2015'],
+          ['Marty McFly', 'Go Pilsen', 'Area 3', 'Last Test City', 'Brand Program',
+           'Last Visit bla bla', '02/02/2015', '02/23/2015']
         ]
       end
     end
