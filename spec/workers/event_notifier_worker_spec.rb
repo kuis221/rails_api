@@ -27,7 +27,7 @@ describe EventNotifierWorker do
       create(:company_user, role: non_admin_role, company: company)
 
       expect do
-        described_class.perform(event.id)
+        described_class.new.perform(event.id)
       end.to change(Notification, :count).by(3)
 
       expect(Notification.where(message: :new_event).map(&:company_user_id)).to match_array [
@@ -42,7 +42,7 @@ describe EventNotifierWorker do
       event = create(:event, campaign: campaign)
 
       expect do
-        described_class.perform(event.id)
+        described_class.new.perform(event.id)
       end.not_to change(Notification, :count)
     end
 
