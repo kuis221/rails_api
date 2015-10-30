@@ -3,6 +3,7 @@
 - results ||= resource.results_for(fields)
 - current_module ||= nil
 
+= hidden_field_tag :results_version, resource.results_version
 
 - results.each do |result|
   = f.simple_fields_for :results, result do |rf|

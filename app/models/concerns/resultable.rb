@@ -18,6 +18,10 @@ module Resultable
       .where(form_field_results: { form_field_id: fields })
       .where('form_field_results.value is not NULL AND form_field_results.value !=\'\'')
     }
+
+    if column_names.include?('results_version')
+      before_save :increment_version_number, if: :results_changed?
+    end
   end
 
   def results_for(fields)
@@ -45,5 +49,13 @@ module Resultable
       result.form_field = field
       result
     end
+  end
+
+  def increment_version_number
+    self.results_version += 1
+  end
+
+  def results_changed?
+    results.any?(&:changed?)
   end
 end
