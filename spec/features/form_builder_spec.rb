@@ -744,6 +744,8 @@ RSpec.shared_examples 'a fieldable element' do
 
     within form_field_settings_for 'My Calculation Field' do
       find('a[data-operation="*"]').click
+      confirm_prompt 'Are you sure you want to change the operation from Add to Multiply? '\
+                     'Doing so will cause all previously saved data to be recalculated.'
     end
     click_js_button 'Save'
     wait_for_ajax

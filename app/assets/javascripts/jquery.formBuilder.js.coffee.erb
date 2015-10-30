@@ -1305,7 +1305,7 @@ CalculationField = FormField.extend {
 					@setOperation operation, $(e.currentTarget) if answer
 					true
 			else
-				@setOperation operationn, $(e.currentTarget)
+				@setOperation operation, $(e.currentTarget)
 
 	setOperation: (operation, target) ->
 		target.closest('.btn-group').find('.active').removeClass('active').end().end().addClass('active')
