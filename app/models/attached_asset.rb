@@ -70,7 +70,7 @@ class AttachedAsset < ActiveRecord::Base
 
   before_validation :set_upload_attributes
 
-  after_commit :queue_processing
+  after_commit :queue_processing, on: [:create, :update]
   after_save :update_active_photos_count, if: -> { attachable.is_a?(Event) && self.photo? }
   after_destroy :update_active_photos_count, if: -> { attachable.is_a?(Event) && self.photo? }
   after_update :rename_existing_file, if: :processed?

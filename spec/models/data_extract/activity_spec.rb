@@ -185,8 +185,8 @@ RSpec.describe DataExtract::Activity, type: :model do
             "ff_#{field.id}_#{option3.id}", "ff_#{field.id}_#{option1.id}"]
           subject.default_sort_by = "ff_#{field.id}_#{option2.id}"
           expect(subject.rows).to eql [
-            ['Campaign Absolut FY12',  '5', '60', '35'],
-            ['Campaign Absolut FY12',  '80', '', '20']
+            ['Campaign Absolut FY12',  5.0, 60.0, 35.0],
+            ['Campaign Absolut FY12',  80.0, 0.0, 20.0]
           ]
         end
 
