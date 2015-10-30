@@ -490,15 +490,28 @@ FormField = Class.extend {
 	getId: () ->
 		@attributes.id
 
-	labelField: () ->
+	labelField: (prompt = false) ->
+		@initialName ||= @attributes.name
+		@confirmedLabelChange ||= false
+		field = $('<input type="text" id="field_name" name="name">').val(@initialName).on 'keyup', (e) =>
+			input = $(e.target)
+			@attributes.name = input.val()
+			@form.setModified()
+			@refresh()
+			true
+
+		if prompt && @attributes.id
+			field.on 'blur', (e) =>
+				return if @confirmedLabelChange or @initialName is field.val()
+				bootbox.confirm 'Are you sure you want to change this item from "'+@initialName+'" to "'+field.val()+'?"  Doing so will change this everywhere in the system including reports and may result in inaccurately labeled data.', (answer) =>
+					if answer
+						@confirmedLabelChange = true
+					else # Rollback change!
+						field.val(@initialName).trigger 'keyup'
+
 		$('<div class="control-group">').append([
 			$('<label class="control-label" for="field_name">').text('Field label'),
-			$('<div class="controls">').append $('<input type="text" id="field_name" name="name">').val(@attributes.name).on 'keyup', (e) =>
-					input = $(e.target)
-					@attributes.name = input.val()
-					@form.setModified()
-					@refresh()
-					true
+			$('<div class="controls">').append field
 		])
 
 	requiredField: (label = 'Required') ->
@@ -575,7 +588,7 @@ FormField = Class.extend {
 		min_fields_allowed = if type is 'statement' then @attributes.min_statements_allowed else @attributes.min_options_allowed
 		visible_items = list.filter (item) -> not item._destroy
 		titles ||= {'option': ['Option','Options'], 'statement': ['Statement', 'Statements']}[type]
-		$('<div class="control-group field-options" data-type="'+type+'">').append($('<label class="control-label">').text(titles[1])).append(
+		element = $('<div class="control-group field-options" data-type="'+type+'">').append($('<label class="control-label">').text(titles[1])).append(
 			$.map list, (option, index) =>
 				optionHidden = option._destroy is '1'
 				$('<div class="controls field-option">').addClass(if @_optionIsExcluded(option) then 'disabled-option' else '' ).data('option', option).append([
@@ -654,10 +667,23 @@ FormField = Class.extend {
 								else
 									null
 							]
-
 					)
 				]).css(display: (if optionHidden then 'none' else '' ))
 		)
+
+		element.find('input[type=text]').each (index, field) =>
+			field.confirmedLabelChange ||= false
+			field.initialName ||= $(field).val()
+			option = $(field).closest('.field-option').data('option')
+			if option.id
+				$(field).on 'blur', (e) =>
+					return if field.confirmedLabelChange or field.initialName is $(field).val()
+					bootbox.confirm 'Are you sure you want to change this item from "'+ field.initialName+'" to "'+$(field).val()+'"?  Doing so will change this everywhere in the system including reports and may result in inaccurately labeled data.', (answer) =>
+						if answer
+							field.confirmedLabelChange = true
+						else # Rollback change!
+							$(field).val(field.initialName).trigger 'keyup'
+		element
 
 	getOptionsAttributes: () ->
 		@attributes.options
@@ -1273,11 +1299,20 @@ CalculationField = FormField.extend {
 			$('<div class="btn-group"></div>').html(items.get().join(''))
 		).on 'click', 'a.btn', (e) =>
 			e.preventDefault();
-			$(e.currentTarget).closest('.btn-group').find('.active').removeClass('active').end().end().addClass('active')
-			@attributes.settings.operation = $(e.currentTarget).data('operation')
-			@form.setModified()
-			@refresh()
-			false
+			operation = $(e.currentTarget).data('operation')
+			if @attributes.id && operation != @attributes.settings.operation
+				bootbox.confirm 'Are you sure you want to change the operation from '+ @operations[@attributes.settings.operation]['tooltip'] + ' to ' + @operations[operation]['tooltip'] + '?  Doing so will cause all previously saved data to be recalculated.', (answer) =>
+					@setOperation operation, $(e.currentTarget) if answer
+					true
+			else
+				@setOperation operation, $(e.currentTarget)
+
+	setOperation: (operation, target) ->
+		target.closest('.btn-group').find('.active').removeClass('active').end().end().addClass('active')
+		@attributes.settings.operation = target.data('operation')
+		@form.setModified()
+		@refresh()
+		true
 
 	attributesForm: () ->
 		[
@@ -1805,3 +1840,4 @@ applyFormUiFormatsTo = (element) ->
 	element.find('select').chosen()
 	element.find("input:checkbox, input:radio, input:file").uniform()
 	element.find('.has-tooltip').tooltip({html: true, delay: 0, animation: false})
+
