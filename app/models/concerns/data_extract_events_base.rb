@@ -46,6 +46,8 @@ module DataExtractEventsBase
             .where("brands_campaigns.brand_id IN (#{filters['brand'].join(', ')})") if filters['brand'].present?
     s = s.joins('LEFT JOIN memberships AS member_events ON member_events.memberable_type=\'Event\'')
           .where("member_events.memberable_id = events.id AND member_events.company_user_id IN (#{filters['user'].join(', ')})") if filters['user'].present?
+    s = s.joins('LEFT JOIN venues ON venues.place_id = events.place_id')
+          .where("venues.id IN (#{filters['venue'].join(', ')})") if filters['venue'].present?
     s
   end
 

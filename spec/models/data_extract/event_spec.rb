@@ -45,6 +45,10 @@ RSpec.describe DataExtract::Event, type: :model do
     end
 
     let(:campaign) { create(:campaign, name: 'Campaign Absolut FY12', company: company) }
+    let(:place) do
+      create(:place, name: 'My place', street_number: '21st', route: 'Jump Street',
+                    city: 'Santa Rosa Beach', state: 'Florida')
+    end
     let(:subject) do
       described_class.new(company: company, current_user: company_user,
                     columns: %w(campaign_name end_date end_time start_date start_time place_street
@@ -58,8 +62,6 @@ RSpec.describe DataExtract::Event, type: :model do
 
     describe 'with data' do
       before do
-        place = create(:place, name: 'My place', street_number: '21st', route: 'Jump Street',
-                       city: 'Santa Rosa Beach', state: 'Florida')
         create(:event, campaign: campaign, start_date: '01/01/2014', start_time: '02:00 pm',
                        end_date: '01/01/2014', end_time: '03:00 pm', place: place,
                        users: [company_user], created_at: Time.zone.local(2013, 8, 23, 9, 15))
@@ -94,6 +96,16 @@ RSpec.describe DataExtract::Event, type: :model do
         expect(subject.rows).to be_empty
 
         subject.filters = { 'user' => [company_user.id, company_user.id + 1] }
+        expect(subject.rows).to eql [
+          ['Campaign Absolut FY12', '01/01/2014', '11:00 PM', '01/01/2014', '10:00 PM', '21st Jump Street',
+           'Santa Rosa Beach', 'My place', 'Florida', '12345', 'Benito Camelas', 'Unsent', nil, '08/23/2013', 'Active']
+        ]
+        venue = place.venues.first
+
+        subject.filters = { 'venue' => [venue.id + 1] }
+        expect(subject.rows).to be_empty
+
+        subject.filters = { 'venue' => [venue.id, venue.id + 1] }
         expect(subject.rows).to eql [
           ['Campaign Absolut FY12', '01/01/2014', '11:00 PM', '01/01/2014', '10:00 PM', '21st Jump Street',
            'Santa Rosa Beach', 'My place', 'Florida', '12345', 'Benito Camelas', 'Unsent', nil, '08/23/2013', 'Active']
