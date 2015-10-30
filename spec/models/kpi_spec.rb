@@ -181,17 +181,17 @@ describe Kpi, type: :model do
         end.to change(described_class, :count).by(-1)
       end.to_not change(FormFieldResult, :count)
 
-      event1 = Event.find(event1.id) # Load a fresh copy of the event
-      result = event1.result_for_kpi(kpi1)
+      kpi = described_class.where(id: [kpi1.id, kpi2.id]).first # Get the remaining kpi
+      result = event1.reload.result_for_kpi(kpi)
       expect(result.value).to eq('100')
 
-      field1 = event1.campaign.form_field_for_kpi(kpi1)
+      field1 = event1.campaign.form_field_for_kpi(kpi)
       expect(field1).to eq(result.form_field)
 
       event2 = Event.find(event2.id) # Load a fresh copy of the event
-      result = event2.result_for_kpi(kpi1)
+      result = event2.reload.result_for_kpi(kpi)
       expect(result.value).to eq('200')
-      field2 = event2.campaign.form_field_for_kpi(kpi1)
+      field2 = event2.campaign.form_field_for_kpi(kpi)
       expect(field2).to eq(result.form_field)
     end
 
@@ -233,19 +233,18 @@ describe Kpi, type: :model do
         end.to change(described_class, :count).by(-1)
       end.to change(FormFieldResult, :count).by(-1)
 
-      event1 = Event.find(event1.id) # Load a fresh copy of the event
-      result = event1.result_for_kpi(kpi1)
+      kpi = described_class.where(id: [kpi1.id, kpi2.id]).first # Get the remaining kpi
+      result = event1.reload.result_for_kpi(kpi)
       result.reload
       expect(result.value).to eq('100')
 
-      field1 = event1.campaign.form_field_for_kpi(kpi1)
+      field1 = event1.campaign.form_field_for_kpi(kpi)
       expect(field1).to eq(result.form_field)
 
-      event2 = Event.find(event2.id) # Load a fresh copy of the event
-      result = event2.result_for_kpi(kpi1)
+      result = event2.reload.result_for_kpi(kpi)
       result.reload
       expect(result.value).to eq('300')
-      field2 = event2.campaign.form_field_for_kpi(kpi1)
+      field2 = event2.campaign.form_field_for_kpi(kpi)
       expect(field2).to eq(result.form_field)
     end
 
@@ -382,11 +381,8 @@ describe Kpi, type: :model do
       end.to_not change(FormFieldResult, :count)
 
       kpi  = described_class.where(id: [kpi1.id, kpi2.id]).first
-      event1 = Event.find(event1.id) # Load a fresh copy of the event
-      expect(event1.result_for_kpi(kpi).to_html).to eq('Uno')
-
-      event2 = Event.find(event2.id) # Load a fresh copy of the event
-      expect(event2.result_for_kpi(kpi).to_html).to eq('Dos')
+      expect(event1.reload.result_for_kpi(kpi).to_html).to eq('Uno')
+      expect(event2.reload.result_for_kpi(kpi).to_html).to eq('Dos')
     end
 
     it 'correctly merge the values for events of fields of the type :percentage when the kpis are in differnet campaigns' do
@@ -430,13 +426,11 @@ describe Kpi, type: :model do
         end.to change(described_class, :count).by(-1)
       end.to_not change(FormFieldResult, :count)
 
-      event1 = Event.find(event1.id) # Load a fresh copy of the event
       kpi  = described_class.where(id: [kpi1.id, kpi2.id]).first # In this case, any kpi can be kept
-      expect(event1.result_for_kpi(kpi).value.keys).to match_array([seg11.id.to_s, seg12.id.to_s])
+      expect(event1.reload.result_for_kpi(kpi).value.keys).to match_array([seg11.id.to_s, seg12.id.to_s])
       expect(event1.result_for_kpi(kpi).value.values).to eq(%w(33 67))
 
-      event2 = Event.find(event2.id) # Load a fresh copy of the event
-      expect(event2.result_for_kpi(kpi).value.keys).to match_array([seg11.id.to_s, seg12.id.to_s])
+      expect(event2.reload.result_for_kpi(kpi).value.keys).to match_array([seg11.id.to_s, seg12.id.to_s])
       expect(event2.result_for_kpi(kpi).value.values).to eq(%w(44 56))
     end
 
@@ -476,13 +470,11 @@ describe Kpi, type: :model do
         end.to change(described_class, :count).by(-2)
       end.to_not change(FormFieldResult, :count)
 
-      event1 = Event.find(event1.id) # Load a fresh copy of the event
-      result = event1.result_for_kpi(described_class.impressions)
+      result = event1.reload.result_for_kpi(described_class.impressions)
       result.reload
       expect(result.value).to eq('100')
 
-      event2 = Event.find(event2.id) # Load a fresh copy of the event
-      result = event2.result_for_kpi(described_class.impressions)
+      result = event2.reload.result_for_kpi(described_class.impressions)
       result.reload
       expect(result.value).to eq('200')
     end
