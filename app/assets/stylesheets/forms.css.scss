@@ -212,6 +212,7 @@ label.radio div.radio {
 	@extend .radio-style;
 	&.checked{
 		border-color: $brand;
+		position: relative; /* required for the radio cheched point */
 		&:after{
 			display: inline-block;
 			content: '';

@@ -864,6 +864,26 @@ describe Event, type: :model do
 
   end
 
+  describe 'results_attributes attribute' do
+    let(:event) { create(:event) }
+
+    it 'is incremented after updating the results' do
+      field = create(:form_field_number, fieldable: event.campaign)
+      expect do
+        event.update_attributes(results_attributes: { '1' => { form_field_id: field.id, value: '100' } })
+      end.to change { event.results_version }.by(1)
+    end
+
+    it 'is NOT incremented if the results are not changed' do
+      expect do
+        expect(
+          event.update_attributes(campaign_id: create(:campaign, company: event.company).id,
+                                  results_attributes: [])
+        ).to be_truthy
+      end.to_not change { event.results_version }
+    end
+  end
+
   describe '#place_reference=' do
     it 'should not fail if nill' do
       event = build(:event, place: nil)

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151015222909) do
+ActiveRecord::Schema.define(version: 20151030121052) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -553,6 +553,7 @@ ActiveRecord::Schema.define(version: 20151015222909) do
     t.datetime "approved_at"
     t.integer  "active_photos_count",                                     default: 0
     t.integer  "visit_id"
+    t.integer  "results_version",                                         default: 0
   end
 
   add_index "events", ["aasm_state"], name: "index_events_on_aasm_state", using: :btree

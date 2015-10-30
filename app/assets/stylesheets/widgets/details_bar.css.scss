@@ -65,6 +65,11 @@ $phase-actions-width: 200px;
 
 .alert-red{
   background-color: $primary-red;
+  .btn-primary {
+    background-color: darken( $primary-red, 15% );
+    color: #fff;
+    margin-left: 20px;
+  }
 }
 .alert-blue{
   background-color: $primary-blue;
