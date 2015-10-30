@@ -29,11 +29,10 @@ javascript:
         events: {
           events: function(start, end, timezone, callback){
             window.loadingVisits = true;
-            var data = '#{j params.except(:start_date, :end_date).to_query.html_safe}';
             if ($('#collection-list-filters').length > 0) {
-              data = $('#collection-list-filters').filteredList('selectCalendarDates', start.toDate(), end.toDate()).filteredList('paramsQueryString') + "&start_date="+start.utc().format('MM/DD/YYYY')+"&end_date="+end.utc().format('MM/DD/YYYY');
+              data = $('#collection-list-filters').filteredList('selectCalendarDates', start.toDate(), end.toDate()).filteredList('paramsQueryString');
             } else {
-              data += "&start_date="+start.utc().format('MM/DD/YYYY')+"&end_date="+end.utc().format('MM/DD/YYYY');
+              data = '#{j params.except(:start_date, :end_date).to_query.html_safe}&start_date[]='+start.utc().format('MM/DD/YYYY')+'&end_date[]='+end.utc().format('MM/DD/YYYY');
             }
             $.ajax({
                 url: '#{brand_ambassadors_visits_url(format: :json)}',
