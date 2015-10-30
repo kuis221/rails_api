@@ -94,9 +94,9 @@ RSpec.describe DataExtract::Activity, type: :model do
       numeric_field = create(:form_field_number, name: 'My Numeric Field', fieldable: activity_type)
 
       expect(subject.columns_definitions).to include(
-        "ff_#{percentage_field.id}_#{option2.id}".to_sym => "join_ff_#{percentage_field.id}.value->'#{option2.id}'",
-        "ff_#{percentage_field.id}_#{option3.id}".to_sym => "join_ff_#{percentage_field.id}.value->'#{option3.id}'",
-        "ff_#{percentage_field.id}_#{option1.id}".to_sym => "join_ff_#{percentage_field.id}.value->'#{option1.id}'",
+        "ff_#{percentage_field.id}_#{option2.id}".to_sym => "COALESCE(NULLIF(join_ff_#{percentage_field.id}.value->'#{option2.id}', ''), '0')::float",
+        "ff_#{percentage_field.id}_#{option3.id}".to_sym => "COALESCE(NULLIF(join_ff_#{percentage_field.id}.value->'#{option3.id}', ''), '0')::float",
+        "ff_#{percentage_field.id}_#{option1.id}".to_sym => "COALESCE(NULLIF(join_ff_#{percentage_field.id}.value->'#{option1.id}', ''), '0')::float",
         "ff_#{numeric_field.id}".to_sym => "join_ff_#{numeric_field.id}.value->'value'"
       )
     end
@@ -185,8 +185,8 @@ RSpec.describe DataExtract::Activity, type: :model do
             "ff_#{field.id}_#{option3.id}", "ff_#{field.id}_#{option1.id}"]
           subject.default_sort_by = "ff_#{field.id}_#{option2.id}"
           expect(subject.rows).to eql [
-            ['Campaign Absolut FY12',  '5', '60', '35'],
-            ['Campaign Absolut FY12',  '80', '', '20']
+            ['Campaign Absolut FY12',  5.0, 60.0, 35.0],
+            ['Campaign Absolut FY12',  80.0, 0.0, 20.0]
           ]
         end
 
