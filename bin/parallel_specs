@@ -1,0 +1,2 @@
+#!/usr/bin/env ruby
+system('DISABLE_SPRING=1 rake parallel:spec[4]')

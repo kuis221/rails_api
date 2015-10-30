@@ -6,7 +6,7 @@ end
 # Capybara.javascript_driver = :webkit
 # Capybara.javascript_driver = :selenium
 Capybara.javascript_driver = :poltergeist
-Capybara.default_max_wait_time = 5
+Capybara.default_max_wait_time = 5 * (ENV.key?('TEST_ENV_NUMBER') ? 2 : 1)
 Capybara.server_port = 9887 + ENV['TEST_ENV_NUMBER'].to_i
 
 # Capybara.server_port = 7000
