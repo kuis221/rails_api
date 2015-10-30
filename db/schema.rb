@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151009084953) do
+ActiveRecord::Schema.define(version: 20151015222909) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "tablefunc"
@@ -594,6 +594,7 @@ ActiveRecord::Schema.define(version: 20151009084953) do
     t.string   "resultable_type", limit: 255
   end
 
+  add_index "form_field_results", ["form_field_id", "resultable_id", "resultable_type"], name: "idx_ff_res_on_form_field_id_n_resultable_id_n_resultable_type", unique: true, using: :btree
   add_index "form_field_results", ["form_field_id"], name: "index_activity_results_on_form_field_id", using: :btree
   add_index "form_field_results", ["hash_value"], name: "index_activity_results_on_hash_value", using: :gist
   add_index "form_field_results", ["resultable_id", "resultable_type", "form_field_id"], name: "index_ff_results_on_resultable_and_form_field_id", using: :btree
