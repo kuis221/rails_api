@@ -1299,11 +1299,20 @@ CalculationField = FormField.extend {
 			$('<div class="btn-group"></div>').html(items.get().join(''))
 		).on 'click', 'a.btn', (e) =>
 			e.preventDefault();
-			$(e.currentTarget).closest('.btn-group').find('.active').removeClass('active').end().end().addClass('active')
-			@attributes.settings.operation = $(e.currentTarget).data('operation')
-			@form.setModified()
-			@refresh()
-			false
+			operation = $(e.currentTarget).data('operation')
+			if @attributes.id && operation != @attributes.settings.operation
+				bootbox.confirm 'Are you sure you want to change the operation from '+ @operations[@attributes.settings.operation]['tooltip'] + ' to ' + @operations[operation]['tooltip'] + '?  Doing so will cause all previously saved data to be recalculated.', (answer) =>
+					@setOperation operation, $(e.currentTarget) if answer
+					true
+			else
+				@setOperation operationn, $(e.currentTarget)
+
+	setOperation: (operation, target) ->
+		target.closest('.btn-group').find('.active').removeClass('active').end().end().addClass('active')
+		@attributes.settings.operation = target.data('operation')
+		@form.setModified()
+		@refresh()
+		true
 
 	attributesForm: () ->
 		[

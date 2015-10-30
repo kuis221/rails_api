@@ -15,7 +15,7 @@ module DataExtractFieldableBase
             { "ff_#{ff.id}".to_sym => "ff_#{ff.id}_place.name" }
           elsif ff.is_hashed_value?
             cols = Hash[ff.options.map { |o| ["ff_#{ff.id}_#{o.id}".to_sym, "COALESCE(NULLIF(join_ff_#{ff.id}.value->'#{o.id}', ''), '0')::float"] }]
-            cols.merge!("ff_#{ff.id}__TOTAL".to_sym => cols.values.join(ff.operation)) if ff.type == 'FormField::Calculation'
+            cols.merge!("ff_#{ff.id}__TOTAL".to_sym => cols_total(cols, ff.operation)) if ff.type == 'FormField::Calculation'
             cols
           else
             { "ff_#{ff.id}".to_sym => "join_ff_#{ff.id}.value->'value'" }
@@ -62,5 +62,14 @@ module DataExtractFieldableBase
       .select { |c| c =~ /\Aff_([0-9]+)(_[0-9]+)?\z/ }
       .map { |c| c.gsub(/ff_([0-9]+)(_[0-9]+)?/, '\1') }
       .uniq
+  end
+
+  def cols_total(cols, operation)
+    total = cols.values.join(operation)
+    if operation == '/'
+      "CASE WHEN (#{cols.values[1..-1].join('=0 OR ')}=0) THEN 'Infinity' ELSE #{total} END"
+    else
+      total
+    end
   end
 end
