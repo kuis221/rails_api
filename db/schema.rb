@@ -14,13 +14,13 @@
 ActiveRecord::Schema.define(version: 20151015222909) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+  enable_extension "postgis"
   enable_extension "tablefunc"
   enable_extension "btree_gist"
-  enable_extension "plpgsql"
   enable_extension "hstore"
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
-  enable_extension "postgis"
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string   "resource_id",   limit: 255, null: false
