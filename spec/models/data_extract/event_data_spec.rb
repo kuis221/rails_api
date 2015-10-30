@@ -1,3 +1,4 @@
+
 # == Schema Information
 #
 # Table name: data_extracts
@@ -282,6 +283,60 @@ RSpec.describe DataExtract::EventData, type: :model do
           expect(subject.rows).to eql [
             ['Campaign Absolut FY12',  5.0, 5.0, 25.0],
             ['Campaign Absolut FY12',  10.0, 90.0, 900.0]
+          ]
+        end
+
+        it 'returns the results for calculation DIVIDE field' do
+          subject.params = { 'campaign_id' => [campaign.id] }
+
+          field = create(:form_field_calculation,
+                         operation: '/', calculation_label: 'GRAND TOTAL', fieldable: campaign,
+                         options: [
+                           option1 = create(:form_field_option, name: 'Opt 1', ordering: 1),
+                           option2 = create(:form_field_option, name: 'Opt 2', ordering: 2)]
+          )
+
+          event.results_for([field]).first.value = {
+            option2.id.to_s => 5, option1.id.to_s => 5 }
+          expect(event.save).to be_truthy
+
+          event = create(:event, campaign: campaign)
+          event.results_for([field]).first.value = {
+            option2.id.to_s => 10, option1.id.to_s => 100 }
+          expect(event.save).to be_truthy
+
+          subject.columns = [
+            'campaign_name', "ff_#{field.id}_#{option2.id}", "ff_#{field.id}_#{option1.id}",
+            "ff_#{field.id}__TOTAL"]
+          subject.default_sort_by = "ff_#{field.id}_#{option2.id}"
+          expect(subject.rows).to eql [
+            ['Campaign Absolut FY12',  5.0, 5.0, 1.0],
+            ['Campaign Absolut FY12',  10.0, 100.0, 10.0]
+          ]
+        end
+
+        it 'returns Infinity when dividing by 0' do
+          subject.params = { 'campaign_id' => [campaign.id] }
+
+          field = create(:form_field_calculation,
+                         operation: '+', calculation_label: 'GRAND TOTAL', fieldable: campaign,
+                         options: [
+                           option1 = create(:form_field_option, name: 'Opt 1', ordering: 1),
+                           option2 = create(:form_field_option, name: 'Opt 2', ordering: 2),
+                           option3 = create(:form_field_option, name: 'Opt 3', ordering: 3)])
+
+          event.results_for([field]).first.value = {
+            option1.id.to_s => 5, option2.id.to_s => 0, option3.id.to_s => 4 }
+          expect(event.save).to be_truthy
+
+          field.update_attributes(operation: '/')
+
+          subject.columns = [
+            'campaign_name', "ff_#{field.id}_#{option1.id}", "ff_#{field.id}_#{option2.id}",
+            "ff_#{field.id}_#{option3.id}", "ff_#{field.id}__TOTAL"]
+          subject.default_sort_by = "ff_#{field.id}_#{option2.id}"
+          expect(subject.rows).to eql [
+            ['Campaign Absolut FY12',  5.0, 0.0, 4.0, Float::INFINITY]
           ]
         end
 

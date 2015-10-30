@@ -574,6 +574,30 @@ feature 'Post Event Data' do
       expect(page).to_not have_content('This field is required.')
     end
 
+    it 'prevents the user from overriding the data other user entered' do
+      event = create(:event,
+                     start_date: Date.yesterday.to_s(:slashes), end_date: Date.yesterday.to_s(:slashes),
+                     campaign: campaign, place: place)
+
+      field = create(:form_field_number,
+                     name: '# Bottles Depleted', fieldable: campaign, required: false)
+
+      visit event_path(event)
+
+      fill_in '# Bottles Depleted', with: '100'
+
+      # Update the event's data simulating other user did it
+      event.update_attributes(results_attributes: [{ form_field_id: field.id, value: 999 }])
+
+      # Try to save my changes in the browser
+      click_js_button 'Save'
+      expect(page).to have_content 'This event\'s data has been updated since you opened it. '\
+                                   'Please refresh the page to get the most current info.'
+
+      click_js_link 'Refresh'
+      expect(page).to have_content '# Bottles Depleted 999'
+    end
+
   end
 
   feature 'non admin user', js: true do

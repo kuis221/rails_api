@@ -331,19 +331,48 @@ describe EventsController, type: :controller do
         Kpi.create_global_kpis
         campaign.assign_all_global_kpis
         expect do
-          put 'update', id: event.to_param,
+          put 'update', id: event.to_param, results_version: event.results_version,
                         event: {
                           results_attributes: {
                             '0' => { form_field_id: campaign.form_field_for_kpi(Kpi.impressions),
-                                     kpi_id: Kpi.impressions.id, kpis_segment_id: nil, value: '100' },
+                                     value: '100' },
                             '1' => { form_field_id: campaign.form_field_for_kpi(Kpi.interactions),
-                                     kpi_id: Kpi.interactions.id, kpis_segment_id: nil, value: '200' }
+                                     value: '200' }
                           }
                         }
         end.to change(FormFieldResult, :count).by(2)
         event.reload
         expect(event.result_for_kpi(Kpi.impressions).value).to eq('100')
         expect(event.result_for_kpi(Kpi.interactions).value).to eq('200')
+      end
+
+      it 'renders results_version_changed template if no results version was given' do
+        field = create(:form_field_text_area, fieldable: campaign)
+        event.update_attributes(results_version: 1)
+        expect do
+          put 'update', id: event.to_param,
+                        event: {
+                          results_attributes: {
+                            '0' => { form_field_id: field.id, value: '100' }
+                          }
+                        }
+        end.to_not change(FormFieldResult, :count)
+        expect(response).to render_template 'results_version_changed'
+      end
+
+      it 'renders results_version_changed template if the given results_version is different than the stored' do
+        field = create(:form_field_text_area, fieldable: campaign)
+        event.update_attributes(results_version: 1)
+        expect do
+          put 'update', id: event.to_param,
+                        event: {
+                          results_attributes: {
+                            '0' => { form_field_id: field.id, value: '100' }
+                          }
+                        },
+                        results_version: event.results_version + 1
+        end.to_not change(FormFieldResult, :count)
+        expect(response).to render_template 'results_version_changed'
       end
 
       it 'should update the event data for a event that already have results' do
@@ -359,7 +388,7 @@ describe EventsController, type: :controller do
         end.to change(FormFieldResult, :count).by(2)
 
         expect do
-          put 'update', id: event.to_param,
+          put 'update', id: event.to_param, results_version: event.results_version,
                         event: {
                           results_attributes: {
                             '0' => { form_field_id: campaign.form_field_for_kpi(Kpi.impressions),
@@ -678,7 +707,8 @@ describe EventsController, type: :controller do
     before { sign_in user }
 
     it 'should be able to edit event_data' do
-      xhr :put, 'update', id: event.to_param, event: { results_attributes: {} }, format: :js
+      xhr :put, 'update', id: event.to_param, results_version: event.results_version,
+                          event: { results_attributes: {} }, format: :js
       expect(assigns(:event)).to eq(event)
       expect(response).to be_success
       expect(response).to render_template('events/_event')

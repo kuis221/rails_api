@@ -12,6 +12,5 @@ if Rails.env.production?
     config.secure      = config.port == 443
     config.development_environments = []
     config.environment_name = ENV['HEROKU_APP_NAME'] || Rails.env
-    config.ignore << 'Resque::DirtyExit'
   end
 end

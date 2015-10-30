@@ -37,6 +37,7 @@ class EventsController < FilteredController
 
   skip_load_and_authorize_resource only: :update
   before_action :authorize_update, only: :update
+  before_action :check_results_version, only: :update
 
   def map
     search_params.merge!(search_permission: :view_map)
@@ -256,5 +257,11 @@ class EventsController < FilteredController
                                                    count: session["activity_create_#{params[:activity_form]}"].to_i,
                                                    activity_type: activity_type.name)
     session.delete "activity_create_#{params[:activity_form]}"
+  end
+
+  def check_results_version
+    return unless params[:event].key?(:results_attributes) && params[:event].key?(:results_attributes)
+    return if params[:results_version].present? && params[:results_version].to_i == resource.results_version
+    render 'results_version_changed'
   end
 end

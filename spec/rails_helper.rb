@@ -67,6 +67,7 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do |example|
+    reset_email
 
     # make sure we star each test in a clean state
     User.current = nil

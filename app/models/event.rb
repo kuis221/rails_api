@@ -815,14 +815,9 @@ class Event < ActiveRecord::Base
   end
 
   def check_results_changed
-    @refresh_event_data = false
-    if results.any?(&:changed?) || event_expenses.any?(&:changed?)
-      @refresh_event_data = true
-    end
-
+    @refresh_event_data = results_changed? || event_expenses.any?(&:changed?)
     @reindex_place = place_id_changed?
     @reindex_tasks = active_changed?
-
     true
   end
 
@@ -832,7 +827,6 @@ class Event < ActiveRecord::Base
       event_data.update_data
       event_data.save
     end
-
     true
   end
 
