@@ -28,7 +28,7 @@ ActiveAdmin.register Kpi do
         if @campaigns.any? && @campaigns.count !=  params[:merge][:master_kpi].try(:count)
           flash[:error] = 'Please make sure to select a KPI for all the campaigns'
         else
-          Resque.enqueue KpiMergeWorker, @kpis.map(&:id), params[:merge]
+          KpiMergeWorker.perform_async @kpis.map(&:id), params[:merge]
 
           redirect_to collection_path,
                       notice: 'A job have been queued to merge the KPIs. '\

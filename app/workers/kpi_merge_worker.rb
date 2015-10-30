@@ -1,8 +1,8 @@
 class KpiMergeWorker
-  include Resque::Plugins::UniqueJob
-  @queue = :export
+  include Sidekiq::Worker
+  sidekiq_options queue: :export
 
-  def self.perform(ids, options)
-    kpis = Kpi.where(id: ids).merge_fields(options)
+  def perform(ids, options)
+    Kpi.where(id: ids).merge_fields(options)
   end
 end

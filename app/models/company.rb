@@ -155,20 +155,19 @@ class Company < ActiveRecord::Base
   private
 
   def create_admin_role_and_user
-    if admin_email
-      role = roles.create(name: 'Super Admin', is_admin: true)
-      if user = User.where(["lower(users.email) = '%s'", admin_email.downcase]).first
-        new_company_user = company_users.build(role_id: role.id, user: user)
-        new_company_user.save validate: false
-        UserMailer.company_existing_admin_invitation(user.id, id).deliver
-      else
-        new_user = User.create(email: admin_email, first_name: 'Admin', last_name: 'User', inviting_user: true)
-        new_company_user = company_users.create(role_id: role.id, user: new_user)
-        new_user.skip_invitation = true
-        new_user.invite!
-        new_user.update_attributes(invitation_sent_at: Time.now.utc)
-        UserMailer.company_admin_invitation(new_user.id).deliver
-      end
+    return unless admin_email
+    role = roles.create(name: 'Super Admin', is_admin: true)
+    if (user = User.where(["lower(users.email) = '%s'", admin_email.downcase]).first)
+      new_company_user = company_users.build(role_id: role.id, user: user)
+      new_company_user.save validate: false
+      UserMailer.delay.company_existing_admin_invitation(user.id, id)
+    else
+      new_user = User.create(email: admin_email, first_name: 'Admin', last_name: 'User', inviting_user: true)
+      company_users.create(role_id: role.id, user: new_user)
+      new_user.skip_invitation = true
+      new_user.invite!
+      new_user.reload.update_attributes(invitation_sent_at: Time.now.utc)
+      UserMailer.delay.company_admin_invitation(new_user.id)
     end
   end
 end

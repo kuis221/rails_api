@@ -16,9 +16,8 @@ describe Results::CommentsController, type: :controller do
 
   describe "GET 'index'" do
     it 'queue the job for export the list' do
+      expect(ListExportWorker).to receive(:perform_async).with(kind_of(Numeric))
       expect { xhr :get, :index, format: :csv }.to change(ListExport, :count).by 1
-      export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
     end
   end
 
@@ -30,7 +29,7 @@ describe Results::CommentsController, type: :controller do
     end
   end
 
-  describe "GET 'list_export'", search: true do
+  describe "GET 'list_export'", :search, :inline_jobs do
     let(:campaign) { create(:campaign, company: @company, name: 'Test Campaign FY01') }
 
     let(:headers) do
@@ -44,7 +43,6 @@ describe Results::CommentsController, type: :controller do
       before { xhr(:get, 'index', format: :csv) }
 
       it 'should return an empty CSV with the correct headers' do
-        ResqueSpec.perform_all(:export)
         expect(export.reload).to have_rows([headers])
       end
     end
@@ -70,7 +68,6 @@ describe Results::CommentsController, type: :controller do
       before { xhr(:get, 'index', format: :csv) }
 
       it 'should include the comment data results' do
-        ResqueSpec.perform_all(:export)
         expect(export.reload).to have_rows([headers, rows])
       end
     end

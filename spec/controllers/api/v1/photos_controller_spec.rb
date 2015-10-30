@@ -75,6 +75,7 @@ describe Api::V1::PhotosController, type: :controller do
   describe "POST 'create'", :show_in_doc  do
     let(:event) { create(:event, company: company, campaign: campaign) }
     it 'queue a job for processing the photos' do
+      expect(AssetsUploadWorker).to receive(:perform_async).with(kind_of(Numeric), 'AttachedAsset')
       s3object = double
       allow(s3object).to receive(:copy_from).and_return(true)
       allow(s3object).to receive(:exists?).at_least(:once).and_return(true)
@@ -100,7 +101,6 @@ describe Api::V1::PhotosController, type: :controller do
       expect(photo.attachable).to eq(event)
       expect(photo.asset_type).to eq('photo')
       expect(photo.direct_upload_url).to eq('https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg')
-      expect(AssetsUploadWorker).to have_queued(photo.id, 'AttachedAsset')
     end
   end
 

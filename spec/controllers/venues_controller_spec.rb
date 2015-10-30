@@ -88,30 +88,29 @@ describe VenuesController, type: :controller do
 
   describe "GET 'index'" do
     it 'queue the job for export the list to CSV' do
+      expect(ListExportWorker).to receive(:perform_async).with(kind_of(Numeric))
       expect do
         xhr :get, :index, format: :csv
       end.to change(ListExport, :count).by(1)
       export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
       expect(export.controller).to eql('VenuesController')
       expect(export.export_format).to eql('csv')
     end
 
     it 'queue the job for export the list to PDF' do
+      expect(ListExportWorker).to receive(:perform_async).with(kind_of(Numeric))
       expect do
         xhr :get, :index, format: :pdf
       end.to change(ListExport, :count).by(1)
       export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
       expect(export.controller).to eql('VenuesController')
       expect(export.export_format).to eql('pdf')
     end
   end
 
-  describe "GET 'list_export'", search: true do
+  describe "GET 'list_export'", :search, :inline_jobs do
     it 'should return an empty book with the correct headers' do
       expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
-      ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['VENUE NAME', 'TD LINX CODE', 'ADDRESS', 'CITY', 'STATE', 'SCORE', 'EVENTS COUNT', 'PROMO HOURS COUNT', 'TOTAL $ SPENT']
       ])
@@ -122,8 +121,6 @@ describe VenuesController, type: :controller do
       Sunspot.commit
 
       expect { xhr :get, 'index', scope: 'user', format: :csv }.to change(ListExport, :count).by(1)
-      expect(ListExportWorker).to have_queued(ListExport.last.id)
-      ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['VENUE NAME', 'TD LINX CODE', 'ADDRESS', 'CITY', 'STATE', 'SCORE', 'EVENTS COUNT', 'PROMO HOURS COUNT', 'TOTAL $ SPENT'],
         [venue.place.name, '5155520', '123 My Street', 'New York City', 'NY', '90', '1', '9.5', '$1,000.00']

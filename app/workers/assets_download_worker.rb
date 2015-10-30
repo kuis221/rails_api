@@ -1,8 +1,8 @@
 class AssetsDownloadWorker
-  include Resque::Plugins::UniqueJob
-  @queue = :download
+  include Sidekiq::Worker
+  sidekiq_options queue: :download
 
-  def self.perform(download_id)
+  def perform(download_id)
     download = AssetDownload.find(download_id)
     begin
       download.process!

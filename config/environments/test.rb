@@ -36,8 +36,6 @@ Brandscopic::Application.configure do
 
   config.action_mailer.default_url_options = { host: 'example.com' }
 
-  ENV['REDISTOGO_URL'] = 'redis://localhost:9999'
-
   config.cache_store = :null_store
   #config.cache_store = :file_store, Rails.root.join("tmp", "cache", "paralleltests#{ENV['TEST_ENV_NUMBER']}")
 

@@ -282,7 +282,7 @@ class AttachedAsset < ActiveRecord::Base
 
     move_uploaded_file
     if post_process_required?
-      Resque.enqueue(AssetsUploadWorker, id, self.class.name)
+      AssetsUploadWorker.perform_async(id, self.class.name)
     else
       transfer_and_cleanup
     end

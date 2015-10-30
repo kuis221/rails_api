@@ -23,6 +23,7 @@ RSpec.describe BrandAmbassadors::DocumentsController, type: :controller do
       end
 
       it 'should successfully create the new record' do
+        expect(AssetsUploadWorker).to receive(:perform_async).with(kind_of(Numeric), 'BrandAmbassadors::Document')
         expect do
           xhr :post, 'create', brand_ambassadors_document: { direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg' }, format: :js
         end.to change(AttachedAsset, :count).by(1)
@@ -35,10 +36,10 @@ RSpec.describe BrandAmbassadors::DocumentsController, type: :controller do
         expect(document.asset_type).to eq('ba_document')
         expect(document.direct_upload_url).to eq('https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg')
         expect(document.folder_id).to be_nil
-        expect(AssetsUploadWorker).to have_queued(document.id, 'BrandAmbassadors::Document')
       end
 
       it 'should successfully create the new record inside a folder' do
+        expect(AssetsUploadWorker).to receive(:perform_async).with(kind_of(Numeric), 'BrandAmbassadors::Document')
         expect do
           xhr :post, 'create', brand_ambassadors_document: { direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg' }, folder_id: 2, format: :js
         end.to change(AttachedAsset, :count).by(1)
@@ -51,10 +52,10 @@ RSpec.describe BrandAmbassadors::DocumentsController, type: :controller do
         expect(document.asset_type).to eq('ba_document')
         expect(document.direct_upload_url).to eq('https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg')
         expect(document.folder_id).to eql 2
-        expect(AssetsUploadWorker).to have_queued(document.id, 'BrandAmbassadors::Document')
       end
 
       it 'should successfully create the new record for a visit' do
+        expect(AssetsUploadWorker).to receive(:perform_async).with(kind_of(Numeric), 'BrandAmbassadors::Document')
         visit = create(:brand_ambassadors_visit,
                        company: company, company_user: user)
         expect do
@@ -69,7 +70,6 @@ RSpec.describe BrandAmbassadors::DocumentsController, type: :controller do
         expect(document.asset_type).to eq('ba_document')
         expect(document.direct_upload_url).to eq('https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg')
         expect(document.folder_id).to be_nil
-        expect(AssetsUploadWorker).to have_queued(document.id, 'BrandAmbassadors::Document')
       end
     end
 

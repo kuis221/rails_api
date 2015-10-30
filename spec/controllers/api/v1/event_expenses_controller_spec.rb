@@ -61,6 +61,7 @@ describe Api::V1::EventExpensesController, type: :controller do
   describe "POST 'create'", show_in_doc: true do
     let(:event) { create(:approved_event, company: company, campaign: campaign, place: place) }
     it 'create an expense and queue a job for processing the attached expense file', :show_in_doc do
+      expect(AssetsUploadWorker).to receive(:perform_async).with(kind_of(Numeric), 'AttachedAsset')
       s3object = double
       allow(s3object).to receive(:copy_from).and_return(true)
       allow(s3object).to receive(:exists?).and_return(true)
@@ -91,7 +92,6 @@ describe Api::V1::EventExpensesController, type: :controller do
       expect(expense.receipt.attachable).to eq(expense)
       expect(expense.receipt.asset_type).to eq(nil)
       expect(expense.receipt.direct_upload_url).to eq('https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg')
-      expect(AssetsUploadWorker).to have_queued(expense.receipt.id, 'AttachedAsset')
     end
   end
 

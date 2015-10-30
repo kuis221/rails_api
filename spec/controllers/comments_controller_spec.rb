@@ -55,54 +55,50 @@ describe CommentsController, type: :controller do
       assigns(:comment).errors.count > 0
     end
 
-    it 'should be able to create a comment for an assigned task and send a SMS to the owner' do
+    it 'should be able to create a comment for an assigned task and send a SMS to the owner', :inline_jobs do
       Timecop.freeze do
-        with_resque do
-          @company_user.update_attributes(
-            notifications_settings: %w(new_comment_sms new_comment_email),
-            user_attributes: { phone_number_verified: true })
-          task.update_attributes(company_user_id: @company_user.to_param)
-          message = "You have a new comment http://localhost:5100/tasks/mine?task%5B%5D=#{task.id}#comments-#{task.id}"
-          expect(UserMailer).to receive(:notification).with(@company_user.id, 'New Comment', message).and_return(double(deliver: true))
-          expect do
-            xhr :post, 'create', task_id: task.to_param, comment: { content: 'this is a test' }, format: :js
-          end.to change(Comment, :count).by(1)
-          comment = Comment.last
-          expect(comment.content).to eq('this is a test')
-          expect(task.comments).to eq([comment])
-          open_last_text_message_for @user.phone_number
-          expect(current_text_message).to have_body message
-        end
+        @company_user.update_attributes(
+          notifications_settings: %w(new_comment_sms new_comment_email),
+          user_attributes: { phone_number_verified: true })
+        task.update_attributes(company_user_id: @company_user.to_param)
+        message = "You have a new comment http://localhost:5100/tasks/mine?task%5B%5D=#{task.id}#comments-#{task.id}"
+        expect(UserMailer).to receive(:notification).with(@company_user.id, 'New Comment', message).and_return(double(deliver: true))
+        expect do
+          xhr :post, 'create', task_id: task.to_param, comment: { content: 'this is a test' }, format: :js
+        end.to change(Comment, :count).by(1)
+        comment = Comment.last
+        expect(comment.content).to eq('this is a test')
+        expect(task.comments).to eq([comment])
+        open_last_text_message_for @user.phone_number
+        expect(current_text_message).to have_body message
       end
     end
 
-    it 'should be able to create a comment for a unassigned task and send a SMS to the event team members' do
+    it 'should be able to create a comment for a unassigned task and send a SMS to the event team members', :inline_jobs do
       Timecop.freeze do
-        with_resque do
-          @company_user.update_attributes(
-            notifications_settings: %w(new_team_comment_sms new_team_comment_email),
-            user_attributes: { phone_number_verified: true })
+        @company_user.update_attributes(
+          notifications_settings: %w(new_team_comment_sms new_team_comment_email),
+          user_attributes: { phone_number_verified: true })
 
-          other_user = create(:company_user, company_id: @company.id,
-                                             notifications_settings: ['new_team_comment_sms'],
-                                             user_attributes: { phone_number_verified: true })
+        other_user = create(:company_user, company_id: @company.id,
+                                           notifications_settings: ['new_team_comment_sms'],
+                                           user_attributes: { phone_number_verified: true })
 
-          task.update_attributes(event_id: event.to_param)
-          event.users << @company_user
-          event.users << other_user
-          message = "You have a new team comment http://localhost:5100/tasks/mine?task%5B%5D=#{task.id}#comments-#{task.id}"
-          expect(UserMailer).to receive(:notification).with(@company_user.id, 'New Team Comment', message).and_return(double(deliver: true))
-          expect do
-            xhr :post, 'create', task_id: task.to_param, comment: { content: 'this is a test' }, format: :js
-          end.to change(Comment, :count).by(1)
-          comment = Comment.last
-          expect(comment.content).to eq('this is a test')
-          expect(task.comments).to eq([comment])
-          open_last_text_message_for @user.phone_number
-          expect(current_text_message).to have_body message
-          open_last_text_message_for other_user.user.phone_number
-          expect(current_text_message).to have_body message
-        end
+        task.update_attributes(event_id: event.to_param)
+        event.users << @company_user
+        event.users << other_user
+        message = "You have a new team comment http://localhost:5100/tasks/mine?task%5B%5D=#{task.id}#comments-#{task.id}"
+        expect(UserMailer).to receive(:notification).with(@company_user.id, 'New Team Comment', message).and_return(double(deliver: true))
+        expect do
+          xhr :post, 'create', task_id: task.to_param, comment: { content: 'this is a test' }, format: :js
+        end.to change(Comment, :count).by(1)
+        comment = Comment.last
+        expect(comment.content).to eq('this is a test')
+        expect(task.comments).to eq([comment])
+        open_last_text_message_for @user.phone_number
+        expect(current_text_message).to have_body message
+        open_last_text_message_for other_user.user.phone_number
+        expect(current_text_message).to have_body message
       end
     end
   end

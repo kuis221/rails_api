@@ -122,19 +122,18 @@ describe EventsController, type: :controller do
       end
 
       it 'queue the job for export the list' do
+        expect(ListExportWorker).to receive(:perform_async).with(kind_of(Numeric))
         expect do
           xhr :get, :index, format: :csv
         end.to change(ListExport, :count).by(1)
         export = ListExport.last
-        expect(ListExportWorker).to have_queued(export.id)
       end
     end
 
-    describe "GET 'list_export'", search: true do
+    describe "GET 'list_export'", :search, :inline_jobs do
       let(:campaign) { create(:campaign, company: company, name: 'Test Campaign FY01') }
       it 'should return an empty book with the correct headers' do
         expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
-        ResqueSpec.perform_all(:export)
         expect(ListExport.last).to have_rows([
           ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'DURATION', 'VENUE NAME', 'ADDRESS', 'CITY',
            'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL']
@@ -159,7 +158,6 @@ describe EventsController, type: :controller do
         Sunspot.commit
 
         expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
-        ResqueSpec.perform_all(:export)
         expect(ListExport.last).to have_rows([
           ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'DURATION', 'VENUE NAME', 'ADDRESS', 'CITY',
            'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL'],
@@ -244,27 +242,25 @@ describe EventsController, type: :controller do
         expect(assigns(:event).company_id).to eq(company.id)
       end
 
-      it 'should assign users to the new event' do
-        with_resque do
-          company_user.update_attributes(
-            notifications_settings: %w(new_event_team_sms new_event_team_email),
-            user_attributes: { phone_number_verified: true })
-          expect(UserMailer).to receive(:notification)
-            .with(company_user.id, 'Added to Event',
-                  %r{You have a new event http:\/\/localhost:5100\/events\/[0-9]+})
-            .and_return(double(deliver: true))
+      it 'should assign users to the new event', :inline_jobs do
+        company_user.update_attributes(
+          notifications_settings: %w(new_event_team_sms new_event_team_email),
+          user_attributes: { phone_number_verified: true })
+        expect(UserMailer).to receive(:notification)
+          .with(company_user.id, 'Added to Event',
+                %r{You have a new event http:\/\/localhost:5100\/events\/[0-9]+})
+          .and_return(double(deliver: true))
+        expect do
           expect do
-            expect do
-              post 'create', event: {
-                campaign_id: campaign.id, team_members: ["company_user:#{company_user.id}"],
-                start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020',
-                end_time: '01:00pm' }, format: :js
-            end.to change(Event, :count).by(1)
-          end.to change(Membership, :count).by(1)
-          expect(assigns(:event).users.last.user.id).to eq(user.id)
-          open_last_text_message_for user.phone_number
-          expect(current_text_message).to have_body "You have a new event http://localhost:5100/events/#{Event.last.id}"
-        end
+            post 'create', event: {
+              campaign_id: campaign.id, team_members: ["company_user:#{company_user.id}"],
+              start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020',
+              end_time: '01:00pm' }, format: :js
+          end.to change(Event, :count).by(1)
+        end.to change(Membership, :count).by(1)
+        expect(assigns(:event).users.last.user.id).to eq(user.id)
+        open_last_text_message_for user.phone_number
+        expect(current_text_message).to have_body "You have a new event http://localhost:5100/events/#{Event.last.id}"
       end
 
       it 'should create the event with the correct dates' do
@@ -591,25 +587,23 @@ describe EventsController, type: :controller do
     end
 
     describe "PUT 'submit'" do
-      it 'should submit event' do
-        with_resque do
-          event = create(:event, active: true, company: company)
-          company_user.update_attributes(
-            notifications_settings: %w(event_recap_pending_approval_sms event_recap_pending_approval_email),
-            user_attributes: { phone_number_verified: true })
-          event.users << company_user
-          message = "You have an event recap that is pending approval http://localhost:5100/events/#{event.id}"
-          expect(UserMailer).to receive(:notification)
-            .with(company_user.id, 'Event Recaps Pending Approval', message)
-            .and_return(double(deliver: true))
-          expect do
-            xhr :put, 'submit', id: event.to_param, format: :js
-            expect(response).to be_success
-            event.reload
-          end.to change(event, :submitted?).to(true)
-          open_last_text_message_for user.phone_number
-          expect(current_text_message).to have_body message
-        end
+      it 'should submit event', :search, :inline_jobs do
+        event = create(:event, active: true, company: company)
+        company_user.update_attributes(
+          notifications_settings: %w(event_recap_pending_approval_sms event_recap_pending_approval_email),
+          user_attributes: { phone_number_verified: true })
+        event.users << company_user
+        message = "You have an event recap that is pending approval http://localhost:5100/events/#{event.id}"
+        expect(UserMailer).to receive(:notification)
+          .with(company_user.id, 'Event Recaps Pending Approval', message)
+          .and_return(double(deliver: true))
+        expect do
+          xhr :put, 'submit', id: event.to_param, format: :js
+          expect(response).to be_success
+          event.reload
+        end.to change(event, :submitted?).to(true)
+        open_last_text_message_for user.phone_number
+        expect(current_text_message).to have_body message
       end
 
       it 'should not allow to submit the event if the event data is not valid' do
@@ -648,27 +642,25 @@ describe EventsController, type: :controller do
     end
 
     describe "PUT 'reject'" do
-      it 'should reject event' do
+      it 'should reject event', :search, :inline_jobs do
         Timecop.freeze do
-          with_resque do
-            event = create(:submitted_event, active: true, company: company)
-            company_user.update_attributes(
-              notifications_settings: %w(event_recap_rejected_sms event_recap_rejected_email),
-              user_attributes: { phone_number_verified: true })
-            event.users << company_user
-            message = "You have a rejected event recap http://localhost:5100/events/#{event.id}"
-            expect(UserMailer).to receive(:notification)
-              .with(company_user.id, 'Rejected Event Recaps', message)
-              .and_return(double(deliver: true))
-            expect do
-              xhr :put, 'reject', id: event.to_param, reason: 'blah blah blah', format: :js
-              expect(response).to be_success
-              event.reload
-            end.to change(event, :rejected?).to(true)
-            expect(event.reject_reason).to eq('blah blah blah')
-            open_last_text_message_for user.phone_number
-            expect(current_text_message).to have_body message
-          end
+          event = create(:submitted_event, active: true, company: company)
+          company_user.update_attributes(
+            notifications_settings: %w(event_recap_rejected_sms event_recap_rejected_email),
+            user_attributes: { phone_number_verified: true })
+          event.users << company_user
+          message = "You have a rejected event recap http://localhost:5100/events/#{event.id}"
+          expect(UserMailer).to receive(:notification)
+            .with(company_user.id, 'Rejected Event Recaps', message)
+            .and_return(double(deliver: true))
+          expect do
+            xhr :put, 'reject', id: event.to_param, reason: 'blah blah blah', format: :js
+            expect(response).to be_success
+            event.reload
+          end.to change(event, :rejected?).to(true)
+          expect(event.reject_reason).to eq('blah blah blah')
+          open_last_text_message_for user.phone_number
+          expect(current_text_message).to have_body message
         end
       end
     end

@@ -51,7 +51,7 @@ class AssetDownload < ActiveRecord::Base
   end
 
   def queue_process
-    Resque.enqueue(AssetsDownloadWorker, id)
+    AssetsDownloadWorker.perform_async(id)
   end
 
   def self.find_or_create_by_assets_ids(ids, params)

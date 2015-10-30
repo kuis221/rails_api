@@ -132,12 +132,7 @@ feature 'Results Activity Data Page', js: true, search: true  do
       click_js_link 'Download'
       click_js_link 'Download as CSV'
 
-      within visible_modal do
-        expect(page).to have_content('We are processing your request, the download will start soon...')
-        expect(ListExportWorker).to have_queued(ListExport.last.id)
-        ResqueSpec.perform_all(:export)
-      end
-      ensure_modal_was_closed
+      wait_for_export_to_complete
 
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS',
@@ -169,13 +164,7 @@ feature 'Results Activity Data Page', js: true, search: true  do
       click_js_link 'Download'
       click_js_link 'Download as PDF'
 
-      within visible_modal do
-        expect(page).to have_content('We are processing your request, the download will start soon...')
-        export = ListExport.last
-        expect(ListExportWorker).to have_queued(export.id)
-        ResqueSpec.perform_all(:export)
-      end
-      ensure_modal_was_closed
+      wait_for_export_to_complete
 
       export = ListExport.last
       # Test the generated PDF...

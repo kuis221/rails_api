@@ -10,6 +10,8 @@ module Sunspot
 
         def self.after_save(*_args);  end
 
+        def self.after_commit(*_args);  end
+
         def self.after_destroy(*_args); end
       end
     end

@@ -218,22 +218,22 @@ describe Event, type: :model do
     let(:company) { create(:company, event_alerts_policy: Notification::EVENT_ALERT_POLICY_ALL) }
 
     it 'should queue EventNotifierWorker worker' do
-      event = create(:event, company: company)
-      expect(EventNotifierWorker).to have_queued(event.id)
+      expect(EventNotifierWorker).to receive(:perform_async)
+      create(:event, company: company)
     end
 
     it "should NOT queue EventNotifierWorker if the company's setting is set to team only" do
       company.settings = { event_alerts_policy: Notification::EVENT_ALERT_POLICY_TEAM }
       company.save
-      event = create(:event, company: company)
-      expect(EventNotifierWorker).to_not have_queued(event.id)
+      expect(EventNotifierWorker).to_not receive(:perform_async)
+      create(:event, company: company)
     end
 
     it "should NOT queue EventNotifierWorker if the company's setting is not set" do
       company.settings = {}
       company.save
-      event = create(:event, company: company)
-      expect(EventNotifierWorker).to_not have_queued(event.id)
+      expect(EventNotifierWorker).to_not receive(:perform_async)
+      create(:event, company: company)
     end
   end
 
@@ -837,31 +837,37 @@ describe Event, type: :model do
     end
   end
 
-  describe 'venue reindexing', strategy: :deletion do
+  describe 'venue reindexing' do
     let(:campaign) { create(:campaign) }
-    let(:event)    { create(:event, campaign: campaign, company: campaign.company) }
+    let!(:event)    { create(:event, campaign: campaign, company: campaign.company) }
 
     it 'should queue a job to update venue details after a event have been updated if the event data have changed' do
       Kpi.create_global_kpis
       campaign.assign_all_global_kpis
       event.place_id = 1
       event.save # Make sure the event have a place_id
-      ResqueSpec.reset!
+      expect(VenueIndexer).to receive(:perform_async).with(event.venue.id)
       expect do
         field = campaign.form_fields.find { |f| f.kpi_id == Kpi.impressions.id }
         event.update_attributes(results_attributes: { '1' => { form_field_id: field.id, value: '100' } })
       end.to change(FormFieldResult, :count).by(1)
-      expect(VenueIndexer).to have_queued(event.venue.id)
     end
 
     it 'should queue a job to update venue details after a event have been updated if place_id changed' do
-      expect do
-        event.place_id =  create(:place).id
-        expect(event.save).to be_truthy
-      end.to change(Venue, :count).by(1)
-      expect(VenueIndexer).to have_queued(event.venue.id)
+      new_venue = create(:venue, company: event.company)
+      expect(VenueIndexer).to receive(:perform_async).with(new_venue.id)
+      event.place_id =  new_venue.place_id
+      expect(event.save).to be_truthy
     end
 
+    it 'should queue a job to update the previews and new event venues' do
+      event_with_place = create(:event, campaign: campaign, place: create(:place))
+      new_venue = create(:venue, company: event_with_place.company)
+      expect(VenueIndexer).to receive(:perform_async).with(event_with_place.venue.id)
+      expect(VenueIndexer).to receive(:perform_async).with(new_venue.id)
+      event_with_place.place_id =  new_venue.place_id
+      expect(event_with_place.save).to be_truthy
+    end
   end
 
   describe '#place_reference=' do

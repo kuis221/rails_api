@@ -46,7 +46,5 @@ Brandscopic::Application.configure do
     )
   end
 
-  ENV['REDISTOGO_URL'] = 'redis://localhost:6379'
-
   config.middleware.insert_before(::Rack::Lock, ::Rack::LiveReload, min_delay: 500) if defined?(Rack::LiveReload)
 end

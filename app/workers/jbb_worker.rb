@@ -1,7 +1,8 @@
 class JbbWorker
-  @queue = :jbb_synch
+  include Sidekiq::Worker
+  sidekiq_options queue: :jbb_synch
 
-  def self.perform(klass)
+  def perform(klass)
     klass.constantize.new.process
   end
 end

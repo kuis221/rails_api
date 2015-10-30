@@ -1,7 +1,8 @@
 class AssetsReprocessWorker
-  @queue = :migration
+  include Sidekiq::Worker
+  sidekiq_options queue: :migration
 
-  def self.perform(id, style)
+  def perform(id, style)
     asset = AttachedAsset.find(id)
     asset.file.reprocess! style
   end

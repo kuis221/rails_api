@@ -88,12 +88,14 @@ describe InvitationsController, type: :controller do
 
         it 'should send a company invitation email' do
           user = create(:user, company_id: 987)
-          expect(UserMailer).to receive(:company_invitation).with(user.id, @company.id, @user.id).and_return(double(deliver: true))
+          delay = double(:delay)
+          expect(delay).to receive(:company_invitation).with(user.id, @company.id, @user.id).and_return(double(deliver: true))
+          expect(UserMailer).to receive(:delay).and_return(delay)
           xhr :post, 'create', user: { first_name: 'Some name', last_name: 'Last', email: user.email, company_users_attributes: { '0' => { role_id: 1 } } }, format: :js
         end
 
         it 'should not reassign the user to the same company' do
-          user = create(:user, email: 'existingemail4321@gmail.com', company_id: @company.id)
+          create(:user, email: 'existingemail4321@gmail.com', company_id: @company.id)
           expect do
             expect do
               xhr :post, 'create', user: { first_name: 'Test', last_name: 'Test', email: 'existingemail4321@gmail.com', company_users_attributes: { '0' => { role_id: 123 } } }, format: :js
@@ -106,12 +108,10 @@ describe InvitationsController, type: :controller do
     end
   end
 
-  describe('as a invited user') do
-    before(:each) do
-      @request.env['devise.mapping'] = Devise.mappings[:user]
-      @company = create(:company)
-    end
-    let(:user) { create(:invited_user, company_id: @company.id, role_id: create(:role).id) }
+  describe 'as a invited user' do
+    before { @request.env['devise.mapping'] = Devise.mappings[:user] }
+    let!(:company) { create(:company) }
+    let(:user) { create(:user, :invited, company_id: company.id, role_id: create(:role, company: company).id) }
 
     describe "POST 'send_invite'" do
       it "ask for resending the invitation's instructions" do

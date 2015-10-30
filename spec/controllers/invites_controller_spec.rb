@@ -57,17 +57,14 @@ RSpec.describe InvitesController, type: :controller do
     end
   end
 
-  describe "GET 'list_export'", search: true do
+  describe "GET 'list_export'", :search, :inline_jobs do
     let(:campaign) { create(:campaign, name: 'Test Campaign FY01', company: company, modules: { 'attendance' => { 'field_type' => 'module', 'name' => 'attendance', 'settings' => { 'attendance_display' => '1' } } }) }
     let(:event) { create(:event, campaign: campaign, start_date: '01/01/2015', end_date: '01/01/2015') }
 
     it 'for account level, generates empty csv with the correct headers' do
       expect { xhr :get, 'index', event_id: event.id, format: :csv }.to change(ListExport, :count).by(1)
-      export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
-      ResqueSpec.perform_all(:export)
 
-      expect(export.reload).to have_rows([
+      expect(ListExport.last).to have_rows([
         ['ACCOUNT', 'JAMESON LOCALS', 'TOP 100', 'INVITES', 'RSVPs', 'ATTENDEES']
       ])
     end
@@ -75,11 +72,8 @@ RSpec.describe InvitesController, type: :controller do
     it 'for market level and aggregate mode, generates empty csv with the correct headers' do
       campaign.update_attributes(modules: { 'attendance' => { 'field_type' => 'module', 'name' => 'attendance', 'settings' => { 'attendance_display' => '2' } } })
       expect { xhr :get, 'index', event_id: event.id, format: :csv }.to change(ListExport, :count).by(1)
-      export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
-      ResqueSpec.perform_all(:export)
 
-      expect(export.reload).to have_rows([
+      expect(ListExport.last).to have_rows([
         %w(MARKET INVITES RSVPs ATTENDEES)
       ])
     end
@@ -87,11 +81,8 @@ RSpec.describe InvitesController, type: :controller do
     it 'for market level and individual mode, generates an empty csv with the correct headers' do
       campaign.update_attributes(modules: { 'attendance' => { 'field_type' => 'module', 'name' => 'attendance', 'settings' => { 'attendance_display' => '2' } } })
       expect { xhr :get, 'index', event_id: event.id, export_mode: 'individual', format: :csv }.to change(ListExport, :count).by(1)
-      export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
-      ResqueSpec.perform_all(:export)
 
-      expect(export.reload).to have_rows([
+      expect(ListExport.last).to have_rows([
         ['MARKET', 'REGISTRANT ID', 'DATE ADDED', 'EMAIL', 'MOBILE PHONE', 'MOBILE SIGN UP',
          'FIRST NAME', 'LAST NAME', 'ATTENDED PREVIOUS BARTENDER BALL',
          'OPT IN TO FUTURE COMMUNICATION', 'PRIMARY REGISTRANT ID',
@@ -101,22 +92,16 @@ RSpec.describe InvitesController, type: :controller do
 
     it 'for account level, generates an empty csv with the correct headers' do
       expect { xhr :get, 'index', event_id: event.id, format: :csv }.to change(ListExport, :count).by(1)
-      export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
-      ResqueSpec.perform_all(:export)
 
-      expect(export.reload).to have_rows([
+      expect(ListExport.last).to have_rows([
         ['ACCOUNT', 'JAMESON LOCALS', 'TOP 100', 'INVITES', 'RSVPs', 'ATTENDEES']
       ])
     end
 
     it 'generates empty csv with the correct headers when exporting invites for a venue' do
       expect { xhr :get, 'index', venue_id: venue.id, format: :csv }.to change(ListExport, :count).by(1)
-      export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
-      ResqueSpec.perform_all(:export)
 
-      expect(export.reload).to have_rows([
+      expect(ListExport.last).to have_rows([
         ['EVENT DATE', 'CAMPAIGN', 'INVITES', 'RSVPs', 'ATTENDEES']
       ])
     end
@@ -125,11 +110,8 @@ RSpec.describe InvitesController, type: :controller do
       campaign.update_attributes(modules: { 'attendance' => { 'field_type' => 'module', 'name' => 'attendance', 'settings' => { 'attendance_display' => '2' } } })
       create(:invite, event: event, area: area, invitees: 100, attendees: 2, rsvps_count: 99)
       expect { xhr :get, 'index', event_id: event.id, format: :csv }.to change(ListExport, :count).by(1)
-      export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
-      ResqueSpec.perform_all(:export)
 
-      expect(export.reload).to have_rows([
+      expect(ListExport.last).to have_rows([
         %w(MARKET INVITES RSVPs ATTENDEES),
         %w(California 100 99 2)
       ])
@@ -141,11 +123,8 @@ RSpec.describe InvitesController, type: :controller do
       create(:invite_rsvp, invite: invite)
       create(:invite_rsvp, invite: invite)
       expect { xhr :get, 'index', event_id: event.id, export_mode: 'individual', format: :csv }.to change(ListExport, :count).by(1)
-      export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
-      ResqueSpec.perform_all(:export)
 
-      expect(export.reload).to have_rows([
+      expect(ListExport.last).to have_rows([
         ['MARKET', 'REGISTRANT ID', 'DATE ADDED', 'EMAIL', 'MOBILE PHONE', 'MOBILE SIGN UP',
          'FIRST NAME', 'LAST NAME', 'ATTENDED PREVIOUS BARTENDER BALL', 'OPT IN TO FUTURE COMMUNICATION',
          'PRIMARY REGISTRANT ID', 'BARTENDER HOW LONG', 'BARTENDER ROLE', 'DATE OF BIRTH', 'ZIP CODE'],
@@ -159,11 +138,8 @@ RSpec.describe InvitesController, type: :controller do
     it 'for account level, includes the invites when exporting from event details' do
       create(:invite, event: event, venue: venue, invitees: 100, attendees: 2, rsvps_count: 99)
       expect { xhr :get, 'index', event_id: event.id, format: :csv }.to change(ListExport, :count).by(1)
-      export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
-      ResqueSpec.perform_all(:export)
 
-      expect(export.reload).to have_rows([
+      expect(ListExport.last).to have_rows([
         ['ACCOUNT', 'JAMESON LOCALS', 'TOP 100', 'INVITES', 'RSVPs', 'ATTENDEES'],
         ['My Super Place', 'YES', 'NO', '100', '99', '2']
       ])
@@ -172,11 +148,8 @@ RSpec.describe InvitesController, type: :controller do
     it 'includes the invites when exporting invites for a venue' do
       create(:invite, event: event, venue: venue, invitees: 100, attendees: 2, rsvps_count: 99)
       expect { xhr :get, 'index', venue_id: venue.id, format: :csv }.to change(ListExport, :count).by(1)
-      export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
-      ResqueSpec.perform_all(:export)
 
-      expect(export.reload).to have_rows([
+      expect(ListExport.last).to have_rows([
         ['EVENT DATE', 'CAMPAIGN', 'INVITES', 'RSVPs', 'ATTENDEES'],
         ['2015-01-01 10:00', 'Test Campaign FY01', '100', '99', '2']
       ])

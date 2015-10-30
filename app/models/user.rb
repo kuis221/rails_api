@@ -123,7 +123,7 @@ class User < ActiveRecord::Base
   has_many :events, through: :company_users
 
   before_save :ensure_authentication_token
-  after_save :reindex_related
+  after_commit :reindex_related, on: :create, if: :persisted?
   before_validation :reset_verification
   after_invitation_accepted :reindex_company_users
   after_update :reprocess_avatar, if: :cropping?
@@ -143,11 +143,11 @@ class User < ActiveRecord::Base
 
   def is_fully_valid?
     if !phone_number.present? ||
-   !country.present? ||
-   !state.present? ||
-   !city.present? ||
-   !street_address.present? ||
-   !zip_code.present?
+       !country.present? ||
+       !state.present? ||
+       !city.present? ||
+       !street_address.present? ||
+       !zip_code.present?
       return false
    else
      return true
@@ -187,7 +187,7 @@ class User < ActiveRecord::Base
 
   def generate_and_send_phone_verification_code
     update_column :phone_number_verification, sprintf('%06d', rand(5**10))[0..5]
-    Resque.enqueue(SendSmsWorker, phone_number, "Your Brandscopic verification code is #{phone_number_verification}")
+    SendSmsWorker.perform_async(phone_number, "Your Brandscopic verification code is #{phone_number_verification}")
   end
 
   # Method for Devise to make that only active users can login into the app
@@ -239,9 +239,7 @@ class User < ActiveRecord::Base
   end
 
   def reindex_related
-    if first_name_changed? || last_name_changed?
-      Sunspot.index tasks
-    end
+    Sunspot.index tasks if first_name_changed? || last_name_changed?
   end
 
   def reindex_company_users
@@ -335,9 +333,8 @@ class User < ActiveRecord::Base
   end
 
   def ensure_authentication_token
-    if authentication_token.blank?
-      self.authentication_token = generate_authentication_token
-    end
+    return unless authentication_token.blank?
+    self.authentication_token = generate_authentication_token
   end
 
   def reset_authentication_token!
@@ -357,6 +354,7 @@ class User < ActiveRecord::Base
 
   def reprocess_avatar
     avatar.reprocess!
+    true
   end
 
   def valid_verification_code?

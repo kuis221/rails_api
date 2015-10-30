@@ -55,7 +55,7 @@ class Legacy::Event < Legacy::Record
         sleep(3)
         retry unless (tries -= 1).zero?
       end
-      Resque.enqueue(PhotoMigrationWorker, id, migration.local.id) if photos.count > 0
+      PhotoMigrationWorker.perform_async(id, migration.local.id) if photos.count > 0
     end
 
     migration

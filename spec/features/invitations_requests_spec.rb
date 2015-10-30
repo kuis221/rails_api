@@ -71,7 +71,7 @@ feature 'Invitations', js: true do
 
   feature 'accept invitation' do
     let(:user) do
-      create(:invited_user,
+      create(:user, :invited,
              first_name: 'Pedro', last_name: 'Picapiedra', email: 'pedro@rocadura.com',
              phone_number: '(506)22728899', country: 'CR', state: 'SJ', city: 'Curridabat',
              street_address: 'This is the street address', unit_number: 'This is the unit number',
@@ -173,7 +173,7 @@ feature 'Invitations', js: true do
 
   feature 'deactivated user' do
     let(:user) do
-      create(:invited_user, invitation_token: 'XYZ123', invitation_sent_at: 1.days.ago, active: false,
+      create(:user, :invited, invitation_token: 'XYZ123', invitation_sent_at: 1.days.ago, active: false,
                             role_id: create(:role, company: company).id, company: company)
     end
 

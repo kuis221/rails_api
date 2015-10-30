@@ -5,7 +5,7 @@ require 'rails_helper'
 feature 'Passwords', js: true do
   before do
     Warden.test_mode!
-    @user = create(:invited_user,
+    @user = create(:user, :invited,
                    first_name: 'First Name',
                    last_name: 'Last Name',
                    email: 'test@email.com',

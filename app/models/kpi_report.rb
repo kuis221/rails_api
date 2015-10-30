@@ -157,7 +157,7 @@ class KpiReport < ActiveRecord::Base
 
   def queue_report
     set_progress(0)
-    Resque.enqueue KpiReportWorker, id
+    KpiReportWorker.perform_async id
   end
 
   def progress_complete

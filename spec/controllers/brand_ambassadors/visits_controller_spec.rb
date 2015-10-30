@@ -20,30 +20,29 @@ RSpec.describe BrandAmbassadors::VisitsController, type: :controller do
     end
 
     it 'queue the job for export the list' do
+      expect(ListExportWorker).to receive(:perform_async).with(kind_of(Numeric))
       expect do
         xhr :get, :index, format: :csv
       end.to change(ListExport, :count).by(1)
       export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
       expect(export.controller).to eql('BrandAmbassadors::VisitsController')
       expect(export.export_format).to eql('csv')
     end
 
     it 'queue the job for export the list' do
+      expect(ListExportWorker).to receive(:perform_async).with(kind_of(Numeric))
       expect do
         xhr :get, :index, format: :pdf
       end.to change(ListExport, :count).by(1)
       export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
       expect(export.controller).to eql('BrandAmbassadors::VisitsController')
       expect(export.export_format).to eql('pdf')
     end
   end
 
-  describe "GET 'list_export'", search: true do
+  describe "GET 'list_export'", :search, :inline_jobs do
     it 'should return an empty book with the correct headers' do
       expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
-      ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['START DATE', 'END DATE', 'EMPLOYEE', 'AREA', 'CITY', 'CAMPAIGN', 'TYPE', 'DESCRIPTION']
       ])
@@ -54,19 +53,17 @@ RSpec.describe BrandAmbassadors::VisitsController, type: :controller do
                           user: create(:user, first_name: 'Michale', last_name: 'Jackson'),
                           company: company, role: user.role)
 
-      brand = create(:brand, name: 'Imperial', company_id: company.to_param)
+      create(:brand, name: 'Imperial', company_id: company.to_param)
 
       area = create(:area, name: 'Area 1', company_id: company.to_param)
 
-      visit = create(:brand_ambassadors_visit,
-                     visit_type: 'PTO', description: 'Test Visit description', company_user: visit_user,
-                     start_date: '01/23/2014', end_date: '01/24/2014', campaign: campaign, area: area,
-                     city: 'Test City', company: company)
+      create(:brand_ambassadors_visit,
+             visit_type: 'PTO', description: 'Test Visit description', company_user: visit_user,
+             start_date: '01/23/2014', end_date: '01/24/2014', campaign: campaign, area: area,
+             city: 'Test City', company: company)
       Sunspot.commit
 
       expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
-      expect(ListExportWorker).to have_queued(ListExport.last.id)
-      ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['START DATE', 'END DATE', 'EMPLOYEE', 'AREA', 'CITY', 'CAMPAIGN', 'TYPE', 'DESCRIPTION'],
         ['01/23/2014', '01/24/2014', 'Michale Jackson', 'Area 1', 'Test City',

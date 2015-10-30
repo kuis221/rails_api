@@ -55,24 +55,19 @@ feature 'Results Event Data Page', js: true, search: true  do
     end
   end
 
-  feature 'export as CSV' do
+  feature 'export as CSV', :inline_jobs do
     scenario 'should include any custom kpis from all the campaigns' do
-      with_resque do
-        field = create(:form_field_number, name: 'My Numeric Field', fieldable: campaign)
-        event = create(:approved_event, company: company, campaign: campaign)
-        event.results_for([field]).first.value = '9876'
-        event.save
+      field = create(:form_field_number, name: 'My Numeric Field', fieldable: campaign)
+      event = create(:approved_event, company: company, campaign: campaign)
+      event.results_for([field]).first.value = '9876'
+      event.save
 
-        Sunspot.commit
-        visit results_event_data_path
+      Sunspot.commit
+      visit results_event_data_path
 
-        click_button 'Download'
+      click_button 'Download'
 
-        within visible_modal do
-          expect(page).to have_content('We are processing your request, the download will start soon...')
-        end
-        ensure_modal_was_closed
-      end
+      wait_for_export_to_complete
     end
   end
 end

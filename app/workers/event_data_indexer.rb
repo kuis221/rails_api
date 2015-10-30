@@ -1,8 +1,8 @@
 class EventDataIndexer
-  include Resque::Plugins::UniqueJob
-  @queue = :indexing
+  include Sidekiq::Worker
+  sidekiq_options queue: :indexing
 
-  def self.perform(event_data_id)
+  def perform(event_data_id)
     data = EventData.find(event_data_id)
     data.update_data
     data.save

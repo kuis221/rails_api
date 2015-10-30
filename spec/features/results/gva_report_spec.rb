@@ -477,17 +477,10 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
   end
 
   def export_report(format = 'CSV')
-    with_resque do
-      expect do
-        click_js_link('Download')
-        click_js_link("Download as #{format}")
-        wait_for_ajax(10)
-        within visible_modal do
-          expect(page).to have_content('We are processing your request, the download will start soon...')
-        end
-        wait_for_ajax(30)
-        ensure_modal_was_closed
-      end.to change(ListExport, :count).by(1)
-    end
+    expect do
+      click_js_link('Download')
+      click_js_link("Download as #{format}")
+      wait_for_export_to_complete
+    end.to change(ListExport, :count).by(1)
   end
 end

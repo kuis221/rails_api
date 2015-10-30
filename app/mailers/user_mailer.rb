@@ -1,8 +1,6 @@
 class UserMailer < ActionMailer::Base
   default from: 'noreply@brandscopic.com'
 
-  include Resque::Mailer
-
   def company_invitation(user_id, company_id, inviter_id)
     @user = User.find(user_id)
     @company = Company.find(company_id)

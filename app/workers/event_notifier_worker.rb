@@ -1,8 +1,8 @@
 class EventNotifierWorker
-  include Resque::Plugins::UniqueJob
-  @queue = :notification
+  include Sidekiq::Worker
+  sidekiq_options queue: :notification
 
-  def self.perform(event_id)
+  def perform(event_id)
     event = Event.find(event_id)
     if event.campaign.present?
       event.campaign.all_users_with_access.each do |user|

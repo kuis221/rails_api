@@ -16,37 +16,31 @@ describe Analysis::GvaController, type: :controller do
 
     describe 'CSV export' do
       it 'queue the job for export the list to CSV' do
+        expect(ListExportWorker).to receive(:perform_async).with(kind_of(Numeric))
         expect do
           xhr :get, :index, format: :csv
         end.to change(ListExport, :count).by(1)
-        export = ListExport.last
-        expect(ListExportWorker).to have_queued(export.id)
       end
     end
 
-    describe 'PDF export' do
+    describe 'PDF export', :inline_jobs do
       let(:campaign) { create(:campaign, name: 'My Super campaign', company: @company) }
       let(:kpi) { create(:kpi, name: 'My Custom KPI', company: @company) }
-      before { ResqueSpec.reset! }
       before { campaign.add_kpi kpi }
 
       it 'queue the job for export the list to PDF' do
+        expect(ListExportWorker).to receive(:perform_async).with(kind_of(Numeric))
         expect do
           xhr :get, :index, report: { campaign_id: campaign.id, group_by: 'campaign', view_mode: 'graph' }, format: :pdf
         end.to change(ListExport, :count).by(1)
-        export = ListExport.last
-        expect(ListExportWorker).to have_queued(export.id)
       end
 
       it 'should render the PDF even if no data' do
         expect do
           xhr :get, :index, report: { campaign_id: campaign.id, group_by: 'campaign', view_mode: 'graph' }, format: :pdf
         end.to change(ListExport, :count).by(1)
-        export = ListExport.last
-        expect(ListExportWorker).to have_queued(export.id)
-        ResqueSpec.perform_all(:export)
 
-        reader = PDF::Reader.new(open(export.reload.file.url))
+        reader = PDF::Reader.new(open(ListExport.last.file.url))
         expect(reader.page_count).to eql 1
         reader.pages.each do |page|
           expect(page.text).to be_empty
@@ -67,11 +61,8 @@ describe Analysis::GvaController, type: :controller do
         expect do
           xhr :get, :index, report: { campaign_id: campaign.id, group_by: 'campaign', view_mode: 'graph' }, format: :pdf
         end.to change(ListExport, :count).by(1)
-        export = ListExport.last
-        expect(ListExportWorker).to have_queued(export.id)
-        ResqueSpec.perform_all(:export)
 
-        reader = PDF::Reader.new(open(export.reload.file.url))
+        reader = PDF::Reader.new(open(ListExport.last.file.url))
         reader.pages.each do |page|
           # PDF to text seems to not always return the same results
           # with white spaces, so, remove them and look for strings
@@ -98,11 +89,8 @@ describe Analysis::GvaController, type: :controller do
         expect do
           xhr :get, :index, report: { campaign_id: campaign.id, group_by: 'campaign', view_mode: 'graph' }, format: :pdf
         end.to change(ListExport, :count).by(1)
-        export = ListExport.last
-        expect(ListExportWorker).to have_queued(export.id)
-        ResqueSpec.perform_all(:export)
 
-        reader = PDF::Reader.new(open(export.reload.file.url))
+        reader = PDF::Reader.new(open(ListExport.last.file.url))
         reader.pages.each do |page|
           # PDF to text seems to not always return the same results
           # with white spaces, so, remove them and look for strings
@@ -134,11 +122,8 @@ describe Analysis::GvaController, type: :controller do
         expect do
           xhr :get, :index, report: { campaign_id: campaign.id, group_by: 'staff', view_mode: 'graph' }, format: :pdf
         end.to change(ListExport, :count).by(1)
-        export = ListExport.last
-        expect(ListExportWorker).to have_queued(export.id)
-        ResqueSpec.perform_all(:export)
 
-        reader = PDF::Reader.new(open(export.reload.file.url))
+        reader = PDF::Reader.new(open(ListExport.last.file.url))
         reader.pages.each do |page|
           # PDF to text seems to not always return the same results
           # with white spaces, so, remove them and look for strings
@@ -276,11 +261,10 @@ describe Analysis::GvaController, type: :controller do
     end
   end
 
-  describe "GET 'list_export'", search: true do
+  describe "GET 'list_export'", :search, :inline_jobs do
     let(:campaign) { create(:campaign, name: 'My Super campaign', company: @company) }
     it 'should return an empty book with the correct headers' do
       expect { xhr :get, :index, report: { campaign_id: campaign.id, group_by: 'campaign' }, format: :csv }.to change(ListExport, :count).by(1)
-      ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['METRIC', 'GOAL', 'ACTUAL', 'ACTUAL %', 'PENDING', 'PENDING %']
       ])
@@ -288,7 +272,6 @@ describe Analysis::GvaController, type: :controller do
 
     it 'should include the event results' do
       kpi = create(:kpi, name: 'My Custom KPI', company: @company)
-      ResqueSpec.reset!
 
       campaign.add_kpi kpi
       @company_user.campaigns << campaign
@@ -306,7 +289,6 @@ describe Analysis::GvaController, type: :controller do
       create(:goal, goalable: campaign, kpi: kpi, value: '100')
 
       expect { xhr :get, :index, report: { campaign_id: campaign.id, group_by: 'staff', view_mode: 'graph' }, format: :csv }.to change(ListExport, :count).by(1)
-      ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['USER/TEAM', 'METRIC', 'GOAL', 'ACTUAL', 'ACTUAL %', 'PENDING', 'PENDING %'],
         ['Test User', 'My Custom KPI', '50', '25', '50.00%', '45', '90.00%']

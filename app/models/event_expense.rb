@@ -68,8 +68,8 @@ class EventExpense < ActiveRecord::Base
 
   def update_event_data
     return unless event.present?
-    Resque.enqueue(EventDataIndexer, event.event_data.id) if event.event_data.present?
-    Resque.enqueue(VenueIndexer, event.venue.id) if event.venue.present?
+    EventDataIndexer.perform_async(event.event_data.id) if event.event_data.present?
+    VenueIndexer.perform_async(event.venue.id) if event.venue.present?
   end
 
   def valid_receipt?

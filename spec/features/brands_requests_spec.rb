@@ -144,16 +144,11 @@ feature 'Brands', js: true do
     end
   end
 
-  feature 'export', search: true do
-    let(:brand1) { create(:brand, name: 'Brand 1', active: true, company: company) }
-    let(:brand2) { create(:brand, name: 'Brand 2', active: true, company: company) }
+  feature 'export', :search do
+    let!(:brand1) { create(:brand, name: 'Brand 1', active: true, company: company) }
+    let!(:brand2) { create(:brand, name: 'Brand 2', active: true, company: company) }
 
-    before do
-      # make sure brands are created before
-      brand1
-      brand2
-      Sunspot.commit
-    end
+    before {  Sunspot.commit }
 
     scenario 'should be able to export as CSV' do
       visit brands_path
@@ -161,12 +156,7 @@ feature 'Brands', js: true do
       click_js_link 'Download'
       click_js_link 'Download as CSV'
 
-      within visible_modal do
-        expect(page).to have_content('We are processing your request, the download will start soon...')
-        expect(ListExportWorker).to have_queued(ListExport.last.id)
-        ResqueSpec.perform_all(:export)
-      end
-      ensure_modal_was_closed
+      wait_for_export_to_complete
 
       expect(ListExport.last).to have_rows([
         ['NAME', 'ACTIVE STATE'],
@@ -181,17 +171,10 @@ feature 'Brands', js: true do
       click_js_link 'Download'
       click_js_link 'Download as PDF'
 
-      within visible_modal do
-        expect(page).to have_content('We are processing your request, the download will start soon...')
-        export = ListExport.last
-        expect(ListExportWorker).to have_queued(export.id)
-        ResqueSpec.perform_all(:export)
-      end
-      ensure_modal_was_closed
+      wait_for_export_to_complete
 
-      export = ListExport.last
       # Test the generated PDF...
-      reader = PDF::Reader.new(open(export.file.url))
+      reader = PDF::Reader.new(open(ListExport.last.file.url))
       reader.pages.each do |page|
         # PDF to text seems to not always return the same results
         # with white spaces, so, remove them and look for strings

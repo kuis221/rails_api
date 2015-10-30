@@ -306,13 +306,13 @@ feature 'Events section' do
           let(:month_name) { today.strftime('%b') }
           let(:year_number) { today.strftime('%Y').to_i }
           let(:today) { Time.use_zone(user.time_zone) { Time.current } }
-          let(:event1) do
+          let!(:event1) do
             create(:event, start_date: today.to_s(:slashes), end_date: today.to_s(:slashes),
                            start_time: '10:00am', end_time: '11:00am',
                            campaign: campaign, active: true,
                            place: create(:place, name: 'Place 1'))
           end
-          let(:event2) do
+          let!(:event2) do
             create(:event, start_date: today.to_s(:slashes), end_date: today.to_s(:slashes),
                            start_time: '08:00am', end_time: '09:00am',
                            campaign: create(:campaign, name: 'Another Campaign April 03', company: company),
@@ -320,12 +320,7 @@ feature 'Events section' do
                                                  state: 'CA', zipcode: '67890'))
           end
 
-          before do
-            # make sure events are created before
-            event1
-            event2
-            Sunspot.commit
-          end
+          before { Sunspot.commit }
 
           scenario 'should be able to export as CSV' do
             contact1 = create(:contact, first_name: 'Guillermo', last_name: 'Vargas', email: 'guilleva@gmail.com', company: company)
@@ -339,13 +334,8 @@ feature 'Events section' do
             click_js_link 'Download'
             click_js_link 'Download as CSV'
 
-            within visible_modal do
-              expect(page).to have_content('We are processing your request, the download will start soon...')
-              expect(ListExportWorker).to have_queued(ListExport.last.id)
-              ResqueSpec.perform_all(:export)
-            end
+            wait_for_export_to_complete
 
-            ensure_modal_was_closed
             expect(ListExport.last).to have_rows([
               ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'DURATION', 'VENUE NAME', 'ADDRESS', 'CITY',
                'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL'],
@@ -367,17 +357,10 @@ feature 'Events section' do
             click_js_link 'Download'
             click_js_link 'Download as PDF'
 
-            within visible_modal do
-              expect(page).to have_content('We are processing your request, the download will start soon...')
-              export = ListExport.last
-              expect(ListExportWorker).to have_queued(export.id)
-              ResqueSpec.perform_all(:export)
-            end
-            ensure_modal_was_closed
+            wait_for_export_to_complete
 
-            export = ListExport.last
             # Test the generated PDF...
-            reader = PDF::Reader.new(open(export.file.url))
+            reader = PDF::Reader.new(open(ListExport.last.file.url))
             reader.pages.each do |page|
               # PDF to text seems to not always return the same results
               # with white spaces, so, remove them and look for strings
@@ -404,17 +387,10 @@ feature 'Events section' do
             click_js_link 'Download'
             click_js_link 'Download as PDF'
 
-            within visible_modal do
-              expect(page).to have_content('We are processing your request, the download will start soon...')
-              export = ListExport.last
-              expect(ListExportWorker).to have_queued(export.id)
-              ResqueSpec.perform_all(:export)
-            end
-            ensure_modal_was_closed
+            wait_for_export_to_complete
 
-            export = ListExport.last
             # Test the generated PDF...
-            reader = PDF::Reader.new(open(export.file.url))
+            reader = PDF::Reader.new(open(ListExport.last.file.url))
             reader.pages.each do |page|
               # PDF to text seems to not always return the same results
               # with white spaces, so, remove them and look for strings

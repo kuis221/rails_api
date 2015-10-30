@@ -7,15 +7,51 @@
 #   Sunspot.session = Sunspot::Queue::SessionProxy.new(Sunspot.session, backend)
 # end
 
-# To reindex using resque
+# To reindex using sidekiq
 if ENV['WEB'] && !Rails.env.test?
-  require 'sunspot/queue/resque'
-  backend = Sunspot::Queue::Resque::Backend.new
+  require 'sunspot/queue/sidekiq'
+  backend = Sunspot::Queue::Sidekiq::Backend.new
   Sunspot.session = Sunspot::Queue::SessionProxy.new(Sunspot.session, backend)
 
   Sunspot::Queue.configure do |config|
     # Override default job classes
     config.index_job   = IndexWorker
+  end
+end
+
+# Mokey patch to make models indexing after commit to
+# work properly with sunspot-queue
+module Sunspot
+  module Rails
+    module Searchable
+      module ActsAsMethods
+        def searchable(options = {}, &block)
+          Sunspot.setup(self, &block)
+
+          if searchable?
+            sunspot_options[:include].concat(Util::Array(options[:include]))
+          else
+            extend ClassMethods
+            include InstanceMethods
+
+            class_attribute :sunspot_options
+
+            unless options[:auto_index] == false
+              before_save :mark_for_auto_indexing_or_removal
+
+              after_commit :perform_index_tasks, if: :persisted?
+            end
+
+            unless options[:auto_remove] == false
+              after_commit ->(searchable) { searchable.remove_from_index }, on: :destroy
+            end
+            options[:include] = Util::Array(options[:include])
+
+            self.sunspot_options = options
+          end
+        end
+      end
+    end
   end
 end
 
