@@ -32,9 +32,14 @@ class DataExtract::BrandAmbassadorsVisit < DataExtract
                  modified_at: proc { "to_char(brand_ambassadors_visits.updated_at, 'MM/DD/YYYY')" }
 
   def add_joins_to_scope(s)
-    s = s.joins('LEFT JOIN company_users ON company_users.id = brand_ambassadors_visits.company_user_id LEFT JOIN users ON users.id = company_users.user_id') if columns.include?('employee')
-    s = s.joins('LEFT JOIN campaigns ON campaigns.id = brand_ambassadors_visits.campaign_id') if columns.include?('campaign_name')
-    s = s.joins('LEFT JOIN areas ON areas.id = brand_ambassadors_visits.area_id') if columns.include?('area_name')
+    s = s.joins('LEFT JOIN company_users '\
+                'ON company_users.id = brand_ambassadors_visits.company_user_id '\
+                'LEFT JOIN users '\
+                'ON users.id = company_users.user_id') if columns.include?('employee')
+    s = s.joins('LEFT JOIN campaigns '\
+                'ON campaigns.id = brand_ambassadors_visits.campaign_id') if columns.include?('campaign_name')
+    s = s.joins('LEFT JOIN areas '\
+                'ON areas.id = brand_ambassadors_visits.area_id') if columns.include?('area_name')
     s
   end
 
