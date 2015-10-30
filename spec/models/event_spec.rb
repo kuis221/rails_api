@@ -863,7 +863,7 @@ describe Event, type: :model do
     it 'should queue a job to update the previews and new event venues' do
       event_with_place = create(:event, campaign: campaign, place: create(:place))
       new_venue = create(:venue, company: event_with_place.company)
-      expect(VenueIndexer).to receive(:perform_async).with(event_with_place.venue.id)
+      expect(VenueIndexer).to receive(:perform_async).with(event_with_place.venue.id).at_least(:once)
       expect(VenueIndexer).to receive(:perform_async).with(new_venue.id)
       event_with_place.place_id =  new_venue.place_id
       expect(event_with_place.save).to be_truthy
