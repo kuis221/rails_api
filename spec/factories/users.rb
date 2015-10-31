@@ -89,10 +89,11 @@ FactoryGirl.define do
       end
     end
 
-    factory :invited_user do
+    trait :invited do
       sequence(:invitation_token) { |n| "#{n}EmMBowassEf#{n}GSHyBhEnX#{n}" }
-      association :invited_by, factory: :user
-      first_name 'Test Invited'
+      invited_by  { create(:user, first_name: 'User', last_name: 'Inviting') }
+      first_name 'User'
+      last_name 'Invited'
       password nil
       password_confirmation nil
       invitation_sent_at 1.day.ago

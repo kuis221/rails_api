@@ -11,6 +11,7 @@ describe DocumentsController, type: :controller do
 
   describe "POST 'create'", strategy: :deletion do
     it 'queue a job for processing the photos' do
+      expect(AssetsUploadWorker).to receive(:perform_async).with(kind_of(Numeric), 'AttachedAsset')
       s3object = double
       allow(s3object).to receive(:copy_from).and_return(true)
       file_object = double(head: double(content_length: 100, content_type: 'image/jpeg', last_modified: Time.now))
@@ -35,7 +36,6 @@ describe DocumentsController, type: :controller do
       expect(document.attachable).to eq(event)
       expect(document.asset_type).to eq('document')
       expect(document.direct_upload_url).to eq('https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg')
-      expect(AssetsUploadWorker).to have_queued(document.id, 'AttachedAsset')
     end
   end
 

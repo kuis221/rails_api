@@ -38,7 +38,7 @@ module Legacy
 
       program_ids.each do |program_id|
         p "Queing program processing[#{program_id}]"
-        Resque.enqueue(ProgramMigrationWorker, company.id, program_id)
+        ProgramMigrationWorker.perform_async(company.id, program_id)
       end
     end
 
@@ -48,10 +48,7 @@ module Legacy
   end
 end
 
-
-p "REQUIRING LEGACY"
 if defined?(Rails::Railtie)
-  p "Rails::Railtie"
   require 'legacy/railtie'
 end
 

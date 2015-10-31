@@ -69,9 +69,9 @@ describe Admin::KpisController, type: :controller do
       campaign.add_kpi kpi2
 
       options  = { 'confirm' => 'Merge', 'master_kpi' => { campaign.to_param => kpi1.id.to_s, campaign.to_param => kpi2.id.to_s } }
+      expect(KpiMergeWorker).to receive(:perform_async).with([kpi1.id, kpi2.id], options)
       post 'batch_action', batch_action: 'merge', collection_selection_toggle_all: 'on', collection_selection: [kpi1.id, kpi2.id], merge: options
       expect(response).to redirect_to(admin_kpis_path)
-      expect(KpiMergeWorker).to have_queued([kpi1.id, kpi2.id], options)
       expect(flash[:notice]).to eq('A job have been queued to merge the KPIs. This can take up to 2 minutes depending of the number of events/campaigns those KPIs are used')
     end
   end

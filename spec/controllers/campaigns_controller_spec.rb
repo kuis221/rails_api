@@ -29,21 +29,21 @@ describe CampaignsController, type: :controller do
     end
 
     it 'queue the job for export the list to CSV' do
+      expect(ListExportWorker).to receive(:perform_async)
       expect do
         xhr :get, :index, format: :csv
       end.to change(ListExport, :count).by(1)
       export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
       expect(export.controller).to eql('CampaignsController')
       expect(export.export_format).to eql('csv')
     end
 
     it 'queue the job for export the list to PDF' do
+      expect(ListExportWorker).to receive(:perform_async)
       expect do
         xhr :get, :index, format: :pdf
       end.to change(ListExport, :count).by(1)
       export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
       expect(export.controller).to eql('CampaignsController')
       expect(export.export_format).to eql('pdf')
     end
@@ -496,26 +496,24 @@ describe CampaignsController, type: :controller do
   end
 
   describe "POST 'add_members" do
-    it 'should assign the user to the campaign' do
-      with_resque do
-        company_user.update_attributes(
-          notifications_settings: %w(new_campaign_sms new_campaign_email),
-          user_attributes: { phone_number_verified: true }
-        )
-        message = "You have a new campaign http://localhost:5100/campaigns/#{campaign.id}"
-        expect(UserMailer).to receive(:notification).with(company_user.id, 'New Campaign', message).and_return(double(deliver: true))
-        expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{company_user.id}")
-        expect(Rails.cache).to receive(:delete).with("user_notifications_#{company_user.id}").at_least(:once)
-        expect do
-          xhr :post, 'add_members', id: campaign.id, member_id: company_user.to_param, format: :js
-          expect(response).to be_success
-          expect(assigns(:campaign)).to eq(campaign)
-          campaign.reload
-        end.to change(campaign.users, :count).by(1)
-        expect(campaign.users).to eq([company_user])
-        open_last_text_message_for user.phone_number
-        expect(current_text_message).to have_body message
-      end
+    it 'should assign the user to the campaign', :inline_jobs do
+      company_user.update_attributes(
+        notifications_settings: %w(new_campaign_sms new_campaign_email),
+        user_attributes: { phone_number_verified: true }
+      )
+      message = "You have a new campaign http://localhost:5100/campaigns/#{campaign.id}"
+      expect(UserMailer).to receive(:notification).with(company_user.id, 'New Campaign', message).and_return(double(deliver: true))
+      expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{company_user.id}")
+      expect(Rails.cache).to receive(:delete).with("user_notifications_#{company_user.id}").at_least(:once)
+      expect do
+        xhr :post, 'add_members', id: campaign.id, member_id: company_user.to_param, format: :js
+        expect(response).to be_success
+        expect(assigns(:campaign)).to eq(campaign)
+        campaign.reload
+      end.to change(campaign.users, :count).by(1)
+      expect(campaign.users).to eq([company_user])
+      open_last_text_message_for user.phone_number
+      expect(current_text_message).to have_body message
     end
 
     it 'should assign all the team\'s users to the campaign' do
@@ -672,10 +670,9 @@ describe CampaignsController, type: :controller do
     end
   end
 
-  describe "GET 'list_export'", search: true do
+  describe "GET 'list_export'", :search, :inline_jobs do
     it 'should return an empty book with the correct headers' do
       expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
-      ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['NAME', 'DESCRIPTION', 'FIRST EVENT', 'LAST EVENT', 'ACTIVE STATE']
       ])
@@ -691,8 +688,6 @@ describe CampaignsController, type: :controller do
       Sunspot.commit
 
       expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
-      expect(ListExportWorker).to have_queued(ListExport.last.id)
-      ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['NAME', 'DESCRIPTION', 'FIRST EVENT', 'LAST EVENT', 'ACTIVE STATE'],
         ['Cacique FY13', 'Test campaign for guaro Cacique', '08/21/2013 10:00', '08/28/2013 11:00', 'Active']

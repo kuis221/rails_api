@@ -14,6 +14,5 @@ if Rails.env.production?
     config.environment_name = ENV['HEROKU_APP_NAME'] || Rails.env
 
     config.ignore << 'SignalException'
-    config.ignore << 'Resque::DirtyExit'
   end
 end

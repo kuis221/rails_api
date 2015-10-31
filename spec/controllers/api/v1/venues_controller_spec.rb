@@ -49,23 +49,21 @@ describe Api::V1::VenuesController, type: :controller do
       expect(result['results']).to be_empty
     end
 
-    it 'return a list of venues filtered by campaign id', strategy: :deletion do
-      with_resque do
-        campaign = create(:campaign, company: company)
-        other_campaign = create(:campaign, company: company)
-        venue = create(:venue, place: create(:place), company: company)
-        other_venue = create(:venue, place: create(:place), company: company)
-        create(:event, company: company, campaign: campaign, place: venue.place)
-        create(:event, company: company, campaign: other_campaign, place: other_venue.place)
-        Sunspot.commit
+    it 'return a list of venues filtered by campaign id', :inline_jobs do
+      campaign = create(:campaign, company: company)
+      other_campaign = create(:campaign, company: company)
+      venue = create(:venue, place: create(:place), company: company)
+      other_venue = create(:venue, place: create(:place), company: company)
+      create(:event, company: company, campaign: campaign, place: venue.place)
+      create(:event, company: company, campaign: other_campaign, place: other_venue.place)
+      Sunspot.commit
 
-        get :index, campaign: [campaign.id], format: :json
-        expect(response).to be_success
-        result = JSON.parse(response.body)
+      get :index, campaign: [campaign.id], format: :json
+      expect(response).to be_success
+      result = JSON.parse(response.body)
 
-        expect(result['results'].count).to eq(1)
-        expect(result['results'].first).to include('id' => venue.id)
-      end
+      expect(result['results'].count).to eq(1)
+      expect(result['results'].first).to include('id' => venue.id)
     end
   end
 

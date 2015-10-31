@@ -269,17 +269,10 @@ feature 'Results Event Status Page', js: true, search: true  do
       click_js_link 'Download'
       click_js_link 'Download as PDF'
 
-      within visible_modal do
-        expect(page).to have_content('We are processing your request, the download will start soon...')
-        export = ListExport.last
-        expect(ListExportWorker).to have_queued(export.id)
-        ResqueSpec.perform_all(:export)
-      end
-      ensure_modal_was_closed
+      wait_for_export_to_complete
 
-      export = ListExport.last
       # Test the generated PDF...
-      reader = PDF::Reader.new(open(export.file.url))
+      reader = PDF::Reader.new(open(ListExport.last.file.url))
       reader.pages.each do |page|
         # PDF to text seems to not always return the same results
         # with white spaces, so, remove them and look for strings
@@ -317,13 +310,7 @@ feature 'Results Event Status Page', js: true, search: true  do
       click_js_link 'Download'
       click_js_link 'Download as PDF'
 
-      within visible_modal do
-        expect(page).to have_content('We are processing your request, the download will start soon...')
-        export = ListExport.last
-        expect(ListExportWorker).to have_queued(export.id)
-        ResqueSpec.perform_all(:export)
-      end
-      ensure_modal_was_closed
+      wait_for_export_to_complete
 
       export = ListExport.last
       # Test the generated PDF...
@@ -369,13 +356,7 @@ feature 'Results Event Status Page', js: true, search: true  do
       click_js_link 'Download'
       click_js_link 'Download as PDF'
 
-      within visible_modal do
-        expect(page).to have_content('We are processing your request, the download will start soon...')
-        export = ListExport.last
-        expect(ListExportWorker).to have_queued(export.id)
-        ResqueSpec.perform_all(:export)
-      end
-      ensure_modal_was_closed
+      wait_for_export_to_complete
 
       export = ListExport.last
       # Test the generated PDF...
@@ -406,17 +387,10 @@ feature 'Results Event Status Page', js: true, search: true  do
   end
 
   def export_report(format = 'CSV')
-    with_resque do
-      expect do
-        click_js_link('Download')
-        click_js_link("Download as #{format}")
-        wait_for_ajax(10)
-        within visible_modal do
-          expect(page).to have_content('We are processing your request, the download will start soon...')
-        end
-        wait_for_ajax(30)
-        ensure_modal_was_closed
-      end.to change(ListExport, :count).by(1)
-    end
+    expect do
+      click_js_link('Download')
+      click_js_link("Download as #{format}")
+      wait_for_export_to_complete
+    end.to change(ListExport, :count).by(1)
   end
 end

@@ -68,10 +68,8 @@ RSpec.configure do |config|
 
   config.before(:each) do |example|
     reset_email
-    allow(Resque::Worker).to receive_messages(working: [])
 
     # make sure we star each test in a clean state
-    ResqueSpec.reset!
     User.current = nil
     Company.current = nil
     Time.zone = Rails.application.config.time_zone

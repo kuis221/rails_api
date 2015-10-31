@@ -29,6 +29,7 @@ describe Api::V1::DocumentsController, type: :controller do
     let(:event) { create(:event, company: company, campaign: campaign) }
 
     it 'queue a job for processing the document', :show_in_doc do
+      expect(AssetsUploadWorker).to receive(:perform_async).with(kind_of(Numeric), 'AttachedAsset')
       s3object = double
       allow(s3object).to receive(:copy_from).and_return(true)
       allow(s3object).to receive(:exists?).at_least(:once).and_return(true)
@@ -51,7 +52,6 @@ describe Api::V1::DocumentsController, type: :controller do
       expect(document.attachable).to eq(event)
       expect(document.asset_type).to eq('document')
       expect(document.direct_upload_url).to eq('https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg')
-      expect(AssetsUploadWorker).to have_queued(document.id, 'AttachedAsset')
     end
   end
 

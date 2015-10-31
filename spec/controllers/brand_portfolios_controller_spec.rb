@@ -21,21 +21,21 @@ describe BrandPortfoliosController, type: :controller do
     end
 
     it 'queue the job for export the list to CSV' do
+      expect(ListExportWorker).to receive(:perform_async).with(kind_of(Numeric))
       expect do
         xhr :get, :index, format: :csv
       end.to change(ListExport, :count).by(1)
       export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
       expect(export.controller).to eql('BrandPortfoliosController')
       expect(export.export_format).to eql('csv')
     end
 
     it 'queue the job for export the list to PDF' do
+      expect(ListExportWorker).to receive(:perform_async).with(kind_of(Numeric))
       expect do
         xhr :get, :index, format: :pdf
       end.to change(ListExport, :count).by(1)
       export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
       expect(export.controller).to eql('BrandPortfoliosController')
       expect(export.export_format).to eql('pdf')
     end
@@ -167,10 +167,9 @@ describe BrandPortfoliosController, type: :controller do
     end
   end
 
-  describe "GET 'list_export'", search: true do
+  describe "GET 'list_export'", :search, :inline_jobs do
     it 'should return an empty book with the correct headers' do
       expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
-      ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['NAME', 'DESCRIPTION', 'ACTIVE STATE']
       ])
@@ -182,8 +181,6 @@ describe BrandPortfoliosController, type: :controller do
       Sunspot.commit
 
       expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
-      expect(ListExportWorker).to have_queued(ListExport.last.id)
-      ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['NAME', 'DESCRIPTION', 'ACTIVE STATE'],
         ['A Vinos ticos', 'Algunos vinos de Costa Rica', 'Active']

@@ -46,13 +46,14 @@ class InvitationsController < Devise::InvitationsController
     redirect_to new_password_path(resource_name) unless params[:invitation_token]
     resource = resource_class.find_by(invitation_token: params[:invitation_token])
     return new_password_path(resource_name) unless resource.present? && resource.invited_to_sign_up?
-    UserMailer.request_new_invitation(resource.id).deliver
+    UserMailer.delay.request_new_invitation(resource.id)
     set_flash_message(:info, :invitation_resend_requested)
     redirect_to after_sign_out_path_for(resource_name)
   end
 
   def create
-    if params[:user] && params[:user][:email] && invited_user = User.where(["lower(users.email) = '%s'", params[:user][:email].downcase]).first
+    if params[:user] && params[:user][:email] &&
+       (invited_user = User.where(["lower(users.email) = '%s'", params[:user][:email].downcase]).first)
       if invited_user.company_users.select { |cu| cu.company_id == current_company.id }.size > 0
         self.resource = User.new(resource_params, as: :admin)
         resource.errors.add(:email, "This user with the email address #{params[:user][:email]} already exists. Email addresses must be unique.")
@@ -60,7 +61,7 @@ class InvitationsController < Devise::InvitationsController
         self.resource = invited_user
         resource.assign_attributes(inviting_user: true, company_users_attributes: resource_params[:company_users_attributes])
         if resource.save && resource.errors.empty?
-          UserMailer.company_invitation(resource.id, current_company.id, current_user.id).deliver
+          UserMailer.delay.company_invitation(resource.id, current_company.id, current_user.id)
         end
       end
     else

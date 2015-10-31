@@ -422,64 +422,94 @@ feature 'Activities management' do
       expect(find_field('Option 2').value).to eql '90'
     end
 
-    scenario 'user can attach a photo to an activity' do
+    scenario 'user can attach a photo to an activity', :inline_jobs do
       activity_type = create(:activity_type, name: 'Activity Type #1', company: company)
       create(:form_field, fieldable: activity_type, type: 'FormField::Photo')
 
       campaign.activity_types << activity_type
 
-      with_resque do # So the image is processed
-        visit event_path(event)
+      visit event_path(event)
 
-        click_js_button('Add Activity')
+      click_js_button('Add Activity')
 
-        within visible_modal do
-          choose('Activity Type #1')
-          click_js_button 'Create'
-        end
+      within visible_modal do
+        choose('Activity Type #1')
+        click_js_button 'Create'
+      end
 
-        within('.survey-header') do
-          expect(page).to have_content 'Activity Type #1'
-        end
+      within('.survey-header') do
+        expect(page).to have_content 'Activity Type #1'
+      end
 
-        expect(page).to have_content('DRAG & DROP')
+      expect(page).to have_content('DRAG & DROP')
 
-        # Should validate the type of the image
-        attach_file 'file', 'spec/fixtures/file.pdf'
-        expect(page).to have_content('is not a valid file')
+      # Should validate the type of the image
+      attach_file 'file', 'spec/fixtures/file.pdf'
+      expect(page).to have_content('is not a valid file')
 
-        attach_file 'file', 'spec/fixtures/photo.jpg'
-        expect(page).to have_no_content('is not a valid file')
-        wait_for_ajax(30) # For the image to upload to S3
-        expect(page).to_not have_content('DRAG & DROP')
-        find('.attachment-attached-view').hover
-        within '.attachment-attached-view' do
-          expect(page).to have_link('Remove')
-          expect(page).to_not have_link('Download')
-        end
+      attach_file 'file', 'spec/fixtures/photo.jpg'
+      expect(page).to have_no_content('is not a valid file')
+      wait_for_ajax(30) # For the image to upload to S3
+      expect(page).to_not have_content('DRAG & DROP')
+      find('.attachment-attached-view').hover
+      within '.attachment-attached-view' do
+        expect(page).to have_link('Remove')
+        expect(page).to_not have_link('Download')
+      end
 
-        select_from_chosen(user.name, from: 'User')
-        fill_in 'Date', with: '05/16/2013'
-        wait_for_photo_to_process 30 do
-          click_button 'Submit'
-        end
+      select_from_chosen(user.name, from: 'User')
+      fill_in 'Date', with: '05/16/2013'
+      wait_for_photo_to_process 30 do
+        click_button 'Submit'
+      end
 
-        expect(page).to have_content('Thank You!')
-        click_link 'Finish'
+      expect(page).to have_content('Thank You!')
+      click_link 'Finish'
 
-        within resource_item do
-          expect(page).to have_content(user.name)
-          expect(page).to have_content('THU May 16')
-          expect(page).to have_content('Activity Type #1')
-        end
+      within resource_item do
+        expect(page).to have_content(user.name)
+        expect(page).to have_content('THU May 16')
+        expect(page).to have_content('Activity Type #1')
+      end
 
-        photo = AttachedAsset.last
-        expect(photo.attachable).to be_a FormFieldResult
-        expect(photo.file_file_name).to eql 'photo.jpg'
+      photo = AttachedAsset.last
+      expect(photo.attachable).to be_a FormFieldResult
+      expect(photo.file_file_name).to eql 'photo.jpg'
 
-        # Remove the photo and attach a new one
-        hover_and_click resource_item, 'Edit'
+      # Remove the photo and attach a new one
+      hover_and_click resource_item, 'Edit'
 
+      expect(page).to_not have_content('DRAG & DROP')
+      find('.attachment-attached-view').hover
+      within '.attachment-attached-view' do
+        expect(page).to have_link('Remove')
+        expect(page).to have_link('Download')
+        click_js_link('Remove')
+      end
+      expect(page).to have_content('DRAG & DROP')
+
+      attach_file 'file', 'spec/fixtures/photo2.jpg'
+      expect(page).to have_no_content('is not a valid file')
+      wait_for_ajax(30) # For the image to upload to S3
+      expect(page).to_not have_content('DRAG & DROP')
+      find('.attachment-attached-view').hover
+      within '.attachment-attached-view' do
+        expect(page).to have_link('Remove')
+        expect(page).to_not have_link('Download')
+      end
+
+      wait_for_photo_to_process 30 do
+        click_button 'Save'
+      end
+
+      photo = AttachedAsset.last
+      expect(photo.attachable).to be_a FormFieldResult
+      expect(photo.file_file_name).to eql 'photo2.jpg'
+
+      # Remove the photo
+      hover_and_click resource_item, 'Edit'
+
+      expect do
         expect(page).to_not have_content('DRAG & DROP')
         find('.attachment-attached-view').hover
         within '.attachment-attached-view' do
@@ -488,113 +518,79 @@ feature 'Activities management' do
           click_js_link('Remove')
         end
         expect(page).to have_content('DRAG & DROP')
-
-        attach_file 'file', 'spec/fixtures/photo2.jpg'
-        expect(page).to have_no_content('is not a valid file')
-        wait_for_ajax(30) # For the image to upload to S3
-        expect(page).to_not have_content('DRAG & DROP')
-        find('.attachment-attached-view').hover
-        within '.attachment-attached-view' do
-          expect(page).to have_link('Remove')
-          expect(page).to_not have_link('Download')
+        click_button 'Save'
+        within resource_item do
+          expect(page).to have_content('Activity Type #1')
         end
-
-        wait_for_photo_to_process 30 do
-          click_button 'Save'
-        end
-
-        photo = AttachedAsset.last
-        expect(photo.attachable).to be_a FormFieldResult
-        expect(photo.file_file_name).to eql 'photo2.jpg'
-
-        # Remove the photo
-        hover_and_click resource_item, 'Edit'
-
-        expect do
-          expect(page).to_not have_content('DRAG & DROP')
-          find('.attachment-attached-view').hover
-          within '.attachment-attached-view' do
-            expect(page).to have_link('Remove')
-            expect(page).to have_link('Download')
-            click_js_link('Remove')
-          end
-          expect(page).to have_content('DRAG & DROP')
-          click_button 'Save'
-          within resource_item do
-            expect(page).to have_content('Activity Type #1')
-          end
-        end.to change(AttachedAsset, :count).by(-1)
-      end
+      end.to change(AttachedAsset, :count).by(-1)
     end
 
-    scenario 'user can attach a document to an activity' do
+    scenario 'user can attach a document to an activity', :inline_jobs do
       activity_type = create(:activity_type, name: 'Activity Type #1', company: company)
       create(:form_field, fieldable: activity_type, type: 'FormField::Attachment')
 
       campaign.activity_types << activity_type
 
-      with_resque do # So the document is processed
-        visit event_path(event)
+      visit event_path(event)
 
-        click_js_button('Add Activity')
+      click_js_button('Add Activity')
 
-        within visible_modal do
-          choose('Activity Type #1')
-          click_js_button 'Create'
-        end
-        ensure_modal_was_closed
+      within visible_modal do
+        choose('Activity Type #1')
+        click_js_button 'Create'
+      end
+      ensure_modal_was_closed
 
-        expect(page).to have_content('DRAG & DROP')
-        attach_file 'file', 'spec/fixtures/file.pdf'
-        expect(page).to have_no_content('is not a valid file')
-        wait_for_ajax(30) # For the file to upload to S3
+      expect(page).to have_content('DRAG & DROP')
+      attach_file 'file', 'spec/fixtures/file.pdf'
+      expect(page).to have_no_content('is not a valid file')
+      wait_for_ajax(30) # For the file to upload to S3
+      expect(page).to_not have_content('DRAG & DROP')
+      expect(page).to have_content('file.pdf')
+      expect(page).to have_link('Remove')
+
+      select_from_chosen(user.name, from: 'User')
+      fill_in 'Date', with: '05/16/2013'
+      wait_for_photo_to_process 30 do
+        click_js_button 'Submit'
+      end
+
+      expect(page).to have_content('Thank You!')
+      click_link 'Finish'
+
+      within resource_item do
+        expect(page).to have_content(user.name)
+        expect(page).to have_content('THU May 16')
+        expect(page).to have_content('Activity Type #1')
+      end
+
+      activity = Activity.last
+      photo = AttachedAsset.last
+      expect(photo.attachable).to be_a FormFieldResult
+      expect(photo.file_file_name).to eql 'file.pdf'
+
+      hover_and_click resource_item, 'Activity Details'
+
+      expect(page).to have_selector('h2', text: 'Activity Type #1')
+      expect(current_path).to eql activity_path(activity)
+      file = AttachedAsset.last
+      src = file.reload.file.url(:original, timestamp: false).gsub(/\Ahttp(s)?/, 'https')
+      expect(page).to have_xpath("//a[starts-with(@href, \"#{src}\")]")
+
+      visit event_path(event)
+
+      # Remove the file
+      hover_and_click resource_item, 'Edit'
+
+      expect do
         expect(page).to_not have_content('DRAG & DROP')
-        expect(page).to have_content('file.pdf')
-        expect(page).to have_link('Remove')
-
-        select_from_chosen(user.name, from: 'User')
-        fill_in 'Date', with: '05/16/2013'
-        wait_for_photo_to_process 30 do
-          click_js_button 'Submit'
-        end
-
-        expect(page).to have_content('Thank You!')
-        click_link 'Finish'
-
+        click_js_link('Remove')
+        expect(page).to have_content('DRAG & DROP')
+        click_button 'Save'
         within resource_item do
-          expect(page).to have_content(user.name)
-          expect(page).to have_content('THU May 16')
           expect(page).to have_content('Activity Type #1')
         end
-
-        activity = Activity.last
-        photo = AttachedAsset.last
-        expect(photo.attachable).to be_a FormFieldResult
-        expect(photo.file_file_name).to eql 'file.pdf'
-
-        hover_and_click resource_item, 'Activity Details'
-
-        expect(page).to have_selector('h2', text: 'Activity Type #1')
-        expect(current_path).to eql activity_path(activity)
-        file = AttachedAsset.last
-        src = file.reload.file.url(:original, timestamp: false).gsub(/\Ahttp(s)?/, 'https')
-        expect(page).to have_xpath("//a[starts-with(@href, \"#{src}\")]")
-
-        visit event_path(event)
-
-        # Remove the file
-        hover_and_click resource_item, 'Edit'
-
-        expect do
-          expect(page).to_not have_content('DRAG & DROP')
-          click_js_link('Remove')
-          expect(page).to have_content('DRAG & DROP')
-          click_button 'Save'
-          within resource_item do
-            expect(page).to have_content('Activity Type #1')
-          end
-        end.to change(AttachedAsset, :count).by(-1)
-      end
+      end.to change(AttachedAsset, :count).by(-1)
     end
 
     scenario 'activities from events should be displayed within the venue' do

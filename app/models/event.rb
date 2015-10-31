@@ -834,9 +834,9 @@ class Event < ActiveRecord::Base
     reindex_campaign
 
     if @reindex_place
-      if place_id_was.present?
-        previous_venue = Venue.find_by(company_id: company_id, place_id: place_id_was)
-        Resque.enqueue(VenueIndexer, previous_venue.id) unless previous_venue.nil?
+      if previous_changes.key?(:place_id) && previous_changes[:place_id].first
+        previous_venue = Venue.find_by(company_id: company_id, place_id: previous_changes[:place_id])
+        VenueIndexer.perform_async(previous_venue.id) unless previous_venue.nil?
       end
     end
 
@@ -851,7 +851,7 @@ class Event < ActiveRecord::Base
   end
 
   def index_venue
-    Resque.enqueue(VenueIndexer, venue.id) if place_id.present?
+    VenueIndexer.perform_async(venue.id) if place_id.present?
     true
   end
 
@@ -922,7 +922,7 @@ class Event < ActiveRecord::Base
 
   def create_notifications
     if company.event_alerts_policy == Notification::EVENT_ALERT_POLICY_ALL
-      Resque.enqueue(EventNotifierWorker, id)
+      EventNotifierWorker.perform_async(id)
     end
     true
   end

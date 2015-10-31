@@ -41,11 +41,11 @@ describe Analysis::AttendanceController, type: :controller do
 
     describe 'CSV export' do
       it 'queue the job for export the list to CSV' do
+        expect(ListExportWorker).to receive(:perform_async).with(kind_of(Numeric))
         expect do
           xhr :get, :index, format: :csv
         end.to change(ListExport, :count).by(1)
         export = ListExport.last
-        expect(ListExportWorker).to have_queued(export.id)
       end
     end
   end
@@ -88,7 +88,7 @@ describe Analysis::AttendanceController, type: :controller do
     end
   end
 
-  describe "GET 'list_export'", search: true do
+  describe "GET 'list_export'", :search, :inline_jobs do
     before { neighborhood }
 
     it 'exports an empty book with the correct headers' do
@@ -96,11 +96,8 @@ describe Analysis::AttendanceController, type: :controller do
         xhr :get, 'index', campaign_id: campaign.id,
                            event_id: event.id, format: :csv
       end.to change(ListExport, :count).by(1)
-      export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
-      ResqueSpec.perform_all(:export)
 
-      expect(export.reload).to have_rows([
+      expect(ListExport.last).to have_rows([
         ['NEIGHBORHOOD', 'CITY', 'STATE', 'ATTENDEES', 'ACCOUNTS ATTENDED', 'INVITATIONS']])
     end
 
@@ -110,11 +107,8 @@ describe Analysis::AttendanceController, type: :controller do
       expect do
         xhr :get, 'index', campaign_id: campaign.id, event_id: event.id, format: :csv
       end.to change(ListExport, :count).by(1)
-      export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
-      ResqueSpec.perform_all(:export)
 
-      expect(export.reload).to have_rows([
+      expect(ListExport.last).to have_rows([
         ['NEIGHBORHOOD', 'CITY', 'STATE', 'ATTENDEES', 'ACCOUNTS ATTENDED', 'INVITATIONS'],
         ['Central City', 'Los Angeles', 'CA', '1', '0', '1']])
     end

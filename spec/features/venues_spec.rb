@@ -58,18 +58,16 @@ feature 'Venues Section', js: true, search: true do
       expect(find_field('I am looking for').value).to eql 'Alcatraz'
     end
 
-    scenario 'GET index should display a list with the venues' do
-      with_resque do
-        create(:event, campaign: campaign,
-                       place: create(:place, name: 'Bar Benito'),
-                       results: { impressions: 35, interactions: 65, samples: 15 },
-                       expenses: [{ amount: 1000 }])
+    scenario 'GET index should display a list with the venues', :inline_jobs do
+      create(:event, campaign: campaign,
+                     place: create(:place, name: 'Bar Benito'),
+                     results: { impressions: 35, interactions: 65, samples: 15 },
+                     expenses: [{ amount: 1000 }])
 
-        create(:event, campaign: campaign,
-                       place: create(:place, name: 'Bar Camelas'),
-                       results: { impressions: 35, interactions: 65, samples: 15 },
-                       expenses: [{ amount: 2000 }])
-      end
+      create(:event, campaign: campaign,
+                     place: create(:place, name: 'Bar Camelas'),
+                     results: { impressions: 35, interactions: 65, samples: 15 },
+                     expenses: [{ amount: 2000 }])
 
       Venue.reindex
       Sunspot.commit
@@ -112,11 +110,7 @@ feature 'Venues Section', js: true, search: true do
     end
 
     before do
-      # make sure events are created before
-      with_resque do
-        event1
-        event2
-      end
+      inline_jobs { event1 && event2 }
       Venue.reindex
       Sunspot.commit
     end
@@ -127,12 +121,7 @@ feature 'Venues Section', js: true, search: true do
       click_js_link 'Download'
       click_js_link 'Download as CSV'
 
-      within visible_modal do
-        expect(page).to have_content('We are processing your request, the download will start soon...')
-        expect(ListExportWorker).to have_queued(ListExport.last.id)
-        ResqueSpec.perform_all(:export)
-      end
-      ensure_modal_was_closed
+      wait_for_export_to_complete
 
       expect(ListExport.last).to have_rows([
         ['VENUE NAME', 'TD LINX CODE', 'ADDRESS', 'CITY', 'STATE', 'SCORE', 'EVENTS COUNT', 'PROMO HOURS COUNT', 'TOTAL $ SPENT'],
@@ -147,13 +136,7 @@ feature 'Venues Section', js: true, search: true do
       click_js_link 'Download'
       click_js_link 'Download as PDF'
 
-      within visible_modal do
-        expect(page).to have_content('We are processing your request, the download will start soon...')
-        export = ListExport.last
-        expect(ListExportWorker).to have_queued(export.id)
-        ResqueSpec.perform_all(:export)
-      end
-      ensure_modal_was_closed
+      wait_for_export_to_complete
 
       export = ListExport.last
       # Test the generated PDF...

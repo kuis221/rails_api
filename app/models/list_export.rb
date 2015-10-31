@@ -57,7 +57,7 @@ class ListExport < ActiveRecord::Base
   end
 
   def queue_process
-    Resque.enqueue(ListExportWorker, id)
+    ListExportWorker.perform_async(id)
   end
 
   def download_url(style_name = :original)

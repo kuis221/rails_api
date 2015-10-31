@@ -34,9 +34,13 @@
           server: 127.0.0.1
           min_messages: WARNING
 
-4. Create a local_env.yml file inside the config folder with the following content (ask for the S3 KEYS to a teammate):
+4. Create a local_env.yml file inside the config folder with the following content (ask nicely for the S3 KEYS to a teammate):
+        DATABASE_USER: <your PG username>
+        DATABASE_PASSWORD: <your PG user password>
         AWS_S3_KEY_ID: ''
         AWS_S3_ACCESS_KEY: ''
+        GOOGLE_API_KEY: ''
+        S3_BUCKET_NAME: 'brandscopic-dev'
         MEMCACHIER_SERVERS: 'localhost:11211'
         REDISTOGO_URL: 'redis://localhost:6379'
 
@@ -136,7 +140,7 @@ In order to keep or code clean and with the best practices, we should try to alw
 
 ## Background Jobs
 
-Our application makes use of background jobs for tasks that require some time to process or that doesn't really need to happen at real time, like Solr indexing, photos thumbnail generation, list exports generation, sending SMSs and e-mails, etc. For such purpose, we are using Resque+Redis, you can see the background jobs queue in your local environment by going to: http://localhost:5100/resque
+Our application makes use of background jobs for tasks that require some time to process or that doesn't really need to happen at real time, like Solr indexing, photos thumbnail generation, list exports generation, sending SMSs and e-mails, etc. For such purpose, we are using Sidekiq+Redis, you can see the background jobs queue in your local environment by going to: http://localhost:5100/_bgjobs
 
 ## Memcachier
 

@@ -30,50 +30,48 @@ feature 'Events section', js: true do
                                         'settings' => { 'categories' => %w(Phone) } })
     end
 
-    scenario 'user can attach a expense to event' do
-      with_resque do # So the document is processed
-        visit event_path(event)
+    scenario 'user can attach a expense to event', :inline_jobs do
+      visit event_path(event)
 
-        click_js_button 'Record Expense'
+      click_js_button 'Record Expense'
 
-        within visible_modal do
-          attach_file 'file', 'spec/fixtures/file.pdf'
+      within visible_modal do
+        attach_file 'file', 'spec/fixtures/file.pdf'
 
-          # Test validations
+        # Test validations
+        click_js_button 'Create'
+        expect(find_field('Category', visible: false)).to have_error('This field is required.')
+
+        select_from_chosen 'Phone', from: 'Category'
+        select_from_chosen 'Brand 2', from: 'Brand'
+        fill_in 'Date', with: '01/01/2014'
+        fill_in 'Amount', with: '13'
+        expect(page).to have_content('File attached: file.pdf')
+
+        wait_for_photo_to_process 15 do
           click_js_button 'Create'
-          expect(find_field('Category', visible: false)).to have_error('This field is required.')
-
-          select_from_chosen 'Phone', from: 'Category'
-          select_from_chosen 'Brand 2', from: 'Brand'
-          fill_in 'Date', with: '01/01/2014'
-          fill_in 'Amount', with: '13'
-          expect(page).to have_content('File attached: file.pdf')
-
-          wait_for_photo_to_process 15 do
-            click_js_button 'Create'
-          end
         end
-        ensure_modal_was_closed
+      end
+      ensure_modal_was_closed
 
-        within '#event-expenses' do
-          expect(page).to have_content 'Phone'
-          expect(page).to have_content '$13.00'
-        end
-        asset = AttachedAsset.last
-        expect(asset.file_file_name).to eql 'file.pdf'
+      within '#event-expenses' do
+        expect(page).to have_content 'Phone'
+        expect(page).to have_content '$13.00'
+      end
+      asset = AttachedAsset.last
+      expect(asset.file_file_name).to eql 'file.pdf'
 
-        # Test user can preview and download the receipt
-        hover_and_click expense_row(asset.attachable), 'View Receipt'
+      # Test user can preview and download the receipt
+      hover_and_click expense_row(asset.attachable), 'View Receipt'
 
-        within visible_modal do
-          src = asset.preview_url(:medium, timestamp: false)
-          expect(page).to have_xpath("//img[starts-with(@src, \"#{src}\")]", wait: 10)
-          find('.slider').hover
+      within visible_modal do
+        src = asset.preview_url(:medium, timestamp: false)
+        expect(page).to have_xpath("//img[starts-with(@src, \"#{src}\")]", wait: 10)
+        find('.slider').hover
 
-          src = asset.file.url(:original, timestamp: false).gsub('http:', 'https:')
-          expect(page).to have_link('Download')
-          expect(page).to have_xpath("//a[starts-with(@href, \"#{src}\")]")
-        end
+        src = asset.file.url(:original, timestamp: false).gsub('http:', 'https:')
+        expect(page).to have_link('Download')
+        expect(page).to have_xpath("//a[starts-with(@href, \"#{src}\")]")
       end
     end
   end

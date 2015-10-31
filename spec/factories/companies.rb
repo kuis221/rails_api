@@ -21,8 +21,10 @@ FactoryGirl.define do
     timezone_support false
     auto_match_events 1
     factory :company_with_user do
-      no_create_admin false
-      sequence(:admin_email) { |n| "testadminuser#{n}@brandscopic.com" }
+      after(:create) do |company|
+        role = create(:role, name: 'Super Admin', company: company, is_admin: true)
+        create(:user, company_id: company.id, role_id: role.id)
+      end
     end
   end
 end

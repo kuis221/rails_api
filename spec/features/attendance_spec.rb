@@ -124,11 +124,7 @@ feature 'Attendance', js: true, search: true do
       click_js_link 'Download'
       click_js_link 'Download as CSV'
 
-      within visible_modal do
-        expect(page).to have_content('We are processing your request, the download will start soon...')
-        expect(ListExportWorker).to have_queued(ListExport.last.id)
-        ResqueSpec.perform_all(:export)
-      end
+      wait_for_export_to_complete
 
       ensure_modal_was_closed
       expect(ListExport.last).to have_rows([
@@ -146,11 +142,7 @@ feature 'Attendance', js: true, search: true do
       click_js_link 'Download'
       click_js_link 'Download individual to CSV'
 
-      within visible_modal do
-        expect(page).to have_content('We are processing your request, the download will start soon...')
-        expect(ListExportWorker).to have_queued(ListExport.last.id)
-        ResqueSpec.perform_all(:export)
-      end
+      wait_for_export_to_complete
 
       ensure_modal_was_closed
       expect(ListExport.last).to have_rows([
@@ -169,13 +161,8 @@ feature 'Attendance', js: true, search: true do
       click_js_link 'Download'
       click_js_link 'Download aggregate to CSV'
 
-      within visible_modal do
-        expect(page).to have_content('We are processing your request, the download will start soon...')
-        expect(ListExportWorker).to have_queued(ListExport.last.id)
-        ResqueSpec.perform_all(:export)
-      end
+      wait_for_export_to_complete
 
-      ensure_modal_was_closed
       expect(ListExport.last).to have_rows([
         %w(MARKET INVITES RSVPs ATTENDEES),
         %w(California 12 0 0)

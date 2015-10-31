@@ -19,22 +19,20 @@ feature 'Photos', js: true do
   end
 
   feature 'Event Photo management' do
-    scenario 'A user can select a photo and attach it to the event' do
-      with_resque do
-        visit event_path(event)
+    scenario 'A user can select a photo and attach it to the event', :inline_jobs do
+      visit event_path(event)
 
-        within '#event-photos' do
-          attach_file 'file', 'spec/fixtures/photo.jpg'
-          expect(page).to have_content('photo.jpg')
-          wait_for_ajax(30) # For the image to upload to S3
-        end
+      within '#event-photos' do
+        attach_file 'file', 'spec/fixtures/photo.jpg'
+        expect(page).to have_content('photo.jpg')
+        wait_for_ajax(30) # For the image to upload to S3
+      end
 
-        photo = AttachedAsset.last
-        # Check that the image appears on the page
-        within gallery_box do
-          src = photo.file.url(:thumbnail, timestamp: false)
-          expect(page).to have_xpath("//img[starts-with(@src, \"#{src}\")]", wait: 10)
-        end
+      photo = AttachedAsset.last
+      # Check that the image appears on the page
+      within gallery_box do
+        src = photo.file.url(:thumbnail, timestamp: false)
+        expect(page).to have_xpath("//img[starts-with(@src, \"#{src}\")]", wait: 10)
       end
     end
 

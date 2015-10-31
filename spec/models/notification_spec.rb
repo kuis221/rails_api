@@ -31,23 +31,23 @@ describe Notification, type: :model do
     before { user.user.update_attribute :phone_number_verified, true }
 
     it 'should not call enqueue any SendSmsWorker' do
-      event = create(:event, campaign: campaign)
+      create(:event, campaign: campaign)
 
-      expect(Resque).not_to receive(:enqueue)
+      expect(SendSmsWorker).to_not receive(:perform_async)
       described_class.send_late_event_sms_notifications
     end
 
     it 'should not call enqueue with the correct message if the user have one late but not due event recaps' do
       event = create(:late_event, campaign: campaign)
       event.users << user
-      expect(Resque).to receive(:enqueue).with(SendSmsWorker, '+15558888888', 'You have one late event recap')
+      expect(SendSmsWorker).to receive(:perform_async).with('+15558888888', 'You have one late event recap')
       described_class.send_late_event_sms_notifications
     end
 
     it 'should not call enqueue with the correct message if the user have one due but not late event recaps' do
       event = create(:due_event, campaign: campaign)
       event.users << user
-      expect(Resque).to receive(:enqueue).with(SendSmsWorker, '+15558888888', 'You have one due event recap')
+      expect(SendSmsWorker).to receive(:perform_async).with('+15558888888', 'You have one due event recap')
       described_class.send_late_event_sms_notifications
     end
 
@@ -58,7 +58,7 @@ describe Notification, type: :model do
       event = create(:due_event, campaign: campaign)
       event.users << user
 
-      expect(Resque).to receive(:enqueue).with(SendSmsWorker, '+15558888888', 'You have 1 due and 1 late event recaps')
+      expect(SendSmsWorker).to receive(:perform_async).with('+15558888888', 'You have 1 due and 1 late event recaps')
       described_class.send_late_event_sms_notifications
     end
   end

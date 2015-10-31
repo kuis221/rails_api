@@ -23,21 +23,21 @@ describe TeamsController, type: :controller do
     end
 
     it 'queue the job for export the list to CSV' do
+      expect(ListExportWorker).to receive(:perform_async).with(kind_of(Numeric))
       expect do
         xhr :get, :index, format: :csv
       end.to change(ListExport, :count).by(1)
       export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
       expect(export.controller).to eql('TeamsController')
       expect(export.export_format).to eql('csv')
     end
 
     it 'queue the job for export the list to PDF' do
+      expect(ListExportWorker).to receive(:perform_async).with(kind_of(Numeric))
       expect do
         xhr :get, :index, format: :pdf
       end.to change(ListExport, :count).by(1)
       export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
       expect(export.controller).to eql('TeamsController')
       expect(export.export_format).to eql('pdf')
     end
@@ -161,7 +161,7 @@ describe TeamsController, type: :controller do
       users.each { |u| other_team.users << u }
 
       # Create some other users that should not be included
-      create(:invited_user, company: @company, role_id: @company_user.role_id) # invited user
+      create(:user, :invited, company: @company, role_id: @company_user.role_id) # invited user
       create(:company_user, company: @company, role_id: @company_user.role_id, active: false) # inactive user
       create(:company_user, company_id: @company.id + 1, role_id: @company_user.role_id, active: true) # user from other company
       xhr :get, 'new_member', id: team.id, format: :js
@@ -201,10 +201,9 @@ describe TeamsController, type: :controller do
     end
   end
 
-  describe "GET 'list_export'", search: true do
+  describe "GET 'list_export'", :search, :inline_jobs do
     it 'should return an empty book with the correct headers' do
       expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
-      ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['NAME', 'DESCRIPTION', 'MEMBERS', 'ACTIVE STATE']
       ])
@@ -216,8 +215,6 @@ describe TeamsController, type: :controller do
       Sunspot.commit
 
       expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
-      expect(ListExportWorker).to have_queued(ListExport.last.id)
-      ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['NAME', 'DESCRIPTION', 'MEMBERS', 'ACTIVE STATE'],
         ['Costa Rica Team', 'El grupo de ticos', '0', 'Active']

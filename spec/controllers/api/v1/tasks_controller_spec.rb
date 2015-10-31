@@ -114,24 +114,22 @@ describe Api::V1::TasksController, type: :controller do
       expect(json['info']).to eql 'Missing parameter task'
     end
 
-    it 'should assign the user to the task and send a SMS to the assigned user' do
+    it 'should assign the user to the task and send a SMS to the assigned user', :inline_jobs do
       Timecop.freeze do
-        with_resque do
-          company_user = create(:company_user,
-                                company_id: company.id,
-                                notifications_settings: %w(new_task_assignment_sms new_task_assignment_email),
-                                user_attributes: { phone_number_verified: true })
-          message = "You have a new task http://localhost:5100/tasks/mine?new_at=#{Time.now.to_i}"
-          expect(UserMailer).to receive(:notification).with(company_user.id, 'New Task Assignment', message).and_return(double(deliver: true))
-          expect do
-            post 'create', event_id: event.to_param, format: :json,
-                           task: { title: 'Some test task', due_at: '05/23/2020',
-                                   company_user_id: company_user.to_param }
-          end.to change(Task, :count).by(1)
-          expect(assigns(:task).company_user_id).to eq(company_user.id)
-          open_last_text_message_for user.phone_number
-          expect(current_text_message).to have_body message
-        end
+        company_user = create(:company_user,
+                              company_id: company.id,
+                              notifications_settings: %w(new_task_assignment_sms new_task_assignment_email),
+                              user_attributes: { phone_number_verified: true })
+        message = "You have a new task http://localhost:5100/tasks/mine?new_at=#{Time.now.to_i}"
+        expect(UserMailer).to receive(:notification).with(company_user.id, 'New Task Assignment', message).and_return(double(deliver: true))
+        expect do
+          post 'create', event_id: event.to_param, format: :json,
+                         task: { title: 'Some test task', due_at: '05/23/2020',
+                                 company_user_id: company_user.to_param }
+        end.to change(Task, :count).by(1)
+        expect(assigns(:task).company_user_id).to eq(company_user.id)
+        open_last_text_message_for user.phone_number
+        expect(current_text_message).to have_body message
       end
     end
   end

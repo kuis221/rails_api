@@ -9,10 +9,10 @@ before_fork do |_server, _worker|
     Process.kill 'QUIT', Process.pid
   end
 
-  if defined?(Resque)
-    Resque.redis.quit
-    Rails.logger.info('Disconnected from Redis')
-  end
+  # if defined?(Resque)
+  #   Resque.redis.quit
+  #   Rails.logger.info('Disconnected from Redis')
+  # end
 
   defined?(ActiveRecord::Base) &&
     ActiveRecord::Base.connection.disconnect!
@@ -23,10 +23,10 @@ after_fork do |_server, _worker|
     puts 'Unicorn worker intercepting TERM and doing nothing. Wait for master to send QUIT'
   end
 
-  if defined?(Resque)
-    Resque.redis = REDIS
-    Rails.logger.info('Connected to Redis')
-  end
+  # if defined?(Resque)
+  #   Resque.redis = REDIS
+  #   Rails.logger.info('Connected to Redis')
+  # end
 
   if defined?(ActiveRecord::Base)
     config = ActiveRecord::Base.configurations[Rails.env] ||

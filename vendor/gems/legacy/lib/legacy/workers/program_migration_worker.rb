@@ -12,7 +12,7 @@ class ProgramMigrationWorker
       batch_size = 20
       total = program.events.count
       while counter < total
-        Resque.enqueue(ProgramEventsMigrationWorker, company.id, program_id, campaign.id, counter, batch_size)
+        ProgramEventsMigrationWorker.perform_async(company.id, program_id, campaign.id, counter, batch_size)
         counter += batch_size
       end
     end

@@ -177,32 +177,30 @@ describe Venue, type: :model do
 
       end
 
-      it 'should correctly distribute the promo hours for events happening in more than one day' do
+      it 'should correctly distribute the promo hours for events happening in more than one day', :inline_jobs do
         Kpi.create_global_kpis
-        with_resque do
-          campaign.assign_all_global_kpis
-          event = create(:event, campaign: campaign, place_id: venue.place_id, start_date: '01/23/2013',
-                                 end_date: '01/24/2013', start_time: '8:00pm', end_time: '03:00am')
-          set_event_results(event, impressions: 100)
-          create(:event_expense, amount: 1000, event: event)
+        campaign.assign_all_global_kpis
+        event = create(:event, campaign: campaign, place_id: venue.place_id, start_date: '01/23/2013',
+                               end_date: '01/24/2013', start_time: '8:00pm', end_time: '03:00am')
+        set_event_results(event, impressions: 100)
+        create(:event_expense, amount: 1000, event: event)
 
-          data = described_class.find(venue.id).overall_graphs_data
-          expect(data[:impressions_promo][0].round).to eq(0)
-          expect(data[:impressions_promo][1].round).to eq(0)
-          expect(data[:impressions_promo][2].round).to eq(57)   # 4h * 100 / 7h
-          expect(data[:impressions_promo][3].round).to eq(43)   # 3h * 100 / 7h
-          expect(data[:impressions_promo][4].round).to eq(0)
-          expect(data[:impressions_promo][5].round).to eq(0)
-          expect(data[:impressions_promo][6].round).to eq(0)
+        data = described_class.find(venue.id).overall_graphs_data
+        expect(data[:impressions_promo][0].round).to eq(0)
+        expect(data[:impressions_promo][1].round).to eq(0)
+        expect(data[:impressions_promo][2].round).to eq(57)   # 4h * 100 / 7h
+        expect(data[:impressions_promo][3].round).to eq(43)   # 3h * 100 / 7h
+        expect(data[:impressions_promo][4].round).to eq(0)
+        expect(data[:impressions_promo][5].round).to eq(0)
+        expect(data[:impressions_promo][6].round).to eq(0)
 
-          expect(data[:cost_impression][0].round).to eq(0)
-          expect(data[:cost_impression][1].round).to eq(0)
-          expect(data[:cost_impression][2].round).to eq(10)   # 1000 / 100
-          expect(data[:cost_impression][3].round).to eq(10)   # 1000 / 100
-          expect(data[:cost_impression][4].round).to eq(0)
-          expect(data[:cost_impression][5].round).to eq(0)
-          expect(data[:cost_impression][6].round).to eq(0)
-        end
+        expect(data[:cost_impression][0].round).to eq(0)
+        expect(data[:cost_impression][1].round).to eq(0)
+        expect(data[:cost_impression][2].round).to eq(10)   # 1000 / 100
+        expect(data[:cost_impression][3].round).to eq(10)   # 1000 / 100
+        expect(data[:cost_impression][4].round).to eq(0)
+        expect(data[:cost_impression][5].round).to eq(0)
+        expect(data[:cost_impression][6].round).to eq(0)
       end
     end
   end

@@ -25,15 +25,14 @@ describe Results::ActivitiesController, type: :controller do
 
   describe "GET 'index'" do
     it 'queue the job for export the list' do
+      expect(ListExportWorker).to receive(:perform_async).with(kind_of(Numeric))
       expect do
         xhr :get, :index, format: :csv
       end.to change(ListExport, :count).by(1)
-      export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
     end
   end
 
-  describe "GET 'list_export'", search: true do
+  describe "GET 'list_export'", :search, :inline_jobs do
     let(:campaign) { create(:campaign, company: company, name: 'Test Campaign FY01') }
     let(:place) do
       create(:place, name: 'Bar Prueba', city: 'Los Angeles',
@@ -54,8 +53,6 @@ describe Results::ActivitiesController, type: :controller do
     it 'return an empty book with the correct headers' do
       expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
       export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
-      ResqueSpec.perform_all(:export)
 
       expect(export.reload).to have_rows([
         ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE', 'VENUE NAME',
@@ -78,8 +75,6 @@ describe Results::ActivitiesController, type: :controller do
 
       expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
       export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
-      ResqueSpec.perform_all(:export)
 
       expect(export.reload).to have_rows([
         ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE', 'VENUE NAME',
@@ -111,8 +106,6 @@ describe Results::ActivitiesController, type: :controller do
       it 'should include the activity data results only for the given campaign' do
         expect { xhr :get, 'index', campaign: [campaign.id], format: :csv }.to change(ListExport, :count).by(1)
         export = ListExport.last
-        expect(ListExportWorker).to have_queued(export.id)
-        ResqueSpec.perform_all(:export)
 
         expect(export.reload).to have_rows([
           ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE', 'VENUE NAME',
@@ -124,8 +117,6 @@ describe Results::ActivitiesController, type: :controller do
       it 'should include any custom kpis from all the campaigns' do
         expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
         export = ListExport.last
-        expect(ListExportWorker).to have_queued(export.id)
-        ResqueSpec.perform_all(:export)
 
         expect(export.reload).to have_rows([
           ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE', 'VENUE NAME',

@@ -147,10 +147,13 @@ Brandscopic::Application.routes.draw do
   end
 
   if ENV['WEB']
+    require 'sidekiq/web'
     devise_for :admin_users, ActiveAdmin::Devise.config
     ActiveAdmin.routes(self)
 
-    mount Resque::Server.new, at: '/resque' unless Rails.env.test?
+    authenticate :admin_user do
+      mount Sidekiq::Web => '/_bgjobs' unless Rails.env.test?
+    end
   end
 
   devise_for :users, controllers: { invitations: 'invitations', passwords: 'passwords' }

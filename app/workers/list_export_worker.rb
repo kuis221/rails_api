@@ -1,25 +1,17 @@
 class ListExportWorker
-  include Resque::Plugins::UniqueJob
-  @queue = :export
+  include Sidekiq::Worker
+  sidekiq_options queue: :export, retry: false
 
-  extend HerokuResqueAutoScale
+  #extend HerokuResqueAutoScale
+  #
+  sidekiq_retries_exhausted do |msg|
+    export = ListExport.find(msg['args'][0])
+    export.fail!
+  end
 
-  def self.perform(download_id)
+  def perform(download_id)
     NewRelic::Agent.ignore_apdex
     NewRelic::Agent.ignore_enduser
-    export = ListExport.find(download_id)
-    export.export_list
-    export = nil
-
-  rescue Resque::TermException, Resque::DirtyExit
-    # if the worker gets killed, (when deploying for example)
-    # re-enqueue the job so it will be processed when worker is restarted
-    Resque.enqueue(ListExportWorker, download_id)
-
-  rescue => e
-    Rails.logger.debug e.message
-    Rails.logger.debug e.backtrace.join("\n")
-    export.fail! if export
-    raise e
+    ListExport.find(download_id).export_list
   end
 end

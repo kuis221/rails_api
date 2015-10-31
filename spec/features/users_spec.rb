@@ -74,7 +74,7 @@ feature 'Users', js: true do
     end
 
     scenario 'allows the user to deactivate invited users' do
-      create(:invited_user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: company.id)
+      create(:user, :invited, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: company.id)
       Sunspot.commit
       visit company_users_path
 
@@ -129,7 +129,7 @@ feature 'Users', js: true do
     end
 
     scenario 'allows the user to resend invitations to invited users' do
-      invited_user = create(:invited_user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: company.id)
+      invited_user = create(:user, :invited, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: company.id)
       Sunspot.commit
       visit company_users_path
 
@@ -475,23 +475,18 @@ feature 'Users', js: true do
     end
   end
 
-  feature 'export', search: true do
+  feature 'export', :search do
     let(:role) { create(:role, name: 'TestRole', company: company) }
-    let(:user1) do
+    let!(:user1) do
       create(:user, first_name: 'Pablo', last_name: 'Baltodano', email: 'email@hotmail.com',
                           city: 'Los Angeles', state: 'CA', country: 'US', company: company, role_id: role.id)
     end
-    let(:user2) do
+    let!(:user2) do
       create(:user, first_name: 'Juanito', last_name: 'Bazooka', email: 'bazooka@gmail.com',
                           city: 'New York', state: 'NY', country: 'US', company: company, role_id: role.id)
     end
 
-    before do
-      # make sure users are created before
-      user1
-      user2
-      Sunspot.commit
-    end
+    before { Sunspot.commit }
 
     scenario 'should be able to export as CSV' do
       visit company_users_path
@@ -499,12 +494,7 @@ feature 'Users', js: true do
       click_js_link 'Download'
       click_js_link 'Download as CSV'
 
-      within visible_modal do
-        expect(page).to have_content('We are processing your request, the download will start soon...')
-        expect(ListExportWorker).to have_queued(ListExport.last.id)
-        ResqueSpec.perform_all(:export)
-      end
-      ensure_modal_was_closed
+      wait_for_export_to_complete
 
       expect(ListExport.last).to have_rows([
         ['FIRST NAME', 'LAST NAME', 'EMAIL', 'PHONE NUMBER', 'ROLE', 'ADDRESS 1', 'ADDRESS 2',
@@ -524,17 +514,10 @@ feature 'Users', js: true do
       click_js_link 'Download'
       click_js_link 'Download as PDF'
 
-      within visible_modal do
-        expect(page).to have_content('We are processing your request, the download will start soon...')
-        export = ListExport.last
-        expect(ListExportWorker).to have_queued(export.id)
-        ResqueSpec.perform_all(:export)
-      end
-      ensure_modal_was_closed
+      wait_for_export_to_complete
 
-      export = ListExport.last
       # Test the generated PDF...
-      reader = PDF::Reader.new(open(export.file.url))
+      reader = PDF::Reader.new(open(ListExport.last.file.url))
       reader.pages.each do |page|
         # PDF to text seems to not always return the same results
         # with white spaces, so, remove them and look for strings

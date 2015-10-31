@@ -86,12 +86,7 @@ feature 'Brand Ambassadors Visits' do
       click_js_link 'Download'
       click_js_link 'Download as CSV'
 
-      within visible_modal do
-        expect(page).to have_content('We are processing your request, the download will start soon...')
-        expect(ListExportWorker).to have_queued(ListExport.last.id)
-        ResqueSpec.perform_all(:export)
-      end
-      ensure_modal_was_closed
+      wait_for_export_to_complete
 
       expect(ListExport.last).to have_rows([
         ['START DATE', 'END DATE', 'EMPLOYEE', 'AREA', 'CITY', 'CAMPAIGN', 'TYPE', 'DESCRIPTION'],
@@ -113,13 +108,7 @@ feature 'Brand Ambassadors Visits' do
       click_js_link 'Download'
       click_js_link 'Download as PDF'
 
-      within visible_modal do
-        expect(page).to have_content('We are processing your request, the download will start soon...')
-        export = ListExport.last
-        expect(ListExportWorker).to have_queued(export.id)
-        ResqueSpec.perform_all(:export)
-      end
-      ensure_modal_was_closed
+      wait_for_export_to_complete
 
       export = ListExport.last
       # Test the generated PDF...
@@ -368,13 +357,7 @@ feature 'Brand Ambassadors Visits' do
       click_js_link 'Download'
       click_js_link 'Download as PDF'
 
-      within visible_modal do
-        expect(page).to have_content('We are processing your request, the download will start soon...')
-        export = ListExport.last
-        expect(ListExportWorker).to have_queued(export.id)
-        ResqueSpec.perform_all(:export)
-      end
-      ensure_modal_was_closed
+      wait_for_export_to_complete
 
       export = ListExport.last
       expect(export.params).to include(mode: 'calendar')
@@ -732,12 +715,8 @@ feature 'Brand Ambassadors Visits' do
       click_js_link 'Download'
       click_js_link 'Download as CSV'
 
-      within visible_modal do
-        expect(page).to have_content('We are processing your request, the download will start soon...')
-        expect(ListExportWorker).to have_queued(ListExport.last.id)
-        ResqueSpec.perform_all(:export)
-      end
-      ensure_modal_was_closed
+      wait_for_export_to_complete
+
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'DURATION', 'VENUE NAME', 'ADDRESS', 'CITY',
          'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL'],
@@ -777,13 +756,7 @@ feature 'Brand Ambassadors Visits' do
       click_js_link 'Download'
       click_js_link 'Download as PDF'
 
-      within visible_modal do
-        expect(page).to have_content('We are processing your request, the download will start soon...')
-        export = ListExport.last
-        expect(ListExportWorker).to have_queued(export.id)
-        ResqueSpec.perform_all(:export)
-      end
-      ensure_modal_was_closed
+      wait_for_export_to_complete
 
       export = ListExport.last
       # Test the generated PDF...

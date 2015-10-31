@@ -1,0 +1,16 @@
+:concurrency: <%= ENV['SIDEKIQ_CONCURRENCY'] || 5 %>
+:limits:
+  upload: <%= ENV['SIDEKIQ_UPLOAD_PROCESS_LIMIT'] || 1 %>
+  export: <%= ENV['SIDEKIQ_EXPORT_PROCESS_LIMIT'] || 1 %>
+  download: <%= ENV['SIDEKIQ_DOWNLOAD_PROCESS_LIMIT'] || 1 %>
+  notification: <%= ENV['SIDEKIQ_NOTIFICATION_PROCESS_LIMIT'] || 5 %>
+  indexing: <%= ENV['SIDEKIQ_INDEXING_PROCESS_LIMIT'] || 5 %>
+  jbb_synch: <%= ENV['SIDEKIQ_JBB_SYNCH_PROCESS_LIMIT'] || 1 %>
+:queues:
+  - [indexing,3]
+  - upload
+  - export
+  - download
+  - notification
+  - default
+  - jbb_synch

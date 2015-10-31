@@ -31,7 +31,7 @@ gem 'aws-sdk'
 gem 'google_places'
 gem 'timeliness'
 gem 'american_date'
-gem 'sunspot_rails', git: 'https://github.com/sunspot/sunspot.git'
+gem 'sunspot_rails', github: 'sunspot/sunspot'
 gem 'sunspot_stats'
 gem 'sunspot-queue', github: 'guilleva/sunspot-queue'
 gem 'progress_bar', require: false
@@ -39,16 +39,14 @@ gem 'unicorn-worker-killer'
 gem 'geocoder'
 gem 'rubyzip'
 gem 'redis'
-gem 'resque' # , require: "resque/server"
-gem 'resque-loner'
-gem 'resque-timeout'
-gem 'resque_mailer'
+gem 'sinatra', require: false
+gem 'sidekiq'
+gem 'sidekiq-limit_fetch'
 gem 'unread'
 gem 'nearest_time_zone'
 gem 'memcachier'
 gem 'dalli'
 gem 'apipie-rails'
-gem 'heroku-resque-workers-scaler', github: 'guilleva/heroku-resque-workers-scaler'
 gem 'twilio-ruby'
 gem 'nested_form'
 gem 'wicked_pdf'
@@ -77,7 +75,6 @@ group :development do
   gem 'haml'
   gem 'better_errors'
   gem 'binding_of_caller'
-
   gem 'nkss-rails', github: 'nadarei/nkss-rails'
 end
 
@@ -104,7 +101,7 @@ group :test, :development do
   gem 'factory_girl_rails', require: false
   gem 'rspec-rails', '~> 3.3.3'
   gem 'populator'
-  gem 'sunspot_solr', git: 'https://github.com/sunspot/sunspot.git'
+  gem 'sunspot_solr', github: 'sunspot/sunspot'
   gem 'timecop'
   gem 'faker'
   gem 'rubocop', require: false
@@ -125,7 +122,6 @@ group :test do
   # gem 'launchy'
   gem 'sunspot_test'
   # gem 'sunspot-rails-tester'
-  gem 'resque_spec'
   gem 'simplecov', require: false
   gem 'capybara-screenshot'
   gem 'fuubar', '2.0.0'

@@ -30,11 +30,10 @@ RSpec.describe Results::DataExtractsController, type: :controller do
     end
 
     it 'queues the job for export the report' do
+      expect(ListExportWorker).to receive(:perform_async).with(kind_of(Numeric))
       expect do
         xhr :get, :new, data_extract: { source: 'event_data' }, format: :csv
       end.to change(ListExport, :count).by(1)
-      export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
     end
   end
 
@@ -46,15 +45,14 @@ RSpec.describe Results::DataExtractsController, type: :controller do
     end
 
     it 'queues the job for export the report' do
+      expect(ListExportWorker).to receive(:perform_async).with(kind_of(Numeric))
       expect do
         xhr :get, :show, id: data_extract.id, format: :csv
       end.to change(ListExport, :count).by(1)
-      export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
     end
   end
 
-  describe "GET 'list_export'", search: true do
+  describe "GET 'list_export'", :search, :inline_jobs do
     before do
       Kpi.create_global_kpis
     end
@@ -65,8 +63,6 @@ RSpec.describe Results::DataExtractsController, type: :controller do
       data_extract.update_attributes(columns: %w(campaign_name end_date end_time))
       expect { xhr :get, 'show', id: data_extract.id, format: :csv }.to change(ListExport, :count).by(1)
       export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
-      ResqueSpec.perform_all(:export)
 
       expect(export.reload).to have_rows([
         ['Campaign', 'End Date', 'End Time']

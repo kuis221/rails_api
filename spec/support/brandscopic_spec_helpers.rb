@@ -6,6 +6,7 @@ module BrandscopiSpecHelpers
     else
       company = create(:company_with_user)
       user = company.company_users.first.user
+      user.accept_invitation!
     end
     User.current = user
     user.current_company = company
@@ -46,6 +47,12 @@ module BrandscopiSpecHelpers
 
   def json
     @json ||= JSON.parse(response.body)
+  end
+
+  def inline_jobs(&block)
+    Sidekiq::Testing.inline! do
+      block.call
+    end
   end
 
   def set_event_results(event, results, autosave = true)

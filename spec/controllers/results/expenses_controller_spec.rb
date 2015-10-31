@@ -25,7 +25,7 @@ describe Results::ExpensesController, type: :controller do
     end
   end
 
-  describe "GET 'list_export'", search: true do
+  describe "GET 'list_export'", :search, :inline_jobs do
     let!(:created_at) { DateTime.parse('2014-07-02 10:00 -07:00') }
     let!(:updated_at) { DateTime.parse('2015-07-01 10:00 -07:00') }
     let!(:approved_at) { DateTime.parse('2015-07-02 10:00 -07:00') }
@@ -38,8 +38,6 @@ describe Results::ExpensesController, type: :controller do
     it 'should return an empty xls with the correct headers' do
       expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
       export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
-      ResqueSpec.perform_all(:export)
 
       expect(export.reload).to have_rows([
         ['CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'EVENT START DATE', 'EVENT END DATE',
@@ -64,8 +62,6 @@ describe Results::ExpensesController, type: :controller do
       Sunspot.commit
       expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
       export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
-      ResqueSpec.perform_all(:export)
 
       expect(export.reload).to have_rows([
         ['CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'EVENT START DATE', 'EVENT END DATE',
@@ -80,11 +76,10 @@ describe Results::ExpensesController, type: :controller do
 
   describe "GET 'index'" do
     it 'queue the job for export the list' do
+      expect(ListExportWorker).to receive(:perform_async).with(kind_of(Numeric))
       expect do
         xhr :get, :index, format: :xls
       end.to change(ListExport, :count).by(1)
-      export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
     end
   end
 

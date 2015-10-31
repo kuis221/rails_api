@@ -44,6 +44,14 @@ module CapybaraBrandscopicHelpers
     end
   end
 
+  def wait_for_export_to_complete
+    within visible_modal do
+      expect(page).to have_content('We are processing your request, the download will start soon...')
+      ListExportWorker.drain
+    end
+    ensure_modal_was_closed
+  end
+
   def confirm_prompt(message)
     within find(:xpath, '//div[contains(@class, \'modal\') and contains(@class, \'confirm-dialog\') and contains(@class, \'in\')]', visible: true) do
       expect(page).to have_content(message)

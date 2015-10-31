@@ -1,16 +1,14 @@
 require 'rails_helper'
 
 describe Api::V1::UsersController, type: :controller do
-  let(:user) { sign_in_as_user }
+  let!(:user) { sign_in_as_user }
   let(:company) { user.company_users.first.company }
 
   before { set_api_authentication_headers user, company }
 
   describe "GET 'index'", search: true do
-    before do
-      user.reload  # Make sure the user is created
-      Sunspot.commit
-    end
+    before { Sunspot.index user.company_users }
+    before { Sunspot.commit }
 
     it 'returns an empty list of users' do
       get :index, company_id: company.id, auth_token: user.authentication_token, format: :json
@@ -49,14 +47,13 @@ describe Api::V1::UsersController, type: :controller do
 
     it 'should return only active users' do
       role = user.company_users.first.role
-      inactive_user = create(:company_user, user: create(:user), company: company, role: role, active: false)
-      invited_user = create(:company_user, user: create(:invited_user), company: company, role: role)
+      create(:company_user, user: create(:user), company: company, role: role, active: false)
+      create(:company_user, user: create(:user, :invited), company: company, role: role)
       Sunspot.commit
       get :index, company_id: company.id, auth_token: user.authentication_token, format: :json
       expect(response).to be_success
-      result = JSON.parse(response.body)
-      expect(result.count).to eq(1)
-      expect(result.first).to include(
+      expect(json.count).to eq(1)
+      expect(json.first).to include(
         'id' => user.company_users.first.id,
         'role_name' => role.name
       )

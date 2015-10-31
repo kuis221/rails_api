@@ -24,21 +24,21 @@ describe CompanyUsersController, type: :controller do
       end
 
       it 'queue the job for export the list to CSV' do
+        expect(ListExportWorker).to receive(:perform_async).with(kind_of(Numeric))
         expect do
           xhr :get, :index, format: :csv
         end.to change(ListExport, :count).by(1)
         export = ListExport.last
-        expect(ListExportWorker).to have_queued(export.id)
         expect(export.controller).to eql('CompanyUsersController')
         expect(export.export_format).to eql('csv')
       end
 
       it 'queue the job for export the list to PDF' do
+        expect(ListExportWorker).to receive(:perform_async).with(kind_of(Numeric))
         expect do
           xhr :get, :index, format: :pdf
         end.to change(ListExport, :count).by(1)
         export = ListExport.last
-        expect(ListExportWorker).to have_queued(export.id)
         expect(export.controller).to eql('CompanyUsersController')
         expect(export.export_format).to eql('pdf')
       end
@@ -148,7 +148,7 @@ describe CompanyUsersController, type: :controller do
       end
 
       it 'allows admin to update invited users' do
-        invited_user = create(:invited_user, company_id: @company.id)
+        invited_user = create(:user, :invited, company_id: @company.id)
         company_user = invited_user.company_users.first
         team = create(:team, company: @company)
         role = create(:role, company: @company)
@@ -171,7 +171,7 @@ describe CompanyUsersController, type: :controller do
 
     describe "GET 'cancel_email_change'" do
       it 'should be successs' do
-        @company_user.user.update_column('unconfirmed_email', 'email@prueba.com')
+        @company_user.user.update_attribute('email', 'email@prueba.com')
         expect(@company_user.user.unconfirmed_email).not_to be_nil
         expect(@company_user.user.confirmation_token).not_to be_nil
 
@@ -392,11 +392,10 @@ describe CompanyUsersController, type: :controller do
       end
     end
 
-    describe "GET 'list_export'", search: true do
+    describe "GET 'list_export'", :search, :inline_jobs do
       it 'should return a book with the correct headers and the Admin user' do
         Sunspot.commit
         expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
-        ResqueSpec.perform_all(:export)
         expect(ListExport.last).to have_rows([
           ['FIRST NAME', 'LAST NAME', 'EMAIL', 'PHONE NUMBER', 'ROLE', 'ADDRESS 1', 'ADDRESS 2',
            'CITY', 'STATE', 'ZIP CODE', 'COUNTRY', 'TIME ZONE', 'LAST LOGIN', 'ACTIVE STATE'],
@@ -412,8 +411,6 @@ describe CompanyUsersController, type: :controller do
         Sunspot.commit
 
         expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
-        expect(ListExportWorker).to have_queued(ListExport.last.id)
-        ResqueSpec.perform_all(:export)
         expect(ListExport.last).to have_rows([
           ['FIRST NAME', 'LAST NAME', 'EMAIL', 'PHONE NUMBER', 'ROLE', 'ADDRESS 1', 'ADDRESS 2',
            'CITY', 'STATE', 'ZIP CODE', 'COUNTRY', 'TIME ZONE', 'LAST LOGIN', 'ACTIVE STATE'],

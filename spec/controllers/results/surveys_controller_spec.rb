@@ -16,11 +16,10 @@ describe Results::SurveysController, type: :controller do
 
   describe "GET 'index'" do
     it 'queue the job for export the list' do
+      expect(ListExportWorker).to receive(:perform_async).with(kind_of(Numeric))
       expect do
         xhr :get, :index, format: :csv
       end.to change(ListExport, :count).by(1)
-      export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
     end
   end
 
@@ -32,7 +31,7 @@ describe Results::SurveysController, type: :controller do
     end
   end
 
-  describe "GET 'list_export'", search: true do
+  describe "GET 'list_export'", :search, :inline_jobs do
     let(:campaign) { create(:campaign, company: @company, name: 'Test Campaign FY01') }
 
     before do
@@ -42,8 +41,6 @@ describe Results::SurveysController, type: :controller do
     it 'should return an empty csv with the correct headers' do
       expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
       export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
-      ResqueSpec.perform_all(:export)
 
       expect(export.reload).to have_rows([
         ['DESCRIPTION', 'CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS', 'EVENT START DATE', 'EVENT END DATE', 'SURVEY CREATED DATE']
@@ -70,8 +67,6 @@ describe Results::SurveysController, type: :controller do
 
       expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
       export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
-      ResqueSpec.perform_all(:export)
 
       expect(export.reload).to have_rows([
         ['DESCRIPTION', 'CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS', 'EVENT START DATE', 'EVENT END DATE', 'SURVEY CREATED DATE'],

@@ -25,15 +25,14 @@ describe Results::EventDataController, type: :controller do
 
   describe "GET 'index'" do
     it 'queue the job for export the list' do
+      expect(ListExportWorker).to receive(:perform_async).with(kind_of(Numeric))
       expect do
         xhr :get, :index, format: :csv
       end.to change(ListExport, :count).by(1)
-      export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
     end
   end
 
-  describe "GET 'list_export'", search: true do
+  describe "GET 'list_export'", :search, :inline_jobs do
     before do
       Kpi.create_global_kpis
     end
@@ -43,8 +42,6 @@ describe Results::EventDataController, type: :controller do
     it 'should return an empty csv with the correct headers' do
       expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
       export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
-      ResqueSpec.perform_all(:export)
 
       expect(export.reload).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'CITY', 'STATE', 'ZIP',
@@ -93,8 +90,6 @@ describe Results::EventDataController, type: :controller do
 
       expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
       export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
-      ResqueSpec.perform_all(:export)
 
       expect(export.reload).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'CITY', 'STATE', 'ZIP',
@@ -123,7 +118,6 @@ describe Results::EventDataController, type: :controller do
       Sunspot.commit
 
       expect { xhr :get, 'index', campaign: [campaign.id], format: :csv }.to change(ListExport, :count).by(1)
-      ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'CITY', 'STATE', 'ZIP',
          'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL', 'START', 'END',
@@ -147,7 +141,6 @@ describe Results::EventDataController, type: :controller do
       Sunspot.commit
 
       expect { xhr :get, 'index', cfid: [cf.id], format: :csv }.to change(ListExport, :count).by(1)
-      ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'CITY', 'STATE', 'ZIP',
          'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL', 'START', 'END',
@@ -179,7 +172,6 @@ describe Results::EventDataController, type: :controller do
 
         expect { xhr :get, 'index', cfid: [cf.id], format: :csv }.to change(ListExport, :count).by(1)
 
-        ResqueSpec.perform_all(:export)
         expect(ListExport.last).to have_rows([
           ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'CITY', 'STATE', 'ZIP',
            'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL', 'START', 'END',
@@ -250,8 +242,6 @@ describe Results::EventDataController, type: :controller do
 
       expect { xhr :get, 'index', campaign: [campaign.id], format: :csv }.to change(ListExport, :count).by(1)
       export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
-      ResqueSpec.perform_all(:export)
 
       expect(export.reload).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'CITY', 'STATE', 'ZIP',
@@ -307,8 +297,6 @@ describe Results::EventDataController, type: :controller do
 
       expect { xhr :get, 'index', brand: [brand.id], format: :csv }.to change(ListExport, :count).by(1)
       export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
-      ResqueSpec.perform_all(:export)
 
       expect(export.reload).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'CITY', 'STATE', 'ZIP',
@@ -344,7 +332,6 @@ describe Results::EventDataController, type: :controller do
         xhr :get, 'index', campaign: [campaign.id, campaign2.id], format: :csv
       end.to change(ListExport, :count).by(1)
 
-      ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'CITY',
          'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL',
@@ -374,7 +361,6 @@ describe Results::EventDataController, type: :controller do
       Sunspot.commit
 
       expect { xhr :get, 'index', format: :csv, campaign: [campaign.id] }.to change(ListExport, :count).by(1)
-      ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'CITY', 'STATE', 'ZIP',
          'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL', 'START', 'END', 'SUBMITTED AT', 'APPROVED AT', 'PROMO HOURS',
@@ -416,7 +402,6 @@ describe Results::EventDataController, type: :controller do
       Sunspot.commit
 
       expect { xhr :get, 'index', campaign: [campaign.id], format: :csv }.to change(ListExport, :count).by(1)
-      ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'CITY', 'STATE', 'ZIP',
          'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL', 'START', 'END',
@@ -455,7 +440,6 @@ describe Results::EventDataController, type: :controller do
         Sunspot.commit
 
         expect { xhr :get, 'index', cfid: [cf.id], format: :csv }.to change(ListExport, :count).by(1)
-        ResqueSpec.perform_all(:export)
         expect(ListExport.last).to have_rows([
           ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'CITY', 'STATE', 'ZIP',
            'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL', 'START', 'END', 'SUBMITTED AT',
@@ -474,7 +458,6 @@ describe Results::EventDataController, type: :controller do
         Sunspot.commit
 
         expect { xhr :get, 'index', cfid: [cf.id], format: :csv }.to change(ListExport, :count).by(1)
-        ResqueSpec.perform_all(:export)
         expect(ListExport.last).to have_rows([
           ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'COUNTRY', 'CITY', 'STATE', 'ZIP',
            'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL', 'START', 'END', 'SUBMITTED AT',

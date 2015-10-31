@@ -52,16 +52,16 @@ class EventsController < FilteredController
         sms_message = I18n.translate(
           'notifications_sms.event_recap_pending_approval',
           url: Rails.application.routes.url_helpers.event_url(resource))
-        Resque.enqueue(SendSmsWorker, company_user.phone_number, sms_message)
+        SendSmsWorker.perform_async(company_user.phone_number, sms_message)
       end
       if company_user.allow_notification?('event_recap_pending_approval_email')
         email_message = I18n.translate(
           'notifications_email.event_recap_pending_approval',
           url: Rails.application.routes.url_helpers.event_url(resource))
-        UserMailer.notification(
+        UserMailer.delay.notification(
           company_user.id,
           I18n.translate('notification_types.event_recap_pending_approval'),
-          email_message).deliver
+          email_message)
       end
     end
     flash[:event_message_success] = I18n.translate('instructive_messages.execute.submit.success')
@@ -95,17 +95,17 @@ class EventsController < FilteredController
         sms_message = I18n.translate(
           'notifications_sms.event_recap_rejected',
           url: Rails.application.routes.url_helpers.event_url(resource))
-        Resque.enqueue(SendSmsWorker, company_user.phone_number, sms_message)
+        SendSmsWorker.perform_async(company_user.phone_number, sms_message)
       end
       if company_user.allow_notification?('event_recap_rejected_email')
         email_message = I18n.translate(
           'notifications_email.event_recap_rejected',
           url: Rails.application.routes.url_helpers.event_url(resource))
-        UserMailer.notification(
+        UserMailer.delay.notification(
           company_user.id,
           I18n.translate('notification_types.event_recap_rejected'),
           email_message
-        ).deliver
+        )
       end
     end
     flash[:event_message_fail] = I18n.translate('instructive_messages.results.rejected')
