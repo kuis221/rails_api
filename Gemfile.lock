@@ -120,7 +120,7 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.3.8)
     afm (0.2.2)
-    airbrake (4.0.0)
+    airbrake (4.3.3)
       builder
       multi_json
     american_date (1.1.0)
