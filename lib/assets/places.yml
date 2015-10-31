@@ -9,8 +9,7 @@ places_001:
     - locality
     - political
   formatted_address: Miami Beach, FL, USA
-  latitude: '25.790654'
-  longitude: '-80.1300455'
+  lonlat: 'POINT(25.790654 -80.1300455)'
   street_number: 
   route: 
   zipcode: 
@@ -31,8 +30,7 @@ places_002:
     - natural_feature
     - establishment
   formatted_address: Tampa Bay, Florida, USA
-  latitude: '27.702871'
-  longitude: '-82.5834947'
+  lonlat: 'POINT(27.702871 -82.5834947)'
   street_number: 
   route: 
   zipcode: 
@@ -54,8 +52,7 @@ places_003:
     - transit_station
     - establishment
   formatted_address: 1 Jeff Fuqua Blvd, Orlando, FL, United States
-  latitude: '28.431639'
-  longitude: '-81.308286'
+  lonlat: 'POINT(28.431639 -81.308286)'
   street_number: '1'
   route: Jeff Fuqua Blvd
   zipcode: '32827'
@@ -77,8 +74,7 @@ places_004:
     - amusement_park
     - establishment
   formatted_address: Lake Buena Vista, FL, United States
-  latitude: '28.381642'
-  longitude: '-81.56376'
+  lonlat: 'POINT(28.381642 -81.56376)'
   street_number: 
   route: 
   zipcode: '32830'
@@ -99,8 +95,7 @@ places_005:
     - locality
     - political
   formatted_address: Wisconsin Dells, WI, USA
-  latitude: '43.6274794'
-  longitude: '-89.7709579'
+  lonlat: 'POINT(43.6274794 -89.7709579)'
   street_number: 
   route: 
   zipcode: 
@@ -121,8 +116,7 @@ places_006:
     - locality
     - political
   formatted_address: Casablanca, Morocco
-  latitude: '33.5333333'
-  longitude: '-7.5833333'
+  lonlat: 'POINT(33.5333333 -7.5833333)'
   street_number: 
   route: 
   zipcode: 
@@ -143,8 +137,7 @@ places_007:
     - locality
     - political
   formatted_address: Kansas City, MO, USA
-  latitude: '39.0997265'
-  longitude: '-94.5785667'
+  lonlat: 'POINT(39.0997265 -94.5785667)'
   street_number: 
   route: 
   zipcode: 
@@ -164,8 +157,7 @@ places_008:
     ---
     - route
   formatted_address: Hwy 6, Sugar Land, TX, USA
-  latitude: '29.5856855'
-  longitude: '-95.5901322'
+  lonlat: 'POINT(29.5856855 -95.5901322)'
   street_number: 
   route: Hwy 6
   zipcode: 
@@ -185,8 +177,7 @@ places_009:
     ---
     - route
   formatted_address: Wisconsin Ave NW, Bethesda, MD 20815, USA
-  latitude: '38.961499'
-  longitude: '-77.0859609'
+  lonlat: 'POINT(38.961499 -77.0859609)'
   street_number: 
   route: Wisconsin Ave NW
   zipcode: '20815'
@@ -207,8 +198,7 @@ places_010:
     - country
     - political
   formatted_address: Costa Rica
-  latitude: '9.748917'
-  longitude: '-83.753428'
+  lonlat: 'POINT(9.748917 -83.753428)'
   street_number: 
   route: 
   zipcode: 
@@ -229,8 +219,7 @@ places_011:
     - country
     - political
   formatted_address: Nicaragua
-  latitude: '12.865416'
-  longitude: '-85.207229'
+  lonlat: 'POINT(12.865416 -85.207229)'
   street_number: 
   route: 
   zipcode: 
@@ -251,8 +240,7 @@ places_012:
     - colloquial_area
     - political
   formatted_address: Las Vegas Strip, NV, USA
-  latitude: '36.1147065'
-  longitude: '-115.1728484'
+  lonlat: 'POINT(36.1147065 -115.1728484)'
   street_number: 
   route: 
   zipcode: 
@@ -273,8 +261,7 @@ places_013:
     - administrative_area_level_1
     - political
   formatted_address: Nevada, USA
-  latitude: '38.8026097'
-  longitude: '-116.419389'
+  lonlat: 'POINT(38.8026097 -116.419389)'
   street_number: 
   route: 
   zipcode: 
@@ -295,8 +282,7 @@ places_014:
     - locality
     - political
   formatted_address: Toronto, ON, Canada
-  latitude: '43.653226'
-  longitude: '-79.3831843'
+  lonlat: 'POINT(43.653226 -79.3831843)'
   street_number: 
   route: 
   zipcode: 
@@ -317,8 +303,7 @@ places_015:
     - locality
     - political
   formatted_address: San Jose, CA, USA
-  latitude: '37.3393857'
-  longitude: '-121.8949555'
+  lonlat: 'POINT(37.3393857 -121.8949555)'
   street_number: 
   route: 
   zipcode: 
@@ -338,8 +323,7 @@ places_016:
     ---
     - route
   formatted_address: Michigan Ave, Detroit, MI, USA
-  latitude: '42.331156'
-  longitude: '-83.1023532'
+  lonlat: 'POINT(42.331156 -83.1023532)'
   street_number: 
   route: Michigan Ave
   zipcode: 
@@ -360,8 +344,7 @@ places_017:
     - locality
     - political
   formatted_address: Quebec City, QC, Canada
-  latitude: '46.8032826'
-  longitude: '-71.242796'
+  lonlat: 'POINT(46.8032826 -71.242796)'
   street_number: 
   route: 
   zipcode: 
@@ -382,8 +365,7 @@ places_018:
     - locality
     - political
   formatted_address: Montreal, QC, Canada
-  latitude: '45.5086699'
-  longitude: '-73.5539925'
+  lonlat: 'POINT(45.5086699 -73.5539925)'
   street_number: 
   route: 
   zipcode: 
@@ -404,8 +386,7 @@ places_019:
     - sublocality
     - political
   formatted_address: 13th arrondissement of Paris, Paris, France
-  latitude: '48.8322222'
-  longitude: '2.3555556'
+  lonlat: 'POINT(48.8322222 2.3555556)'
   street_number: 
   route: 
   zipcode: 
@@ -425,8 +406,7 @@ places_020:
     ---
     - route
   formatted_address: Monton St, Manchester, Greater Manchester M14, UK
-  latitude: '53.4571291'
-  longitude: '-2.2369854'
+  lonlat: 'POINT(53.4571291 -2.2369854)'
   street_number: 
   route: Monton St
   zipcode: M14
@@ -447,8 +427,7 @@ places_021:
     - bar
     - establishment
   formatted_address: 309 Manhattan Beach Boulevard, Manhattan Beach, CA, United States
-  latitude: '33.885374'
-  longitude: '-118.409475'
+  lonlat: 'POINT(33.885374 -118.409475)'
   street_number: '309'
   route: Manhattan Beach Boulevard
   zipcode: '90266'
@@ -470,8 +449,7 @@ places_022:
     - bar
     - establishment
   formatted_address: 2369 Market Street, San Francisco, CA, United States
-  latitude: '37.762969'
-  longitude: '-122.434352'
+  lonlat: 'POINT(37.762969 -122.434352)'
   street_number: '2369'
   route: Market Street
   zipcode: '94114'
@@ -491,8 +469,7 @@ places_023:
     ---
     - establishment
   formatted_address: 24108 Lorain Road, North Olmsted, OH, United States
-  latitude: '41.430197'
-  longitude: '-81.889853'
+  lonlat: 'POINT(41.430197 -81.889853)'
   street_number: '24108'
   route: Lorain Road
   zipcode: '44070'
@@ -512,8 +489,7 @@ places_024:
     ---
     - establishment
   formatted_address: 1660 Capalina Road, San Marcos, CA, United States
-  latitude: '33.151578'
-  longitude: '-117.196351'
+  lonlat: 'POINT(33.151578 -117.196351)'
   street_number: '1660'
   route: Capalina Road
   zipcode: '92069'
@@ -534,8 +510,7 @@ places_025:
     - bar
     - establishment
   formatted_address: 8944 Santa Monica Boulevard, West Hollywood, CA, United States
-  latitude: '34.083915'
-  longitude: '-118.385188'
+  lonlat: 'POINT(34.083915 -118.385188)'
   street_number: '8944'
   route: Santa Monica Boulevard
   zipcode: '90069'
@@ -558,8 +533,7 @@ places_026:
     - food
     - establishment
   formatted_address: 1265 Boylston Street, Boston, MA, United States
-  latitude: '42.345198'
-  longitude: '-71.096308'
+  lonlat: 'POINT(42.345198 -71.096308)'
   street_number: '1265'
   route: Boylston Street
   zipcode: '02215'
@@ -582,8 +556,7 @@ places_027:
     - food
     - establishment
   formatted_address: 546 Commons Drive, Woodbury, MN, United States
-  latitude: '44.940422'
-  longitude: '-92.93262'
+  lonlat: 'POINT(44.940422 -92.93262)'
   street_number: '546'
   route: Commons Drive
   zipcode: '55125'
@@ -604,8 +577,7 @@ places_028:
     - night_club
     - establishment
   formatted_address: 411 Redondo Avenue, Long Beach, California, United States
-  latitude: '33.772005'
-  longitude: '-118.152621'
+  lonlat: 'POINT(33.772005 -118.152621)'
   street_number: '411'
   route: Redondo Avenue
   zipcode: '90814'
@@ -626,8 +598,7 @@ places_029:
     - bar
     - establishment
   formatted_address: 2115 13th Street, Boulder, CO, United States
-  latitude: '40.019441'
-  longitude: '-105.279269'
+  lonlat: 'POINT(40.019441 -105.279269)'
   street_number: '2115'
   route: 13th Street
   zipcode: '80302'
@@ -651,8 +622,7 @@ places_030:
     - food
     - establishment
   formatted_address: 2714 McKinney Avenue, Dallas, TX, United States
-  latitude: '32.797992'
-  longitude: '-96.801167'
+  lonlat: 'POINT(32.797992 -96.801167)'
   street_number: '2714'
   route: McKinney Avenue
   zipcode: '75204'
@@ -673,8 +643,7 @@ places_031:
     - bar
     - establishment
   formatted_address: 1823 East 7th Avenue, Tampa, FL, United States
-  latitude: '27.960181'
-  longitude: '-82.43836'
+  lonlat: 'POINT(27.960181 -82.43836)'
   street_number: '1823'
   route: East 7th Avenue
   zipcode: '33605'
@@ -697,8 +666,7 @@ places_032:
     - food
     - establishment
   formatted_address: 24223 Jefferson Avenue, Saint Clair Shores, MI, United States
-  latitude: '42.469851'
-  longitude: '-82.888423'
+  lonlat: 'POINT(42.469851 -82.888423)'
   street_number: '24223'
   route: Jefferson Avenue
   zipcode: '48080'
@@ -722,8 +690,7 @@ places_033:
     - food
     - establishment
   formatted_address: 2045 Mount Diablo Street, Concord, CA, United States
-  latitude: '37.977851'
-  longitude: '-122.035154'
+  lonlat: 'POINT(37.977851 -122.035154)'
   street_number: '2045'
   route: Mount Diablo Street
   zipcode: '94520'
@@ -744,8 +711,7 @@ places_034:
     - bar
     - establishment
   formatted_address: 24 Broadway, Wisconsin Dells, WI, United States
-  latitude: '43.627594'
-  longitude: '-89.77736'
+  lonlat: 'POINT(43.627594 -89.77736)'
   street_number: '24'
   route: Broadway
   zipcode: '53965'
@@ -767,8 +733,7 @@ places_035:
     - food
     - establishment
   formatted_address: 3982 West Auburn Road, Rochester Hills, MI, United States
-  latitude: '42.634332'
-  longitude: '-83.209068'
+  lonlat: 'POINT(42.634332 -83.209068)'
   street_number: '3982'
   route: West Auburn Road
   zipcode: '48309'
@@ -789,8 +754,7 @@ places_036:
     - bar
     - establishment
   formatted_address: 2375 North High Street, Columbus, OH, United States
-  latitude: '40.01071'
-  longitude: '-83.010457'
+  lonlat: 'POINT(40.01071 -83.010457)'
   street_number: '2375'
   route: North High Street
   zipcode: '43202'
@@ -813,8 +777,7 @@ places_037:
     - food
     - establishment
   formatted_address: 912 South Main Street, St. Charles, Missouri, United States
-  latitude: '38.774491'
-  longitude: '-90.484445'
+  lonlat: 'POINT(38.774491 -90.484445)'
   street_number: '912'
   route: South Main Street
   zipcode: '63301'
@@ -837,8 +800,7 @@ places_038:
     - food
     - establishment
   formatted_address: 3516 North Clark Street, Chicago, IL, United States
-  latitude: '41.94598'
-  longitude: '-87.655757'
+  lonlat: 'POINT(41.94598 -87.655757)'
   street_number: '3516'
   route: North Clark Street
   zipcode: '60657'
@@ -861,8 +823,7 @@ places_039:
     - food
     - establishment
   formatted_address: 700 Northeast 2nd Avenue, Miami, FL, United States
-  latitude: '25.781138'
-  longitude: '-80.190619'
+  lonlat: 'POINT(25.781138 -80.190619)'
   street_number: '700'
   route: Northeast 2nd Avenue
   zipcode: '33132'
@@ -886,8 +847,7 @@ places_040:
     - food
     - establishment
   formatted_address: 3330 North Clark Street, Chicago, IL, United States
-  latitude: '41.942494'
-  longitude: '-87.652884'
+  lonlat: 'POINT(41.942494 -87.652884)'
   street_number: '3330'
   route: North Clark Street
   zipcode: '60657'
@@ -908,8 +868,7 @@ places_041:
     - night_club
     - establishment
   formatted_address: 422 Congress Avenue, Austin, TX, United States
-  latitude: '30.267022'
-  longitude: '-97.743383'
+  lonlat: 'POINT(30.267022 -97.743383)'
   street_number: '422'
   route: Congress Avenue
   zipcode: '78701'
@@ -930,8 +889,7 @@ places_042:
     - bar
     - establishment
   formatted_address: 2483 North Clark Street, Chicago, IL, United States
-  latitude: '41.927719'
-  longitude: '-87.641615'
+  lonlat: 'POINT(41.927719 -87.641615)'
   street_number: '2483'
   route: North Clark Street
   zipcode: '60614'
@@ -953,8 +911,7 @@ places_043:
     - bar
     - establishment
   formatted_address: 2409 North Henderson Avenue, Dallas, TX, United States
-  latitude: '32.815136'
-  longitude: '-96.778924'
+  lonlat: 'POINT(32.815136 -96.778924)'
   street_number: '2409'
   route: North Henderson Avenue
   zipcode: '75206'
@@ -975,8 +932,7 @@ places_044:
     - bar
     - establishment
   formatted_address: 1881 Bandera Road, San Antonio, TX, United States
-  latitude: '29.555337'
-  longitude: '-98.670009'
+  lonlat: 'POINT(29.555337 -98.670009)'
   street_number: '1881'
   route: Bandera Road
   zipcode: '78023'
@@ -999,8 +955,7 @@ places_045:
     - food
     - establishment
   formatted_address: 35750 Warren Road, Westland, MI, United States
-  latitude: '42.33912'
-  longitude: '-83.395492'
+  lonlat: 'POINT(42.33912 -83.395492)'
   street_number: '35750'
   route: Warren Road
   zipcode: '48185'
@@ -1021,8 +976,7 @@ places_046:
     - bar
     - establishment
   formatted_address: 2900 Thomas Avenue, Dallas, TX, United States
-  latitude: '32.796573'
-  longitude: '-96.796812'
+  lonlat: 'POINT(32.796573 -96.796812)'
   street_number: '2900'
   route: Thomas Avenue
   zipcode: '75204'
@@ -1043,8 +997,7 @@ places_047:
     - bar
     - establishment
   formatted_address: 19 West Pennsylvania Avenue, Towson, MD, United States
-  latitude: '39.400541'
-  longitude: '-76.603856'
+  lonlat: 'POINT(39.400541 -76.603856)'
   street_number: '19'
   route: West Pennsylvania Avenue
   zipcode: '21204'
@@ -1066,8 +1019,7 @@ places_048:
     - food
     - establishment
   formatted_address: 606 2nd Street Pike, Southampton, PA, United States
-  latitude: '40.171577'
-  longitude: '-75.044954'
+  lonlat: 'POINT(40.171577 -75.044954)'
   street_number: '606'
   route: 2nd Street Pike
   zipcode: '18966'
@@ -1089,8 +1041,7 @@ places_049:
     - bar
     - establishment
   formatted_address: 2005 Locust Street, St. Louis, MO, United States
-  latitude: '38.633106'
-  longitude: '-90.208418'
+  lonlat: 'POINT(38.633106 -90.208418)'
   street_number: '2005'
   route: Locust Street
   zipcode: '63103'
@@ -1113,8 +1064,7 @@ places_050:
     - food
     - establishment
   formatted_address: 10950 Club West Parkway Northeast, Blaine, MN, United States
-  latitude: '45.169396'
-  longitude: '-93.231287'
+  lonlat: 'POINT(45.169396 -93.231287)'
   street_number: '10950'
   route: Club West Parkway Northeast
   zipcode: '55449'
@@ -1136,8 +1086,7 @@ places_051:
     - bar
     - establishment
   formatted_address: 2004 North 16th Street, Tampa, FL, United States
-  latitude: '27.961976'
-  longitude: '-82.441776'
+  lonlat: 'POINT(27.961976 -82.441776)'
   street_number: '2004'
   route: North 16th Street
   zipcode: '33605'
@@ -1158,8 +1107,7 @@ places_052:
     - lodging
     - establishment
   formatted_address: 3285 Peachtree Road Northeast, Atlanta, GA, United States
-  latitude: '33.84474'
-  longitude: '-84.3688'
+  lonlat: 'POINT(33.84474 -84.3688)'
   street_number: '3285'
   route: Peachtree Road Northeast
   zipcode: '30305'
@@ -1181,8 +1129,7 @@ places_053:
     - bar
     - establishment
   formatted_address: 954 West Belmont Avenue, Chicago, IL, United States
-  latitude: '41.940005'
-  longitude: '-87.653718'
+  lonlat: 'POINT(41.940005 -87.653718)'
   street_number: '954'
   route: West Belmont Avenue
   zipcode: '60657'
@@ -1203,8 +1150,7 @@ places_054:
     - night_club
     - establishment
   formatted_address: 4904 West Avenue, San Antonio, TX, United States
-  latitude: '29.511488'
-  longitude: '-98.525855'
+  lonlat: 'POINT(29.511488 -98.525855)'
   street_number: '4904'
   route: West Avenue
   zipcode: '78213'
@@ -1226,8 +1172,7 @@ places_055:
     - bar
     - establishment
   formatted_address: The Pour House, 2725 W 7th St, Fort Worth, TX 76107, USA
-  latitude: '32.7509588'
-  longitude: '-97.3553224'
+  lonlat: 'POINT(32.7509588 -97.3553224)'
   street_number: '2725'
   route: W 7th St
   zipcode: '76107'
@@ -1248,8 +1193,7 @@ places_056:
     - bar
     - establishment
   formatted_address: 1900 South 77 Sunshine Strip, Harlingen, TX, United States
-  latitude: '26.173822'
-  longitude: '-97.674794'
+  lonlat: 'POINT(26.173822 -97.674794)'
   street_number: '1900'
   route: South 77 Sunshine Strip
   zipcode: '78550'
@@ -1272,8 +1216,7 @@ places_057:
     - food
     - establishment
   formatted_address: 2710 McKinney Avenue, Dallas, TX, United States
-  latitude: '32.797776'
-  longitude: '-96.801136'
+  lonlat: 'POINT(32.797776 -96.801136)'
   street_number: '2710'
   route: McKinney Avenue
   zipcode: '75204'
@@ -1295,8 +1238,7 @@ places_058:
     - food
     - establishment
   formatted_address: 1001 South Miami Avenue, Miami, FL, United States
-  latitude: '25.764313'
-  longitude: '-80.192767'
+  lonlat: 'POINT(25.764313 -80.192767)'
   street_number: '1001'
   route: South Miami Avenue
   zipcode: '33131'
@@ -1316,8 +1258,7 @@ places_059:
     ---
     - establishment
   formatted_address: 121 Avenue A, Denton, TX, United States
-  latitude: '33.213909'
-  longitude: '-97.146093'
+  lonlat: 'POINT(33.213909 -97.146093)'
   street_number: '121'
   route: Avenue A
   zipcode: '76201'
@@ -1338,8 +1279,7 @@ places_060:
     - bar
     - establishment
   formatted_address: 11851 Bandera Road, Helotes, TX, United States
-  latitude: '29.553826'
-  longitude: '-98.669884'
+  lonlat: 'POINT(29.553826 -98.669884)'
   street_number: '11851'
   route: Bandera Road
   zipcode: '78023'
@@ -1360,8 +1300,7 @@ places_061:
     - bar
     - establishment
   formatted_address: 900 Houston Street, Fort Worth, TX, United States
-  latitude: '32.751507'
-  longitude: '-97.33034'
+  lonlat: 'POINT(32.751507 -97.33034)'
   street_number: '900'
   route: Houston Street
   zipcode: '76102'
@@ -1384,8 +1323,7 @@ places_062:
     - food
     - establishment
   formatted_address: 409 Colorado Street, Austin, TX, United States
-  latitude: '30.267101'
-  longitude: '-97.7445'
+  lonlat: 'POINT(30.267101 -97.7445)'
   street_number: '409'
   route: Colorado Street
   zipcode: '78701'
@@ -1406,8 +1344,7 @@ places_063:
     - bar
     - establishment
   formatted_address: 1929 East 7th Avenue, Tampa, FL, United States
-  latitude: '27.960166'
-  longitude: '-82.436883'
+  lonlat: 'POINT(27.960166 -82.436883)'
   street_number: '1929'
   route: East 7th Avenue
   zipcode: '33605'
@@ -1429,8 +1366,7 @@ places_064:
     - bar
     - establishment
   formatted_address: 1021 7th Street Northwest, Washington, DC, United States
-  latitude: '38.903688'
-  longitude: '-77.021781'
+  lonlat: 'POINT(38.903688 -77.021781)'
   street_number: '1021'
   route: 7th Street Northwest
   zipcode: '20001'
@@ -1451,8 +1387,7 @@ places_065:
     - night_club
     - establishment
   formatted_address: 7333 East Indian Plaza, Scottsdale, Arizona, United States
-  latitude: '33.501312'
-  longitude: '-111.922964'
+  lonlat: 'POINT(33.501312 -111.922964)'
   street_number: '7333'
   route: East Indian Plaza
   zipcode: '85251'
@@ -1475,8 +1410,7 @@ places_066:
     - food
     - establishment
   formatted_address: 4417 Main Street, Philadelphia, PA, United States
-  latitude: '40.026405'
-  longitude: '-75.225238'
+  lonlat: 'POINT(40.026405 -75.225238)'
   street_number: '4417'
   route: Main Street
   zipcode: '19127'
@@ -1497,8 +1431,7 @@ places_067:
     - night_club
     - establishment
   formatted_address: 1031 Germantown Avenue, Philadelphia, PA, United States
-  latitude: '39.966328'
-  longitude: '-75.138502'
+  lonlat: 'POINT(39.966328 -75.138502)'
   street_number: '1031'
   route: Germantown Avenue
   zipcode: '19123'
@@ -1519,8 +1452,7 @@ places_068:
     - lodging
     - establishment
   formatted_address: 505 North State Street, Chicago, IL, United States
-  latitude: '41.891037'
-  longitude: '-87.627923'
+  lonlat: 'POINT(41.891037 -87.627923)'
   street_number: '505'
   route: North State Street
   zipcode: '60654'
@@ -1542,8 +1474,7 @@ places_069:
     - food
     - establishment
   formatted_address: 2657 North Kedzie Avenue, Chicago, IL, United States
-  latitude: '41.930098'
-  longitude: '-87.707082'
+  lonlat: 'POINT(41.930098 -87.707082)'
   street_number: '2657'
   route: North Kedzie Avenue
   zipcode: '60647'
@@ -1566,8 +1497,7 @@ places_070:
     - food
     - establishment
   formatted_address: 1603 North Lake Shore Drive, Chicago, IL, United States
-  latitude: '41.913403'
-  longitude: '-87.62433'
+  lonlat: 'POINT(41.913403 -87.62433)'
   street_number: '1603'
   route: North Lake Shore Drive
   zipcode: '60614'
@@ -1587,8 +1517,7 @@ places_071:
     ---
     - route
   formatted_address: Westheimer, Houston, TX 77027, USA
-  latitude: '29.7417386'
-  longitude: '-95.4501325'
+  lonlat: 'POINT(29.7417386 -95.4501325)'
   street_number: 
   route: Westheimer
   zipcode: '77027'
@@ -1611,8 +1540,7 @@ places_072:
     - store
     - establishment
   formatted_address: 1416 North Litchfield Road, Goodyear, AZ, United States
-  latitude: '33.462531'
-  longitude: '-112.358342'
+  lonlat: 'POINT(33.462531 -112.358342)'
   street_number: '1416'
   route: North Litchfield Road
   zipcode: '85395'
@@ -1634,8 +1562,7 @@ places_073:
     - food
     - establishment
   formatted_address: 1700 West Division Street, Chicago, IL, United States
-  latitude: '41.90344'
-  longitude: '-87.670514'
+  lonlat: 'POINT(41.90344 -87.670514)'
   street_number: '1700'
   route: West Division Street
   zipcode: '60622'
@@ -1658,8 +1585,7 @@ places_074:
     - store
     - establishment
   formatted_address: 7280 Lagae Road, Castle Rock, CO, United States
-  latitude: '39.4685'
-  longitude: '-104.880891'
+  lonlat: 'POINT(39.4685 -104.880891)'
   street_number: '7280'
   route: Lagae Road
   zipcode: '80108'
@@ -1682,8 +1608,7 @@ places_075:
     - food
     - establishment
   formatted_address: 5061 Westheimer Road, Houston, TX, United States
-  latitude: '29.740018'
-  longitude: '-95.463816'
+  lonlat: 'POINT(29.740018 -95.463816)'
   street_number: '5061'
   route: Westheimer Road
   zipcode: '77056'
@@ -1706,8 +1631,7 @@ places_076:
     - store
     - establishment
   formatted_address: 850 Lexington Street, Waltham, MA, United States
-  latitude: '42.404262'
-  longitude: '-71.234201'
+  lonlat: 'POINT(42.404262 -71.234201)'
   street_number: '850'
   route: Lexington Street
   zipcode: '02452'
@@ -1730,8 +1654,7 @@ places_077:
     - store
     - establishment
   formatted_address: 1729 South Texas Avenue, College Station, TX, United States
-  latitude: '30.616563'
-  longitude: '-96.318076'
+  lonlat: 'POINT(30.616563 -96.318076)'
   street_number: '1729'
   route: South Texas Avenue
   zipcode: '77840'
@@ -1753,8 +1676,7 @@ places_078:
     - store
     - establishment
   formatted_address: 35201 Hunter Avenue, Westland, MI, United States
-  latitude: '42.331294'
-  longitude: '-83.387109'
+  lonlat: 'POINT(42.331294 -83.387109)'
   street_number: '35201'
   route: Hunter Avenue
   zipcode: '48185'
@@ -1776,8 +1698,7 @@ places_079:
     - bar
     - establishment
   formatted_address: 335 Powell Street, San Francisco, CA, United States
-  latitude: '37.787727'
-  longitude: '-122.408523'
+  lonlat: 'POINT(37.787727 -122.408523)'
   street_number: '335'
   route: Powell Street
   zipcode: '94102'
@@ -1799,8 +1720,7 @@ places_080:
     - establishment
   formatted_address: Ruth Eckerd Hall, 1111 N McMullen Booth Rd, Clearwater, FL 33759,
     USA
-  latitude: '27.976034'
-  longitude: '-82.704689'
+  lonlat: 'POINT(27.976034 -82.704689)'
   street_number: '1111'
   route: N McMullen Booth Rd
   zipcode: '33759'
@@ -1823,8 +1743,7 @@ places_081:
     - food
     - establishment
   formatted_address: 435 North Clark Street, Chicago, IL, United States
-  latitude: '41.890352'
-  longitude: '-87.630948'
+  lonlat: 'POINT(41.890352 -87.630948)'
   street_number: '435'
   route: North Clark Street
   zipcode: '60654'
@@ -1846,8 +1765,7 @@ places_082:
     - food
     - establishment
   formatted_address: 101 West Green Street, Pasadena, CA, United States
-  latitude: '34.144596'
-  longitude: '-118.152404'
+  lonlat: 'POINT(34.144596 -118.152404)'
   street_number: '101'
   route: West Green Street
   zipcode: '91105'
@@ -1869,8 +1787,7 @@ places_083:
     - food
     - establishment
   formatted_address: 3008 Maple Avenue, Dallas, TX, United States
-  latitude: '32.798445'
-  longitude: '-96.807712'
+  lonlat: 'POINT(32.798445 -96.807712)'
   street_number: '3008'
   route: Maple Avenue
   zipcode: '75201'
@@ -1893,8 +1810,7 @@ places_084:
     - food
     - establishment
   formatted_address: 1324 Washington Avenue, St. Louis, MO, United States
-  latitude: '38.632188'
-  longitude: '-90.199251'
+  lonlat: 'POINT(38.632188 -90.199251)'
   street_number: '1324'
   route: Washington Avenue
   zipcode: '63103'
@@ -1917,8 +1833,7 @@ places_085:
     - food
     - establishment
   formatted_address: 1996 South Kirk Road, Geneva, IL, United States
-  latitude: '41.872667'
-  longitude: '-88.27977'
+  lonlat: 'POINT(41.872667 -88.27977)'
   street_number: '1996'
   route: South Kirk Road
   zipcode: '60134'
@@ -1940,8 +1855,7 @@ places_086:
     - food
     - establishment
   formatted_address: 2948 Crockett Street, Fort Woth, TX, United States
-  latitude: '32.750287'
-  longitude: '-97.359493'
+  lonlat: 'POINT(32.750287 -97.359493)'
   street_number: '2948'
   route: Crockett Street
   zipcode: '76107'
@@ -1962,8 +1876,7 @@ places_087:
     - bar
     - establishment
   formatted_address: '515 West 7th Street #2, Los Angeles, CA, United States'
-  latitude: '34.046986'
-  longitude: '-118.25595'
+  lonlat: 'POINT(34.046986 -118.25595)'
   street_number: '515'
   route: West 7th Street
   zipcode: '90014'
@@ -1984,8 +1897,7 @@ places_088:
     - bowling_alley
     - establishment
   formatted_address: 905 Theodore Street, Crest Hill, IL, United States
-  latitude: '41.552597'
-  longitude: '-88.105513'
+  lonlat: 'POINT(41.552597 -88.105513)'
   street_number: '905'
   route: Theodore Street
   zipcode: '60403'
@@ -2008,8 +1920,7 @@ places_089:
     - food
     - establishment
   formatted_address: 29 West Jefferson Avenue, Naperville, IL, United States
-  latitude: '41.773156'
-  longitude: '-88.14902'
+  lonlat: 'POINT(41.773156 -88.14902)'
   street_number: '29'
   route: West Jefferson Avenue
   zipcode: '60540'
@@ -2031,8 +1942,7 @@ places_090:
     - food
     - establishment
   formatted_address: 2505 East Grapevine Mills Circle, Grapevine, TX, United States
-  latitude: '32.964697'
-  longitude: '-97.039007'
+  lonlat: 'POINT(32.964697 -97.039007)'
   street_number: '2505'
   route: East Grapevine Mills Circle
   zipcode: '76051'
@@ -2055,8 +1965,7 @@ places_091:
     - food
     - establishment
   formatted_address: 1110 Nicollet Mall, Minneapolis, MN, United States
-  latitude: '44.972716'
-  longitude: '-93.27595'
+  lonlat: 'POINT(44.972716 -93.27595)'
   street_number: '1110'
   route: Nicollet Mall
   zipcode: '55403'
@@ -2078,8 +1987,7 @@ places_092:
     - food
     - establishment
   formatted_address: 6015 North 16th Street, Phoenix, AZ, United States
-  latitude: '33.52433'
-  longitude: '-112.047351'
+  lonlat: 'POINT(33.52433 -112.047351)'
   street_number: '6015'
   route: North 16th Street
   zipcode: '85014'
@@ -2102,8 +2010,7 @@ places_093:
     - food
     - establishment
   formatted_address: '401 Biscayne Boulevard #225, Miami, FL, United States'
-  latitude: '25.778501'
-  longitude: '-80.186473'
+  lonlat: 'POINT(25.778501 -80.186473)'
   street_number: '401'
   route: Biscayne Boulevard
   zipcode: '33132'
@@ -2125,8 +2032,7 @@ places_094:
     - food
     - establishment
   formatted_address: 1316 Chestnut Street, Philadelphia, PA, United States
-  latitude: '39.950605'
-  longitude: '-75.162466'
+  lonlat: 'POINT(39.950605 -75.162466)'
   street_number: '1316'
   route: Chestnut Street
   zipcode: '19107'
@@ -2150,8 +2056,7 @@ places_095:
     - bar
     - establishment
   formatted_address: 3300 Delta Fair Boulevard, Antioch, CA, United States
-  latitude: '38.003463'
-  longitude: '-121.840264'
+  lonlat: 'POINT(38.003463 -121.840264)'
   street_number: '3300'
   route: Delta Fair Boulevard
   zipcode: '94509'
@@ -2172,8 +2077,7 @@ places_096:
     - bar
     - establishment
   formatted_address: 200 3rd Street, Farmington, MN, United States
-  latitude: '44.641269'
-  longitude: '-93.145436'
+  lonlat: 'POINT(44.641269 -93.145436)'
   street_number: '200'
   route: 3rd Street
   zipcode: '55024'
@@ -2194,8 +2098,7 @@ places_097:
     - bar
     - establishment
   formatted_address: 1380 South Broadway, Denver, CO, United States
-  latitude: '39.691494'
-  longitude: '-104.987087'
+  lonlat: 'POINT(39.691494 -104.987087)'
   street_number: '1380'
   route: South Broadway
   zipcode: '80210'
@@ -2217,8 +2120,7 @@ places_098:
     - food
     - establishment
   formatted_address: 108 West Kinzie Street, Chicago, IL, United States
-  latitude: '41.889206'
-  longitude: '-87.631578'
+  lonlat: 'POINT(41.889206 -87.631578)'
   street_number: '108'
   route: West Kinzie Street
   zipcode: '60654'
@@ -2240,8 +2142,7 @@ places_099:
     - food
     - establishment
   formatted_address: 43 South Market Street, Frederick, MD, United States
-  latitude: '39.413158'
-  longitude: '-77.411217'
+  lonlat: 'POINT(39.413158 -77.411217)'
   street_number: '43'
   route: South Market Street
   zipcode: '21701'
@@ -2264,8 +2165,7 @@ places_100:
     - food
     - establishment
   formatted_address: 1000 Olive Street, St. Louis, MO, United States
-  latitude: '38.629103'
-  longitude: '-90.194817'
+  lonlat: 'POINT(38.629103 -90.194817)'
   street_number: '1000'
   route: Olive Street
   zipcode: '63101'
@@ -2289,8 +2189,7 @@ places_101:
     - food
     - establishment
   formatted_address: 492 South Lake Avenue, Pasadena, CA, United States
-  latitude: '34.137367'
-  longitude: '-118.131964'
+  lonlat: 'POINT(34.137367 -118.131964)'
   street_number: 
   route: 
   zipcode: '91101'
@@ -2312,8 +2211,7 @@ places_102:
     - food
     - establishment
   formatted_address: 33626 Schoenherr Road, Sterling Heights, MI, United States
-  latitude: '42.542771'
-  longitude: '-82.987919'
+  lonlat: 'POINT(42.542771 -82.987919)'
   street_number: '33626'
   route: Schoenherr Road
   zipcode: '48312'
@@ -2334,8 +2232,7 @@ places_103:
     - bowling_alley
     - establishment
   formatted_address: 1620 Railroad Avenue, Livermore, CA, United States
-  latitude: '37.681918'
-  longitude: '-121.776274'
+  lonlat: 'POINT(37.681918 -121.776274)'
   street_number: '1620'
   route: Railroad Avenue
   zipcode: '94550'
@@ -2359,8 +2256,7 @@ places_104:
     - food
     - establishment
   formatted_address: 200 South 12th Street, Philadelphia, PA, United States
-  latitude: '39.948466'
-  longitude: '-75.160709'
+  lonlat: 'POINT(39.948466 -75.160709)'
   street_number: '200'
   route: South 12th Street
   zipcode: '19107'
@@ -2381,8 +2277,7 @@ places_105:
     - night_club
     - establishment
   formatted_address: 3578 South 108th Street, Milwaukee, WI, United States
-  latitude: '42.978872'
-  longitude: '-88.047147'
+  lonlat: 'POINT(42.978872 -88.047147)'
   street_number: '3578'
   route: South 108th Street
   zipcode: '53228'
@@ -2405,8 +2300,7 @@ places_106:
     - food
     - establishment
   formatted_address: 1280 South Pine Island Road, Plantation, FL, United States
-  latitude: '26.107883'
-  longitude: '-80.262139'
+  lonlat: 'POINT(26.107883 -80.262139)'
   street_number: '1280'
   route: South Pine Island Road
   zipcode: '33324'
@@ -2427,8 +2321,7 @@ places_107:
     - lodging
     - establishment
   formatted_address: 1685 Collins Avenue, Miami Beach, FL, United States
-  latitude: '25.792099'
-  longitude: '-80.129314'
+  lonlat: 'POINT(25.792099 -80.129314)'
   street_number: '1685'
   route: Collins Avenue
   zipcode: '33139'
@@ -2448,8 +2341,7 @@ places_108:
     ---
     - establishment
   formatted_address: 2511 Bissonnet Street, Houston, TX, United States
-  latitude: '29.725401'
-  longitude: '-95.41738'
+  lonlat: 'POINT(29.725401 -95.41738)'
   street_number: '2511'
   route: Bissonnet Street
   zipcode: '77005'
@@ -2470,8 +2362,7 @@ places_109:
     - bar
     - establishment
   formatted_address: 75 Murray Street, New York, NY, United States
-  latitude: '40.71474'
-  longitude: '-74.010678'
+  lonlat: 'POINT(40.71474 -74.010678)'
   street_number: '75'
   route: Murray Street
   zipcode: '10007'
@@ -2493,8 +2384,7 @@ places_110:
     - bar
     - establishment
   formatted_address: 1254 Boylston Street, Boston, MA, United States
-  latitude: '42.344952'
-  longitude: '-71.095887'
+  lonlat: 'POINT(42.344952 -71.095887)'
   street_number: '1254'
   route: Boylston Street
   zipcode: '02215'
@@ -2515,8 +2405,7 @@ places_111:
     - bar
     - establishment
   formatted_address: 2534 Old Middlefield Way, Mountain View, CA, United States
-  latitude: '37.41555'
-  longitude: '-122.100951'
+  lonlat: 'POINT(37.41555 -122.100951)'
   street_number: '2534'
   route: Old Middlefield Way
   zipcode: '94043'
@@ -2539,8 +2428,7 @@ places_112:
     - food
     - establishment
   formatted_address: 7038 West Sunset Boulevard, Hollywood, CA, United States
-  latitude: '34.097783'
-  longitude: '-118.342712'
+  lonlat: 'POINT(34.097783 -118.342712)'
   street_number: '7038'
   route: West Sunset Boulevard
   zipcode: '90028'
@@ -2563,8 +2451,7 @@ places_113:
     - food
     - establishment
   formatted_address: 19400 Northline Road, Southgate, MI, United States
-  latitude: '42.213391'
-  longitude: '-83.228507'
+  lonlat: 'POINT(42.213391 -83.228507)'
   street_number: '19400'
   route: Northline Road
   zipcode: '48195'
@@ -2585,8 +2472,7 @@ places_114:
     - bar
     - establishment
   formatted_address: 816 Matisse Drive, Fort Worth, TX, United States
-  latitude: '32.750616'
-  longitude: '-97.351182'
+  lonlat: 'POINT(32.750616 -97.351182)'
   street_number: '816'
   route: Matisse Drive
   zipcode: '76107'
@@ -2609,8 +2495,7 @@ places_115:
     - food
     - establishment
   formatted_address: 515 Houston St., Fort Worth, TX, United States
-  latitude: '32.75364'
-  longitude: '-97.331613'
+  lonlat: 'POINT(32.75364 -97.331613)'
   street_number: 
   route: 
   zipcode: '76102'
@@ -2633,8 +2518,7 @@ places_116:
     - food
     - establishment
   formatted_address: 4041 North 40th Street, Phoenix, AZ, United States
-  latitude: '33.494496'
-  longitude: '-111.9951'
+  lonlat: 'POINT(33.494496 -111.9951)'
   street_number: '4041'
   route: North 40th Street
   zipcode: '85018'
@@ -2656,8 +2540,7 @@ places_117:
     - food
     - establishment
   formatted_address: 423 South Main Street, Grapevine, TX, United States
-  latitude: '32.936896'
-  longitude: '-97.078256'
+  lonlat: 'POINT(32.936896 -97.078256)'
   street_number: '423'
   route: South Main Street
   zipcode: '76051'
@@ -2680,8 +2563,7 @@ places_118:
     - food
     - establishment
   formatted_address: 17776 Blanco Road, San Antonio, TX, United States
-  latitude: '29.603764'
-  longitude: '-98.507455'
+  lonlat: 'POINT(29.603764 -98.507455)'
   street_number: '17776'
   route: Blanco Road
   zipcode: '78232'
@@ -2704,8 +2586,7 @@ places_119:
     - food
     - establishment
   formatted_address: '8 Chicago Avenue #1, Naperville, IL, United States'
-  latitude: '41.771403'
-  longitude: '-88.148243'
+  lonlat: 'POINT(41.771403 -88.148243)'
   street_number: '8'
   route: Chicago Avenue
   zipcode: '60540'
@@ -2726,8 +2607,7 @@ places_120:
     - bowling_alley
     - establishment
   formatted_address: 7502 Florence Avenue, Downey, CA, United States
-  latitude: '33.957401'
-  longitude: '-118.139041'
+  lonlat: 'POINT(33.957401 -118.139041)'
   street_number: '7502'
   route: Florence Avenue
   zipcode: '90240'
@@ -2750,8 +2630,7 @@ places_121:
     - food
     - establishment
   formatted_address: 1318 Westheimer Road, Houston, TX, United States
-  latitude: '29.743972'
-  longitude: '-95.395334'
+  lonlat: 'POINT(29.743972 -95.395334)'
   street_number: '1318'
   route: Westheimer Road
   zipcode: '77006'
@@ -2772,8 +2651,7 @@ places_122:
     - lodging
     - establishment
   formatted_address: 2700 Turf Valley Rd, Ellicott City, MD, United States
-  latitude: '39.297013'
-  longitude: '-76.892273'
+  lonlat: 'POINT(39.297013 -76.892273)'
   street_number: '2700'
   route: Turf Valley Rd
   zipcode: '21042'
@@ -2795,8 +2673,7 @@ places_123:
     - lodging
     - establishment
   formatted_address: Suite C, 5306 Washington Avenue, Houston, TX, United States
-  latitude: '29.77072'
-  longitude: '-95.414726'
+  lonlat: 'POINT(29.77072 -95.414726)'
   street_number: '5306'
   route: Washington Avenue
   zipcode: '77007'
@@ -2818,8 +2695,7 @@ places_124:
     - food
     - establishment
   formatted_address: 1621 Oak Lawn Avenue, Dallas, TX, United States
-  latitude: '32.797019'
-  longitude: '-96.820116'
+  lonlat: 'POINT(32.797019 -96.820116)'
   street_number: '1621'
   route: Oak Lawn Avenue
   zipcode: '75207'
@@ -2840,8 +2716,7 @@ places_125:
     - bar
     - establishment
   formatted_address: 1224 1st Avenue, Seattle, WA, United States
-  latitude: '47.606817'
-  longitude: '-122.337917'
+  lonlat: 'POINT(47.606817 -122.337917)'
   street_number: '1224'
   route: 1st Avenue
   zipcode: '98101'
@@ -2862,8 +2737,7 @@ places_126:
     - bar
     - establishment
   formatted_address: 42066 Van Dyke Avenue, Sterling Heights, MI, United States
-  latitude: '42.602424'
-  longitude: '-83.03'
+  lonlat: 'POINT(42.602424 -83.03)'
   street_number: '42066'
   route: Van Dyke Avenue
   zipcode: '48314'
@@ -2884,8 +2758,7 @@ places_127:
     - bar
     - establishment
   formatted_address: 1524 Civic Drive, Walnut Creek, CA, United States
-  latitude: '37.901682'
-  longitude: '-122.062406'
+  lonlat: 'POINT(37.901682 -122.062406)'
   street_number: '1524'
   route: Civic Drive
   zipcode: '94596'
@@ -2906,8 +2779,7 @@ places_128:
     - bar
     - establishment
   formatted_address: 1237 Polk Street, San Francisco, CA, United States
-  latitude: '37.788373'
-  longitude: '-122.420362'
+  lonlat: 'POINT(37.788373 -122.420362)'
   street_number: '1237'
   route: Polk Street
   zipcode: '94109'
@@ -2929,8 +2801,7 @@ places_129:
     - food
     - establishment
   formatted_address: 14506 South Robert Trail, Rosemount, MN, United States
-  latitude: '44.738781'
-  longitude: '-93.125959'
+  lonlat: 'POINT(44.738781 -93.125959)'
   street_number: '14506'
   route: South Robert Trail
   zipcode: '55068'
@@ -2952,8 +2823,7 @@ places_130:
     - bar
     - establishment
   formatted_address: 2009 8th Street Northwest, Washington, DC, United States
-  latitude: '38.91719'
-  longitude: '-77.022683'
+  lonlat: 'POINT(38.91719 -77.022683)'
   street_number: '2009'
   route: 8th Street Northwest
   zipcode: '20001'
@@ -2975,8 +2845,7 @@ places_131:
     - food
     - establishment
   formatted_address: 3100 East West Maple Road, Commerce Township, MI, United States
-  latitude: '42.54275'
-  longitude: '-83.441706'
+  lonlat: 'POINT(42.54275 -83.441706)'
   street_number: '3100'
   route: East West Maple Road
   zipcode: '48390'
@@ -2997,8 +2866,7 @@ places_132:
     - bar
     - establishment
   formatted_address: 2490 Taylor Road, Wildwood, MO, United States
-  latitude: '38.580052'
-  longitude: '-90.626918'
+  lonlat: 'POINT(38.580052 -90.626918)'
   street_number: '2490'
   route: Taylor Road
   zipcode: '63040'
@@ -3021,8 +2889,7 @@ places_133:
     - food
     - establishment
   formatted_address: 2451 Pablo Kisel Boulevard, Brownsville, TX, United States
-  latitude: '25.95907'
-  longitude: '-97.506194'
+  lonlat: 'POINT(25.95907 -97.506194)'
   street_number: '2451'
   route: Pablo Kisel Boulevard
   zipcode: '78526'
@@ -3043,8 +2910,7 @@ places_134:
     - bar
     - establishment
   formatted_address: 835 Foch Street, Fort Worth, TX, United States
-  latitude: '32.750214'
-  longitude: '-97.356323'
+  lonlat: 'POINT(32.750214 -97.356323)'
   street_number: 
   route: 
   zipcode: '76107'
@@ -3066,8 +2932,7 @@ places_135:
     - bar
     - establishment
   formatted_address: 345 S Garey Ave, Pomona, CA, United States
-  latitude: '34.056459'
-  longitude: '-117.750405'
+  lonlat: 'POINT(34.056459 -117.750405)'
   street_number: '345'
   route: S Garey Ave
   zipcode: '91766'
@@ -3088,8 +2953,7 @@ places_136:
     - bar
     - establishment
   formatted_address: 3113 Ross Avenue, Dallas, TX, United States
-  latitude: '32.79387'
-  longitude: '-96.791179'
+  lonlat: 'POINT(32.79387 -96.791179)'
   street_number: '3113'
   route: Ross Avenue
   zipcode: '75204'
@@ -3111,8 +2975,7 @@ places_137:
     - bar
     - establishment
   formatted_address: 8811 Santa Monica Boulevard, West Hollywood, CA, United States
-  latitude: '34.085742'
-  longitude: '-118.383422'
+  lonlat: 'POINT(34.085742 -118.383422)'
   street_number: '8811'
   route: Santa Monica Boulevard
   zipcode: '90069'
@@ -3134,8 +2997,7 @@ places_138:
     - bar
     - establishment
   formatted_address: 414 East 20th Avenue, Denver, CO, United States
-  latitude: '39.74744'
-  longitude: '-104.981974'
+  lonlat: 'POINT(39.74744 -104.981974)'
   street_number: '414'
   route: East 20th Avenue
   zipcode: '80205'
@@ -3157,8 +3019,7 @@ places_139:
     - food
     - establishment
   formatted_address: 153 Sea Girt Avenue, Manasquan, NJ, United States
-  latitude: '40.129489'
-  longitude: '-74.041896'
+  lonlat: 'POINT(40.129489 -74.041896)'
   street_number: '153'
   route: Sea Girt Avenue
   zipcode: 08736
@@ -3179,8 +3040,7 @@ places_140:
     - night_club
     - establishment
   formatted_address: 2079 North University Drive, Sunrise, FL, United States
-  latitude: '26.151365'
-  longitude: '-80.257264'
+  lonlat: 'POINT(26.151365 -80.257264)'
   street_number: '2079'
   route: North University Drive
   zipcode: '33322'
@@ -3202,8 +3062,7 @@ places_141:
     - food
     - establishment
   formatted_address: 11625 North Kendall Drive, Miami, FL, United States
-  latitude: '25.687903'
-  longitude: '-80.380454'
+  lonlat: 'POINT(25.687903 -80.380454)'
   street_number: '11625'
   route: North Kendall Drive
   zipcode: '33176'
@@ -3226,8 +3085,7 @@ places_142:
     - food
     - establishment
   formatted_address: 601 Pennsylvania Avenue Northwest, Washington, DC, United States
-  latitude: '38.894008'
-  longitude: '-77.020826'
+  lonlat: 'POINT(38.894008 -77.020826)'
   street_number: '601'
   route: Pennsylvania Avenue Northwest
   zipcode: '20004'
@@ -3250,8 +3108,7 @@ places_143:
     - food
     - establishment
   formatted_address: 1025 Washington Avenue, St. Louis, MO, United States
-  latitude: '38.631449'
-  longitude: '-90.194721'
+  lonlat: 'POINT(38.631449 -90.194721)'
   street_number: '1025'
   route: Washington Avenue
   zipcode: '63101'
@@ -3274,8 +3131,7 @@ places_144:
     - food
     - establishment
   formatted_address: 201 South Meridian Street, Indianapolis, IN, United States
-  latitude: '39.764092'
-  longitude: '-86.158039'
+  lonlat: 'POINT(39.764092 -86.158039)'
   street_number: '201'
   route: South Meridian Street
   zipcode: '46225'
@@ -3296,8 +3152,7 @@ places_145:
     - night_club
     - establishment
   formatted_address: 520 4th Street, San Francisco, CA, United States
-  latitude: '37.779169'
-  longitude: '-122.397787'
+  lonlat: 'POINT(37.779169 -122.397787)'
   street_number: '520'
   route: 4th Street
   zipcode: '94107'
@@ -3318,8 +3173,7 @@ places_146:
     - bar
     - establishment
   formatted_address: 641 Walnut Street, Cincinnati, OH, United States
-  latitude: '39.103696'
-  longitude: '-84.512056'
+  lonlat: 'POINT(39.103696 -84.512056)'
   street_number: '641'
   route: Walnut Street
   zipcode: '45202'
@@ -3341,8 +3195,7 @@ places_147:
     - food
     - establishment
   formatted_address: 7931 Firestone Boulevard, Downey, CA, United States
-  latitude: '33.943585'
-  longitude: '-118.139129'
+  lonlat: 'POINT(33.943585 -118.139129)'
   street_number: '7931'
   route: Firestone Boulevard
   zipcode: '90241'
@@ -3363,8 +3216,7 @@ places_148:
     - bar
     - establishment
   formatted_address: 1207 West Hickory Street, Denton, TX, United States
-  latitude: '33.214451'
-  longitude: '-97.145438'
+  lonlat: 'POINT(33.214451 -97.145438)'
   street_number: '1207'
   route: West Hickory Street
   zipcode: '76201'
@@ -3385,8 +3237,7 @@ places_149:
     - bar
     - establishment
   formatted_address: 2425 South Bascom Avenue, Campbell, CA, United States
-  latitude: '37.278644'
-  longitude: '-121.932175'
+  lonlat: 'POINT(37.278644 -121.932175)'
   street_number: '2425'
   route: South Bascom Avenue
   zipcode: '95008'
@@ -3410,8 +3261,7 @@ places_150:
     - food
     - establishment
   formatted_address: 1229 Spruce Street, Philadelphia, PA, United States
-  latitude: '39.946857'
-  longitude: '-75.162217'
+  lonlat: 'POINT(39.946857 -75.162217)'
   street_number: '1229'
   route: Spruce Street
   zipcode: '19107'
@@ -3432,8 +3282,7 @@ places_151:
     - bar
     - establishment
   formatted_address: 814 1st Street, Miami Beach, FL, United States
-  latitude: '25.769786'
-  longitude: '-80.136315'
+  lonlat: 'POINT(25.769786 -80.136315)'
   street_number: '814'
   route: 1st Street
   zipcode: '33139'
@@ -3454,8 +3303,7 @@ places_152:
     - bar
     - establishment
   formatted_address: 20710 Rutledge Road, Castro Valley, CA, United States
-  latitude: '37.69433'
-  longitude: '-122.084965'
+  lonlat: 'POINT(37.69433 -122.084965)'
   street_number: '20710'
   route: Rutledge Road
   zipcode: '94546'
@@ -3477,8 +3325,7 @@ places_153:
     - bar
     - establishment
   formatted_address: 1051 University Avenue, San Diego, CA, United States
-  latitude: '32.748248'
-  longitude: '-117.154044'
+  lonlat: 'POINT(32.748248 -117.154044)'
   street_number: '1051'
   route: University Avenue
   zipcode: '92103'
@@ -3498,8 +3345,7 @@ places_154:
     ---
     - establishment
   formatted_address: 18322 Sonterra Place, San Antonio, TX, United States
-  latitude: '29.610774'
-  longitude: '-98.498416'
+  lonlat: 'POINT(29.610774 -98.498416)'
   street_number: '18322'
   route: Sonterra Place
   zipcode: '78258'
@@ -3522,8 +3368,7 @@ places_155:
     - food
     - establishment
   formatted_address: Dragonfly At Hotel Zaza, 2332 Leonard St, Dallas, TX 75201, USA
-  latitude: '32.7942149'
-  longitude: '-96.8014574'
+  lonlat: 'POINT(32.7942149 -96.8014574)'
   street_number: '2332'
   route: Leonard St
   zipcode: '75201'
@@ -3545,8 +3390,7 @@ places_156:
     - food
     - establishment
   formatted_address: 432 South Main Street, Grapevine, TX, United States
-  latitude: '32.936536'
-  longitude: '-97.078513'
+  lonlat: 'POINT(32.936536 -97.078513)'
   street_number: '432'
   route: South Main Street
   zipcode: '76051'
@@ -3567,8 +3411,7 @@ places_157:
     - bar
     - establishment
   formatted_address: 7221 Southwest 58th Avenue, South Miami, FL, United States
-  latitude: '25.703768'
-  longitude: '-80.287275'
+  lonlat: 'POINT(25.703768 -80.287275)'
   street_number: '7221'
   route: Southwest 58th Avenue
   zipcode: '33143'
@@ -3591,8 +3434,7 @@ places_158:
     - bar
     - establishment
   formatted_address: 11459 Imperial Highway, Norwalk, CA, United States
-  latitude: '33.91804'
-  longitude: '-118.088905'
+  lonlat: 'POINT(33.91804 -118.088905)'
   street_number: '11459'
   route: Imperial Highway
   zipcode: '90650'
@@ -3613,8 +3455,7 @@ places_159:
     - bar
     - establishment
   formatted_address: 7125 East 5th Avenue, Scottsdale, AZ, United States
-  latitude: '33.49796'
-  longitude: '-111.927349'
+  lonlat: 'POINT(33.49796 -111.927349)'
   street_number: '7125'
   route: East 5th Avenue
   zipcode: '85251'
@@ -3635,8 +3476,7 @@ places_160:
     - bar
     - establishment
   formatted_address: 2021 Hennepin Avenue, Minneapolis, MN, United States
-  latitude: '44.962149'
-  longitude: '-93.291652'
+  lonlat: 'POINT(44.962149 -93.291652)'
   street_number: '2021'
   route: Hennepin Avenue
   zipcode: '55405'
@@ -3659,8 +3499,7 @@ places_161:
     - food
     - establishment
   formatted_address: 700 Carroll Street, Fort Worth, TX, United States
-  latitude: '32.751838'
-  longitude: '-97.354822'
+  lonlat: 'POINT(32.751838 -97.354822)'
   street_number: '700'
   route: Carroll Street
   zipcode: '76107'
@@ -3680,8 +3519,7 @@ places_162:
     ---
     - establishment
   formatted_address: Bellingham, MA, United States
-  latitude: '42.086764'
-  longitude: '-71.474505'
+  lonlat: 'POINT(42.086764 -71.474505)'
   street_number: 
   route: 
   zipcode: 
@@ -3703,8 +3541,7 @@ places_163:
     - food
     - establishment
   formatted_address: 245 South Washington Street, Naperville, IL, United States
-  latitude: '41.771678'
-  longitude: '-88.148134'
+  lonlat: 'POINT(41.771678 -88.148134)'
   street_number: '245'
   route: South Washington Street
   zipcode: '60540'
@@ -3726,8 +3563,7 @@ places_164:
     - bar
     - establishment
   formatted_address: 1401 East 7th Avenue, Tampa, FL, United States
-  latitude: '27.9602'
-  longitude: '-82.444041'
+  lonlat: 'POINT(27.9602 -82.444041)'
   street_number: '1401'
   route: East 7th Avenue
   zipcode: '33605'
@@ -3750,8 +3586,7 @@ places_165:
     - food
     - establishment
   formatted_address: 113 East Juneau Avenue, Milwaukee, WI, United States
-  latitude: '43.045557'
-  longitude: '-87.912781'
+  lonlat: 'POINT(43.045557 -87.912781)'
   street_number: '113'
   route: East Juneau Avenue
   zipcode: '53202'
@@ -3771,8 +3606,7 @@ places_166:
     ---
     - establishment
   formatted_address: 19364 Eureka Road, Southgate, MI, United States
-  latitude: '42.199159'
-  longitude: '-83.22778'
+  lonlat: 'POINT(42.199159 -83.22778)'
   street_number: '19364'
   route: Eureka Road
   zipcode: '48193'
@@ -3794,8 +3628,7 @@ places_167:
     - bar
     - establishment
   formatted_address: 375 Eleventh St., San Francisco, CA, United States
-  latitude: '37.770987'
-  longitude: '-122.412732'
+  lonlat: 'POINT(37.770987 -122.412732)'
   street_number: '375'
   route: Eleventh St.
   zipcode: '94103'
@@ -3817,8 +3650,7 @@ places_168:
     - food
     - establishment
   formatted_address: Olympic Boulevard, Walnut Creek, CA, United States
-  latitude: '37.896136'
-  longitude: '-122.060682'
+  lonlat: 'POINT(37.896136 -122.060682)'
   street_number: 
   route: Olympic Boulevard
   zipcode: '94596'
@@ -3840,8 +3672,7 @@ places_169:
     - bar
     - establishment
   formatted_address: 208 East 12th Street, Cincinnati, OH, United States
-  latitude: '39.1093'
-  longitude: '-84.511165'
+  lonlat: 'POINT(39.1093 -84.511165)'
   street_number: '208'
   route: East 12th Street
   zipcode: '45202'
@@ -3864,8 +3695,7 @@ places_170:
     - food
     - establishment
   formatted_address: 16 East Patrick Street, Frederick, MD, United States
-  latitude: '39.414041'
-  longitude: '-77.410506'
+  lonlat: 'POINT(39.414041 -77.410506)'
   street_number: '16'
   route: East Patrick Street
   zipcode: '21701'
@@ -3885,8 +3715,7 @@ places_171:
     ---
     - establishment
   formatted_address: 238 West Davis Street, Dallas, TX, United States
-  latitude: '32.749317'
-  longitude: '-96.826142'
+  lonlat: 'POINT(32.749317 -96.826142)'
   street_number: '238'
   route: West Davis Street
   zipcode: '75208'
@@ -3907,8 +3736,7 @@ places_172:
     - night_club
     - establishment
   formatted_address: 943 North Citrus Avenue, Covina, CA, United States
-  latitude: '34.096698'
-  longitude: '-117.890639'
+  lonlat: 'POINT(34.096698 -117.890639)'
   street_number: '943'
   route: North Citrus Avenue
   zipcode: '91722'
@@ -3928,8 +3756,7 @@ places_173:
     ---
     - establishment
   formatted_address: 1211 West Hickory Street, Denton, TX, United States
-  latitude: '33.214534'
-  longitude: '-97.145615'
+  lonlat: 'POINT(33.214534 -97.145615)'
   street_number: '1211'
   route: West Hickory Street
   zipcode: '76201'
@@ -3950,8 +3777,7 @@ places_174:
     - bar
     - establishment
   formatted_address: 6559 Concord Boulevard, Inver Grove Hts, MN, United States
-  latitude: '44.854099'
-  longitude: '-93.019979'
+  lonlat: 'POINT(44.854099 -93.019979)'
   street_number: '6559'
   route: Concord Boulevard
   zipcode: '55076'
@@ -3974,8 +3800,7 @@ places_175:
     - food
     - establishment
   formatted_address: 136 Hilltown Village Center, Chesterfield, MO, United States
-  latitude: '38.659535'
-  longitude: '-90.551516'
+  lonlat: 'POINT(38.659535 -90.551516)'
   street_number: '136'
   route: Hilltown Village Center
   zipcode: '63017'
@@ -3996,8 +3821,7 @@ places_176:
     - bar
     - establishment
   formatted_address: 902 Houston Street, Fort Worth, TX, United States
-  latitude: '32.751481'
-  longitude: '-97.330323'
+  lonlat: 'POINT(32.751481 -97.330323)'
   street_number: '902'
   route: Houston Street
   zipcode: '76102'
@@ -4019,8 +3843,7 @@ places_177:
     - food
     - establishment
   formatted_address: 111 West Kinzie Street, Chicago, IL, United States
-  latitude: '41.88904'
-  longitude: '-87.631486'
+  lonlat: 'POINT(41.88904 -87.631486)'
   street_number: '111'
   route: West Kinzie Street
   zipcode: '60654'
@@ -4043,8 +3866,7 @@ places_178:
     - food
     - establishment
   formatted_address: 1320 15th Street, Denver, CO, United States
-  latitude: '39.748612'
-  longitude: '-104.999279'
+  lonlat: 'POINT(39.748612 -104.999279)'
   street_number: '1320'
   route: 15th Street
   zipcode: '80202'
@@ -4066,8 +3888,7 @@ places_179:
     - bar
     - establishment
   formatted_address: 5039 Willis Avenue, Dallas, TX, United States
-  latitude: '32.820316'
-  longitude: '-96.785524'
+  lonlat: 'POINT(32.820316 -96.785524)'
   street_number: '5039'
   route: Willis Avenue
   zipcode: '75206'
@@ -4088,8 +3909,7 @@ places_180:
     - bar
     - establishment
   formatted_address: 29308 Mission Boulevard, Hayward, CA, United States
-  latitude: '37.632751'
-  longitude: '-122.050199'
+  lonlat: 'POINT(37.632751 -122.050199)'
   street_number: '29308'
   route: Mission Boulevard
   zipcode: '94544'
@@ -4110,8 +3930,7 @@ places_181:
     - bar
     - establishment
   formatted_address: 27 East Fourteen Mile Road, Clawson, MI, United States
-  latitude: '42.533638'
-  longitude: '-83.145498'
+  lonlat: 'POINT(42.533638 -83.145498)'
   street_number: '27'
   route: East Fourteen Mile Road
   zipcode: '48017'
@@ -4132,8 +3951,7 @@ places_182:
     - bar
     - establishment
   formatted_address: 5501 Northeast 2nd Avenue, Miami, FL, United States
-  latitude: '25.826187'
-  longitude: '-80.19178'
+  lonlat: 'POINT(25.826187 -80.19178)'
   street_number: '5501'
   route: Northeast 2nd Avenue
   zipcode: '33137'
@@ -4155,8 +3973,7 @@ places_183:
     - bar
     - establishment
   formatted_address: 1507 East 7th Avenue, Tampa, FL, United States
-  latitude: '27.9602'
-  longitude: '-82.442503'
+  lonlat: 'POINT(27.9602 -82.442503)'
   street_number: '1507'
   route: East 7th Avenue
   zipcode: '33605'
@@ -4177,8 +3994,7 @@ places_184:
     - bar
     - establishment
   formatted_address: 8832 Imperial Highway, Downey, CA, United States
-  latitude: '33.917053'
-  longitude: '-118.138986'
+  lonlat: 'POINT(33.917053 -118.138986)'
   street_number: '8832'
   route: Imperial Highway
   zipcode: '90242'
@@ -4200,8 +4016,7 @@ places_185:
     - establishment
   formatted_address: Pasco County Veteran Services, 13853 15th St, Dade City, FL 33525,
     USA
-  latitude: '28.359886'
-  longitude: '-82.198201'
+  lonlat: 'POINT(28.359886 -82.198201)'
   street_number: '13853'
   route: 15th St
   zipcode: '33525'
@@ -4223,8 +4038,7 @@ places_186:
     - food
     - establishment
   formatted_address: 1014 Southwest Stark Street, Portland, OR, United States
-  latitude: '45.522043'
-  longitude: '-122.681436'
+  lonlat: 'POINT(45.522043 -122.681436)'
   street_number: '1014'
   route: Southwest Stark Street
   zipcode: '97205'
@@ -4245,8 +4059,7 @@ places_187:
     - lodging
     - establishment
   formatted_address: 207 5th Avenue, San Diego, CA, United States
-  latitude: '32.707466'
-  longitude: '-117.159719'
+  lonlat: 'POINT(32.707466 -117.159719)'
   street_number: '207'
   route: 5th Avenue
   zipcode: '92101'
@@ -4269,8 +4082,7 @@ places_188:
     - store
     - establishment
   formatted_address: 325 Bennett Highway, Malden, MA, United States
-  latitude: '42.443962'
-  longitude: '-71.02542'
+  lonlat: 'POINT(42.443962 -71.02542)'
   street_number: '325'
   route: Bennett Highway
   zipcode: 02148
@@ -4293,8 +4105,7 @@ places_189:
     - food
     - establishment
   formatted_address: 201 East Delaware Place, Chicago, IL, United States
-  latitude: '41.899126'
-  longitude: '-87.62177'
+  lonlat: 'POINT(41.899126 -87.62177)'
   street_number: '201'
   route: East Delaware Place
   zipcode: '60611'
@@ -4316,8 +4127,7 @@ places_190:
     - food
     - establishment
   formatted_address: 7700 West Courtney Campbell Causeway, Tampa, FL, United States
-  latitude: '27.967072'
-  longitude: '-82.570296'
+  lonlat: 'POINT(27.967072 -82.570296)'
   street_number: '7700'
   route: West Courtney Campbell Causeway
   zipcode: '33607'
@@ -4339,8 +4149,7 @@ places_191:
     - bar
     - establishment
   formatted_address: 5740 Maple Avenue, Dallas, TX, United States
-  latitude: '32.822047'
-  longitude: '-96.837139'
+  lonlat: 'POINT(32.822047 -96.837139)'
   street_number: '5740'
   route: Maple Avenue
   zipcode: '75235'
@@ -4360,8 +4169,7 @@ places_192:
     ---
     - establishment
   formatted_address: 7134 East Thomas Road, Scottsdale, AZ, United States
-  latitude: '33.480482'
-  longitude: '-111.927986'
+  lonlat: 'POINT(33.480482 -111.927986)'
   street_number: '7134'
   route: East Thomas Road
   zipcode: '85251'
@@ -4383,8 +4191,7 @@ places_193:
     - food
     - establishment
   formatted_address: 53 Pier Avenue, Hermosa Beach, CA, United States
-  latitude: '33.862185'
-  longitude: '-118.400911'
+  lonlat: 'POINT(33.862185 -118.400911)'
   street_number: '53'
   route: Pier Avenue
   zipcode: '90254'
@@ -4406,8 +4213,7 @@ places_194:
     - store
     - establishment
   formatted_address: 286 American Legion Highway, Revere, MA, United States
-  latitude: '42.417186'
-  longitude: '-71.003187'
+  lonlat: 'POINT(42.417186 -71.003187)'
   street_number: '286'
   route: American Legion Highway
   zipcode: '02151'
@@ -4428,8 +4234,7 @@ places_195:
     - lodging
     - establishment
   formatted_address: 1020 Ocean Drive, Miami Beach, FL, United States
-  latitude: '25.780663'
-  longitude: '-80.130743'
+  lonlat: 'POINT(25.780663 -80.130743)'
   street_number: '1020'
   route: Ocean Drive
   zipcode: '33139'
@@ -4450,8 +4255,7 @@ places_196:
     - bar
     - establishment
   formatted_address: 500 A Commonwealth Avenue, Boston, MA, United States
-  latitude: '42.348529'
-  longitude: '-71.095545'
+  lonlat: 'POINT(42.348529 -71.095545)'
   street_number: 500 A
   route: Commonwealth Avenue
   zipcode: '02215'
@@ -4474,8 +4278,7 @@ places_197:
     - food
     - establishment
   formatted_address: 500 Commonwealth Avenue, Boston, MA, United States
-  latitude: '42.348774'
-  longitude: '-71.094994'
+  lonlat: 'POINT(42.348774 -71.094994)'
   street_number: '500'
   route: Commonwealth Avenue
   zipcode: '02215'
@@ -4497,8 +4300,7 @@ places_198:
     - food
     - establishment
   formatted_address: 151 West Erie Street, Chicago, IL, United States
-  latitude: '41.893886'
-  longitude: '-87.633042'
+  lonlat: 'POINT(41.893886 -87.633042)'
   street_number: '151'
   route: West Erie Street
   zipcode: '60654'
@@ -4520,8 +4322,7 @@ places_199:
     - food
     - establishment
   formatted_address: 528 Commonwealth Avenue, Boston, MA, United States
-  latitude: '42.348565'
-  longitude: '-71.096133'
+  lonlat: 'POINT(42.348565 -71.096133)'
   street_number: '528'
   route: Commonwealth Avenue
   zipcode: '02215'
@@ -4542,8 +4343,7 @@ places_200:
     - bar
     - establishment
   formatted_address: 701 North Damen Avenue, Chicago, IL, United States
-  latitude: '41.894186'
-  longitude: '-87.676867'
+  lonlat: 'POINT(41.894186 -87.676867)'
   street_number: '701'
   route: North Damen Avenue
   zipcode: '60622'
@@ -4564,8 +4364,7 @@ places_201:
     - lodging
     - establishment
   formatted_address: 640 North Wabash Avenue, Chicago, IL, United States
-  latitude: '41.893529'
-  longitude: '-87.627094'
+  lonlat: 'POINT(41.893529 -87.627094)'
   street_number: '640'
   route: North Wabash Avenue
   zipcode: '60611'
@@ -4587,8 +4386,7 @@ places_202:
     - food
     - establishment
   formatted_address: 633 Pennsylvania Avenue Southeast, Washington, DC, United States
-  latitude: '38.884865'
-  longitude: '-76.997277'
+  lonlat: 'POINT(38.884865 -76.997277)'
   street_number: '633'
   route: Pennsylvania Avenue Southeast
   zipcode: '20003'
@@ -4610,8 +4408,7 @@ places_203:
     - establishment
   formatted_address: 1075 Thomas Jefferson Street Northwest, Washington, DC, United
     States
-  latitude: '38.904731'
-  longitude: '-77.060048'
+  lonlat: 'POINT(38.904731 -77.060048)'
   street_number: '1075'
   route: Thomas Jefferson Street Northwest
   zipcode: '20007'
@@ -4631,8 +4428,7 @@ places_204:
     ---
     - establishment
   formatted_address: 24555 Novi Road, Novi, MI, United States
-  latitude: '42.46873'
-  longitude: '-83.476608'
+  lonlat: 'POINT(42.46873 -83.476608)'
   street_number: '24555'
   route: Novi Road
   zipcode: '48375'
@@ -4654,8 +4450,7 @@ places_205:
     - spa
     - establishment
   formatted_address: 660 North State Street, Chicago, IL, United States
-  latitude: '41.894317'
-  longitude: '-87.628376'
+  lonlat: 'POINT(41.894317 -87.628376)'
   street_number: '660'
   route: North State Street
   zipcode: '60654'
@@ -4677,8 +4472,7 @@ places_206:
     - food
     - establishment
   formatted_address: 101 Ocean Drive, Miami Beach, FL, United States
-  latitude: '25.769787'
-  longitude: '-80.132898'
+  lonlat: 'POINT(25.769787 -80.132898)'
   street_number: '101'
   route: Ocean Drive
   zipcode: '33139'
@@ -4702,8 +4496,7 @@ places_207:
     - food
     - establishment
   formatted_address: 1758 West Grand Avenue, Chicago, IL, United States
-  latitude: '41.890986'
-  longitude: '-87.671877'
+  lonlat: 'POINT(41.890986 -87.671877)'
   street_number: '1758'
   route: West Grand Avenue
   zipcode: '60622'
@@ -4725,8 +4518,7 @@ places_208:
     - food
     - establishment
   formatted_address: 35 Northeast 40th Street, Miami, FL, United States
-  latitude: '25.813282'
-  longitude: '-80.194587'
+  lonlat: 'POINT(25.813282 -80.194587)'
   street_number: '35'
   route: Northeast 40th Street
   zipcode: '33137'
@@ -4748,8 +4540,7 @@ places_209:
     - bar
     - establishment
   formatted_address: ROOF on theWit, 201 N State St, Chicago, Illinois 60601, USA
-  latitude: '41.8860367'
-  longitude: '-87.6276886'
+  lonlat: 'POINT(41.8860367 -87.6276886)'
   street_number: '201'
   route: N State St
   zipcode: '60601'
@@ -4769,8 +4560,7 @@ places_210:
     ---
     - establishment
   formatted_address: 722 East Burnside Street, Portland, OR, United States
-  latitude: '45.522844'
-  longitude: '-122.657956'
+  lonlat: 'POINT(45.522844 -122.657956)'
   street_number: '722'
   route: East Burnside Street
   zipcode: '97214'
@@ -4793,8 +4583,7 @@ places_211:
     - food
     - establishment
   formatted_address: 11831 Wilshire Boulevard, Los Angeles, CA, United States
-  latitude: '34.047768'
-  longitude: '-118.463538'
+  lonlat: 'POINT(34.047768 -118.463538)'
   street_number: '11831'
   route: Wilshire Boulevard
   zipcode: '90025'
@@ -4816,8 +4605,7 @@ places_212:
     - food
     - establishment
   formatted_address: 707 6th Street Northwest, Washington, DC, United States
-  latitude: '38.898672'
-  longitude: '-77.019742'
+  lonlat: 'POINT(38.898672 -77.019742)'
   street_number: '707'
   route: 6th Street Northwest
   zipcode: '20001'
@@ -4839,8 +4627,7 @@ places_213:
     - food
     - establishment
   formatted_address: 1704 Washington Street, Boston, Massachusetts, United States
-  latitude: '42.337024'
-  longitude: '-71.075959'
+  lonlat: 'POINT(42.337024 -71.075959)'
   street_number: '1704'
   route: Washington Street
   zipcode: 02118
@@ -4860,8 +4647,7 @@ places_214:
     ---
     - establishment
   formatted_address: 2918 North Henderson Avenue, Dallas, TX, United States
-  latitude: '32.820581'
-  longitude: '-96.784835'
+  lonlat: 'POINT(32.820581 -96.784835)'
   street_number: '2918'
   route: North Henderson Avenue
   zipcode: '75206'
@@ -4883,8 +4669,7 @@ places_215:
     - food
     - establishment
   formatted_address: 1924 Pennsylvania Avenue NW, Washington, DC, United States
-  latitude: '38.900354'
-  longitude: '-77.044506'
+  lonlat: 'POINT(38.900354 -77.044506)'
   street_number: '1924'
   route: Pennsylvania Avenue NW
   zipcode: '20006'
@@ -4906,8 +4691,7 @@ places_216:
     - food
     - establishment
   formatted_address: 1612 14th Street Northwest, Washington, DC, United States
-  latitude: '38.911632'
-  longitude: '-77.03203'
+  lonlat: 'POINT(38.911632 -77.03203)'
   street_number: '1612'
   route: 14th Street Northwest
   zipcode: '20009'
@@ -4929,8 +4713,7 @@ places_217:
     - food
     - establishment
   formatted_address: 777 Main Street, Fort Worth, TX, United States
-  latitude: '32.753164'
-  longitude: '-97.329748'
+  lonlat: 'POINT(32.753164 -97.329748)'
   street_number: '777'
   route: Main Street
   zipcode: '76102'
@@ -4954,8 +4737,7 @@ places_218:
     - food
     - establishment
   formatted_address: 614 West Davis Street, Dallas, TX, United States
-  latitude: '32.749387'
-  longitude: '-96.831983'
+  lonlat: 'POINT(32.749387 -96.831983)'
   street_number: '614'
   route: West Davis Street
   zipcode: '75208'
@@ -4977,8 +4759,7 @@ places_219:
     - food
     - establishment
   formatted_address: 2415 Ponce De Leon Boulevard, Coral Gables, FL, United States
-  latitude: '25.748994'
-  longitude: '-80.25846'
+  lonlat: 'POINT(25.748994 -80.25846)'
   street_number: '2415'
   route: Ponce De Leon Boulevard
   zipcode: '33134'
@@ -4998,8 +4779,7 @@ places_220:
     ---
     - street_address
   formatted_address: 1435 P St NW, Washington, DC 20005, USA
-  latitude: '38.909906'
-  longitude: '-77.033371'
+  lonlat: 'POINT(38.909906 -77.033371)'
   street_number: '1435'
   route: P St NW
   zipcode: '20005'
@@ -5021,8 +4801,7 @@ places_221:
     - food
     - establishment
   formatted_address: 21 Temple Place, Boston, MA, United States
-  latitude: '42.355264'
-  longitude: '-71.062319'
+  lonlat: 'POINT(42.355264 -71.062319)'
   street_number: '21'
   route: Temple Place
   zipcode: '02111'
@@ -5045,8 +4824,7 @@ places_222:
     - food
     - establishment
   formatted_address: 955 West Fulton Market, Chicago, IL, United States
-  latitude: '41.886636'
-  longitude: '-87.651793'
+  lonlat: 'POINT(41.886636 -87.651793)'
   street_number: '955'
   route: West Fulton Market
   zipcode: '60607'
@@ -5068,8 +4846,7 @@ places_223:
     - establishment
   formatted_address: 1310 New Hampshire Avenue Northwest, Washington, District of
     Columbia, United States
-  latitude: '38.907641'
-  longitude: '-77.045566'
+  lonlat: 'POINT(38.907641 -77.045566)'
   street_number: '1310'
   route: New Hampshire Avenue Northwest
   zipcode: '20036'
@@ -5091,8 +4868,7 @@ places_224:
     - bar
     - establishment
   formatted_address: 180 Massachusetts Avenue, Cambridge, MA, United States
-  latitude: '42.360867'
-  longitude: '-71.096344'
+  lonlat: 'POINT(42.360867 -71.096344)'
   street_number: '180'
   route: Massachusetts Avenue
   zipcode: 02139
@@ -5115,8 +4891,7 @@ places_225:
     - food
     - establishment
   formatted_address: 1097 Glendon Avenue, Los Angeles, CA, United States
-  latitude: '34.060918'
-  longitude: '-118.444538'
+  lonlat: 'POINT(34.060918 -118.444538)'
   street_number: '1097'
   route: Glendon Avenue
   zipcode: '90024'
@@ -5139,8 +4914,7 @@ places_226:
     - food
     - establishment
   formatted_address: 69 Bromfield Street, Boston, MA, United States
-  latitude: '42.357077'
-  longitude: '-71.060893'
+  lonlat: 'POINT(42.357077 -71.060893)'
   street_number: '69'
   route: Bromfield Street
   zipcode: 02108
@@ -5163,8 +4937,7 @@ places_227:
     - food
     - establishment
   formatted_address: 602 University Avenue, Madison, WI, United States
-  latitude: '43.073307'
-  longitude: '-89.395954'
+  lonlat: 'POINT(43.073307 -89.395954)'
   street_number: '602'
   route: University Avenue
   zipcode: '53715'
@@ -5187,8 +4960,7 @@ places_228:
     - food
     - establishment
   formatted_address: 10053 Maine Avenue, Lakeside, CA, United States
-  latitude: '32.861315'
-  longitude: '-116.921996'
+  lonlat: 'POINT(32.861315 -116.921996)'
   street_number: '10053'
   route: Maine Avenue
   zipcode: '92040'
@@ -5211,8 +4983,7 @@ places_229:
     - food
     - establishment
   formatted_address: 855 Terry A Francois Boulevard, San Francisco, CA, United States
-  latitude: '37.764241'
-  longitude: '-122.387709'
+  lonlat: 'POINT(37.764241 -122.387709)'
   street_number: '855'
   route: Terry A Francois Boulevard
   zipcode: '94107'
@@ -5235,8 +5006,7 @@ places_230:
     - food
     - establishment
   formatted_address: 4217 Oak Lawn Avenue, Dallas, TX, United States
-  latitude: '32.820316'
-  longitude: '-96.802501'
+  lonlat: 'POINT(32.820316 -96.802501)'
   street_number: '4217'
   route: Oak Lawn Avenue
   zipcode: '75219'
@@ -5259,8 +5029,7 @@ places_231:
     - food
     - establishment
   formatted_address: 2251 San Ramon Valley Boulevard, San Ramon, CA, United States
-  latitude: '37.779618'
-  longitude: '-121.978022'
+  lonlat: 'POINT(37.779618 -121.978022)'
   street_number: '2251'
   route: San Ramon Valley Boulevard
   zipcode: '94583'
@@ -5282,8 +5051,7 @@ places_232:
     - food
     - establishment
   formatted_address: 1110 Vermont Avenue Northwest, Washington, DC, United States
-  latitude: '38.904376'
-  longitude: '-77.032918'
+  lonlat: 'POINT(38.904376 -77.032918)'
   street_number: '1110'
   route: Vermont Avenue Northwest
   zipcode: '20005'
@@ -5306,8 +5074,7 @@ places_233:
     - food
     - establishment
   formatted_address: 705 6th Street Northwest, Washington, DC, United States
-  latitude: '38.898603'
-  longitude: '-77.019739'
+  lonlat: 'POINT(38.898603 -77.019739)'
   street_number: '705'
   route: 6th Street Northwest
   zipcode: '20001'
@@ -5329,8 +5096,7 @@ places_234:
     - food
     - establishment
   formatted_address: 1332 Hermosa Avenue, Hermosa Beach, CA, United States
-  latitude: '33.863406'
-  longitude: '-118.400153'
+  lonlat: 'POINT(33.863406 -118.400153)'
   street_number: '1332'
   route: Hermosa Avenue
   zipcode: '90254'
@@ -5352,8 +5118,7 @@ places_235:
     - food
     - establishment
   formatted_address: 1148 Main Avenue, Cleveland, OH, United States
-  latitude: '41.498325'
-  longitude: '-81.707135'
+  lonlat: 'POINT(41.498325 -81.707135)'
   street_number: '1148'
   route: Main Avenue
   zipcode: '44113'
@@ -5374,8 +5139,7 @@ places_236:
     - bar
     - establishment
   formatted_address: 17 W 32nd St, New York, United States
-  latitude: '40.74772'
-  longitude: '-73.986579'
+  lonlat: 'POINT(40.74772 -73.986579)'
   street_number: '17'
   route: W 32nd St
   zipcode: '10001'
@@ -5397,8 +5161,7 @@ places_237:
     - food
     - establishment
   formatted_address: 3667 South Las Vegas Boulevard, Las Vegas, NV, United States
-  latitude: '36.1096'
-  longitude: '-115.172571'
+  lonlat: 'POINT(36.1096 -115.172571)'
   street_number: '3667'
   route: South Las Vegas Boulevard
   zipcode: '89109'
@@ -5420,8 +5183,7 @@ places_238:
     - food
     - establishment
   formatted_address: 1901 Collins Avenue, Miami, FL, United States
-  latitude: '25.794856'
-  longitude: '-80.128304'
+  lonlat: 'POINT(25.794856 -80.128304)'
   street_number: '1901'
   route: Collins Avenue
   zipcode: '33139'
@@ -5442,8 +5204,7 @@ places_239:
     - bar
     - establishment
   formatted_address: 2403 Bagby St, Houston, Texas, United States
-  latitude: '29.749496'
-  longitude: '-95.37829'
+  lonlat: 'POINT(29.749496 -95.37829)'
   street_number: '2403'
   route: Bagby St
   zipcode: '77006'
@@ -5466,8 +5227,7 @@ places_240:
     - food
     - establishment
   formatted_address: 22 East 54th Street, New York, NY, United States
-  latitude: '40.760469'
-  longitude: '-73.97433'
+  lonlat: 'POINT(40.760469 -73.97433)'
   street_number: '22'
   route: East 54th Street
   zipcode: '10022'
@@ -5490,8 +5250,7 @@ places_241:
     - food
     - establishment
   formatted_address: 4141 Main Street, Philadelphia, PA, United States
-  latitude: '40.02296'
-  longitude: '-75.219119'
+  lonlat: 'POINT(40.02296 -75.219119)'
   street_number: '4141'
   route: Main Street
   zipcode: '19127'
@@ -5514,8 +5273,7 @@ places_242:
     - food
     - establishment
   formatted_address: 1800 East Broadway, Long Beach, CA, United States
-  latitude: '33.767389'
-  longitude: '-118.169538'
+  lonlat: 'POINT(33.767389 -118.169538)'
   street_number: '1800'
   route: East Broadway
   zipcode: '90802'
@@ -5537,8 +5295,7 @@ places_243:
     - bar
     - establishment
   formatted_address: 116 South 18th Street, Philadelphia, PA, United States
-  latitude: '39.951226'
-  longitude: '-75.170528'
+  lonlat: 'POINT(39.951226 -75.170528)'
   street_number: '116'
   route: South 18th Street
   zipcode: '19103'
@@ -5560,8 +5317,7 @@ places_244:
     - food
     - establishment
   formatted_address: 1661 Meridian Avenue, Miami Beach, FL, United States
-  latitude: '25.791921'
-  longitude: '-80.136462'
+  lonlat: 'POINT(25.791921 -80.136462)'
   street_number: '1661'
   route: Meridian Avenue
   zipcode: '33139'
@@ -5584,8 +5340,7 @@ places_245:
     - food
     - establishment
   formatted_address: 10 West Washington Boulevard, Venice, CA, United States
-  latitude: '33.979'
-  longitude: '-118.466617'
+  lonlat: 'POINT(33.979 -118.466617)'
   street_number: '10'
   route: West Washington Boulevard
   zipcode: '90292'
@@ -5608,8 +5363,7 @@ places_246:
     - establishment
   formatted_address: 526 South Martin Luther King Boulevard, Las Vegas, NV, United
     States
-  latitude: '36.16572'
-  longitude: '-115.161004'
+  lonlat: 'POINT(36.16572 -115.161004)'
   street_number: '526'
   route: South Martin Luther King Boulevard
   zipcode: '89106'
@@ -5630,8 +5384,7 @@ places_247:
     - bar
     - establishment
   formatted_address: 1980 Union Street, San Francisco, CA, United States
-  latitude: '37.79764'
-  longitude: '-122.431913'
+  lonlat: 'POINT(37.79764 -122.431913)'
   street_number: '1980'
   route: Union Street
   zipcode: '94123'

@@ -81,8 +81,8 @@ end
 # Gems that are only required for the web process, to prevent
 # workers loading not needed libraries
 group :web do
-  gem 'font_assets', path: 'vendor/gems/font_assets'
   gem 'activeadmin', github: 'activeadmin/active_admin'
+  gem 'font_assets', path: 'vendor/gems/font_assets'
   gem 'unicorn'
 end
 

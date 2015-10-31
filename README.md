@@ -44,9 +44,10 @@
         MEMCACHIER_SERVERS: 'localhost:11211'
         REDISTOGO_URL: 'redis://localhost:6379'
 
-5. Make sure you have [PhantomJS](http://phantomjs.org/download.html):
+5. Make sure you have [PhantomJS](http://phantomjs.org/download.html) version 1.9.X, version 2.0 does not support file attachments yet:
 
-  For MacOS, type:
+  For MacOS:
+    (Note: In El Capitan as for Oct 2015 it's not possible to install it using brew, so download the correct version and install manually)
 
         brew update && brew install phantomjs
 
@@ -65,40 +66,68 @@
 
         rake sunspot:solr:start
 
-9. Insert the initial data
+9. Install [redis](http://redis.io/):
+  For MacOS:
+
+        brew install redis
+
+  For Ubuntu:
+
+        sudo apt-get install redis-server
+
+        # Its started altogether with foreman, so we don't need it to be installed
+        # as a service
+        sudo update-rc.d redis-server disable
+
+11. Start redis in another tab (we need it to run db:seed, it will be stoped after the next step)
+
+        redis-server
+
+12. Insert the initial data
 
         rake db:seed
 
-10. Run the tests to make sure everything works (optional)
-
-        rake
-
-11. Load some test data into the app
-
-        rake db:populate:all
-
-12. Reindex the data we just created
-
-        rake sunspot:reindex
-
-13. Stop the local Solr server because it will be executed on the next step
+13. Stop Solr and Redis(^C)
 
         rake sunspot:solr:stop
 
-14. Copy the following text in the .env in the project's root folder:
+14. Run the tests to make sure everything works (optional) See the Running Tests section.
+
+
+15. Load some test data into the app. This will create some users (all with the `Test1234` password), campaigns and some other stuff
+
+        rake db:populate:all
+
+   Reindex the data we just created
+
+        rake sunspot:reindex
+
+16. Stop the local Solr server because it will be executed on the next step
+
+        rake sunspot:solr:stop
+
+17. Copy the following text in the .env in the project's root folder:
     RACK_ENV=development
     RAILS_ENV=development
     PORT=5000
     TERM_CHILD=1
 
-15. Start the local server
+18. Install foreman
+
+        gem install foreman
+
+19. Star the required processes, including rails server using foreman with the Procfile.dev (because Procfile has stuff for production)
 
         foreman start -f Procfile.dev
 
-16. Go to http://localhost:5100/ and you should be able to login using:
+20. Go to http://localhost:5100/ and you should be able to login using:
 
         Email: admin@brandscopic.com
         Password: Adminpass12
+
+## Brandscopic Admin Backend
+
+We have a basic backend for some admin tasks that can be accessed at http://localhost:5100/admin and login in as the AdminUser user that was created in the seed task.
 
 ## Coding standards
 
@@ -115,10 +144,30 @@ Our application makes use of background jobs for tasks that require some time to
 
 ## Memcachier
 
-Memcache is also used in several places to speed the the application. If you want to enable it in your development environment, [follow this steps](https://github.com/cjaskot/brandscopic/wiki/Use-Memcached-in-development).
+Memcache is also used in several places to speed the the application but it's not required for development. If you want to enable it in your development environment, [follow this steps](https://github.com/cjaskot/brandscopic/wiki/Use-Memcached-in-development).
 
 ## Rebuilding the Solr index
 
 Sometimes the data can come out of sync during the development phase. Fortunately
 there is a command we can use to build the entire index.
        rake sunspot:solr:index
+
+## Running the tests
+
+You can run the tests by simple running `rake`, but you can speed it up a little with parallel_test by running `DISABLE_SPRING=1 rake "parallel:spec"`, but default, it will load as many process as CPUs you machine have. Since 8 processes might be a lot
+
+
+## Setting parallel_tests for the first use
+
+  Create additional database(s)
+
+        rake parallel:create
+
+  Copy development schema (repeat after migrations)
+
+        rake parallel:prepare
+
+## Running parallel tests!
+
+        rake parallel:spec
+
