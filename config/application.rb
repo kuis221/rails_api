@@ -87,16 +87,16 @@ module Brandscopic
 
     I18n.enforce_available_locales = true
 
-    config.middleware.insert_before "ActionDispatch::Static", "Rack::Cors" do
+    config.middleware.insert_before 'ActionDispatch::Static', 'Rack::Cors' do
       allow do
         origins '*'
-        resource '*', :headers => :any, :methods => [:get, :post, :put, :patch, :head, :delete, :options]
+        resource '*', headers: :any, methods: [:get, :post, :put, :patch, :head, :delete, :options]
       end
     end
 
     config.eager_load_paths += ["#{Rails.root}/lib"]
 
-    # We dont need controllers to be in eager_loaded in workers
+    # We dont need active_admin to be in eager_loaded in workers
     unless ENV['WEB']
       config.eager_load_paths.reject! { |a| a.include?('app/admin') || a.include?('app/inputs') }
       # require Rails.root.join 'app/controllers/application_controller' #need for devise initializator
@@ -110,7 +110,7 @@ class ActiveRecordOverrideRailtie < Rails::Railtie
   initializer 'active_record.initialize_database.override' do |app|
 
     ActiveSupport.on_load(:active_record) do
-      if url = ENV['DATABASE_URL']
+      if (url = ENV['DATABASE_URL'])
         ActiveRecord::Base.connection_pool.disconnect!
         parsed_url = URI.parse(url)
         config =  {

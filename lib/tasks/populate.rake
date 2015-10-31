@@ -7,7 +7,7 @@ namespace :db do
       YAML.load_file(File.join(Rails.root, 'lib', 'assets', 'places.yml')).each do |record|
         params = record[1].reject { |k, _v| k == 'id' }.merge(do_not_connect_to_api: true)
         params['types'] = YAML.load(params['types']) rescue []
-        Place.create(params, without_protection: true)
+        Place.create(params)
       end
     end
 
@@ -15,6 +15,11 @@ namespace :db do
     task companies: :environment do
       Company.populate(2) do |company|
         company.name = Faker::Company.name
+      end
+      if (u = User.find_by(email: 'admin@brandscopic.com'))
+        Company.all.each do |company|
+          u.company_users.create(company: company, role: company.roles.create(name: 'Super Admin', is_admin: true))
+        end
       end
     end
 
@@ -144,7 +149,7 @@ namespace :db do
         user_ids = company.company_users.active.map(&:id)
         team_ids = company.teams.active.map(&:id)
         Campaign.where(company_id: company.id).all.each do |campaign|
-          Event.populate(rand(10..20)) do |event|
+          Event.populate(rand(1000..2000)) do |event|
             event.start_at = rand(0..10).send([:weeks, :days, :months].sample).send([:ago, :from_now].sample) + rand(1..24).hours + rand(0..60).minutes
             event.end_at = event.start_at + rand(1..2).send([:days, :hours].sample)
             event.active = [true, true, true, false, true, true, true, true]
@@ -154,21 +159,20 @@ namespace :db do
             event.aasm_state = 'unsent'
           end
           campaign.events.each do |event|
-            if event.user_ids.size == 0
-              users = user_ids.sample(Random.rand(5))
-              event.user_ids = users
-              event.team_ids = team_ids.sample(Random.rand(2))
-              users += company.company_users.joins(:teams).where(teams: { id: event.team_ids }).map(&:id)
+            next if event.user_ids.size == 0
+            users = user_ids.sample(Random.rand(5))
+            event.user_ids = users
+            event.team_ids = team_ids.sample(Random.rand(2))
+            users += company.company_users.joins(:teams).where(teams: { id: event.team_ids }).map(&:id)
 
-              Task.populate(Random.rand(5)) do |task|
-                task.event_id = event.id
-                task.company_user_id = (users + [nil, nil]).sample
-                task.completed = [true, false]
-                task.due_at = Date.today + (Random.rand(7) * [1, -1].sample).days
-                task.title = Faker::Lorem.sentence(4 + Random.rand(6))
-                task.active = [true, true, false, true, true]
-                task.id = event.id
-              end
+            Task.populate(Random.rand(5)) do |task|
+              task.event_id = event.id
+              task.company_user_id = (users + [nil, nil]).sample
+              task.completed = [true, false]
+              task.due_at = Date.today + (Random.rand(7) * [1, -1].sample).days
+              task.title = Faker::Lorem.sentence(4 + Random.rand(6))
+              task.active = [true, true, false, true, true]
+              task.id = event.id
             end
           end
         end
