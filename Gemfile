@@ -35,7 +35,6 @@ gem 'sunspot_rails', github: 'sunspot/sunspot'
 gem 'sunspot_stats'
 gem 'sunspot-queue', github: 'guilleva/sunspot-queue'
 gem 'progress_bar', require: false
-gem 'unicorn-worker-killer'
 gem 'geocoder'
 gem 'rubyzip'
 gem 'redis'
@@ -83,7 +82,7 @@ end
 group :web do
   gem 'activeadmin', github: 'activeadmin/active_admin'
   gem 'font_assets', path: 'vendor/gems/font_assets'
-  gem 'unicorn'
+  gem 'puma'
 end
 
 # Gems used only for assets and not required

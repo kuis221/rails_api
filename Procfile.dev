@@ -1,8 +1,8 @@
 redis-server: redis-server
 
-web: env LOG_CONSOLE=1 WEB_CONCURRENCY=1 WEB=1 bundle exec unicorn -p $PORT -c ./config/unicorn.rb
-assets: env WEB=1 WEB_CONCURRENCY=5 bundle exec unicorn -p 5111 -c ./config/unicorn.rb
-worker: env LOG_CONSOLE=1 bundle exec sidekiq -c 5 -q indexing,3 -q download,1 -q upload,1 -q notification,1 -q jbb_synch,1 -q export,1
+web: env LOG_CONSOLE=1 WEB_CONCURRENCY=1 MAX_THREADS=1 WEB=1 bundle exec puma -C config/puma.rb
+assets: env WEB=1 WEB_CONCURRENCY=1 MAX_THREADS=5 PORT=5111 bundle exec puma -C config/puma.rb
+worker: env LOG_CONSOLE=1 bundle exec sidekiq
 
 guard-livereload: bundle exec guard
 search-solr: bundle exec rake sunspot:solr:run
