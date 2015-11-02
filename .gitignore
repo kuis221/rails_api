@@ -20,7 +20,6 @@
 .rvmrc
 .vagrant
 Vagrantfile
-config/database.yml
 config/local_env.yml
 config/initializers/config_local.rb
 myrspec

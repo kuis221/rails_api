@@ -1,0 +1,22 @@
+production:
+  adapter: postgis
+  url:  <%= ENV["DATABASE_URL"] %>
+  pool: <%= ENV["DB_POOL"] || ENV['MAX_THREADS'] || 5 %>
+
+development:
+  adapter: postgis
+  database: brandscopic_dev
+  encoding: unicode
+  username: <%= ENV["DATABASE_USER"] %>
+  password: <%= ENV["DATABASE_PASSWORD"] %>
+  host: 127.0.0.1
+
+test:
+  adapter: postgis
+  database: brandscopic_test<%= ENV['TEST_ENV_NUMBER'] %>
+  encoding: unicode
+  username: <%= ENV["DATABASE_USER"] %>
+  password: <%= ENV["DATABASE_PASSWORD"] %>
+  host: 127.0.0.1
+  min_messages: WARNING
+  sslmode: disable
