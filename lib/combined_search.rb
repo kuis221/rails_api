@@ -135,7 +135,9 @@ class CombinedSearch
         else
           city = find_city(m[:city], state, country)
         end
-        Place.new(name: result['name'], city: city, state: state, country: country, types: result['types'])
+        place = Place.new(name: result['name'], city: city, state: state, country: country, types: result['types'])
+        place.normalize_names
+        place
       end
     end
   end
