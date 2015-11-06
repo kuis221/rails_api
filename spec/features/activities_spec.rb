@@ -90,8 +90,6 @@ feature 'Activities management' do
   feature 'admin user', js: true do
     let(:role) { create(:role, company: company) }
 
-    it_behaves_like 'a user that view the activiy details'
-
     scenario 'should not display the activities section if the campaigns have no activity types assigned' do
       visit event_path(event)
       expect(page).to_not have_css('#event-activities')
@@ -138,7 +136,10 @@ feature 'Activities management' do
       create(:form_field_option, name: 'Dropdown option #2', form_field: dropdown_field, ordering: 2)
       create(:form_field, name: 'Place Field', type: 'FormField::Place', fieldable: activity_type, ordering: 5)
 
-      campaign.activity_types << activity_type
+      activity_type2 = create(:activity_type, name: 'Activity Type #2', company: company)
+      create(:form_field, name: 'Form Field #1', type: 'FormField::Number', fieldable: activity_type2, ordering: 3)
+
+      campaign.activity_types << [activity_type, activity_type2]
 
       visit event_path(event)
 
@@ -167,6 +168,7 @@ feature 'Activities management' do
       click_button 'Submit'
 
       expect(page).to have_content('Thank You!')
+
       click_link 'Finish'
       expect(page).to have_content 'Nice work. One Activity Type #1 activity has been added.'
 
@@ -198,6 +200,75 @@ feature 'Activities management' do
       within('#activities-list') do
         expect(page).to have_no_selector('li')
       end
+    end
+
+    scenario 'user can repeat or select new activity type' do
+      create(:user, company: company, first_name: 'Juanito', last_name: 'Bazooka')
+
+      activity_type = create(:activity_type, name: 'Activity Type #1', company: company)
+      create(:form_field, name: '# bottles depleted', type: 'FormField::Number', fieldable: activity_type, ordering: 3)
+
+      activity_type2 = create(:activity_type, name: 'Activity Type #2', company: company)
+      create(:form_field, name: '# t-shirts given', type: 'FormField::Number', fieldable: activity_type2, ordering: 3)
+
+      campaign.activity_types << [activity_type, activity_type2]
+
+      visit event_path(event)
+
+      expect(page).to_not have_content('Activity Type #1')
+
+      click_js_button 'Add Activity'
+
+      within visible_modal do
+        choose('Activity Type #1')
+        click_js_button 'Create'
+      end
+
+      within('.survey-header') do
+        expect(page).to have_content 'Activity Type #1'
+      end
+
+      fill_in '# bottles depleted', with: '122'
+      select_from_chosen('Juanito Bazooka', from: 'User')
+      fill_in 'Date', with: '05/16/2013'
+
+      click_button 'Submit'
+
+      expect(page).to have_content('Thank You!')
+      expect(page).to have_button('Repeat Activity')
+      expect(page).to have_button('New Activity')
+
+      click_js_button 'Repeat Activity'
+
+      within('.survey-header') do
+        expect(page).to have_content 'Activity Type #1'
+      end
+
+      fill_in '# bottles depleted', with: '122'
+      select_from_chosen('Juanito Bazooka', from: 'User')
+      fill_in 'Date', with: '05/16/2013'
+
+      click_button 'Submit'
+      expect(page).to have_content('Thank You!')
+
+      #
+      # Create an acitivity of a different kind
+      click_js_button 'New Activity'
+      within visible_modal do
+        choose('Activity Type #2')
+        click_js_button 'Create'
+      end
+
+      fill_in '# t-shirts given', with: '122'
+      select_from_chosen('Juanito Bazooka', from: 'User')
+      fill_in 'Date', with: '05/16/2013'
+
+      click_button 'Submit'
+
+      expect(page).to have_content('Thank You!')
+      click_js_link 'Finish'
+      expect(page).to have_content 'Activity Type #1'
+      expect(page).to have_content 'Activity Type #2'
     end
 
     scenario 'allows the user to edit an activity from an Event' do

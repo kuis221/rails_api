@@ -5,5 +5,17 @@
       h3 Thank You!
 
     .row-fluid
-      = link_to "New #{@activity_type.name}", url_for(params.merge(action: 'new', activity: { activity_type_id: @activity_type.id })), class: 'btn btn-primary btn-large', method: 'get'
+      = button_to url_for(params.merge(action: 'new', activity: { activity_type_id: @activity_type.id })), class: 'btn btn-primary btn-large', method: 'get' do
+        = hidden_field_tag 'activity[activity_type_id]', @activity_type.id
+        = hidden_field_tag 'phase', params[:phase]
+        = hidden_field_tag 'return', params[:return]
+        i.icon.icon-repeat
+        | Repeat Activity
+    .row-fluid
+      = button_to url_for(params.merge(action: 'new')), method: :get, remote: true, class: 'btn btn-primary', data: { disable_with: 'Please wait...' }, title: 'New Activity' do
+        = hidden_field_tag 'phase', params[:phase]
+        = hidden_field_tag 'return', params[:return]
+        i.icon.icon-plus
+        | New activity
+    .row-fluid
       = link_to "Finish", url_for([parent, activity_form: params[:form_id], activity_type_id: @activity_type.id ]) + '#activities-list', class: 'btn btn-cancel btn-large', method: 'get'
