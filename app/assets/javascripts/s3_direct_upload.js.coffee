@@ -43,6 +43,7 @@ $.fn.S3Uploader = (options) ->
     $uploadForm.fileupload
 
       dropZone: settings.drop_zone
+      pasteZone: null
       limitConcurrentUploads: settings.limit_concurrent_uploads
       sequentialUploads: settings.sequential_uploads
 
