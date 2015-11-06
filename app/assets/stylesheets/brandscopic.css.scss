@@ -7429,10 +7429,10 @@ body.dashboard.index {
 		color: $gray-lighter;
 		background-color: $text;
 		padding: 20px 0;
-	  position: fixed;
-	  width: 100%;
-	  top: 0;
-	  z-index: 9;
+		position: fixed;
+		width: 100%;
+		top: 0;
+		z-index: 9;
 		h5 {
 			display: block;
 			width: 460px;
@@ -7493,8 +7493,17 @@ body.dashboard.index {
 			font-weight: bold;
 			margin: 20px 0 60px 0;
 		}
-		.btn + .btn {
-			margin-left: 8px;
+		.btn {
+			margin-top: 15px;
+			width: 160px;
+			font-size: 14px;
+			.icon {
+				margin-right: 10px;
+			}
+			&.btn-primary {
+				text-align: left;
+				padding-left: 18px;
+			}
 		}
 	}
 }
