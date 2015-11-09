@@ -18,7 +18,7 @@
 3. Create a database.yml file inside the config folder with the following content:
 
         development:
-          adapter: postgresql
+          adapter: postgis
           database: brandscopic_dev
           encoding: unicode
           username: <your_user_name>
@@ -26,7 +26,7 @@
           server: 127.0.0.1
 
         test:
-          adapter: postgresql
+          adapter: postgis
           database: brandscopic_test
           encoding: unicode
           username: <your_user_name>
@@ -37,8 +37,8 @@
 4. Create a local_env.yml file inside the config folder with the following content (ask nicely for the S3 KEYS to a teammate):
         DATABASE_USER: <your PG username>
         DATABASE_PASSWORD: <your PG user password>
-        AWS_S3_KEY_ID: ''
-        AWS_S3_ACCESS_KEY: ''
+        AWS_ACCESS_KEY_ID: ''
+        AWS_SECRET_ACCESS_KEY: ''
         GOOGLE_API_KEY: ''
         S3_BUCKET_NAME: 'brandscopic-dev'
         MEMCACHIER_SERVERS: 'localhost:11211'
