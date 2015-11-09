@@ -377,6 +377,12 @@ class Place < ActiveRecord::Base
     end
   end
 
+  def normalize_names
+    self.city = self.city.gsub(/^st\.?\s/i, 'Saint ') if self.city.present?
+    self.neighborhoods = neighborhoods.map { |x| x.gsub(/^st\.?\s/i, 'Saint ') } if neighborhoods.is_a?(Array)
+    true
+  end
+
   private
 
   def fetch_place_data
@@ -498,12 +504,6 @@ class Place < ActiveRecord::Base
     areas.each do |area|
       Area.update_common_denominators(area)
     end
-  end
-
-  def normalize_names
-    self.city = self.city.gsub(/^st\.?\s/i, 'Saint ') if self.city.present?
-    self.neighborhoods = neighborhoods.map { |x| x.gsub(/^st\.?\s/i, 'Saint ') } if neighborhoods.is_a?(Array)
-    true
   end
 
   def update_locations

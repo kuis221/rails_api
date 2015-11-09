@@ -74,6 +74,14 @@ describe CombinedSearch, type: :model do
                 'reference' => 'REFERENCE3',
                 'types' => %w(food bar establishment),
                 'geometry' => { 'location' => { 'lat' => 11.11, 'lng' => 44.44 }  }
+              }, {
+                'formatted_address' => 'St Petersburg, Florida, United States',
+                'place_id' => 'PLACEID4',
+                'name' => 'St Petersburg',
+                'city' => 'St Petersburg',
+                'reference' => 'REFERENCE4',
+                'types' => %w(locality political),
+                'geometry' => { 'location' => { 'lat' => 33.33, 'lng' => 55.55 }  }
               }
             ]
           }
@@ -102,12 +110,20 @@ describe CombinedSearch, type: :model do
               id: 'REFERENCE3||PLACEID3',
               location: { latitude: 11.11, longitude: 44.44 },
               valid: false
+            },
+            {
+              value: 'St Petersburg, Florida, United States',
+              label: 'St Petersburg, Florida, United States',
+              id: 'REFERENCE4||PLACEID4',
+              location: { latitude: 33.33, longitude: 55.55 },
+              valid: false
             }
           ]
         end
 
         it "should set the 'valid' flag to true for places the user is allowed to access" do
           company_user.places << create(:city, name: 'Los Angeles', state: 'California', country: 'US')
+          company_user.places << create(:city, name: 'St Petersburg', state: 'Florida', country: 'US')
           params = { q: 'qw', current_company_user: company_user }
           expect(described_class.new(params).results).to eql [
             {
@@ -122,6 +138,13 @@ describe CombinedSearch, type: :model do
               label: 'Vertigo 42, Tower 42, Los Angeles, CA 23211, United States',
               id: 'REFERENCE3||PLACEID3',
               location: { latitude: 11.11, longitude: 44.44 },
+              valid: true
+            },
+            {
+              value: 'St Petersburg, Florida, United States',
+              label: 'St Petersburg, Florida, United States',
+              id: 'REFERENCE4||PLACEID4',
+              location: { latitude: 33.33, longitude: 55.55 },
               valid: true
             },
             {
@@ -177,6 +200,13 @@ describe CombinedSearch, type: :model do
               id: 'REFERENCE2||PLACEID2',
               location: { latitude: 11.22, longitude: 22.33 },
               valid: false
+            },
+            {
+              value: 'St Petersburg, Florida, United States',
+              label: 'St Petersburg, Florida, United States',
+              id: 'REFERENCE4||PLACEID4',
+              location: { latitude: 33.33, longitude: 55.55 },
+              valid: false
             }
           ]
         end
@@ -216,6 +246,13 @@ describe CombinedSearch, type: :model do
               label: 'Los Angeles, ON, Canada',
               id: 'REFERENCE2||PLACEID2',
               location: { latitude: 11.22, longitude: 22.33 },
+              valid: false
+            },
+            {
+              value: 'St Petersburg, Florida, United States',
+              label: 'St Petersburg, Florida, United States',
+              id: 'REFERENCE4||PLACEID4',
+              location: { latitude: 33.33, longitude: 55.55 },
               valid: false
             }
           ]
