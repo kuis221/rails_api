@@ -84,7 +84,8 @@ class FilteredController < InheritedResources::Base
     @search_params ||= params.permit(permitted_search_params).tap do |p|
       CustomFilter.where(id: params[:cfid]).each do |cf|
         p[:end_date] = params[:start_date] if params.key?('start_date') && !params.key?('end_date')
-        p.deep_merge!(Rack::Utils.parse_nested_query(cf.filters)) do |key, v1, v2|
+        custom_filters = validate_custom_filters_dates(Rack::Utils.parse_nested_query(cf.filters))
+        p.deep_merge!(custom_filters) do |key, v1, v2|
           if %w(start_date end_date).include?(key)
             Array(v1) + Array(v2)
           else
@@ -92,7 +93,7 @@ class FilteredController < InheritedResources::Base
           end
         end
       end if params[:cfid].present?
-      p.merge!(base_search_params)
+      validate_equal_length_dates(p).merge!(base_search_params)
     end
   end
 
@@ -136,5 +137,27 @@ class FilteredController < InheritedResources::Base
 
   def controller_filters(c)
     c
+  end
+
+  private
+
+  def validate_custom_filters_dates(values)
+    if values['start_date'].present? && values['end_date'].blank?
+      values.delete('start_date')
+    elsif values['start_date'].blank? && values['end_date'].present?
+      values.delete('end_date')
+    end
+    values
+  end
+
+  def validate_equal_length_dates(values)
+    if values['start_date'].present? && values['end_date'].present?
+      if values['start_date'].length > values['end_date'].length
+        values['start_date'].pop(values['start_date'].length - values['end_date'].length)
+      elsif values['start_date'].length < values['end_date'].length
+        values['end_date'].pop(values['end_date'].length - values['start_date'].length)
+      end
+    end
+    values
   end
 end
