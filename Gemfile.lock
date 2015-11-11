@@ -17,7 +17,7 @@ GIT
       sass-rails
 
 GIT
-  remote: git://github.com/guilleva/sunspot-queue.git
+  remote: git://github.com/brandscopic/sunspot-queue.git
   revision: 61101c6803a29c2be91c3ffc00d7b4c676e34f1c
   specs:
     sunspot-queue (0.10.2)
