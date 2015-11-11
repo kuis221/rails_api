@@ -151,13 +151,17 @@ class FilteredController < InheritedResources::Base
   end
 
   def validate_equal_length_dates(values)
-    if values['start_date'].present? && values['end_date'].present?
-      if values['start_date'].length > values['end_date'].length
-        values['start_date'].pop(values['start_date'].length - values['end_date'].length)
-      elsif values['start_date'].length < values['end_date'].length
-        values['end_date'].pop(values['end_date'].length - values['start_date'].length)
-      end
+    if values['start_date'].kind_of?(Array) && values['end_date'].kind_of?(Array)
+      values['start_date'] = equal_length_arrays(values['start_date'], values['end_date'])
+      values['end_date'] = equal_length_arrays(values['end_date'], values['start_date'])
     end
     values
+  end
+
+  def equal_length_arrays(array1, array2)
+    tam1 = array1.length
+    tam2 = array2.length
+    array1.pop(tam1 - tam2) if tam1 > tam2
+    array1
   end
 end
