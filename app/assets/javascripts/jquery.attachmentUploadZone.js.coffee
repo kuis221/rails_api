@@ -13,6 +13,7 @@ $.widget 'nmk.attachmentUploadZone', {
 			dataType: "xml"
 			autoUpload: true
 			dropZone: form
+			pasteZone: null
 			start: (e) ->
 				form.addClass("uploading").find(".attachment-attached-view, .attachment-select-file-view").hide().end().find(".attachment-uploading-view").show()
 				form.find('div[id="panel-' + fieldId + '"]').show()
