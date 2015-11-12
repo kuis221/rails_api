@@ -22,9 +22,8 @@ module Html
     def gender_total(data)
       male = data.find { |n| n[0] == 'Male' }
       female = data.find { |n| n[0] == 'Female' }
-
-      total_male = male.present? ? male[1].round : 0
-      total_female = female.present? ? female[1].round : 0
+      total_male = male.present? && male[1].present? ? male[1].round : 0
+      total_female = female.present? && female[1].present? ? female[1].round : 0
       total = total_male + total_female
 
       {
@@ -34,6 +33,7 @@ module Html
     end
 
     def percent_of(n, t)
+      return 0 if t == 0
       n.to_f / t.to_f * 100.0
     end
   end
