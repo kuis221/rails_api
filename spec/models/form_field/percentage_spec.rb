@@ -53,9 +53,9 @@ describe FormField::Percentage, type: :model do
       events = field.form_field_results.for_event_campaign(campaign)
       result = events.map(&:hash_value).compact
 
-      expect(result).to eq([{}, { '1'=>'100', '2'=>'0' }, { '1'=>'50', '2'=>'50' },
-                            { '1'=>'80', '2'=>'20' }, { '1'=>'40', '2'=>'60' },
-                            { '1'=>'0', '2'=>'100' }])
+      expect(result).to eq([{}, { option1.id.to_s => '100', option2.id.to_s => '0' }, { option1.id.to_s => '50', option2.id.to_s => '50' },
+                            { option1.id.to_s => '80', option2.id.to_s => '20' }, { option1.id.to_s => '40', option2.id.to_s => '60' },
+                            { option1.id.to_s => '0', option2.id.to_s => '100' }])
 
       values =  field.results_for_percentage_chart_for_hash(result).sort
       expect(values).to eq([['Female', 230.0], ['Male', 270.0]])
