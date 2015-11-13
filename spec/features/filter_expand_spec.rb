@@ -156,6 +156,45 @@ feature 'Filter Expand', js: true, search: true do
       end
     end
 
+    scenario 'Allows validate custom dates range filters and equal length array dates' do
+      Timecop.travel(Time.zone.local(2013, 07, 15, 12, 01)) do
+        campaign2 = create(:campaign, name: 'Imperial FYU', company: company)
+        create_list(:event, 3, company: company, campaign: campaign2)
+        events
+        Sunspot.commit
+
+        visit events_path
+        remove_filter 'Today To The Future'
+
+        expect(page).to have_selector('#events-list .resource-item', count: 5)
+
+        custom_filter_category = create(:custom_filters_category, name: 'Fiscal Years', company: company)
+        create(:custom_filter,
+               owner: company_user, name: 'My Dates Range', apply_to: 'events',
+               filters: 'status%5B%5D=Active&start_date=7%2F28%2F2013',
+               category: custom_filter_category)
+
+        visit events_path
+        remove_filter 'Today To The Future'
+
+        filter_section('FISCAL YEARS').unicheck('My Dates Range')
+        expect(page).to have_selector('#events-list .resource-item', count: 5)
+        expect(collection_description).to have_filter_tag('My Dates Range')
+
+        select_filter_calendar_day('21')
+        expect(page).to have_selector('#events-list .resource-item', count: 1)
+        expect(collection_description).to have_filter_tag('My Dates Range')
+        expect(collection_description).to have_filter_tag('Jul 21, 2013')
+
+        expand_filter 'My Dates Range'
+        expect(collection_description).to_not have_filter_tag('My Custom Filter')
+        expect(collection_description).to have_filter_tag('Jul 21, 2013')
+        expect(collection_description).not_to have_filter_tag('Jul 28, 2013')
+
+        expect(page).to have_selector('#events-list .resource-item', count: 1)
+      end
+    end
+
     scenario 'Expanding custom filters should not clear previously selected filters' do
       custom_filter_category = create(:custom_filters_category, name: 'Divisions', company: company)
       area1 = create(:area, name: 'Some Area', description: 'an area description', company: company)

@@ -84,7 +84,7 @@ class FilteredController < InheritedResources::Base
     @search_params ||= params.permit(permitted_search_params).tap do |p|
       CustomFilter.where(id: params[:cfid]).each do |cf|
         p[:end_date] = params[:start_date] if params.key?('start_date') && !params.key?('end_date')
-        p.deep_merge!(Rack::Utils.parse_nested_query(cf.filters)) do |key, v1, v2|
+        p.deep_merge!(cf.to_params) do |key, v1, v2|
           if %w(start_date end_date).include?(key)
             Array(v1) + Array(v2)
           else

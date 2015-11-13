@@ -42,4 +42,21 @@ class CustomFilter < ActiveRecord::Base
       'Company', company_user.company_id, 'CompanyUser', company_user.id
     )
   }
+
+  def to_params
+    remove_invalid_dates Rack::Utils.parse_nested_query(filters)
+  end
+
+  private
+
+  def remove_invalid_dates(values)
+    if (values['start_date'].blank? || values['end_date'].blank?) ||
+       (values['start_date'].present? && values['end_date'].present? &&
+        values['start_date'].kind_of?(Array) && values['end_date'].kind_of?(Array) &&
+        values['start_date'].length != values['end_date'].length)
+      values.delete('start_date')
+      values.delete('end_date')
+    end
+    values
+  end
 end
