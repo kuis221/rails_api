@@ -42,12 +42,18 @@ feature 'Results Expenses Page', js: true, search: true  do
       event = build(:approved_event, campaign: campaign1, company: company, start_date: '08/21/2013', end_date: '08/21/2013',
                                      start_time: '8:00pm', end_time: '11:00pm', place: create(:place, name: 'Place 1'))
       event.event_expenses.build(category: 'Entertainment', event_id: event.id, amount: 10, expense_date: '01/01/2015')
+      event.users << company_user
       event.save
 
       event2 = build(:approved_event, campaign: campaign1, company: company, start_date: '08/25/2013', end_date: '08/25/2013',
                                       start_time: '9:00am', end_time: '10:00am', place: create(:place, name: 'Place 2'))
       event2.event_expenses.build(category: 'Uncategorized', event_id: event.id, amount: 20, expense_date: '01/01/2015')
+      event2.users << company_user
       event2.save
+
+      event3 = create(:approved_event, campaign: campaign1, company: company, start_date: '08/21/2013', end_date: '08/21/2013',
+                                       start_time: '9:00am', end_time: '9:30am', place: create(:place, name: 'Place 3'))
+      event3.users << company_user
 
       Sunspot.commit
       visit results_expenses_path
@@ -61,6 +67,34 @@ feature 'Results Expenses Page', js: true, search: true  do
       end
       # Second Row
       within resource_item 2 do
+        expect(page).to have_content('First Campaign')
+        expect(page).to have_content('SUN Aug 25, 2013, 9:00 AM - 10:00 AM')
+        expect(page).to have_content('Place 2, 11 Main St., New York City, NY, 12345')
+        expect(page).to have_content('$20.00')
+      end
+      expect(page).to have_content('TOTAL:$30.00')
+
+      # Do not display events without expenses
+      expect(page).to_not have_content('WED Aug 21, 2013, 9:00 AM - 9:30 AM')
+
+      # Filter by People, report should include events without expenses
+      add_filter 'PEOPLE', 'Test User'
+
+      # First Row
+      within resource_item 1 do
+        expect(page).to have_content('First Campaign')
+        expect(page).to have_content('WED Aug 21, 2013, 9:00 AM - 9:30 AM')
+        expect(page).to have_content('Place 3, 11 Main St., New York City, NY, 12345')
+      end
+      # Second Row
+      within resource_item 2 do
+        expect(page).to have_content('First Campaign')
+        expect(page).to have_content('WED Aug 21, 2013, 8:00 PM - 11:00 PM')
+        expect(page).to have_content('Place 1, 11 Main St., New York City, NY, 12345')
+        expect(page).to have_content('$10.00')
+      end
+      # Third Row
+      within resource_item 3 do
         expect(page).to have_content('First Campaign')
         expect(page).to have_content('SUN Aug 25, 2013, 9:00 AM - 10:00 AM')
         expect(page).to have_content('Place 2, 11 Main St., New York City, NY, 12345')
