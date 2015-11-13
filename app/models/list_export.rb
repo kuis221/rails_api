@@ -23,7 +23,7 @@ class ListExport < ActiveRecord::Base
 
   has_attached_file :file, PAPERCLIP_SETTINGS
 
-  validates_attachment_file_name :file, matches: [/xls\Z/, /pdf\Z/, /csv\Z/]
+  validates_attachment_file_name :file, matches: [/xls\Z/, /pdf\Z/, /csv\Z/, /zip\Z/]
 
   serialize :params
   serialize :url_options
@@ -105,10 +105,17 @@ class ListExport < ActiveRecord::Base
   def build_file_from_path(path, name)
     if export_format == 'pdf'
       build_pdf_file(path)
+    elsif export_format == 'zip'
+      build_zip_file(path)
     else
       build_xlsx_file(path)
     end
     self.file_file_name = name
+  end
+
+  def build_zip_file(path)
+    self.file = File.open(path)
+    self.file_content_type = 'application/octet-stream'
   end
 
   def build_xlsx_file(path)
