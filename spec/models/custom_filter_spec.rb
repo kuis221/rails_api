@@ -62,5 +62,13 @@ describe CustomFilter, type: :model do
 
       expect(custom_filter.remove_invalid_dates_filters).to eq('end_date=7%2F28%2F2013&start_date=7%2F28%2F2013&status%5B%5D=Active')
     end
+
+    it 'should not remove the dates arrays' do
+      custom_filter = create(:custom_filter, owner: custom_user, name: 'My Dates Range', apply_to: 'events',
+                      filters: 'start_date%5B%5D=7%2F28%2F2013&start_date%5B%5D=7%2F29%2F2013&end_date%5B%5D=7%2F28%2F2013&end_date%5B%5D=7%2F29%2F2013',
+                      category: custom_filter_category)
+
+      expect(custom_filter.remove_invalid_dates_filters).to eq('end_date%5B%5D=7%2F28%2F2013&end_date%5B%5D=7%2F29%2F2013&start_date%5B%5D=7%2F28%2F2013&start_date%5B%5D=7%2F29%2F2013')
+    end
   end
 end

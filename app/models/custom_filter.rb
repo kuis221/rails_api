@@ -47,6 +47,7 @@ class CustomFilter < ActiveRecord::Base
     url_query_string = Rack::Utils.parse_nested_query(filters)
     if (url_query_string['start_date'].blank? || url_query_string['end_date'].blank?) ||
        (url_query_string['start_date'].present? && url_query_string['end_date'].present? &&
+        url_query_string['start_date'].kind_of?(Array) && url_query_string['end_date'].kind_of?(Array) &&
         url_query_string['start_date'].length != url_query_string['end_date'].length)
       url_query_string.delete('start_date')
       url_query_string.delete('end_date')
