@@ -189,4 +189,28 @@ describe FormField, type: :model do
       expect(field.format_html(build(:form_field_result, value: 1.2, form_field: field))).to eql '1.2'
     end
   end
+
+  describe '#segment_goal' do
+    it 'returns the correct goal value for a segment' do
+      campaign = create(:campaign)
+      kpi =  create(:kpi, name: 'My Custom KPI', kpi_type: 'percentage',
+                    capture_mechanism: 'integer', company: campaign.company,
+                    kpis_segments: [
+                      segment1 = create(:kpis_segment, text: 'Option1'),
+                      segment2 = create(:kpis_segment, text: 'Option2')])
+
+      field = campaign.add_kpi(kpi)
+
+      create(:goal, goalable: campaign, kpi: kpi, kpis_segment_id: segment1.id, value: 10)
+      create(:goal, goalable: campaign, kpi: kpi, kpis_segment_id: segment2.id, value: 20)
+
+      result = create(:form_field_result,
+                      resultable: create(:event, company: campaign.company, campaign: campaign),
+                      form_field: field)
+
+      expect(field.send(:segment_goal, result, ['A Name', 999])).to eql nil
+      expect(field.send(:segment_goal, result, [segment1.text, segment1.id])).to eql 10
+      expect(field.send(:segment_goal, result, [segment2.text, segment2.id])).to eql 20
+    end
+  end
 end

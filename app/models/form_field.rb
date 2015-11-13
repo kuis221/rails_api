@@ -328,6 +328,6 @@ class FormField < ActiveRecord::Base
   def segment_goal(result, segment)
     return unless result && kpi.present?
     resource = result.resultable
-    resource.kpi_goals.key?(kpi_id) ? resource.kpi_goals[kpi_id][s[1]] : nil
+    resource.kpi_goals.key?(kpi_id) ? resource.kpi_goals[kpi_id][segment[1]] : nil
   end
 end
