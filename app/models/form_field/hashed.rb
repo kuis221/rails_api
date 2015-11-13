@@ -21,8 +21,8 @@ class FormField::Hashed < FormField
     return [] if result.blank?
 
     keys = options_for_input.map { |_, v| v.to_s }
+    result = result.reject { |v| v.blank? }
     totals = Hash[keys.zip(result.map { |h| h.values_at(*keys) }.reduce { |a, v| a.zip(v).map { |sum, t| sum.to_f + t.to_f } })]
-
     totals.reduce({}) do |memo, (key, value)|
       memo[key.to_i] = value
       memo
@@ -31,7 +31,6 @@ class FormField::Hashed < FormField
 
   def results_for_percentage_chart_for_hash(result)
     totals = results_for_hash_values(result)
-
     values = totals.reject { |_k, v| v.nil? || v == '' || v.to_f == 0.0 }
     options_map = Hash[options_for_input.map { |o| [o[1], o[0]] }]
     values.map { |k, v| [options_map[k], v] }
