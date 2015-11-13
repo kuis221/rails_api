@@ -19,7 +19,7 @@ module Html
       end
     end
 
-    def gender_total(data)
+    def gender_percentage(data)
       male = data.find { |n| n[0] == 'Male' }
       female = data.find { |n| n[0] == 'Female' }
       total_male = male.present? && male[1].present? ? male[1].round : 0
