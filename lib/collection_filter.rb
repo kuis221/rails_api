@@ -240,6 +240,6 @@ class CollectionFilter
   end
 
   def custom_filter_subitems(id)
-    CustomFilter.find(id).filters
+    CustomFilter.find(id).remove_invalid_dates_filters
   end
 end

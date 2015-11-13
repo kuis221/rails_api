@@ -34,4 +34,33 @@ describe CustomFilter, type: :model do
       expect(described_class.by_type('events')).to match_array [cf1, cf4]
     end
   end
+
+  describe '#remove_invalid_dates_filters' do
+    let(:custom_filter_category) { create(:custom_filters_category, name: 'Fiscal Years', company: create(:company)) }
+    let(:custom_user) { create(:company_user) }
+
+    it 'should remove the invalid dates' do
+      custom_filter = create(:custom_filter, owner: custom_user, name: 'My Dates Range', apply_to: 'events',
+                      filters: 'status%5B%5D=Active&start_date=7%2F28%2F2013',
+                      category: custom_filter_category)
+
+      expect(custom_filter.remove_invalid_dates_filters).to eq('status%5B%5D=Active')
+    end
+
+    it 'should remove the invalid length array dates' do
+      custom_filter = create(:custom_filter, owner: custom_user, name: 'My Dates Range', apply_to: 'events',
+                      filters: 'status%5B%5D=Active&start_date%5B%5D=7%2F28%2F2013&start_date%5B%5D=7%2F29%2F2013&end_date%5B%5D=7%2F28%2F2013',
+                      category: custom_filter_category)
+
+      expect(custom_filter.remove_invalid_dates_filters).to eq('status%5B%5D=Active')
+    end
+
+    it 'should not remove the dates' do
+      custom_filter = create(:custom_filter, owner: custom_user, name: 'My Dates Range', apply_to: 'events',
+                      filters: 'status%5B%5D=Active&start_date=7%2F28%2F2013&end_date=7%2F28%2F2013',
+                      category: custom_filter_category)
+
+      expect(custom_filter.remove_invalid_dates_filters).to eq('end_date=7%2F28%2F2013&start_date=7%2F28%2F2013&status%5B%5D=Active')
+    end
+  end
 end

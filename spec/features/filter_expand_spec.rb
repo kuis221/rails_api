@@ -189,7 +189,7 @@ feature 'Filter Expand', js: true, search: true do
         expand_filter 'My Dates Range'
         expect(collection_description).to_not have_filter_tag('My Custom Filter')
         expect(collection_description).to have_filter_tag('Jul 21, 2013')
-        expect(collection_description).to have_filter_tag('Jul 28, 2013')
+        expect(collection_description).not_to have_filter_tag('Jul 28, 2013')
 
         expect(page).to have_selector('#events-list .resource-item', count: 1)
       end
