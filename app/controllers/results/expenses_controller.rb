@@ -48,6 +48,15 @@ class Results::ExpensesController < FilteredController
     end
   end
 
+  def list_exportable?
+    return true unless request.format.zip?
+    events =  Event.do_search(search_params, include_facets = true).results.map(&:id)
+    bytes = EventExpense.where(event_id: events).joins(:receipt).sum(:file_file_size)
+    @export_errors = []
+    @export_errors = ['You are trying to download too many receipts at one time. Downloads cannot exceed 100MB in size. Please export fewer receipts.'] if bytes > 104857600
+    @export_errors.empty?
+  end
+
   def add_expenses_csv_file(csv, zipfile)
     csv_file = Tempfile.new('expenses')
     csv_file.write csv
