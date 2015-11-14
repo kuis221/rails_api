@@ -14,7 +14,7 @@ class Results::ExpensesController < FilteredController
   def collection_to_zip(export, path)
     Zip::File.open(path, Zip::File::CREATE) do |zipfile|
       csv = export_collection do |event|
-        add_expenses_files_zip(event, zipfile)
+        event.receipts_for_zip_export.each { |f| zipfile.add f[0], f[1]  }
       end
       add_expenses_csv_file(csv, zipfile)
     end
@@ -48,29 +48,11 @@ class Results::ExpensesController < FilteredController
     end
   end
 
-  def add_expenses_files_zip(event, zipfile)
-    event.event_expenses.each_with_index do |expense, index|
-      file_local_name = "#{Rails.root}/tmp/#{expense.id}"
-      expense.receipt.file.copy_to_local_file(:medium, file_local_name) if expense.receipt.present?
-      zipfile.add generate_filename(event, expense, index), file_local_name if expense.receipt.present?
-    end
-  end
-
   def add_expenses_csv_file(csv, zipfile)
     csv_file = Tempfile.new('expenses')
     csv_file.write csv
     csv_file.close
     zipfile.add "expenses-#{Time.now.strftime('%Y%m%d%H%M%S')}.csv", csv_file.path
-  end
-
-  def generate_filename(event, expense, index)
-    user = User.find(expense.created_by_id) if expense.created_by_id.present?
-    created_name = user.present? ? "#{user.first_name[0]}{user.last_name}": ''
-    "#{expense.expense_date.strftime('%Y%m%d')}-#{remove_all_spaces(event.place_name)}-#{remove_all_spaces(expense.category)}-#{created_name}-#{index}.#{expense.receipt.file_extension}"
-  end
-
-  def remove_all_spaces(value)
-    value.gsub(/\s+/, '')
   end
 
   def search_params
