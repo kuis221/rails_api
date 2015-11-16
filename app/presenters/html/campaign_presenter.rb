@@ -22,8 +22,8 @@ module Html
     def gender_percentage(data)
       male = data.find { |n| n[0] == 'Male' }
       female = data.find { |n| n[0] == 'Female' }
-      total_male = male.present? && male[1].present? ? male[1].to_i.round : 0
-      total_female = female.present? && female[1].present? ? female[1].to_i.round : 0
+      total_male = male.present? && male[1].present? ? male[1].to_f.round : 0
+      total_female = female.present? && female[1].present? ? female[1].to_f.round : 0
       total = total_male + total_female
 
       {
