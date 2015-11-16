@@ -96,7 +96,7 @@ module ExportableController
 
   # Create and enqueue a ListExport for the current request
   def enqueue_export
-    return unless request.format.xls? || request.format.pdf? || request.format.csv?
+    return unless request.format.xls? || request.format.pdf? || request.format.csv? || request.format.zip?
     if list_exportable?
       @export = ListExport.create(
         controller: self.class.name,

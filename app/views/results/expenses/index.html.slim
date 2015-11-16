@@ -22,11 +22,19 @@
     #list-view.tab-pane.active
       #list-tools.row-fluid
         .pull-right
-          button.btn.download.xlsx-download-link data-url="#{results_expenses_path(format: "csv")}" title="Download" data-disable-with="..."
-           span.icon-download
+          .dropdown.btn-download#btn-export
+            a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+              i.icon-download
+              i.icon-arrow-down-small
+            ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+              li
+                a.xlsx-download-link href="#" role="menuitem" data-url="#{results_expenses_path(format: :csv)}"
+                  | Download as CSV
+              li
+                a.xlsx-download-link href="#" role="menuitem" data-url="#{results_expenses_path(format: :zip)}"
+                  | Download as CSV file and Receipts
       #expenses-totals
       #expenses-list.resource-list.no-top-margin.without-actions
-
 = render partial: 'help_tutorial'
 
 javascript:

@@ -72,6 +72,14 @@ describe Results::ExpensesController, type: :controller do
          '2013-08-21 20:00', '2013-08-21 23:00', '2014-07-02 10:00', 'Test User', '2015-07-01 10:00', 'Test User', '10.0', '10.0', nil]
       ])
     end
+
+    it 'should return an zip file' do
+      expect { xhr :get, 'index', format: :zip }.to change(ListExport, :count).by(1)
+      export = ListExport.last
+
+      expect(export.file_content_type).to eq('application/octet-stream')
+      expect(export.export_format).to eq('zip')
+    end
   end
 
   describe "GET 'index'" do
@@ -82,5 +90,4 @@ describe Results::ExpensesController, type: :controller do
       end.to change(ListExport, :count).by(1)
     end
   end
-
 end
