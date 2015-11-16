@@ -1,6 +1,6 @@
 class KpiReportWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :export
+  sidekiq_options queue: :export, retry: false
 
   def perform(report_id)
     report = KpiReport.find(report_id)

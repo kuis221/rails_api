@@ -1,6 +1,6 @@
 class AssetsUploadWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :upload
+  sidekiq_options queue: :upload, retry: 3
 
   def perform(asset_id, asset_class = 'AttachedAsset')
     klass ||= asset_class.constantize

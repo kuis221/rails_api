@@ -1,6 +1,6 @@
 class EventNotifierWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :notification
+  sidekiq_options queue: :notification, retry: 3
 
   def perform(event_id)
     event = Event.find(event_id)

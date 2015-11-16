@@ -1,6 +1,6 @@
 class AssetsDownloadWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :download
+  sidekiq_options queue: :download, retry: 1
 
   def perform(download_id)
     download = AssetDownload.find(download_id)
