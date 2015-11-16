@@ -12,6 +12,8 @@ describe Html::CampaignPresenter, type: :presenter do
       expect(presenter.gender_percentage([['Male'],['Female', 40.0]])).to eq({ male: 0, female: 100 })
 
       expect(presenter.gender_percentage([['Female', 230.0], ['Male', 270.0]])).to eq({ male: 54, female: 46 })
+
+      expect(presenter.gender_percentage([['Female', '230.0'], ['Male', '270.0']])).to eq({ male: 54, female: 46 })
     end
   end
 end
