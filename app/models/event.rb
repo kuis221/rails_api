@@ -342,6 +342,10 @@ class Event < ActiveRecord::Base
     double :ethnicity_hispanic, stored: true
     double :ethnicity_native_american, stored: true
     double :ethnicity_white, stored: true
+
+    integer :expenses_with_receipts, stored: true do
+      event_expenses.joins(:receipt).count
+    end
   end
 
   def activate!
@@ -574,6 +578,7 @@ class Event < ActiveRecord::Base
           with(:spent).greater_than(0) if params[:with_expenses_only].present?
           with(:has_surveys, true) if params[:with_surveys_only].present?
           with(:has_comments, true) if params[:with_comments_only].present?
+          stat(:expenses_with_receipts, type: 'sum')
 
           if params.key?(:event_data_stats) && params[:event_data_stats]
             stat(:promo_hours, type: 'sum')
