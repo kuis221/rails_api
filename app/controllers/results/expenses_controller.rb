@@ -50,7 +50,7 @@ class Results::ExpensesController < FilteredController
 
   def list_exportable?
     return true unless request.format.zip?
-    events =  Event.do_search(search_params, include_facets = true).results.map(&:id)
+    events =  Event.do_search(search_params.merge(per_page: 999999)).hits.map  { |h| h.stored(:id) }
     bytes = EventExpense.where(event_id: events).joins(:receipt).sum(:file_file_size)
     @export_errors = []
     @export_errors = ['You are trying to download too many receipts at one time. Downloads cannot exceed 100MB in size. Please export fewer receipts.'] if bytes > 104857600
