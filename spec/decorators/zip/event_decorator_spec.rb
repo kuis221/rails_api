@@ -33,7 +33,7 @@ describe Zip::EventPresenter, type: :presenter do
                                         receipt: receipt1, event: event, created_by: create(:user, first_name: 'Sara', last_name: 'Smith'))
 
       presenter = Zip::EventPresenter.new(event, nil)
-      expect(presenter.generate_filename(expense1, 1)).to eql '20150101-PlaceTest-Entertainment-SSmith-1.jpg'
+      expect(presenter.generate_filename(expense1, 1)).to eql "20150101-PlaceTest-Entertainment-SSmith-1#{expense1.id}.jpg"
     end
   end
 
@@ -43,6 +43,16 @@ describe Zip::EventPresenter, type: :presenter do
       expect(presenter.remove_all_spaces('Test Test ')).to eql 'TestTest'
       expect(presenter.remove_all_spaces('')).to eql nil
       expect(presenter.remove_all_spaces('TestTest')).to eql 'TestTest'
+    end
+  end
+
+  describe 'sanitize_filename' do
+    it 'return string sanitize filename' do
+      presenter = Zip::EventPresenter.new(build(:event), nil)
+      expect(presenter.sanitize_filename("20130810-McGillyCuddy'sBar&Grill-BarSpend-JTets-0.JPG")).to eql '20130810-McGillyCuddy_sBar_Grill-BarSpend-JTets-0.JPG'
+      expect(presenter.sanitize_filename('')).to eql ''
+      expect(presenter.sanitize_filename('20130810 BarSpend-JTets-0.JPG')).to eql '20130810_BarSpend-JTets-0.JPG'
+      expect(presenter.sanitize_filename('20130810&%$&/test.JPG')).to eql '20130810_test.JPG'
     end
   end
 end
