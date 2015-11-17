@@ -53,7 +53,7 @@ class Results::ExpensesController < FilteredController
     events =  Event.do_search(search_params.merge(per_page: 999999)).hits.map  { |h| h.stored(:id) }
     total_expenses = EventExpense.where(event_id: events).joins(:receipt).count
     @export_errors = []
-    @export_errors = ['Downloads are limited to 500 receipts. Please select fewer expenses and try again.'] total_expenses > 500
+    @export_errors = ['Downloads are limited to 500 receipts. Please select fewer expenses and try again.'] if total_expenses > 500
     @export_errors.empty?
   end
 
