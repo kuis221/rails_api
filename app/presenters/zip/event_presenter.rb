@@ -5,6 +5,7 @@ module Zip
         if expense.receipt.present?
           file_local_name = "#{Rails.root}/tmp/#{expense.id}"
           resolution = expense.receipt.is_thumbnable? ? :medium : :original
+          next unless expense.receipt.file.path(resolution).present?
           expense.receipt.file.copy_to_local_file(resolution, file_local_name)
           m << [sanitize_filename(generate_filename(expense, index)), file_local_name]
         end
