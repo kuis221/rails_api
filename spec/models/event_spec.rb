@@ -80,6 +80,7 @@ describe Event, type: :model do
     it { is_expected.to have_searchable_field(:ethnicity_hispanic) }
     it { is_expected.to have_searchable_field(:ethnicity_native_american) }
     it { is_expected.to have_searchable_field(:ethnicity_white) }
+    it { is_expected.to have_searchable_field(:expenses_with_receipts) }
   end
 
   describe 'event results validations' do
