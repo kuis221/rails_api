@@ -20,27 +20,34 @@ namespace :brandscopic do
 
   desc 'Copy all assets production to this environment\'s bucket'
   task synch_assets: :environment do
+    require 'thwait'
     origin_bucket = ENV['ORIGIN'] || 'brandscopic-prod'
     fail 'Cannot copy to the same bucket' if ENV['S3_BUCKET_NAME'] == origin_bucket
-    first_id = ENV['START'] || 0
-    last_id = ENV['END'] || AttachedAsset.last.id
+    first_id = ENV.key?('START') ? ENV['START'].to_i : 0
+    last_id = ENV.key?('END') ? ENV['END'].to_i : AttachedAsset.last.id
+    number_threads = ENV.key?('THREADS') ? ENV['THREADS'].to_i : 5
     s3 = AWS::S3.new
-    AttachedAsset.where(id: first_id.to_i..last_id.to_i).find_each do |at|
-      if at.file.exists?
-        Rails.logger.info "Skpping asset #{at.id} because it exists in the bucket #{ENV['S3_BUCKET_NAME']}"
-        next
-      end
-      (at.file.styles.keys + [:original]).each do |style_name|
-        key = at.file.path(style_name).gsub(/^\//, '')
-        begin
-          if s3.buckets[origin_bucket].objects[key].exists?
-            s3.buckets[origin_bucket].objects[key].copy_to(
-              key, bucket_name: ENV['S3_BUCKET_NAME'], acl: :public_read)
+
+    # Start the threads
+    threads = []
+    (first_id..last_id).to_a.in_groups_of(((last_id - first_id) / (number_threads - 1)).to_i, false) do |group|
+      threads << Thread.new do
+        p "Starting thread to process assets from #{group.first} to #{group.last}"
+        AttachedAsset.where(id: group.first.to_i..group.last.to_i).find_each do |at|
+          (at.file.styles.keys + [:original]).each do |style_name|
+            key = at.file.path(style_name).gsub(/^\//, '')
+            begin
+              s3.buckets[origin_bucket].objects[key].copy_to(
+                key, bucket_name: ENV['S3_BUCKET_NAME'], acl: :public_read)
+            rescue
+            end
           end
-        rescue
         end
       end
     end
+
+    # Wait for the threads to complete
+    ThreadsWait.all_waits(*threads)
   end
 
   desc 'Merge venues from a CSV file sent through the STDIN'
