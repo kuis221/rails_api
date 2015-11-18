@@ -2738,6 +2738,16 @@ ul.ui-widget-content{
 		.segment-total{
 			display: none;
 		}
+		span.checkbox, span.radio {
+			padding-left: 0;
+			label {
+				display: block;
+				font-weight: normal;
+				div.radio {
+					margin-right: 10px;
+				}
+			}
+		}
 		&.error {
 			.help-inline {
 				line-height: 24px;
