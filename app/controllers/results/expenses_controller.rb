@@ -50,7 +50,7 @@ class Results::ExpensesController < FilteredController
 
   def list_exportable?
     return true unless request.format.zip?
-    search = Event.do_search(search_params.merge(per_page: 999999))
+    search = Event.do_search(search_params)
     total_expenses = search.stat_response['stats_fields']['expenses_with_receipts_is']['sum']
     @export_errors = []
     @export_errors = ['Downloads are limited to 500 receipts. Please select fewer expenses and try again.'] if total_expenses > 500
