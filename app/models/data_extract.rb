@@ -66,6 +66,9 @@ class DataExtract < ActiveRecord::Base
 
   after_initialize  do
     self.columns ||= []
+    self.columns.delete_if { |c| 
+      c =~ /\Aff_([0-9]+)(_[0-9]+)?\z/ && form_fields.find_by(id: c.gsub(/ff_([0-9]+)(_[0-9]+)?/, '\1')).nil? 
+    }
   end
 
   def columns=(cols)
