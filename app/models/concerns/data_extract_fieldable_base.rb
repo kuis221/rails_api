@@ -58,7 +58,7 @@ module DataExtractFieldableBase
   end
 
   def selected_form_field_ids
-    ids = columns
+    columns
       .select { |c| c =~ /\Aff_([0-9]+)(_[0-9]+)?\z/ }
       .map { |c| c.gsub(/ff_([0-9]+)(_[0-9]+)?/, '\1') }
       .uniq
