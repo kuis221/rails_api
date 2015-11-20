@@ -7,7 +7,7 @@ module Zip
           style = expense.receipt.image? ? :medium : :original
           next unless expense.receipt.file.path(style).present?
           tmp_file = expense.receipt.file.copy_to_local_file(style, file_local_name)
-          m << [sanitize_filename(generate_filename(expense, index)), file_local_name] if tmp_file
+          m << [sanitize_filename(generate_filename(expense, index)), file_local_name] if tmp_file.present?
         end
         m
       end
