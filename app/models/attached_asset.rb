@@ -168,6 +168,10 @@ class AttachedAsset < ActiveRecord::Base
     %r{^(image|(x-)?application)/(bmp|gif|jpeg|jpg|pjpeg|png|x-png|pdf)$}.match(file_content_type).present?
   end
 
+  def image?
+    %r{^(image|(x-)?application)/(bmp|gif|jpeg|jpg|pjpeg|png|x-png)$}.match(file_content_type).present?
+  end
+
   def pdf?
     %r{^(x-)?application/pdf$}.match(file_content_type).present?
   end

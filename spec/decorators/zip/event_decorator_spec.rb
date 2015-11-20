@@ -8,7 +8,8 @@ describe Zip::EventPresenter, type: :presenter do
 
   describe 'receipts_for_zip_export' do
     it 'return array with filenames and paths' do
-      receipt1 = build(:attached_asset, created_at: Time.zone.local(2013, 8, 22, 11, 59))
+      receipt1 = build(:attached_asset, created_at: Time.zone.local(2013, 8, 22, 11, 59),
+                                        file: File.open(Rails.root.join('spec','fixtures','file.pdf')))
       expense1 = create(:event_expense, amount: 99.99, category: 'Entertainment', reimbursable: true,
                                          receipt: receipt1, event: event, created_by: create(:user, first_name: 'Sara', last_name: 'Smith'))
       expense2 = create(:event_expense, amount: 159.15, category: 'Fuel', event: event)
