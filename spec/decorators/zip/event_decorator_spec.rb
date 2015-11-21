@@ -34,7 +34,7 @@ describe Zip::EventPresenter, type: :presenter do
                                         receipt: receipt1, event: event, created_by: create(:user, first_name: 'Sara', last_name: 'Smith'))
 
       presenter = Zip::EventPresenter.new(event, nil)
-      expect(presenter.generate_filename(expense1, 1)).to eql "20150101-PlaceTest-Entertainment-SSmith-1#{expense1.id}.jpg"
+      expect(presenter.generate_filename(expense1, 1)).to eql "20150101-PlaceTest-Entertainment-SSmith-1-#{expense1.id}.jpg"
     end
   end
 
