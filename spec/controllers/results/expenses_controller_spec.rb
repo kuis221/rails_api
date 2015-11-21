@@ -91,7 +91,7 @@ describe Results::ExpensesController, type: :controller do
       expect { xhr :get, 'index', format: :zip }.to change(ListExport, :count).by(1)
       export = ListExport.last
 
-      expect(export.file_content_type).to eq('application/octet-stream')
+      expect(export.file_content_type).to eq('application/zip')
       expect(export.export_format).to eq('zip')
     end
   end

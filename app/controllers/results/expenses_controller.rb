@@ -15,6 +15,7 @@ class Results::ExpensesController < FilteredController
     Zip::File.open(path, Zip::File::CREATE) do |zipfile|
       csv = export_collection do |event|
         event.receipts_for_zip_export.each { |f| zipfile.add f[0], f[1]  }
+        zipfile.commit
       end
       add_expenses_csv_file(csv, zipfile)
     end
@@ -62,6 +63,8 @@ class Results::ExpensesController < FilteredController
     csv_file.write csv
     csv_file.close
     zipfile.add "expenses-#{Time.now.strftime('%Y%m%d%H%M%S')}.csv", csv_file.path
+    zipfile.commit # Commit before the tmp file is removed
+    csv_file.unlink
   end
 
   def search_params
