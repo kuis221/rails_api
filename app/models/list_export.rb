@@ -24,6 +24,7 @@ class ListExport < ActiveRecord::Base
   has_attached_file :file, PAPERCLIP_SETTINGS
 
   validates_attachment_file_name :file, matches: [/xls\Z/, /pdf\Z/, /csv\Z/, /zip\Z/]
+  do_not_validate_attachment_file_type :file
 
   serialize :params
   serialize :url_options
@@ -74,7 +75,12 @@ class ListExport < ActiveRecord::Base
   def export_list
     self.queue! if self.failed?
     self.process! if self.queued? || self.new?
-    build_file
+    begin
+      build_file
+    rescue => e
+      self.fail!
+      raise e
+    end
 
     # Save file or raise error if failed
     Kernel.fail(errors.full_messages.join(', ')) unless save_with_retry
@@ -86,12 +92,20 @@ class ListExport < ActiveRecord::Base
   def build_file
     ctrl = load_controller
     zone = company_user.user.time_zone.presence || Rails.application.config.time_zone
-    path = Dir::Tmpname.create(['export-' + id.to_s,  '.html']) {}
-    Time.use_zone(zone) { ctrl.send(:export_list, self, path) }
+    Time.use_zone(zone) { ctrl.send(:export_list, self, tmp_file_name) }
 
-    build_file_from_path path, "#{ctrl.send(:export_file_name)}-#{id}.#{export_format}"
+    build_file_from_path tmp_file_name, "#{ctrl.send(:export_file_name)}-#{id}.#{export_format}"
   ensure
     unload_controller
+  end
+
+  def tmp_file_name
+    @tmp_file_name ||=
+      if export_format == 'pdf'
+        Dir::Tmpname.create(['export-' + id.to_s,  '.html']) {}
+      else
+        Dir::Tmpname.create(['export-' + id.to_s,  ".#{export_format}"]) {}
+      end
   end
 
   def export
@@ -115,7 +129,7 @@ class ListExport < ActiveRecord::Base
 
   def build_zip_file(path)
     self.file = File.open(path)
-    self.file_content_type = 'application/octet-stream'
+    self.file_content_type = 'application/zip'
   end
 
   def build_xlsx_file(path)
