@@ -1,5 +1,5 @@
 :concurrency: <%= ENV['SIDEKIQ_CONCURRENCY'] || 5 %>
-:limits:
+:process_limits:
   upload: <%= ENV['SIDEKIQ_UPLOAD_PROCESS_LIMIT'] || 1 %>
   export: <%= ENV['SIDEKIQ_EXPORT_PROCESS_LIMIT'] || 1 %>
   download: <%= ENV['SIDEKIQ_DOWNLOAD_PROCESS_LIMIT'] || 1 %>
