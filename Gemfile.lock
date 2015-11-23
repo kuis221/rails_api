@@ -70,7 +70,8 @@ PATH
       railties (~> 4)
 
 GEM
-  remote: https://YEcwVtZUfnGBLsXUrkUi@gem.fury.io/brandscopic/
+  remote: https://17d9QxUxncxZr4H7SLVw@gem.fury.io/app18070962_heroku_com/
+  remote: https://rubygems.org/
   specs:
     Ascii85 (1.0.2)
     aasm (3.3.2)

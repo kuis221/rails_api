@@ -1,5 +1,5 @@
-source 'https://YEcwVtZUfnGBLsXUrkUi@gem.fury.io/brandscopic/'
-# source 'https://rubygems.org'
+source 'https://17d9QxUxncxZr4H7SLVw@gem.fury.io/app18070962_heroku_com/'
+source 'https://rubygems.org'
 
 ruby ENV['CUSTOM_RUBY_VERSION'] || '2.2.3'
 
