@@ -3,26 +3,45 @@ This is the functions.sql file used by Squirm-Rails. Define your Postgres stored
 procedures in this file and they will be loaded at the end of any calls to the
 db:schema:load Rake task.
 */
-
-
-
-CREATE OR REPLACE FUNCTION find_place(pname VARCHAR, pstreet VARCHAR, pcity VARCHAR, pstate VARCHAR, pzipcode VARCHAR) RETURNS integer AS $$
-DECLARE
-    place RECORD;
-    normalized_address VARCHAR;
-    normalized_address2 VARCHAR;
+DO $$
 BEGIN
-    normalized_address := lower(normalize_addresss(pstreet));
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'place_match') THEN
+        CREATE TYPE place_match AS (confidence integer, score real, id integer);
+    END IF;
+END$$;
 
-    FOR place IN SELECT * FROM places WHERE similarity(pname, name) > 0.5 AND lower(city)=lower(pcity) AND lower(state)=lower(pstate) AND (pzipcode is NULL OR lower(zipcode)=lower(pzipcode)) AND lower(normalize_addresss(coalesce(places.street_number, '') || ' ' || coalesce(places.route, ''))) = normalized_address  LOOP
-        return place.id;
-    END LOOP;
-
-    FOR place IN SELECT * FROM places WHERE similarity(pname, name) > 0.5 AND lower(city)=lower(pcity) AND lower(state)=lower(pstate) AND (pzipcode is NULL OR lower(zipcode)=lower(pzipcode)) AND similarity(normalize_addresss(coalesce(places.street_number, '') || ' ' || coalesce(places.route, '')), normalized_address) >= 0.5  LOOP
-        return place.id;
-    END LOOP;
-
-    RETURN NULL;
+CREATE OR REPLACE FUNCTION find_place(pname VARCHAR, pstreet VARCHAR, pstate VARCHAR, pzipcode VARCHAR) RETURNS setof place_match AS $$
+DECLARE
+    place_name VARCHAR;
+    place_address VARCHAR;
+    place_zip2 VARCHAR;
+BEGIN
+    place_name     := normalize_place_name(pname);
+    place_address  := normalize_addresss(pstreet);
+    place_zip2 := substr(pzipcode, 1, 2);
+    return Query (
+        -- High confidence level (10)
+        SELECT 10 confidence, similarity(normalize_place_name(name), place_name) score, places.id FROM places 
+        WHERE state=pstate AND 
+              substr(lower(normalize_place_name(name)), 1, 5) = substr(lower(place_name), 1, 5) AND 
+              substr(normalize_addresss(lower(COALESCE(street_number, '') || ' ' || COALESCE(route, ''))), 1, 5) = substr(lower(place_address), 1, 5) AND 
+              zipcode = pzipcode
+    UNION
+        -- Medium confidence level (5)
+        SELECT 5 confidence, similarity(normalize_place_name(name), place_name) score, places.id FROM places 
+        WHERE state=pstate AND 
+              normalize_place_name(name) % place_name AND 
+              similarity(normalize_addresss(lower(COALESCE(street_number, '') || ' ' || COALESCE(route, ''))), place_address) >= 0.5 AND 
+              substr(normalize_addresss(lower(COALESCE(street_number, '') || ' ' || COALESCE(route, ''))), 1, 5) = substr(lower(place_address), 1, 5) AND
+              zipcode = pzipcode
+    UNION
+        -- Low confidence level (1)
+        SELECT 1 confidence, similarity(normalize_place_name(name), place_name) score, places.id FROM places 
+        WHERE similarity(normalize_place_name(name), place_name) >= 0.5 AND 
+              similarity(normalize_addresss(lower(COALESCE(street_number, '') || ' ' || COALESCE(route, ''))), place_address) >= 0.4 AND 
+              (place_zip2 IS NULL OR substr(zipcode, 1, 2) = place_zip2) 
+    ORDER BY 1 DESC, 2 DESC
+    );
 END;
 $$ LANGUAGE plpgsql;
 

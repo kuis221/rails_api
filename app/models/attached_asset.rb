@@ -64,6 +64,7 @@ class AttachedAsset < ActiveRecord::Base
 
   scope :for_events, ->(events) { where(attachable_type: 'Event', attachable_id: events) }
   scope :photos, -> { where(asset_type: 'photo') }
+  scope :receipts, -> { where(asset_type: 'receipts') }
   scope :active, -> { where(active: true) }
 
   validate :valid_file_format?

@@ -148,6 +148,7 @@ javascript:
       url: '#{campaign_path(resource, format: :json)}',
       exportUrl: '#{form_campaign_path(resource, format: :pdf)}',
       resourceName: 'campaign',
+      kbmgEnabled: #{current_company.kbmg_enabled?},
       defaultExpensesCategories: #{current_company.expense_categories.split(/\s*\n\s*/).to_json.html_safe},
       canEdit: #{can?(:view_event_form, resource) ? 'true' : 'false'},
       canActivateKpis: #{can?(:activate_kpis, resource) ? 'true' : 'false'}

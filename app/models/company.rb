@@ -15,7 +15,11 @@ class Company < ActiveRecord::Base
   attr_accessor :admin_email
   attr_accessor :no_create_admin
 
-  store_accessor :settings, :event_alerts_policy, :brand_ambassadors_role_ids, :ytd_dates_range, :auto_match_events
+  store_accessor :settings, :event_alerts_policy, :brand_ambassadors_role_ids,
+                 :ytd_dates_range, :auto_match_events
+
+  # Should go after the `store :settings...` line
+  include BrandscopicKbmg::Configurable
 
   has_many :company_users, dependent: :destroy
   has_many :teams, dependent: :destroy

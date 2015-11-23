@@ -33,7 +33,7 @@ namespace :brandscopic do
     (first_id..last_id).to_a.in_groups_of(((last_id - first_id) / (number_threads - 1)).to_i, false) do |group|
       threads << Thread.new do
         p "Starting thread to process assets from #{group.first} to #{group.last}"
-        AttachedAsset.where(id: group.first.to_i..group.last.to_i).find_each do |at|
+        AttachedAsset.where(attachable_type: 'EventExpense').where(id: group.first.to_i..group.last.to_i).find_each do |at|
           (at.file.styles.keys + [:original]).each do |style_name|
             key = at.file.path(style_name).gsub(/^\//, '')
             begin

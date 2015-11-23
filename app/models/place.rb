@@ -365,9 +365,9 @@ class Place < ActiveRecord::Base
     end
 
     def find_place(binds)
-      connection.select_value(
-        sanitize_sql_array(['select find_place(:name, :street, :city, :state, :zipcode)', binds])
-      ).try(:to_i)
+      connection.select_rows(
+        sanitize_sql_array(['select * from find_place(:name, :street, :state, :zipcode)', binds])
+      )
     end
 
     def td_linx_match(id, state_code)

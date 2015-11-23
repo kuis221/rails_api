@@ -1304,7 +1304,30 @@ RSpec.shared_examples 'a fieldable element that accept modules' do
     expect(find('.fields-wrapper')).to have_content('Gallery')
   end
 
+  scenario 'cannot add a KBMG key if not enabled' do
+    visit fieldable_path
+    expect(page).to have_selector('h2', text: fieldable.name)
+    toggle_collapsible 'Modules'
+    toggle_collapsible 'Fields' # Hide fields
+
+    # Wait for accordeon effect to complate
+    within('.fields-wrapper') do
+      expect(page).to have_no_content('Dropdown')
+    end
+
+    module_field('Attendance').drag_to form_builder
+
+    within('.fields-wrapper') do
+      expect(page).to have_no_content('Attendance')
+    end
+
+    within form_field_settings_for(module_section('Attendance')) do
+      expect(page).to_not have_field('KBMG API Key')
+    end
+  end
+
   scenario 'add and configure an Attendance module' do
+    company.update_attribute(:kbmg_enabled, 'true')
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     toggle_collapsible 'Modules'

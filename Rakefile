@@ -4,7 +4,7 @@
 
 require File.expand_path('../config/application', __FILE__)
 
-unless ENV['RAILS_ENV'] == 'production'
+unless ENV['RAILS_ENV'] == 'production' || !defined?(RuboCop)
   require 'rubocop/rake_task'
   RuboCop::RakeTask.new
 end

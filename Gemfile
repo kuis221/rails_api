@@ -1,4 +1,5 @@
-source 'https://rubygems.org'
+source 'https://YEcwVtZUfnGBLsXUrkUi@gem.fury.io/brandscopic/'
+# source 'https://rubygems.org'
 
 ruby ENV['CUSTOM_RUBY_VERSION'] || '2.2.3'
 
@@ -60,6 +61,7 @@ gem 'rgeo-geojson'
 gem 'paper_trail', '~> 4.0.0'
 gem 'simple_form', '~> 3.2.0'
 gem 'country_select', '2.0.0.rc1'
+gem 'brandscopic_kbmg' # , path: 'engines/brandscopic_kbmg'
 
 # For memory debugging
 # gem "allocation_stats"
