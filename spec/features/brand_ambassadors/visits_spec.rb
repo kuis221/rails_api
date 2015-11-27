@@ -334,6 +334,13 @@ feature 'Brand Ambassadors Visits' do
 
       expect(page).to have_css('div#calendar-view.tab-pane.active')
       expect(page).to have_no_css('div#visits-scoller-outer.tab-pane.active')
+
+      # Removing filters should still display the visits
+      remove_filter find('.filter-item', match: :first).text
+      within('div#calendar-view') do
+        expect(page).to have_content 'Brand Program - My Campaign Test User - New York'
+        expect(page).to have_content 'Formal Market Visit - My Campaign Test User - New York'
+      end
     end
 
     scenario 'should be able to export the calendar view as PDF' do
