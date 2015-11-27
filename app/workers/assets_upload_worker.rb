@@ -6,7 +6,6 @@ class AssetsUploadWorker
     klass ||= asset_class.constantize
     asset = klass.find(asset_id)
     return if asset.processed?
-    asset.queued! unless asset.queued?
     asset.transfer_and_cleanup
   end
 end
