@@ -1,0 +1,11 @@
+- items = parent.invites.active.joins(:place).includes(:place).order('places.name ASC')
+table.table
+  thead
+    tr 
+      th Venue
+      th Invites
+      th RSVPs
+      th Attendees
+      th.actions
+  tbody
+    = render partial: "invites/invite", collection: items, as: :invite, locals: { parent: parent }

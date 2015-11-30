@@ -339,7 +339,7 @@ GEM
     kss (0.5.0)
     launchy (2.4.3)
       addressable (~> 2.3)
-    listen (3.0.3)
+    listen (3.0.5)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
     loofah (2.0.3)
@@ -430,7 +430,7 @@ GEM
       activesupport (>= 2.3.14)
     rack (1.6.4)
     rack-cors (0.2.9)
-    rack-livereload (0.3.15)
+    rack-livereload (0.3.16)
       rack
     rack-protection (1.5.3)
       rack

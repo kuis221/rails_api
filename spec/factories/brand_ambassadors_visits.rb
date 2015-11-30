@@ -7,7 +7,7 @@
 #  company_user_id :integer
 #  start_date      :date
 #  end_date        :date
-#  active          :boolean          default(TRUE)
+#  active          :boolean          default("true")
 #  created_at      :datetime
 #  updated_at      :datetime
 #  description     :text

@@ -1799,7 +1799,7 @@ AttendanceField = Module.extend {
 			name: 'Attendance'
 		}, attributes)
 
-		@attributes.settings ||= { attendance_display: 1 }
+		@attributes.settings ||= { }
 
 		@
 
@@ -1813,18 +1813,9 @@ AttendanceField = Module.extend {
 		]
 
 	attributesForm: () ->
+		return false unless @form.options.kbmgEnabled
 		[
 			$('<h4>').text('Field Settings'),
-			$('<div class="control-group">').append [
-				$('<label class="control-label" for="attendance_display_by">').text('Display attendance by'),
-				$('<select id="attendance_display_by" name="attendance_display">').append(
-					$.map [{id: 1, text: 'Venue'}, {id: 2, text: 'Market'}, {id: 3, text: 'Individual'}], (option) => $('<option>').val(option.id).text(option.text).attr('selected', @attributes.settings.attendance_display is option.id )
-				).val(@attributes.settings.attendance_display).on 'change', (e) =>
-					input = $(e.target)
-					@attributes.settings.attendance_display = input.val()
-					@form.setModified()
-					true
-			],
 			( if @form.options.kbmgEnabled
 					$('<div class="control-group">').append([
 						$('<label class="control-label" for="attendance_api_key">').text('KBMG API Key'),

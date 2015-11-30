@@ -72,7 +72,7 @@ describe Analysis::AttendanceController, type: :controller do
       end
 
       it 'loads the zip codes from Google API and stores it in DB' do
-        expect(InviteRsvp).to receive(:open).and_return(double(
+        expect(InviteIndividual).to receive(:open).and_return(double(
           read: '{"results":[{"geometry":{"location":{"lat":"34.0187789203171","lng":"-118.259249420375"}}}]}'
         ))
         invite = create(:invite, area: area, event: event)

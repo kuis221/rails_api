@@ -6,12 +6,12 @@
 #  event_id        :integer
 #  title           :string(255)
 #  due_at          :datetime
-#  completed       :boolean          default(FALSE)
+#  completed       :boolean          default("false")
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  created_by_id   :integer
 #  updated_by_id   :integer
-#  active          :boolean          default(TRUE)
+#  active          :boolean          default("true")
 #  company_user_id :integer
 #
 

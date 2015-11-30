@@ -58,6 +58,7 @@
 //= require fullcalendar
 //= require brandscopic
 //= require campaigns
+//= require attendance
 //= require events
 //= require spectrum.js
 //= require filesize.min.js

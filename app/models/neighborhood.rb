@@ -8,7 +8,7 @@
 #  city     :string(64)
 #  name     :string(64)
 #  regionid :decimal(, )
-#  geog     :spatial          multipolygon, 4326
+#  geog     :geography({:srid multipolygon, 4326
 #
 
 class Neighborhood < ActiveRecord::Base

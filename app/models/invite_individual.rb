@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: invite_rsvps
+# Table name: invite_individuals
 #
 #  id                               :integer          not null, primary key
 #  invite_id                        :integer
@@ -25,15 +25,28 @@
 #  attended                         :boolean
 #
 
-class InviteRsvp < ActiveRecord::Base
-  belongs_to :invite
+class InviteIndividual < ActiveRecord::Base
+  belongs_to :invite, inverse_of: :individuals
+  accepts_nested_attributes_for :invite
+
+  validates :first_name, presence: true
+  validates :last_name, presence: true
+  validates :email, presence: true
 
   delegate :place_name, :campaign_name, :invitees, :rsvps_count, :attendees,
            :jameson_locals?, :top_venue?, :event, :area,
            to: :invite
 
+  scope :active, -> { where active: true }
+
+  after_create :increase_invite_invitees
+
   def self.for_event(event)
     where(invite: event.invites)
+  end
+
+  def name
+    [first_name, last_name].compact.join ' '
   end
 
   def self.without_locations
@@ -66,5 +79,9 @@ class InviteRsvp < ActiveRecord::Base
     id = Neighborhood.where('ST_Intersects(ST_GeomFromText(?), geog)', point).pluck(:gid).first
     id ||= Neighborhood.order("ST_Distance(ST_GeomFromText('#{point}'), geog) ASC").pluck(:gid).first
     id
+  end
+
+  def increase_invite_invitees
+    invite.increment! :invitees
   end
 end

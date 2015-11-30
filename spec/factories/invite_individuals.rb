@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: invite_rsvps
+# Table name: invite_invdividuals
 #
 #  id                               :integer          not null, primary key
 #  invite_id                        :integer
@@ -28,7 +28,7 @@
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
 FactoryGirl.define do
-  factory :invite_rsvp do
+  factory :invite_individual do
     invite nil
     registrant_id 1
     date_added '2015-01-06'

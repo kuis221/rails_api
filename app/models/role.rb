@@ -7,9 +7,9 @@
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  company_id    :integer
-#  active        :boolean          default(TRUE)
+#  active        :boolean          default("true")
 #  description   :text
-#  is_admin      :boolean          default(FALSE)
+#  is_admin      :boolean          default("false")
 #  created_by_id :integer
 #  updated_by_id :integer
 #

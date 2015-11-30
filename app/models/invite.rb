@@ -6,13 +6,13 @@
 #  event_id      :integer
 #  venue_id      :integer
 #  market        :string(255)
-#  invitees      :integer          default(0)
-#  rsvps_count   :integer          default(0)
-#  attendees     :integer          default(0)
+#  invitees      :integer          default("0")
+#  rsvps_count   :integer          default("0")
+#  attendees     :integer          default("0")
 #  final_date    :date
 #  created_at    :datetime
 #  updated_at    :datetime
-#  active        :boolean          default(TRUE)
+#  active        :boolean          default("true")
 #  area_id       :integer
 #  created_by_id :integer
 #  updated_by_id :integer
@@ -23,7 +23,7 @@ class Invite < ActiveRecord::Base
   belongs_to :venue
   belongs_to :area
   has_one :place, through: :venue
-  has_many :rsvps, class_name: 'InviteRsvp'
+  has_many :individuals, class_name: 'InviteIndividual', inverse_of: :invite
 
   delegate :name_with_location, :id, :name, to: :place, prefix: true, allow_nil: true
   delegate :jameson_locals?, :top_venue?, to: :venue, allow_nil: true

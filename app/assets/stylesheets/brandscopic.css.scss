@@ -7666,6 +7666,71 @@ form.button_to .button-with-icon {
 	}
 }
 
+
+#invite-form-tabs {
+  border-bottom: 1px solid $gray-light;
+  li {
+    margin-right: 50px;
+    a {
+      background-color: white;
+    }
+    &.active {
+      border-bottom: 3px solid $gray;
+      a {
+        color: $gray;
+      }
+    }
+    .icon {
+      margin-right: 8px;
+    }
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
+#invite-forms {
+  padding-top: 30px;
+  .individual-name {
+    .first-name {
+      width: 50%;
+      float: left;
+      padding-right: 5px;
+      box-sizing: border-box;
+    }
+    .last-name {
+      width: 50%;
+      padding-left: 5px;
+      display: inline-block;
+      box-sizing: border-box;
+    }
+  }
+}
+
+#resource-invites-list {
+  .invite-editable-attribute {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .popover-content {
+    width: 100px;
+    input {
+      margin: 0;
+    }
+    .icon-plus-sign, .icon-minus-rounded {
+      font-size: 22px;
+      margin-top: 8px;
+      display: inline-block;
+      color: $gray;
+    }
+    .icon-plus-sign {
+      float: left;
+    }
+    .icon-minus-rounded {
+      float: right;
+    }
+  }
+}
+
 @import 'widgets/asset_upload_dialog';
 @import 'widgets/documents_list';
 @import 'widgets/resource_list';

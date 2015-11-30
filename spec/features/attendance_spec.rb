@@ -16,16 +16,21 @@ feature 'Attendance', js: true, search: true do
   end
 
   shared_examples_for 'a user that can create invites' do
-    scenario 'cannot view the attendance module if not invitations were created' do
+    scenario 'user sees a blank state message if no invites have been created' do
       visit event_path(event)
-      expect(page).to_not have_selector('h5', text: 'ATTENDANCE')
-      expect(page).to have_button('Add Activity')
+      expect(page).to have_selector('h5', text: 'ATTENDANCE')
+      expect(page).to have_content('No Invites have been added to this event.')
+      expect(page).to have_button('Add Invites')
     end
 
     scenario 'can view the attendance module if invites were created' do
-      create(:invite, event: event, venue: event.venue)
+      invite = create(:invite, event: event, venue: event.venue)
+      create :invite_individual, invite: invite
       visit event_path(event)
       expect(page).to have_selector('h5', text: 'ATTENDANCE')
+      within event_attendance_module do
+        expect(page).to have_content event.venue.name
+      end
       expect(page).to have_button('Add Activity')
     end
 
@@ -211,6 +216,11 @@ feature 'Attendance', js: true, search: true do
       before { company_user.areas << area }
       let(:permissions) { [[:index_invites, 'Event'], [:create_invite, 'Event'], [:show, 'Event']] }
     end
+  end
+
+
+  def event_attendance_module
+    find '#event-attendance'
   end
 
   def create_invite(account: nil, invites: 12, type: 'venue')

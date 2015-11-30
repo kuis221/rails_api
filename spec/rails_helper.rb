@@ -4,7 +4,7 @@ ENV['RAILS_ENV'] ||= 'test'
 require 'spec_helper'
 require 'simplecov'
 
-unless ENV['CI'] || ENV.key?('TEST_ENV_NUMBER')
+if ENV["COVERAGE"]
   SimpleCov.start 'rails' do
     add_filter 'lib/legacy'
   end

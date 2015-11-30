@@ -22,7 +22,7 @@ namespace :geojson do
       )
     end
     p 'Updating zipcode mappings'
-    zipcodes.each { |zipcode| InviteRsvp.update_zip_code_location(zipcode) }
+    zipcodes.each { |zipcode| InviteIndividual.update_zip_code_location(zipcode) }
   end
 
   def force_multipolygon(geometry)

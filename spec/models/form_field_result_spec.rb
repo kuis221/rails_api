@@ -8,7 +8,7 @@
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  hash_value      :hstore
-#  scalar_value    :decimal(15, 2)   default(0.0)
+#  scalar_value    :decimal(15, 2)   default("0")
 #  resultable_id   :integer
 #  resultable_type :string(255)
 #

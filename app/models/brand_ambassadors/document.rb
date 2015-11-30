@@ -14,12 +14,12 @@
 #  updated_by_id         :integer
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
-#  active                :boolean          default(TRUE)
+#  active                :boolean          default("true")
 #  direct_upload_url     :string(255)
-#  rating                :integer          default(0)
+#  rating                :integer          default("0")
 #  folder_id             :integer
-#  status                :integer          default(0)
-#  processing_percentage :integer          default(0)
+#  status                :integer          default("0")
+#  processing_percentage :integer          default("0")
 #
 
 class BrandAmbassadors::Document < ::AttachedAsset

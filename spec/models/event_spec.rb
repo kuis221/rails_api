@@ -12,9 +12,9 @@
 #  updated_by_id       :integer
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
-#  active              :boolean          default(TRUE)
+#  active              :boolean          default("true")
 #  place_id            :integer
-#  promo_hours         :decimal(6, 2)    default(0.0)
+#  promo_hours         :decimal(6, 2)    default("0")
 #  reject_reason       :text
 #  timezone            :string(255)
 #  local_start_at      :datetime
@@ -24,8 +24,9 @@
 #  rejected_at         :datetime
 #  submitted_at        :datetime
 #  approved_at         :datetime
-#  active_photos_count :integer          default(0)
+#  active_photos_count :integer          default("0")
 #  visit_id            :integer
+#  results_version     :integer          default("0")
 #
 
 require 'rails_helper'

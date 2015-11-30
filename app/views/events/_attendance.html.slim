@@ -1,26 +1,41 @@
-- items = (resource.invites.active.joins(:place).select("invites.*, places.name") + resource.invites.active.joins(:area).select("invites.*, areas.name")).sort_by(&:name)
-
-- if items.any?
+- group_by ||= 'individual'
+- if resource.invites.active.any?
   #resource-invites-list
+    .row-fluid
+      .span4
+        h5.module-title ATTENDANCE
+      .span4.text-center
+        #attendance-group-by.btn-group data-toggle="buttons-radio"
+          a.btn.by-individual href="#{event_invite_individuals_path(resource, format: :js)}" class="#{:active if group_by == 'individual'}" data-remote="remote" by Individual
+          a.btn.by-venue href="#{event_invites_path(resource, format: :js)}" data-remote="remote" class="#{:active if group_by == 'venue'}" by Venue
+      .span4
+        .dropdown.btn-download.pull-right
+          a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+            i.icon-download
+            i.icon-arrow-down-small
+          ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+            - if group_by == 'individual'
+              li
+                = link_to 'Download as CSV', event_invite_individuals_path(resource, format: :csv), role: :menuitem, class: 'xlsx-download-link', data: { url: event_invite_individuals_path(resource, format: :csv) }
+              li
+                = link_to 'Download as PDF', event_invite_individuals_path(resource, format: :pdf), role: :menuitem, class: 'xlsx-download-link', data: { url: event_invite_individuals_path(resource, format: :pdf) }
+            - else
+              li
+                = link_to 'Download as CSV', event_invites_path(resource, format: :csv), role: :menuitem, class: 'xlsx-download-link', data: { url: event_invites_path(resource, format: :csv) }
+              li
+                = link_to 'Download as PDF', event_invites_path(resource, format: :pdf), role: :menuitem, class: 'xlsx-download-link', data: { url: event_invites_path(resource, format: :pdf) }
+      
 
-    .dropdown.btn-download.pull-right
-      a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
-        i.icon-download
-        i.icon-arrow-down-small
-      ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
-        - if resource.campaign.enabled_modules.include?('attendance') && Invite::ATTENDANCE_DISPLAY_BY_TYPES.try(:[], resource.campaign.module_setting('attendance', 'attendance_display')) == 'market'
-          li
-            = link_to 'Download individual to CSV', event_invites_path(resource, export_mode: :individual, format: :csv), role: :menuitem, class: 'xlsx-download-link', data: { url: event_invites_path(resource, export_mode: :individual, format: :csv) }
-            = link_to 'Download aggregate to CSV', event_invites_path(resource, format: :csv), role: :menuitem, class: 'xlsx-download-link', data: { url: event_invites_path(resource, format: :csv) }
-          li
-            = link_to 'Download aggregate to PDF', event_invites_path(resource, format: :pdf), role: :menuitem, class: 'xlsx-download-link', data: { url: event_invites_path(resource, format: :pdf) }
-        - else
-          li
-            = link_to 'Download as CSV', event_invites_path(resource, format: :csv), role: :menuitem, class: 'xlsx-download-link', data: { url: event_invites_path(resource, format: :csv) }
-          li
-            = link_to 'Download as PDF', event_invites_path(resource, format: :pdf), role: :menuitem, class: 'xlsx-download-link', data: { url: event_invites_path(resource, format: :pdf) }
-
-    h5.module-title ATTENDANCE
-
+    - if can?(:create_invite, resource)
+      = button_to 'Create Invites', new_event_invite_path(resource, phase: presenter.current_phase, return: return_path), method: :get, remote: true, class: 'btn btn-primary', data: { disable_with: 'Please wait...' }, title: 'Create Invites'
+  
     #invites-list.resource-list
-      = render partial: 'invites/invite', collection: items, locals: { parent: resource }
+      - if group_by == 'venue'
+        = render partial: "invites/table", locals: { parent: resource }
+      - else
+        = render partial: "invite_individuals/table", locals: { parent: resource }
+- else
+  h5.module-title ATTENDANCE
+  = blank_state_module('event.invites') do
+    = button_to 'Add Invites', new_event_invite_path(resource, phase: presenter.current_phase, return: return_path), method: :get, remote: true, disable_with: 'Please wait...', class: 'btn btn-primary', data: { disable_with: 'Please wait...' }, title: 'Add Invites'
+

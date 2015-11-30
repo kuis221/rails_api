@@ -6,13 +6,13 @@
 #  event_id      :integer
 #  venue_id      :integer
 #  market        :string(255)
-#  invitees      :integer          default(0)
-#  rsvps_count   :integer          default(0)
-#  attendees     :integer          default(0)
+#  invitees      :integer          default("0")
+#  rsvps_count   :integer          default("0")
+#  attendees     :integer          default("0")
 #  final_date    :date
 #  created_at    :datetime
 #  updated_at    :datetime
-#  active        :boolean          default(TRUE)
+#  active        :boolean          default("true")
 #  area_id       :integer
 #  created_by_id :integer
 #  updated_by_id :integer
@@ -23,7 +23,7 @@
 FactoryGirl.define do
   factory :invite do
     event nil
-    venue nil
+    association(:venue)
     invitees 1
     rsvps_count 0
     attendees 1

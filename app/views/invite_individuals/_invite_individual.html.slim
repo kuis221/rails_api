@@ -1,0 +1,17 @@
+tr.resource-item.invite id="invite_individual_#{invite_individual.id}"
+  td= invite_individual.name
+  - if parent.is_a?(Venue)
+    td
+      = format_date_range(invite_individual.invite.event.start_at, invite_individual.invite.event.end_at, date_only: true)
+      .crop-text
+        = invite_individual.invite.campaign_name
+  - else
+    td= invite_individual.invite.place_name
+  td= invite_individual.email
+  td= editable_invite_checkbox parent, invite_individual, :rsvpd
+  td= editable_invite_checkbox parent, invite_individual, :attended
+
+  td
+    .resource-item-actions
+      = button_to_edit invite_individual, url: url_for([:edit, parent, invite_individual]) if can?(:edit_invite, parent.class)
+      = button_to_activate_or_deactivate(invite_individual, activate_url: url_for([:activate, parent, invite_individual]), deactivate_url: url_for([:deactivate, parent, invite_individual])) if can?(:deactivate_invite, parent.class)

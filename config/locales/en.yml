@@ -12,7 +12,7 @@ en:
       document_folder: "Folder"
       kpi: "KPI"
       activity_type: "Activity Type"
-      invite: "Attendance"
+      invite: "Invitation"
       event: "Event"
       event_data: "Event Data"
       task: "Task"
@@ -282,6 +282,7 @@ en:
         contacts: 'No Contacts have been added to this event.'
         team_members: 'No Team Members have been added to this event.'
         activities: 'No Activities have been added to this event.'
+        invites: 'No Invites have been added to this event.'
         comments: 'No Consumer Comments have been added to this event.'
         expenses: 'No Expenses have been added to this event.'
         tasks: 'No Tasks have been added to this event.'
@@ -334,7 +335,7 @@ en:
         roles: 'Roles'
         teams: 'Teams'
         company_users: 'Users'
-        invites: 'Attendance'
+        invites: 'Invitations'
 
   range_filters:
     events_count: 'Events'
@@ -413,7 +414,7 @@ en:
       activity_type: "Deactivate Activity Type"
       report: "Deactivate Report"
       brand_ambassadors/visit: "Deactivate Visit"
-      invite: "Deactivate Attendance Record"
+      invite: "Deactivate Invitations Record"
       data_extract/activity: "Deactivate Report"
       data_extract/activity_type: "Deactivate Report"
       data_extract/area: "Deactivate Report"
@@ -448,7 +449,7 @@ en:
       activity_type: "Activate Activity Type"
       report: "Activate Report"
       brand_ambassadors/visit: "Activate Visit"
-      invite: "Activate Attendance Record"
+      invite: "Activate Invitations Record"
     invitations:
       resend: "Resend Invitation"
 
@@ -582,7 +583,7 @@ en:
         brand_ambassadors/document: "New Document"
         document_folder: "New Folder"
         filter_setting: "Filtering options"
-        invite: "New Attendance"
+        invite: "New Invitation"
         custom_filters_category: "New Custom Filters Category"
         data_extract/activity: "Save Report"
         data_extract/activity_type: "Save Report"
@@ -635,7 +636,7 @@ en:
         brand_ambassadors/document: "Edit Document"
         document_folder: "Edit Folder"
         filter_setting: "Filtering options"
-        invite: "Edit Attendance"
+        invite: "Edit Invitation"
         data_extract/activity: "Edit Report"
         data_extract/activity_type: "Edit Report"
         data_extract/area: "Edit Report"

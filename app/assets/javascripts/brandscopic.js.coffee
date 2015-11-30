@@ -60,6 +60,7 @@ jQuery ->
 
 	$(document).on 'click', (e) ->
 		$('.has-popover').each () ->
+			return unless $(this).data('popover').tip().hasClass('in')
 			if !$(this).is(e.target) && $(this).has(e.target).length is 0 && $('.popover').has(e.target).length is 0
 				$(this).popover('hide')
 		return if $(e.target).closest('.tooltip').length > 0

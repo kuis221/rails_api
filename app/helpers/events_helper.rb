@@ -13,6 +13,30 @@ module EventsHelper
     \n".html_safe
   end
 
+  def editable_invite_checkbox(resource, invite, attribute)
+    readonly = can?(:edit_invite, resource)
+    simple_form_for([resource, invite], remote: true) do |f|
+      f.input attribute, label: false, as: :boolean
+    end
+  end
+
+  def editable_invite_attribute(resource, invite, attribute)
+    return invite.send(attribute) unless can? :edit_invite, resource
+    content_tag :span, invite.send(attribute), class: 'has-popover invite-editable-attribute', data: { trigger: 'click', placement: :bottom, content: invite_attribute_popover(resource, invite, attribute) }, rel: :popover
+  end
+
+  def invite_attribute_popover(resource, invite, attribute)
+    html_escape_once(simple_form_for([resource, invite], remote: true) do |f|
+      content_tag :div, class: 'row-fluid' do
+        content_tag(:div, content_tag(:a, '', href: "#", class: 'icon icon-minus-rounded decrease', title: 'Decrease'), class: 'span2') +
+        content_tag(:div, '-', class: 'span8') do
+          f.input attribute, label: false
+        end +
+        content_tag(:div, content_tag(:a, '', href: "#", class: 'icon icon-plus-sign increase', title: 'Increase'), class: 'span2')
+      end
+    end)
+  end
+
   def create_scrollmultispy_js
     "
       $('body').scrollmultispy({

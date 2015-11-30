@@ -1,45 +1,16 @@
-div.resource-item.invite id="invite_#{invite.id}"
-  .resource-item-link
-    - if parent.is_a?(Venue)
-      .span6
-        .text-large= format_date_range(invite.event.start_at, invite.event.end_at, date_only: true)
-        .crop-text
-          = invite.campaign_name
+tr.resource-item.invite id="invite_#{invite.id}"
+  - if parent.is_a?(Venue)
+    td
+      = format_date_range(invite.event.start_at, invite.event.end_at, date_only: true)
+      .crop-text
+        = invite.campaign_name
+  - else
+    td= invite.place_name
+  td= editable_invite_attribute parent, invite, :invitees
+  td= editable_invite_attribute parent, invite, :rsvps_count
+  td= editable_invite_attribute parent, invite, :attendees
 
-      .span2
-        .text-large= invite.invitees
-        | Invites
-      .span2
-        .text-large= invite.rsvps_count
-        | RSVPs
-      .span2
-        .text-large= invite.attendees
-        | Attendees
-
-    - else
-      .span4
-        .text-large= invite.venue.present? ? invite.place_name : invite.area.name
-
-      .span2
-        - if invite.venue.present?
-          .text-large= invite.venue.jameson_locals? ? 'Yes' : 'No'
-          | Jameson Locals
-
-      .span2
-        - if invite.venue.present?
-          .text-large= invite.venue.top_venue? ? 'Yes' : 'No'
-          | Top 100
-
-      .span1
-        .text-large= invite.invitees
-        | Invites
-      .span1
-        .text-large= invite.rsvps_count
-        | RSVPs
-      .span1
-        .text-large= invite.attendees
-        | Attendees
-
-  .resource-item-actions
-    = button_to_edit invite, url: url_for([:edit, parent, invite]) if can?(:edit_invite, parent.class)
-    = button_to_activate_or_deactivate(invite, activate_url: url_for([:activate, parent, invite]), deactivate_url: url_for([:deactivate, parent, invite])) if can?(:deactivate_invite, parent.class)
+  td
+    .resource-item-actions
+      = button_to_edit invite, url: url_for([:edit, parent, invite]) if can?(:edit_invite, parent.class)
+      = button_to_activate_or_deactivate(invite, activate_url: url_for([:activate, parent, invite]), deactivate_url: url_for([:deactivate, parent, invite])) if can?(:deactivate_invite, parent.class)

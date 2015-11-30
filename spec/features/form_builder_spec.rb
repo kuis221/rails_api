@@ -1304,28 +1304,6 @@ RSpec.shared_examples 'a fieldable element that accept modules' do
     expect(find('.fields-wrapper')).to have_content('Gallery')
   end
 
-  scenario 'cannot add a KBMG key if not enabled' do
-    visit fieldable_path
-    expect(page).to have_selector('h2', text: fieldable.name)
-    toggle_collapsible 'Modules'
-    toggle_collapsible 'Fields' # Hide fields
-
-    # Wait for accordeon effect to complate
-    within('.fields-wrapper') do
-      expect(page).to have_no_content('Dropdown')
-    end
-
-    module_field('Attendance').drag_to form_builder
-
-    within('.fields-wrapper') do
-      expect(page).to have_no_content('Attendance')
-    end
-
-    within form_field_settings_for(module_section('Attendance')) do
-      expect(page).to_not have_field('KBMG API Key')
-    end
-  end
-
   scenario 'add and configure an Attendance module' do
     company.update_attribute(:kbmg_enabled, 'true')
     visit fieldable_path
@@ -1347,8 +1325,6 @@ RSpec.shared_examples 'a fieldable element that accept modules' do
     expect(find('.form-wrapper')).to have_selector('.form-section.module[data-type=Attendance]')
 
     within form_field_settings_for(module_section('Attendance')) do
-      expect(find_field('Display attendance by', visible: false).value).to eql '1'
-      select_from_chosen 'Market', from: 'Display attendance by'
       fill_in 'KBMG API Key', with: 'SOME-API-TOKEN'
     end
 
@@ -1359,7 +1335,6 @@ RSpec.shared_examples 'a fieldable element that accept modules' do
     visit fieldable_path
 
     within form_field_settings_for(module_section('Attendance')) do
-      expect(find_field('Display attendance by', visible: false).value).to eql '2'
       expect(find_field('KBMG API Key').value).to eql 'SOME-API-TOKEN'
     end
   end
