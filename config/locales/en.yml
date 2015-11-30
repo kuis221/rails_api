@@ -1054,6 +1054,9 @@ en:
 
   data_exports:
     fields:
+      attendees: "Attendees"
+      invitees: "Invites"
+      rsvps: "RSVPs"
       campaign_name: "Campaign"
       area_name: "Area"
       end_date: "End Date"

@@ -56,7 +56,8 @@ class DataExtract < ActiveRecord::Base
   end
 
   DATA_SOURCES = [
-    ['Events', :event], ['Post Event Data (PERs)', :event_data], ['Activities', :activity],
+    ['Events', :event], ['Post Event Data (PERs)', :event_data],
+    ['Activities', :activity], ['Invites - Venue', :invite],
     ['Comments', :comment], ['Contacts', :contact], ['Expenses', :event_expense],
     ['Tasks', :task], ['Venues', :place], ['Users', :company_user], ['Teams', :team],
     ['Roles', :role], ['Campaigns', :campaign], ['Brands', :brand], ['Activity Types', :activity_type],
@@ -66,8 +67,8 @@ class DataExtract < ActiveRecord::Base
 
   after_initialize  do
     self.columns ||= []
-    self.columns.delete_if { |c| 
-      c =~ /\Aff_([0-9]+)(_[0-9]+)?\z/ && form_fields.find_by(id: c.gsub(/ff_([0-9]+)(_[0-9]+)?/, '\1')).nil? 
+    self.columns.delete_if { |c|
+      c =~ /\Aff_([0-9]+)(_[0-9]+)?\z/ && form_fields.find_by(id: c.gsub(/ff_([0-9]+)(_[0-9]+)?/, '\1')).nil?
     }
   end
 
