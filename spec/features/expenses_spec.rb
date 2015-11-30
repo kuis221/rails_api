@@ -76,6 +76,52 @@ feature 'Events section', js: true do
     end
   end
 
+  feature 'deactivate' do
+    let(:permissions) do
+      [[:show, 'Event'], [:index_expenses, 'Event'],
+       [:create_expense, 'Event'], [:deactivate_expense, 'Event']]
+    end
+    let(:event) { create(:due_event, campaign: campaign, place: place) }
+
+    before do
+      event.campaign.update_attribute(:modules, 'expenses' => {
+                                        'settings' => { 'categories' => %w(Phone) } })
+    end
+
+    scenario 'user can deactivate an expense from event', :inline_jobs do
+      visit event_path(event)
+
+      click_js_button 'Record Expense'
+
+      within visible_modal do
+        attach_file 'file', 'spec/fixtures/file.pdf'
+
+        select_from_chosen 'Phone', from: 'Category'
+        fill_in 'Date', with: '01/01/2014'
+        fill_in 'Amount', with: '13'
+        expect(page).to have_content('File attached: file.pdf')
+
+        wait_for_photo_to_process 15 do
+          click_js_button 'Create'
+        end
+      end
+      ensure_modal_was_closed
+
+      within '#event-expenses' do
+        expect(page).to_not have_content 'No Expenses have been added to this event.'
+      end
+      asset = AttachedAsset.last
+
+      # Test user can remove the expense
+      hover_and_click expense_row(asset.attachable), 'Deactivate Expense'
+      confirm_prompt 'Are you sure you want to deactivate this expense?'
+
+      within '#event-expenses' do
+        expect(page).to have_content 'No Expenses have been added to this event.'
+      end
+    end
+  end
+
   feature 'split' do
     let(:event) { create(:due_event, campaign: campaign, place: place) }
     let(:brand1) { create(:brand, name: 'Brand 1', company_id: company.id) }
