@@ -1,4 +1,4 @@
-= simple_form_for [parent, resource], remote: true do |f|
+= simple_form_for [parent, resource], html: { class: 'individual_invite_form' },  remote: true do |f|
   = f.fields_for :invite do |fi|
     .individual-name
       .first-name
@@ -9,6 +9,10 @@
       = fi.error :place
       = fi.input :place_reference, as: :location, required: true, label: 'Venue', input_html: { id: 'individual_place_location', display_value: params[:place_reference_display_name] || resource.invite.place_name_with_location, placeholder: 'Search for venues' }
       = f.input :email, id: :individual_invite_email
+    - if resource.persisted?
+      .row-fluid
+        .span3= f.input :rsvpd, as: :boolean, label: false, inline_label: true
+        .span3= f.input :attended, as: :boolean, label: false, inline_label: true
 
     .form-actions
       = f.button :submit, class: 'btn btn-primary', data: { disable_with: 'Please wait...' }

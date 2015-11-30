@@ -31,6 +31,7 @@ class InviteIndividualsController < InheritedResources::Base
     @invite_individual_params ||= params.require(:invite_individual).permit(
       :first_name, :last_name, :email, :rsvpd, :attended, invite_attributes: [
         :place_reference, :invitees]).tap do |p|
+          next unless p.key?(:invite_attributes)
           # set the parent's id
           p[:invite_attributes]["#{parent.class.name.underscore}_id"]  = parent.id
           # set the invite id if there is already and invitation for that venue

@@ -33,6 +33,8 @@ en:
         invitees: '# Invites'
         rsvps_count: '# RSVPs'
         attendees: '# Attendes'
+      invite_individual:
+        rsvpd: "RSVP'd"
   time:
     formats:
       default: '%m/%d/%Y %H:%M:%S'
@@ -584,6 +586,7 @@ en:
         document_folder: "New Folder"
         filter_setting: "Filtering options"
         invite: "New Invitation"
+        invite_individual: "New Invitation"
         custom_filters_category: "New Custom Filters Category"
         data_extract/activity: "Save Report"
         data_extract/activity_type: "Save Report"
@@ -637,6 +640,7 @@ en:
         document_folder: "Edit Folder"
         filter_setting: "Filtering options"
         invite: "Edit Invitation"
+        invite_individual: "Edit Invitation"
         data_extract/activity: "Edit Report"
         data_extract/activity_type: "Edit Report"
         data_extract/area: "Edit Report"

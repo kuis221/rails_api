@@ -79,6 +79,15 @@ form{
 			}
 		}
 	}
+
+  &.boolean { 
+		label.checkbox .checker span.checked:after {
+			top: 6px !important;
+		}
+		span.optional {
+			display: none;
+		}
+	}
 }
 
 .select2-container-multi {

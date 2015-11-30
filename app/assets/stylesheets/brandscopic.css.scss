@@ -2827,6 +2827,11 @@ ul.ui-widget-content{
 					color: $gray-light;
 					font-weight: normal;
 				}
+        &.boolean {
+          span.optional {
+            display: none;
+          }
+        }
 			}
 			&.control-group-label{
 				&.control-label{
@@ -7688,8 +7693,10 @@ form.button_to .button-with-icon {
     }
   }
 }
-#invite-forms {
-  padding-top: 30px;
+#invite-form {
+  .tab-content { padding-top: 30px; }
+}
+.individual_invite_form {
   .individual-name {
     .first-name {
       width: 50%;
