@@ -57,7 +57,7 @@ class DataExtract < ActiveRecord::Base
 
   DATA_SOURCES = [
     ['Events', :event], ['Post Event Data (PERs)', :event_data],
-    ['Activities', :activity], ['Invites - Venue', :invite],
+    ['Activities', :activity], ['Invites - Venue', :invite], ['Invites - Individual', :invite_individual],
     ['Comments', :comment], ['Contacts', :contact], ['Expenses', :event_expense],
     ['Tasks', :task], ['Venues', :place], ['Users', :company_user], ['Teams', :team],
     ['Roles', :role], ['Campaigns', :campaign], ['Brands', :brand], ['Activity Types', :activity_type],

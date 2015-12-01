@@ -26,6 +26,8 @@
 #
 
 class InviteIndividual < ActiveRecord::Base
+  track_who_does_it
+
   belongs_to :invite, inverse_of: :individuals
   accepts_nested_attributes_for :invite
 
