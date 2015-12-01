@@ -33,7 +33,6 @@ class DataExtract::Invite < DataExtract
                  place_city: 'places.city',
                  place_state: 'places.state',
                  place_zipcode: 'places.zipcode',
-                 rsvps: 'invites.rsvps_count',
                  attendees: 'invites.attendees',
                  invitees: 'invites.invitees',
                  rsvps: 'invites.rsvps_count',

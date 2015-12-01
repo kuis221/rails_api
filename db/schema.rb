@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151127221456) do
+ActiveRecord::Schema.define(version: 20151201011900) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
@@ -679,6 +679,12 @@ ActiveRecord::Schema.define(version: 20151127221456) do
     t.boolean  "attended"
     t.boolean  "rsvpd",                                        default: false
     t.boolean  "active",                                       default: true
+    t.integer  "age"
+    t.string   "address_line_1"
+    t.string   "address_line_2"
+    t.string   "city"
+    t.string   "province_code"
+    t.string   "country_code"
   end
 
   add_index "invite_individuals", ["invite_id"], name: "index_invite_individuals_on_invite_id", using: :btree

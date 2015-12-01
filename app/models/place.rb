@@ -177,6 +177,33 @@ class Place < ActiveRecord::Base
     joins("INNER JOIN (#{area_query} UNION #{place_query}) areas_places ON places.id=areas_places.place_id")
   end
 
+  # Expects a hash containing a KBMG's API Place object with the following
+  # data:
+  # {
+  #   "EntityType": 2,
+  #   "PlaceId": "13722045-7d02-4aeb-bb9f-788948894569",
+  #   "CreatedDate": "2015-03-27T15:13:47.2448224",
+  #   "ModifiedDate": "2015-04-30T01:39:44.6541716",
+  #   "MarkForDelete": false,
+  #   "Name": "Central Cinema",
+  #   "AddressLine1": "1411 21st Avenue",
+  #   "AddressLine2": "",
+  #   "City": "Seattle",
+  #   "PostalCode": "98122",
+  #   "CountryCode": "US",
+  #   "CountryName": "United States",
+  #   "ProvinceName": "Washington",
+  #   "ProvinceCode": "WA",
+  #   "Description": "",
+  #   "MajorMarket": "Seattle"
+  # }
+  def self.kbmg_matches(place)
+    find_place name: place['Name'],
+               street: [place['AddressLine1'], place['AddressLine2']].compact.join(' '),
+               state: place['ProvinceName'],
+               zipcode: place['PostalCode'].to_s
+  end
+
   def street
     "#{street_number} #{route}".strip
   end

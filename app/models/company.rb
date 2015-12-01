@@ -19,7 +19,7 @@ class Company < ActiveRecord::Base
                  :ytd_dates_range, :auto_match_events
 
   # Should go after the `store :settings...` line
-  include BrandscopicKbmg::Configurable
+  include KbmgConfigurable
 
   has_many :company_users, dependent: :destroy
   has_many :teams, dependent: :destroy

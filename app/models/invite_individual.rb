@@ -41,7 +41,7 @@ class InviteIndividual < ActiveRecord::Base
 
   scope :active, -> { where active: true }
 
-  after_create :increase_invite_invitees
+  after_create :increase_invite_counters
 
   def self.for_event(event)
     where(invite: event.invites)
@@ -83,7 +83,9 @@ class InviteIndividual < ActiveRecord::Base
     id
   end
 
-  def increase_invite_invitees
+  def increase_invite_counters
     invite.increment! :invitees
+    invite.increment! :rsvps_count if rsvpd?
+    invite.increment! :attendees if attended?
   end
 end

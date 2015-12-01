@@ -734,6 +734,9 @@ en:
     comments:
       edit: 'add consumer comments'
       read_only: 'view consumer comments'
+    attendance:
+      edit: 'add event invites'
+      read_only: 'view event invites'
 
   instructive_messages:
     plan:
