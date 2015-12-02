@@ -16,9 +16,9 @@
           ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
             - if group_by == 'individual'
               li
-                = link_to 'Download as CSV', event_invite_individuals_path(resource, format: :csv), role: :menuitem, class: 'xlsx-download-link', data: { url: event_invite_individuals_path(resource, format: :csv) }
+                = link_to 'Download as CSV', event_invite_individuals_path(resource, format: :csv), role: :menuitem, class: 'xlsx-download-link', id: 'download-invites-csv', data: { url: event_invite_individuals_path(resource, format: :csv) }
               li
-                = link_to 'Download as PDF', event_invite_individuals_path(resource, format: :pdf), role: :menuitem, class: 'xlsx-download-link', data: { url: event_invite_individuals_path(resource, format: :pdf) }
+                = link_to 'Download as PDF', event_invite_individuals_path(resource, format: :pdf), role: :menuitem, class: 'xlsx-download-link', id: 'download-invites-pdf', data: { url: event_invite_individuals_path(resource, format: :pdf) }
             - else
               li
                 = link_to 'Download as CSV', event_invites_path(resource, format: :csv), role: :menuitem, class: 'xlsx-download-link', data: { url: event_invites_path(resource, format: :csv) }

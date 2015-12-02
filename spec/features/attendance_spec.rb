@@ -36,7 +36,7 @@ feature 'Attendance', js: true, search: true do
 
     scenario 'can create and edit an invite when attendance display is set as Venue' do
       visit event_path(event)
-      create_invite account: 'Guillermitos Bar', invites: 12, type: 'venue'
+      create_invite account: 'Guillermitos Bar', invites: 12
 
       within '#invites-list' do
         expect(page).to have_content('Guillermitos Bar')
@@ -111,20 +111,43 @@ feature 'Attendance', js: true, search: true do
       create(:invite, venue: event.venue, event: event)
       visit event_path(event)
 
-      expect(page).to have_selector('#invites-list .resource-item')
+      within event_attendance_module do
+        expect(page).to_not have_selector('#invites-list .resource-item')
+        click_js_link 'by Venue'
+        expect(page).to have_selector('#invites-list .resource-item')
+      end
 
-      hover_and_click resource_item(1, list: '#invites-list'), 'Deactivate Attendance Record'
+      hover_and_click resource_item(1, list: '#invites-list'), 'Deactivate Invitation Record'
 
-      confirm_prompt 'Are you sure you want to deactivate this attendance record?'
+      confirm_prompt 'Are you sure you want to deactivate this invitation record?'
 
       expect(page).to have_no_selector('#invites-list .resource-item')
+    end
+
+    scenario 'can deactivate individual invites from the attendance table' do
+      invite = create :invite, venue: event.venue, event: event
+      create :invite_individual, invite: invite, first_name: 'Leonardo', last_name: 'DiCaprio'
+      visit event_path(event)
+
+      within event_attendance_module do
+        expect(page).to have_content 'Leonardo DiCaprio'
+      end
+
+      hover_and_click resource_item(1, list: '#invites-list'), 'Deactivate Invitation Record'
+
+      confirm_prompt 'Are you sure you want to deactivate this invitation record?'
+
+      within event_attendance_module do
+        expect(page).to have_content 'Leonardo DiCaprio'
+      end
     end
   end
 
   shared_examples_for 'a user that can download invites' do
     scenario 'can export as csv' do
       visit event_path(event)
-      create_invite account: 'Guillermitos Bar', invites: 12, type: 'venue'
+      create_invite account: 'Guillermitos Bar', invites: 12
+      change_attendance_display_by 'Venue'
 
       click_js_link 'Download'
       click_js_link 'Download as CSV'
@@ -133,8 +156,8 @@ feature 'Attendance', js: true, search: true do
 
       ensure_modal_was_closed
       expect(ListExport.last).to have_rows([
-        ['ACCOUNT', 'JAMESON LOCALS', 'TOP 100', 'INVITES', 'RSVPs', 'ATTENDEES'],
-        ['Guillermitos Bar', 'NO', 'NO', '12', '0', '0']
+        ['VENUEEVENT DATE', 'CAMPAIGN', 'INVITES', 'RSVPs', 'ATTENDEES'],
+        ['Guillermitos Bar', '2015-11-11 10:00', 'Campaign 1', '12', '0', '0']
       ])
     end
 
@@ -142,7 +165,7 @@ feature 'Attendance', js: true, search: true do
       campaign.update_attributes(modules: { 'attendance' => { 'field_type' => 'module', 'name' => 'attendance', 'settings' => { 'attendance_display' => '2' } } })
 
       visit event_path(event)
-      create_invite account: 'California', invites: 12, type: 'market'
+      create_invite account: 'California', invites: 12
 
       click_js_link 'Download'
       click_js_link 'Download individual to CSV'
@@ -161,7 +184,7 @@ feature 'Attendance', js: true, search: true do
       campaign.update_attributes(modules: { 'attendance' => { 'field_type' => 'module', 'name' => 'attendance', 'settings' => { 'attendance_display' => '2' } } })
 
       visit event_path(event)
-      create_invite account: 'California', invites: 12, type: 'market'
+      create_invite account: 'California', invites: 12
 
       click_js_link 'Download'
       click_js_link 'Download aggregate to CSV'
@@ -172,21 +195,6 @@ feature 'Attendance', js: true, search: true do
         %w(MARKET INVITES RSVPs ATTENDEES),
         %w(California 12 0 0)
       ])
-    end
-  end
-
-  feature 'admin user' do
-    let(:role) { create(:role, company: company) }
-
-    it_behaves_like 'a user that can create invites' do
-      before { area.places << place }
-      before { campaign.areas << area }
-    end
-
-    it_behaves_like 'a user that can deactivate invites'
-    it_behaves_like 'a user that can download invites' do
-      before { area.places << place }
-      before { campaign.areas << area }
     end
   end
 
@@ -223,22 +231,27 @@ feature 'Attendance', js: true, search: true do
     find '#event-attendance'
   end
 
-  def create_invite(account: nil, invites: 12, type: 'venue')
+  def change_attendance_display_by(mode)
+      within event_attendance_module do
+        click_js_link "by #{mode}"
+        expect(page).to have_selector 'a.active', text: "by #{mode}"
+      end
+  end
+
+  def create_invite(account: nil, invites: 12)
     Sunspot.commit
-    click_js_button 'Add Activity'
+    if page.has_button?('Add Invites')  # for the case of the blank state
+      click_js_button 'Add Invites'
+    else
+      click_js_button 'Create Invites'
+    end
     within visible_modal do
-      choose('Invitation')
+      expect(page).to have_content 'New Invitation'
+      click_js_link 'Venue Invitation'
+      fill_in '# Invites', with: invites
+      select_from_autocomplete 'Search for a place', account
       click_js_button 'Create'
     end
     ensure_modal_was_closed
-
-    select_from_autocomplete 'Search for a place', account if type == 'venue'
-    select_from_chosen account, from: 'Market' if type == 'market'
-    wait_for_ajax
-    fill_in '# Invites', with: invites
-    click_button 'Submit'
-
-    expect(page).to have_content('Thank You!')
-    click_link 'Finish'
   end
 end

@@ -1,3 +1,5 @@
 | $('#invites-list').html('#{j render(partial: "invites/table", locals: { parent: parent, }) }');
 | $('#attendance-group-by .active').toggleClass('active');
 | $('#attendance-group-by .by-venue').addClass('active');
+| $('#download-invites-csv').attr('href', '#{j url_for(action: :index, format: :csv)}').data('url', '#{j url_for(action: :index, format: :csv)}');
+| $('#download-invites-pdf').attr('href', '#{j url_for(action: :index, format: :pdf)}').data('url', '#{j url_for(action: :index, format: :pdf)}');

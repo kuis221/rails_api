@@ -3,4 +3,5 @@
   = render 'form_dialog'
 - else
   | $('.bootbox.modal').modal('hide');
-  | $('#invites-list').html('#{j render(partial: 'invites/invite', collection: parent.invites.active.joins(:place).order('places.name ASC'), locals: { parent: parent }) }');
+  = render partial: "#{parent.class.name.pluralize.underscore}/attendance", locals: { resource: parent }
+
