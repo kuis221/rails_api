@@ -35,7 +35,7 @@
 
     = f.input :description, input_html: { placeholder: 'Enter a short description of your event' }
 
-    = f.input :team_members, label: 'Event staff' do
+    = f.input :team_members, label: 'Event staff', wrapper_html: { class: 'chosen-choise-close' } do
       = f.select :team_members, current_company.team_member_options , {}, class: 'input-xlarge chosen-enabled', multiple: true, 'data-placeholder' => " "
 
   .form-actions
