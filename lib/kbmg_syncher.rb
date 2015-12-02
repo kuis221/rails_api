@@ -37,11 +37,16 @@ class KbmgSyncher
         total_pages = (response['Total'] / 1000).to_i + 1
         logger.debug "obtained #{response['Total']} for #{total_pages} pages"
         response['Data']['Events'].each do |kbmg_event|
-          events = search_events_in_campaign(campaign, kbmg_event)
+          kbmg_place = client.place(kbmg_event['RelatedPlace']['PlaceId'])
+          unless kbmg_place
+            logger.info "Couldn't fetch place #{kbmg_event['RelatedPlace']['PlaceId']}"
+            next
+          end
+          events = search_events_in_campaign(campaign, kbmg_event, kbmg_place)
           next unless events.count == 1
           event = events.first
           event.update_column(:kbmg_event_id, kbmg_event['EventId'])
-          synch_event_individuals event
+          synch_event_individuals event, kbmg_event, kbmg_place
         end
         page += 1
       else
@@ -52,17 +57,11 @@ class KbmgSyncher
 
   # Synch the RSVPs for a single event. As a requirement, the event's
   # kbmg_event_id attribute should be set to a valid KBMG's Event ID
-  def synch_event_individuals(event)
-    kbmg_event = client.event(event.kbmg_event_id)
-    logger.info "Couldn't fetch event #{event.kbmg_event_id}" unless kbmg_event
-    return unless kbmg_event
+  def synch_event_individuals(event, kbmg_event, kbmg_place)
     registrations = client.event_registrations(event.kbmg_event_id)
     logger.info 'Failed to fetch event registrations' unless registrations && registrations['Success']
     return unless registrations && registrations['Success']
 
-    kbmg_place = client.place(kbmg_event['RelatedPlace']['PlaceId'])
-    logger.info "Couldn't fetch place #{kbmg_event['RelatedPlace']['PlaceId']}" unless kbmg_place
-    return unless kbmg_place
     place =  place_match(kbmg_place)
     unless place.persisted?
       logger.info "Couldn't create #{place.errors.inspect}"
@@ -135,9 +134,9 @@ class KbmgSyncher
 
   # Search for a campaign event by looking for the start date. Returns
   # an Active Record collection with all events found
-  def search_events_in_campaign(campaign, kbmg_event)
+  def search_events_in_campaign(campaign, kbmg_event, kbmg_place)
     date = Timeliness.parse(kbmg_event['StartDate'], format: 'yyyy-mm-ddThh:nn:ss', zone: :utc)
-    campaign.events.where(local_start_at: date.beginning_of_day..date.end_of_day)
+    campaign.events.joins(:place).where(local_start_at: date.beginning_of_day..date.end_of_day, places: { city: kbmg_place['City']})
   end
 
   def valid_campaign_api_key?

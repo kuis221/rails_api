@@ -9,6 +9,9 @@ describe KbmgSyncher do
            modules: { 'attendance' => { 'settings' => module_settings } })
   end
 
+  let(:place1) { create :place, city: 'Los Angeles', state: 'California' }
+  let(:place2) { create :place, city: 'Breckenridge', state: 'Colorado' }
+
   describe 'synch' do
     let(:subject) { described_class }
 
@@ -73,7 +76,7 @@ describe KbmgSyncher do
               {  'StartDate' => '2015-01-01T12:00:00', 'EventId' => 'EVNT1',
                  'RelatedPlace' => { 'PlaceId' => 'PLACE1' } },
               {  'StartDate' => '2015-01-02T12:00:00', 'EventId' => 'EVNT2',
-                 'RelatedPlace' => { 'PlaceId' => 'PLACE1' } }
+                 'RelatedPlace' => { 'PlaceId' => 'PLACE2' } }
             ] } }
           end
 
@@ -84,7 +87,7 @@ describe KbmgSyncher do
 
           stub_api_data :event, 'EVNT2' do
             { 'StartDate' => '2015-01-02T12:00:00', 'EventId' => 'EVNT2',
-              'RelatedPlace' => { 'PlaceId' => 'PLACE1' } }
+              'RelatedPlace' => { 'PlaceId' => 'PLACE2' } }
           end
 
           stub_api_data :place, 'PLACE1' do
@@ -93,6 +96,14 @@ describe KbmgSyncher do
               'Name' => 'Bar None', 'AddressLine1' => '1233 Union Street',
               'ProvinceCode' => 'CA',
               'ProvinceName' => 'California', 'PostalCode' => '12233' }
+          end
+
+          stub_api_data :place, 'PLACE2' do
+            { 'City' => 'Breckenridge', 'MajorMarket' => 'Some Market',
+              'CountryName' => 'United States', 'CountryCode' => 'US',
+              'Name' => 'Bar None', 'AddressLine1' => '1233 Union Street',
+              'ProvinceCode' => 'CO',
+              'ProvinceName' => 'Colorado', 'PostalCode' => '80424' }
           end
 
           stub_api_data :event_registrations, 'EVNT1' do
@@ -123,9 +134,9 @@ describe KbmgSyncher do
         end
 
         it 'synchs the data for the events' do
-          event1 = create(:event, campaign: campaign, start_date: '01/01/2015', end_date: '01/01/2015')
-          event2 = create(:event, campaign: campaign, start_date: '01/02/2015', end_date: '01/02/2015')
-          create :place, name: 'Bar None', state: 'California', zipcode: '12233', street_number: '1233', route: 'tnion Street'
+          event1 = create(:event, campaign: campaign, start_date: '01/01/2015', place: place1, end_date: '01/01/2015')
+          event2 = create(:event, campaign: campaign, start_date: '01/02/2015', place: place2, end_date: '01/02/2015')
+          create :place, name: 'Bar None', state: 'California', zipcode: '12233', street_number: '1233', route: 'Union Street'
 
           expect do
             expect do
@@ -133,28 +144,45 @@ describe KbmgSyncher do
                 subject.process
               end.to change(Invite, :count).by(2)
             end.to change(InviteIndividual, :count).by(4) # Two per event
-          end.to change(Venue, :count).by(1)
+          end.to change(Venue, :count).by(2)
 
           expect(event1.reload.kbmg_event_id).to eql 'EVNT1'
           expect(Invite.pluck(:rsvps_count, :attendees, :invitees)).to match_array([
             [0, 1, 2], [1, 1, 2]
           ])
-          expect(Invite.all.map(&:venue).uniq).to eql [Venue.last]
+          expect(Invite.all.map(&:venue).uniq).to match_array Venue.last(2)
         end
 
-        it 'creates the place if a good match cannot be found' do
-          event1 = create(:event, campaign: campaign, start_date: '01/01/2015', end_date: '01/01/2015')
-          event2 = create(:event, campaign: campaign, start_date: '01/02/2015', end_date: '01/02/2015')
+        it 'correctly finds the event based on the place\'s city' do
+          # Create two events in the same date but different city, only one
+          # should get synched since start date + city matches the one from
+          # the API
+          event1 = create(:event, campaign: campaign, start_date: '01/01/2015', place: place1, end_date: '01/01/2015')
+          event2 = create(:event, campaign: campaign, start_date: '01/01/2015', place: place2, end_date: '01/01/2015')
+          expect do
+            expect do
+              expect do
+                subject.process
+              end.to change(Invite, :count).by(1)
+            end.to change(InviteIndividual, :count).by(2) # Two per event
+          end.to change(Venue, :count).by(1)
+        end
+
+        pending 'creates the place if a good match cannot be found' do
+          # This should be implemented when making it to assign the correct
+          # venue to each individual invite
+          event1 = create(:event, campaign: campaign, place: place1, start_date: '01/01/2015', end_date: '01/01/2015')
+          event2 = create(:event, campaign: campaign, place: place2, start_date: '01/02/2015', end_date: '01/02/2015')
 
           expect do
             subject.process
-          end.to change(Place, :count).by(1)
+          end.to change(Place, :count).by(2)
 
           expect(event1.reload.kbmg_event_id).to eql 'EVNT1'
           expect(Invite.pluck(:rsvps_count, :attendees, :invitees)).to match_array([
             [0, 1, 2], [1, 1, 2]
           ])
-          expect(Invite.all.map(&:venue).uniq).to eql [Venue.last]
+          expect(Invite.all.map(&:venue).uniq).to match_array Venue.last(2)
           place = Place.last
           expect(place.name).to eql 'Bar None'
           expect(place.formatted_address).to eql '1233 Union Street, Los Angeles, CA, United States'
