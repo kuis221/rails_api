@@ -39,9 +39,10 @@ class InviteIndividual < ActiveRecord::Base
            :jameson_locals?, :top_venue?, :event, :area,
            to: :invite
 
-  scope :active, -> { where active: true }
+  scope :active, -> { joins(:invite).where(active: true, invites: { active: true }) }
 
-  after_create :increase_invite_counters
+  after_create :increment_invite_counters
+  after_update :update_invite_counters
 
   def self.left_join_with_places
     joins(:invite)
@@ -97,9 +98,20 @@ class InviteIndividual < ActiveRecord::Base
     id
   end
 
-  def increase_invite_counters
+  def increment_invite_counters
     invite.increment! :invitees
     invite.increment! :rsvps_count if rsvpd?
     invite.increment! :attendees if attended?
+  end
+
+  def update_invite_counters
+    if active_changed?
+      invite.increment!(:rsvps_count, -1) if rsvpd?
+      invite.increment!(:attendees, -1) if attended?
+      invite.increment!(:invitees, -1)
+    else
+      invite.increment!(:rsvps_count, rsvpd? ? 1 : -1) if rsvpd_changed?
+      invite.increment!(:attendees, attended? ? 1 : -1) if attended_changed?
+    end
   end
 end

@@ -49,9 +49,6 @@ Styleguide 4.1.5
 		width: calc(100% - 1px);
     border: 1px solid #C0C0C0;
 		th {
-      &:last-child {
-        border-right: 1px solid #C0C0C0;
-      }
       font-size: 12px;
       &.actions {
         width: 50px;
@@ -59,7 +56,7 @@ Styleguide 4.1.5
     }
 		td a {
 			text-decoration: underline;
-	  	}
+    }
 		.resource-item .resource-item-actions {
 			padding-top: 0;
 			width: 50px;
@@ -203,6 +200,9 @@ Styleguide 4.1.5
 			margin-bottom: 0;
 		}
 	}
+  thead .resource-item:hover {
+    background-color: transparent;
+  }
 	.special-icon {
 		margin-right: 10px;
 	}

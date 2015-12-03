@@ -1,7 +1,7 @@
 - items = parent.invite_individuals.active.left_join_with_places.includes(invite: :place).order('places.name ASC')
 table.table
   thead
-    tr 
+    tr.resource-item 
       th Name
       th Venue
       th Email

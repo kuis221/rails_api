@@ -28,5 +28,62 @@
 require 'rails_helper'
 
 RSpec.describe InviteIndividual, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  let(:event) { create :event }
+  describe 'callbacks' do
+    describe 'after_create' do
+      it "must increment invite's counters" do
+        invite = create :invite, event: event, invitees: 0, rsvps_count: 0, attendees: 0
+        create :invite_individual, invite: invite, attended: true, rsvpd: true
+        expect(invite.reload.invitees).to eql 1
+        expect(invite.attendees).to eql 1
+        expect(invite.rsvps_count).to eql 1
+
+        create :invite_individual, invite: invite, attended: false, rsvpd: true
+        expect(invite.reload.invitees).to eql 2
+        expect(invite.attendees).to eql 1
+        expect(invite.rsvps_count).to eql 2
+
+        create :invite_individual, invite: invite, attended: false, rsvpd: false
+        expect(invite.reload.invitees).to eql 3
+        expect(invite.attendees).to eql 1
+        expect(invite.rsvps_count).to eql 2
+      end
+    end
+
+    describe 'after_update' do
+      it "must update invite's counters" do
+        invite = create :invite, event: event, invitees: 10, rsvps_count: 10, attendees: 10
+        individual = create :invite_individual, invite: invite, attended: true, rsvpd: true
+        expect(invite.reload.invitees).to eql 11
+        expect(invite.attendees).to eql 11
+        expect(invite.rsvps_count).to eql 11
+
+        individual.update_attributes attended: false, rsvpd: true
+        expect(invite.reload.invitees).to eql 11
+        expect(invite.attendees).to eql 10
+        expect(invite.rsvps_count).to eql 11
+
+        individual.update_attributes rsvpd: false
+        expect(invite.reload.invitees).to eql 11
+        expect(invite.attendees).to eql 10
+        expect(invite.rsvps_count).to eql 10
+      end
+    end
+
+    describe 'on deactivate' do
+      it 'updates the invite counters' do
+        invite = create :invite, event: event, invitees: 10, rsvps_count: 10, attendees: 10
+        individual = create :invite_individual, invite: invite, attended: true, rsvpd: true
+        expect(invite.reload.invitees).to eql 11
+        expect(invite.attendees).to eql 11
+        expect(invite.rsvps_count).to eql 11
+
+        individual.deactivate!
+
+        expect(invite.reload.invitees).to eql 10
+        expect(invite.attendees).to eql 10
+        expect(invite.rsvps_count).to eql 10
+      end
+    end
+  end
 end

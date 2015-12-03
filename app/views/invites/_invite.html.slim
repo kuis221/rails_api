@@ -1,9 +1,9 @@
 tr.resource-item.invite id="invite_#{invite.id}"
-  - if parent.is_a?(Venue)
-    td
+  td
+    - if parent.is_a?(Venue)
       = "#{invite.campaign_name}, #{invite.event.start_at.strftime('%B %d at %l:%M %p')}".html_safe
-  - else
-    td= invite.place_name
+    - else
+      = invite.place_name
   td= editable_invite_attribute parent, invite, :invitees
   td= editable_invite_attribute parent, invite, :rsvps_count
   td= editable_invite_attribute parent, invite, :attendees
