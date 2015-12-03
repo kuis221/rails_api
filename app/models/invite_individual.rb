@@ -57,6 +57,14 @@ class InviteIndividual < ActiveRecord::Base
     [first_name, last_name].compact.join ' '
   end
 
+  def activate!
+    update_attribute :active, true
+  end
+
+  def deactivate!
+    update_attribute :active, false
+  end
+
   def self.without_locations
     joins('LEFT JOIN zipcode_locations zl ON zl.zipcode=invite_rsvps.zip_code')
       .where('zl.zipcode IS NULL')
