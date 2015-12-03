@@ -1,0 +1,9 @@
+= content_for :pdf_scripts
+  javascript:
+    window.status='loading';
+    jQuery(function(){
+		  $("input:checkbox, input:radio").not('[data-no-uniform="true"], #uniform-is-ajax, .bs-checkbox').uniform();
+      window.status='completed';
+    });
+h5 ATTENDANCE
+= render 'table'
