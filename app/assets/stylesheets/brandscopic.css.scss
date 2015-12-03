@@ -7721,7 +7721,13 @@ form.button_to .button-with-icon {
   .popover-content {
     width: 100px;
     input {
+      &:hover {
+        margin: 0;
+        padding:0;
+      }
       margin: 0;
+      padding:0;
+      text-align: center;
     }
     .icon-plus-sign, .icon-minus-rounded {
       font-size: 22px;

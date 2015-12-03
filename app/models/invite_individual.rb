@@ -43,6 +43,12 @@ class InviteIndividual < ActiveRecord::Base
 
   after_create :increase_invite_counters
 
+  def self.left_join_with_places
+    joins(:invite)
+      .joins('LEFT JOIN venues ON venues.id=invites.venue_id')
+      .joins('LEFT JOIN places ON places.id=venues.place_id')
+  end
+
   def self.for_event(event)
     where(invite: event.invites)
   end

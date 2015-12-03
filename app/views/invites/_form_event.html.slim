@@ -6,6 +6,6 @@
   = render partial: 'form_invite_counters', locals: { f: f }
 
   .form-actions
-    = f.button :submit, class: 'btn btn-primary', data: { disable_with: 'Please wait...' }
+    = f.button :submit, 'Invite Attendees', class: 'btn btn-primary', data: { disable_with: 'Please wait...' }
     = "&nbsp;".html_safe
     = f.button :button, 'Cancel', class: 'btn btn-cancel'

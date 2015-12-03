@@ -7,14 +7,14 @@
         = f.input :last_name, id: :individual_invite_last_name
     .row-fluid.google-places
       = fi.error :place
-      = fi.input :place_reference, as: :location, required: true, label: 'Venue', input_html: { id: 'individual_place_location', display_value: params[:place_reference_display_name] || resource.invite.place_name_with_location, placeholder: 'Search for venues...' }
-      = f.input :email, id: :individual_invite_email
+      = fi.input :place_reference, as: :location, required: true, label: 'Venue', input_html: { id: 'individual_place_location', display_value: params[:place_reference_display_name] || resource.invite.place_name_with_location, placeholder: 'Search for a venue...' }
+      = f.input :email, id: :individual_invite_email, input_html: { placeholder: 'Type invitee\'s email address...' }
     - if resource.persisted?
       .row-fluid
         .span3= f.input :rsvpd, as: :boolean, label: false, inline_label: true
         .span3= f.input :attended, as: :boolean, label: false, inline_label: true
 
     .form-actions
-      = f.button :submit, class: 'btn btn-primary', data: { disable_with: 'Please wait...' }
+      = f.button :submit, 'Send Invitation', class: 'btn btn-primary', data: { disable_with: 'Please wait...' }
       = "&nbsp;".html_safe
       = f.button :button, 'Cancel', class: 'btn btn-cancel'
