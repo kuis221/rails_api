@@ -4,9 +4,10 @@
 
   - if resource.persisted?
     .span3
+      = f.input :rsvps_count, required: true,\
+                input_html: { placeholder: 'Number of RSVPs' }
+
+    .span3
       = f.input :attendees, required: true,\
                 input_html: { placeholder: 'Number of attendees' }
 
-    .span3
-      = f.input :rsvps_count, required: true,\
-                input_html: { placeholder: 'Number of RSVPs' }

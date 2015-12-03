@@ -7,7 +7,7 @@
         = f.input :last_name, id: :individual_invite_last_name
     .row-fluid.google-places
       = fi.error :place
-      = fi.input :place_reference, as: :location, required: true, label: 'Venue', input_html: { id: 'individual_place_location', display_value: params[:place_reference_display_name] || resource.invite.place_name_with_location, placeholder: 'Search for venues' }
+      = fi.input :place_reference, as: :location, required: true, label: 'Venue', input_html: { id: 'individual_place_location', display_value: params[:place_reference_display_name] || resource.invite.place_name_with_location, placeholder: 'Search for venues...' }
       = f.input :email, id: :individual_invite_email
     - if resource.persisted?
       .row-fluid

@@ -11,6 +11,6 @@ class LocationInput < SimpleForm::Inputs::Base
                                id: "#{hidden_id}_ac",
                                value: input_html_options[:display_value],
                                class:   "places-autocomplete #{input_html_options[:class].join(' ')}",
-                               placeholder: 'Search for a place')).html_safe
+                               placeholder: (input_html_options[:placeholder] || 'Search for a place'))).html_safe
   end
 end

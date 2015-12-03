@@ -2,10 +2,14 @@
 table.table
   thead
     tr 
-      th Venue
+      - if parent.is_a?(Venue)
+        th Event
+      - else
+        th Venue
       th Invites
       th RSVPs
       th Attendees
       th.actions
+        = "&nbsp;".html_safe
   tbody
     = render partial: "invites/invite", collection: items, as: :invite, locals: { parent: parent }

@@ -1,7 +1,7 @@
 = simple_form_for([parent, resource], remote: true) do |f|
   .row-fluid.google-places
     = f.error :place
-    = f.input :place_reference, :as => :location, required: true, label: 'Venue', input_html: { display_value: params[:place_reference_display_name] || resource.place_name_with_location, placeholder: 'Search for venues' }
+    = f.input :place_reference, :as => :location, required: true, label: 'Venue', input_html: { display_value: params[:place_reference_display_name] || resource.place_name_with_location, placeholder: 'Search for a venue...' }
 
   = render partial: 'form_invite_counters', locals: { f: f }
 

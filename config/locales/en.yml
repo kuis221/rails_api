@@ -30,11 +30,13 @@ en:
       contact:
         company_name: 'Company'
       invite:
-        invitees: '# Invites'
-        rsvps_count: '# RSVPs'
-        attendees: '# Attendes'
+        invitees: 'Invites'
+        rsvps_count: 'RSVPs'
+        attendees: 'Attendees'
       invite_individual:
         rsvpd: "RSVP'd"
+        first_name: 'First Name'
+        last_name: 'Last Name'
   time:
     formats:
       default: '%m/%d/%Y %H:%M:%S'

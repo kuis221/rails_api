@@ -47,9 +47,16 @@ Styleguide 4.1.5
 	overflow: hidden;
 	& .table {
 		width: calc(100% - 1px);
-		th.actions {
-			width: 50px;
-		}
+    border: 1px solid #C0C0C0;
+		th {
+      &:last-child {
+        border-right: 1px solid #C0C0C0;
+      }
+      font-size: 12px;
+      &.actions {
+        width: 50px;
+      }
+    }
 		td a {
 			text-decoration: underline;
 	  	}
