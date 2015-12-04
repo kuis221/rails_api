@@ -94,7 +94,6 @@ class KbmgSyncher
       address_line_2: person['AddressLine2'],
       province_code: person['ProvinceCode'],
       country_code: person['CountryCode'],
-      address_line_2: person['AddressLine2'],
       zip_code: person['PostalCode'],
       date_of_birth: person['DateOfBirth'],
       date_added: person['CreatedDate'],
