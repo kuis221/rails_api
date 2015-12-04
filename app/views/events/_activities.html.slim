@@ -1,7 +1,7 @@
 #activities-container
   h5.module-title ACTIVITIES
   - if resource.activities.active.any?
-    - if can?(:create, Activity) || can?(:create_invite, resource)
+    - if can?(:create, Activity)
       = button_to 'New Activity', new_event_activity_path(resource, phase: presenter.current_phase, return: return_path), method: :get, remote: true, class: 'btn btn-primary', data: { disable_with: 'Please wait...' }, title: 'New Activity'
 
     #activities-list.resource-list
