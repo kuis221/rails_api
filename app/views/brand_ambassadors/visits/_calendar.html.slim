@@ -31,6 +31,10 @@ javascript:
             window.loadingVisits = true;
             if ($('#collection-list-filters').length > 0) {
               data = $('#collection-list-filters').filteredList('selectCalendarDates', start.toDate(), end.toDate()).filteredList('paramsQueryString');
+              if (data.indexOf("start_date") < 0 || data.indexOf("end_date") < 0) {
+                if (data != '') data += '&'
+                data += 'start_date[]='+start.utc().format('MM/DD/YYYY')+'&end_date[]='+end.utc().format('MM/DD/YYYY');
+              }
             } else {
               data = '#{j params.except(:start_date, :end_date).to_query.html_safe}&start_date[]='+start.utc().format('MM/DD/YYYY')+'&end_date[]='+end.utc().format('MM/DD/YYYY');
             }
