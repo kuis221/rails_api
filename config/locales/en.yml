@@ -297,6 +297,10 @@ en:
       venue:
         activities: 'No Activities have been added to this venue.'
         events: 'No Events have been added to this venue.'
+        invites: 
+          any: 'No Invites have been added to this venue.'
+          individual: 'No Individual Invites have been added to this venue.'
+          venue: 'No Venue Invites have been added to this venue.'
       company_users:
         places: 'No Places have been assigned to this user.'
       areas:
