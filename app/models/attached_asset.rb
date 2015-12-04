@@ -73,6 +73,7 @@ class AttachedAsset < ActiveRecord::Base
   after_commit :queue_processing, on: [:create, :update]
   after_save :update_active_photos_count, if: -> { attachable.is_a?(Event) && self.photo? }
   after_destroy :update_active_photos_count, if: -> { attachable.is_a?(Event) && self.photo? }
+  after_destroy :delete_queued_process
   after_update :rename_existing_file, if: :processed?
   before_post_process :post_process_required?
 
@@ -291,6 +292,18 @@ class AttachedAsset < ActiveRecord::Base
       transfer_and_cleanup
     end
     true
+  end
+
+  # Delete associated queued process
+  def delete_queued_process
+    return unless queued?
+
+    queue = Sidekiq::Queue.new('upload')
+    queue.each do |job|
+      next unless job.args.include? id
+      job.delete
+      break
+    end
   end
 
   def max_event_photos

@@ -20,10 +20,11 @@
             - else
               = rf.input :value, result.form_field.field_options(result)
             = rf.input :form_field_id, as: :hidden, wrapper: false
-
 = content_for :pdf_scripts
-  = wicked_pdf_javascript_include_tag "application"
   javascript:
+    jQuery(function(){
+      $("input:checkbox, input:radio").not('[data-no-uniform="true"], #uniform-is-ajax, .bs-checkbox').uniform();
+    });
     $(window).ready(function(){
       function autoHeightTextArea(a) {
           if (!$(a).prop('scrollTop')) {
