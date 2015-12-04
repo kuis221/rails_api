@@ -207,6 +207,12 @@ jQuery ->
 
 		$("abbr.timeago").timeago();
 
+		for table in $("table.js-sortable").get()
+			return if $(table).data('stupidtable')
+			$(table).stupidtable()
+			$('th.default-sort', table).stupidsort('asc')
+
+
 		updateCalculationTotals()
 
 	window.smoothScrollTo = (element, link) ->

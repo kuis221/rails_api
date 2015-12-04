@@ -1,15 +1,15 @@
 - items = parent.invites.active.joins(:place).includes(:place).order('places.name ASC')
-table.table
+table.table.js-sortable
   thead
     tr.resource-item
-      th
+      th.default-sort data-sort="string"
         - if parent.is_a?(Venue)
           | Event
         - else
           | Venue
-      th Invites
-      th RSVPs
-      th Attendees
+      th data-sort="int" Invites
+      th data-sort="int" RSVPs
+      th data-sort="int" Attendees
       th.actions
   tbody
     = render partial: "invites/invite", collection: items, as: :invite, locals: { parent: parent }

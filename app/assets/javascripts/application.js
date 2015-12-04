@@ -51,6 +51,7 @@
 //= require jquery.jscrollpane
 //= require jquery.dragtable
 //= require jquery.timeago
+//= require stupidtable.js
 //= require scrollMultiSpy
 //= require markerclusterer
 //= require select2

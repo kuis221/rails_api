@@ -8,8 +8,8 @@ tr.resource-item.invite id="invite_individual_#{invite_individual.id}"
   - else
     td= invite_individual.invite.place_name
   td= invite_individual.email
-  td= editable_invite_checkbox parent, invite_individual, :rsvpd
-  td= editable_invite_checkbox parent, invite_individual, :attended
+  td data-sort-value="#{invite_individual.rsvpd ? 1 : 0}" = editable_invite_checkbox parent, invite_individual, :rsvpd
+  td data-sort-value="#{invite_individual.attended ? 1 : 0}" = editable_invite_checkbox parent, invite_individual, :attended
 
   td
     .resource-item-actions
