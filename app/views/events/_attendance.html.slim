@@ -1,6 +1,6 @@
 - group_by ||= 'individual'
-- if resource.invites.active.any?
-  #resource-invites-list
+#resource-invites-list
+  - if resource.invites.active.any?
     .row-fluid
       .span4
         h5.module-title ATTENDANCE
@@ -26,16 +26,18 @@
                 = link_to 'Download as PDF', event_invites_path(resource, format: :pdf), role: :menuitem, class: 'xlsx-download-link', data: { url: event_invites_path(resource, format: :pdf) }
       
 
-    - if can?(:create_invite, resource)
-      = button_to 'Create Invites', new_event_invite_path(resource, phase: presenter.current_phase, return: return_path), method: :get, remote: true, class: 'btn btn-primary', data: { disable_with: 'Please wait...' }, title: 'Create Invites'
+    - if (group_by == 'venue' && resource.invites.joins(:venue).active.any?) || (group_by == 'individual' && resource.invite_individuals.active.any?)  
+      - if can?(:create_invite, resource)
+        = button_to 'Create Invites', new_event_invite_path(resource, phase: presenter.current_phase, return: return_path), method: :get, remote: true, class: 'btn btn-primary', data: { disable_with: 'Please wait...' }, title: 'Create Invites'
   
-    #invites-list.resource-list
-      - if group_by == 'venue'
-        = render partial: "invites/table", locals: { parent: resource }
-      - else
-        = render partial: "invite_individuals/table", locals: { parent: resource }
-- else
-  h5.module-title ATTENDANCE
-  = blank_state_module('event.invites') do
-    = button_to 'Add Invites', new_event_invite_path(resource, phase: presenter.current_phase, return: return_path), method: :get, remote: true, disable_with: 'Please wait...', class: 'btn btn-primary', data: { disable_with: 'Please wait...' }, title: 'Add Invites'
+      #invites-list.resource-list
+        = render partial: "invite#{'_individual' if group_by == 'individual'}s/table", locals: { parent: resource }
+    - else
+      = blank_state_module("event.invites.#{group_by}") do
+        = button_to 'Add Invites', new_event_invite_path(resource, phase: presenter.current_phase, return: return_path, group_by: group_by), method: :get, remote: true, disable_with: 'Please wait...', class: 'btn btn-primary', data: { disable_with: 'Please wait...' }, title: 'Add Invites'
+
+  - else
+    h5.module-title ATTENDANCE
+    = blank_state_module('event.invites.any') do
+      = button_to 'Add Invites', new_event_invite_path(resource, phase: presenter.current_phase, return: return_path, group_by: group_by), method: :get, remote: true, disable_with: 'Please wait...', class: 'btn btn-primary', data: { disable_with: 'Please wait...' }, title: 'Add Invites'
 

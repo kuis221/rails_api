@@ -1,4 +1,5 @@
 = simple_form_for [parent, resource], html: { class: 'individual_invite_form' },  remote: true do |f|
+  = hidden_field_tag :group_by, params[:group_by]
   = f.fields_for :invite do |fi|
     .individual-name
       .first-name

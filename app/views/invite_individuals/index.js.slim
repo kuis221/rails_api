@@ -1,5 +1,3 @@
-| $('#invites-list').html('#{j render(partial: "invite_individuals/table", locals: { parent: parent }) }');
-| $('#attendance-group-by .active').toggleClass('active');
-| $('#attendance-group-by .by-individual').addClass('active');
+| $('#resource-invites-list').replaceWith('#{j render(partial: "#{parent.class.name.pluralize.underscore}/attendance", locals: { resource: parent, group_by: 'individual', presenter: present(parent) }, formats: [:html]) }');
 | $('#download-invites-csv').data('url', '#{j url_for(action: :index, format: :csv)}');
 | $('#download-invites-pdf').data('url', '#{j url_for(action: :index, format: :pdf)}');

@@ -3,4 +3,4 @@
   = render 'form_dialog'
 - else
   | $('.bootbox.modal').modal('hide');
-  = render partial: "#{parent.class.name.pluralize.underscore}/attendance", locals: { resource: parent }
+  = render template: "invite#{'_individual' unless params[:group_by] == 'venue'}s/index"

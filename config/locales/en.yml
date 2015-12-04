@@ -286,7 +286,10 @@ en:
         contacts: 'No Contacts have been added to this event.'
         team_members: 'No Team Members have been added to this event.'
         activities: 'No Activities have been added to this event.'
-        invites: 'No Invites have been added to this event.'
+        invites: 
+          any: 'No Invites have been added to this event.'
+          individual: 'No Individual Invites have been added to this event.'
+          venue: 'No Venue Invites have been added to this event.'
         comments: 'No Consumer Comments have been added to this event.'
         expenses: 'No Expenses have been added to this event.'
         tasks: 'No Tasks have been added to this event.'
