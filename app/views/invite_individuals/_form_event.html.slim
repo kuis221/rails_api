@@ -16,6 +16,6 @@
         .span3= f.input :attended, as: :boolean, label: false, inline_label: true
 
     .form-actions
-      = f.button :submit, 'Send Invitation', class: 'btn btn-primary', data: { disable_with: 'Please wait...' }
+      = f.button :submit, class: 'btn btn-primary', data: { disable_with: 'Please wait...' }
       = "&nbsp;".html_safe
       = f.button :button, 'Cancel', class: 'btn btn-cancel'

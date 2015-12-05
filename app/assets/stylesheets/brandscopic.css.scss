@@ -7714,6 +7714,22 @@ form.button_to .button-with-icon {
 }
 
 #resource-invites-list {
+  #attendance-group-by {
+    .btn {
+      width: 140px;
+    }
+  }
+  table {
+    th.text-center {
+      text-align: center;
+    }
+    .rsvpd {
+      width: 60px;
+    }
+    .attended {
+      width: 60px;
+    }
+  }
   .invite-editable-attribute {
     text-decoration: underline;
     cursor: pointer;

@@ -1,13 +1,13 @@
 .row-fluid
   .span3
-    = f.input :invitees, input_html: { placeholder: 'Number of invitees' }
+    = f.input :invitees, as: :counter, input_html: { placeholder: 'Number of invitees' }
 
   - if resource.persisted?
     .span3
-      = f.input :rsvps_count, required: true,\
+      = f.input :rsvps_count, as: :counter, required: true,\
                 input_html: { placeholder: 'Number of RSVPs' }
 
     .span3
-      = f.input :attendees, required: true,\
+      = f.input :attendees, as: :counter, required: true,\
                 input_html: { placeholder: 'Number of attendees' }
 

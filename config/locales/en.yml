@@ -46,6 +46,13 @@ en:
     submit:
       create: "Create"
       update: "Save"
+      invite:
+        create: "Invite Attendees"
+        update: "Save"
+      invite_individual:
+        create: "Send Invitation"
+        update: "Save"
+        
 
   flash_email_confirmation: 'A confirmation email was sent to %{email}. Your email will not be changed until you complete this step.'
 

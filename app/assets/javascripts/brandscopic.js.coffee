@@ -208,7 +208,7 @@ jQuery ->
 		$("abbr.timeago").timeago();
 
 		for table in $("table.js-sortable").get()
-			return if $(table).data('stupidtable')
+			return if $(table).data('sortFns')
 			$(table).stupidtable()
 			$('th.default-sort', table).stupidsort('asc')
 
@@ -378,6 +378,14 @@ jQuery ->
 	$(document).on 'submit', "form", validateForm
 	$(document).on 'ajax:before', "form", validateForm
 
+	$(document).on 'click', '.counter-input-grp button', (e) ->
+		e.preventDefault();
+		input = $(this).closest('.counter-input-grp').find('input')
+		if $(this).hasClass('increase')
+			input.val eval(input.val() + ' + ' + 1)
+		else
+			input.val eval(input.val() + ' - ' + 1)
+		input.change()
 
 	$(document).off('click.newFeature').on 'click.newFeature', '.new-feature .btn-dismiss-alert', () ->
 		alert = $(this).closest('.new-feature')
