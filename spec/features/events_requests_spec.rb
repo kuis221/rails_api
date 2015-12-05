@@ -1252,6 +1252,32 @@ feature 'Events section' do
         end
       end
 
+      scenario 'allows to remove users and teams from the event staff', js: true do
+        user = create(:user, first_name: 'Pablo', last_name: 'Baltodano', company_id: company.id)
+        team = create(:team, name: 'Team 1', company: company)
+        create(:membership, company_user: user.company_users.first, memberable: event)
+        create(:teaming, team: team, teamable: event)
+        Sunspot.commit
+
+        visit event_path(event)
+
+        # Test the user and the team are present in the list of the event staff, remove them
+        within staff_list do
+          expect(page).to have_content('Pablo Baltodano')
+          expect(page).to have_content('Team 1')
+          click_js_link 'Remove User'
+          click_js_link 'Remove Team'
+          expect(page).to_not have_content('Pablo Baltodano')
+          expect(page).to_not have_content('Team 1')
+        end
+
+        # Refresh the page and make sure the user and the team are not there
+        visit event_path(event)
+
+        expect(page).to_not have_content('Pablo Baltodano')
+        expect(page).to_not have_content('Team 1')
+      end
+
       scenario 'allows to add a user as contact to the event', js: true do
         create(:user, first_name: 'Pablo', last_name: 'Baltodano',
                       email: 'palinair@gmail.com', company_id: company.id,
@@ -1531,6 +1557,10 @@ feature 'Events section' do
 
   def contact_list
     '#event-contacts-list'
+  end
+
+  def staff_list
+    '#event-team-members'
   end
 
   def tracker_bar
