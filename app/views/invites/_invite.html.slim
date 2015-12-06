@@ -4,9 +4,12 @@ tr.resource-item.invite id="invite_#{invite.id}"
       = "#{invite.campaign_name}, #{invite.event.start_at.strftime('%B %d at %l:%M %p')}".html_safe
     - else
       = invite.place_name
-  td= editable_invite_attribute parent, invite, :invitees
-  td= editable_invite_attribute parent, invite, :rsvps_count
-  td= editable_invite_attribute parent, invite, :attendees
+  td.invitees
+    .text-center= editable_invite_attribute parent, invite, :invitees
+  td.rsvps_count
+    .text-center= editable_invite_attribute parent, invite, :rsvps_count
+  td.attendees
+    .text-center= editable_invite_attribute parent, invite, :attendees
 
   td
     .resource-item-actions

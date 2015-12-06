@@ -7,9 +7,9 @@ table.table.js-sortable
           | Event
         - else
           | Venue
-      th data-sort="int" Invites
-      th data-sort="int" RSVPs
-      th data-sort="int" Attendees
+      th.text-center data-sort="int" Invites
+      th.text-center data-sort="int" RSVPs
+      th.text-center data-sort="int" Attendees
       th.actions
   tbody
     = render partial: "invites/invite", collection: items, as: :invite, locals: { parent: parent }

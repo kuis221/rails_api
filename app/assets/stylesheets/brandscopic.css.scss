@@ -7729,6 +7729,9 @@ form.button_to .button-with-icon {
     .attended {
       width: 60px;
     }
+    .invitees, .rsvps_count, .attendees {
+      width: 15%;
+    }
   }
   .invite-editable-attribute {
     text-decoration: underline;
