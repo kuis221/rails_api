@@ -2,11 +2,10 @@
 table.table.js-sortable
   thead
     tr.resource-item
-      th.default-sort data-sort="string"
-        - if parent.is_a?(Venue)
-          | Event
-        - else
-          | Venue
+      - if parent.is_a?(Venue)
+        th.default-sort data-sort="string" Campaign
+        th data-sort="string"  Event date
+      th data-sort="string" Venue
       th.text-center data-sort="int" Invites
       th.text-center data-sort="int" RSVPs
       th.text-center data-sort="int" Attendees

@@ -1,43 +1,26 @@
-- group_by ||= 'individual'
 #resource-invites-list.details_box
+  h5.module-title ATTENDANCE
   - if resource.invites.active.any?
     .row-fluid
-      .span4
-        h5.module-title ATTENDANCE
-      .span4.text-center
-        #attendance-group-by.btn-group data-toggle="buttons-radio"
-          a.btn.by-individual href="#{venue_invite_individuals_path(resource, format: :js)}" class="#{:active if group_by == 'individual'}" data-remote="remote" by Individual
-          a.btn.by-venue href="#{venue_invites_path(resource, format: :js)}" data-remote="remote" class="#{:active if group_by == 'venue'}" by Venue
+      .span8
+        - if can?(:create_invite, resource)
+          = button_to 'Create Invites', new_venue_invite_path(resource, return: return_path), method: :get, remote: true, class: 'btn btn-primary', data: { disable_with: 'Please wait...' }, title: 'Create Invites'
       .span4
         .dropdown.btn-download.pull-right
           a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
             i.icon-download
             i.icon-arrow-down-small
           ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
-            - if group_by == 'individual'
-              li
-                = link_to 'Download as CSV', venue_invite_individuals_path(resource, format: :csv), role: :menuitem, class: 'xlsx-download-link', id: 'download-invites-csv', data: { url: venue_invite_individuals_path(resource, format: :csv) }
-              li
-                = link_to 'Download as PDF', venue_invite_individuals_path(resource, format: :pdf), role: :menuitem, class: 'xlsx-download-link', id: 'download-invites-pdf', data: { url: venue_invite_individuals_path(resource, format: :pdf) }
-            - else
-              li
-                = link_to 'Download as CSV', venue_invites_path(resource, format: :csv), role: :menuitem, class: 'xlsx-download-link', data: { url: venue_invites_path(resource, format: :csv) }
-              li
-                = link_to 'Download as PDF', venue_invites_path(resource, format: :pdf), role: :menuitem, class: 'xlsx-download-link', data: { url: venue_invites_path(resource, format: :pdf) }
+            li
+              = link_to 'Download as CSV', venue_invites_path(resource, format: :csv), role: :menuitem, class: 'xlsx-download-link', data: { url: venue_invites_path(resource, format: :csv) }
+            li
+              = link_to 'Download as PDF', venue_invites_path(resource, format: :pdf), role: :menuitem, class: 'xlsx-download-link', data: { url: venue_invites_path(resource, format: :pdf) }
       
 
-    - if (group_by == 'venue' && resource.invites.joins(:venue).active.any?) || (group_by == 'individual' && resource.invite_individuals.active.any?)  
-      - if can?(:create_invite, resource)
-        = button_to 'Create Invites', new_venue_invite_path(resource, return: return_path), method: :get, remote: true, class: 'btn btn-primary', data: { disable_with: 'Please wait...' }, title: 'Create Invites'
-  
-      #invites-list.resource-list
-        = render partial: "invite#{'_individual' if group_by == 'individual'}s/table", locals: { parent: resource }
-    - else
-      = blank_state_module("venue.invites.#{group_by}") do
-        = button_to 'Add Invites', new_venue_invite_path(resource, return: return_path, group_by: group_by), method: :get, remote: true, disable_with: 'Please wait...', class: 'btn btn-primary', data: { disable_with: 'Please wait...' }, title: 'Add Invites'
+    #invites-list.resource-list
+      = render partial: "invites/table", locals: { parent: resource }
 
   - else
-    h5.module-title ATTENDANCE
     = blank_state_module('venue.invites.any') do
-      = button_to 'Add Invites', new_venue_invite_path(resource, return: return_path, group_by: group_by), method: :get, remote: true, disable_with: 'Please wait...', class: 'btn btn-primary', data: { disable_with: 'Please wait...' }, title: 'Add Invites'
+      = button_to 'Add Invites', new_venue_invite_path(resource, return: return_path), method: :get, remote: true, disable_with: 'Please wait...', class: 'btn btn-primary', data: { disable_with: 'Please wait...' }, title: 'Add Invites'
 

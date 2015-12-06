@@ -56,7 +56,7 @@ class Venue < ActiveRecord::Base
     end
   end
 
-  has_many :invites, dependent: :destroy, inverse_of: :venue
+  has_many :invites, through: :events, dependent: :destroy, inverse_of: :venue
   has_many :invite_individuals, through: :invites, source: :individuals
   has_many :hours_fields, dependent: :destroy, inverse_of: :venue
 
