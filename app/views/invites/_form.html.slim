@@ -1,23 +1,25 @@
 - invite_individual ||= resource.individuals.build
-- form_suffix = parent.class.name.underscore
 - if resource.new_record?
-  #invite-form.form-inputs.edit-invite
-    ul#invite-form-tabs.nav.nav-tabs
-      li.active
-        a href="#individual" data-toggle="tab"
-          i.icon.icon-user
-          | Individual Invitation
-      li
-        a href="#venue" data-toggle="tab" 
-          i.icon.icon-venue
-          | Venue Invitation
-    #invite-forms.tab-content
-      #individual.tab-pane.active
-        = render partial: "invite_individuals/form_#{form_suffix}", locals: { parent: parent, resource: invite_individual }
-      #venue.tab-pane
-        = render partial: "form_#{form_suffix}", locals: { parent: parent }
+  - if parent.is_a?(Venue)
+    = render partial: "form_venue", locals: { parent: parent }
+  - else
+    #invite-form.form-inputs.edit-invite
+      ul#invite-form-tabs.nav.nav-tabs
+        li.active
+          a href="#individual" data-toggle="tab"
+            i.icon.icon-user
+            | Individual Invitation
+        li
+          a href="#venue" data-toggle="tab" 
+            i.icon.icon-venue
+            | Venue Invitation
+      #invite-forms.tab-content
+        #individual.tab-pane.active
+          = render partial: 'invite_individuals/form_event', locals: { parent: parent, resource: invite_individual }
+        #venue.tab-pane
+          = render partial: 'form_event', locals: { parent: parent }
 - else
-  = render "form_#{form_suffix}"
+  = render "form_#{parent.class.name.underscore}"
 
 javascript:
   $('#invite-form-tabs a').click(function (e) {

@@ -1,5 +1,5 @@
 class InvitesController < InheritedResources::Base
-  belongs_to :event, :venue, :area, optional: true
+  belongs_to :event, :venue, optional: true
 
   respond_to :js, only: [:new, :create, :edit, :update, :index]
 
@@ -34,6 +34,7 @@ class InvitesController < InheritedResources::Base
   def invite_params
     @invite_params ||= params.require(:invite).permit(
       :place_reference, :venue_id, :event_id, :invitees,
+      :selected_campaign_id, :selected_place_id, :selected_date, :selected_time,
       :attendees, :rsvps_count).tap do |p|
 #       if p[:individuals_attributes] && p[:individuals_attributes].any?
 #         p[:invitees] ||= p[:invitees].to_i +  p[:individuals_attributes].count
@@ -57,5 +58,13 @@ class InvitesController < InheritedResources::Base
     invite_params[:invitees] = found_invite.invitees + invite.invitees.to_i
     found_invite.assign_attributes invite_params
     found_invite
+  end
+
+  def build_resource
+    if parent.is_a?(Venue)
+      @invite = Invite.new(params.key?(:invite) ? invite_params : nil)
+    else
+      super
+    end
   end
 end

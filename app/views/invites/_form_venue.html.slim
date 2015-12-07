@@ -1,16 +1,53 @@
-= simple_form_for([parent, resource], remote: true) do |f|
-  = hidden_field_tag :group_by, params[:group_by]
-  .row-fluid= label_tag :venue_invite_campaign, 'Event', class: 'control-label required'
-  .row-fluid
-    .span7= select_tag 'venue_invite_campaign', options_for_select(allowed_campaigns(parent), @invite.campaign_id), include_blank: true, class: 'required chosen-enabled', 'data-placeholder' => 'Select a Campaign'
-    .span5= f.input :event_id, as: :select, collection: (resource.event.campaign.event_dates), input_html: { class: 'required chosen-enabled', 'data-placeholder' => 'Event Date' }, label: false
+- venue_first = (params[:venue_first].present? || resource.selected_date.blank?)
+= simple_form_for([parent, resource], remote: true, html: { id: 'venue-invite-form' }) do |f|
+  = f.input_field :venue_id, value: parent.id, as: :hidden
+  = hidden_field_tag :venue_first, 1 if venue_first
+  fieldset 
+    legend
+      span Event
+    = f.input :selected_campaign_id, collection: allowed_campaigns(parent), required: true, input_html: { class: 'chosen-enabled' }
+    - if resource.selected_campaign_id
+      - venue_field = capture do
+        #invite-venue
+          = f.input :selected_place_id, as: :location, required: true, label: 'Venue', input_html: { display_value: params[:place_reference_display_name] || resource.selected_place_reference, placeholder: 'Choose the event venue' , data: { 'search-params' => { campaign_id: resource.selected_campaign_id } } }
+          - unless resource.selected_place_id.present? || resource.selected_date.present?
+            a.invite-show-start-date href="#" Show the event start date instead
+      = venue_field if venue_first
+      #invite-event-date class="#{'hide' unless resource.selected_place_id.present? || resource.selected_date.present?}"
+        .row-fluid
+          .span5
+            = f.input :selected_date, required: true, as: :date_picker
+          .span2
+          .span5
+            = f.input :selected_time, required: true, as: :time_picker
+        - unless resource.selected_place_id.present? || resource.selected_date.present?
+          a.invite-show-venue href="#" Show the event venue instead
 
-  = f.input :invitees, input_html: { placeholder: 'Number of invitees' }
-  - if resource.persisted?
-    = f.input :rsvps_count, required: true,\
-              input_html: { placeholder: 'Number of RSVPs' },\
-              hint: '<b>Warning</b>: Editing this value will override the existing data.<br>This canot be undone'.html_safe
-    = f.input :attendees, required: true,\
-              input_html: { placeholder: 'Number of attendees' },\
-              hint: '<b>Warning</b>: Editing this value will override the existing data.<br>This canot be undone'.html_safe
+      = venue_field unless venue_first
+  = render partial: 'form_invite_counters', locals: { f: f }
 
+  .form-actions
+    = f.button :submit, class: 'btn btn-primary', data: { disable_with: 'Please wait...' }
+    = "&nbsp;".html_safe
+    = f.button :button, 'Cancel', class: 'btn btn-cancel'
+
+
+javascript:
+  jQuery(function(){
+    var form = $('#venue-invite-form');
+    $('select#invite_selected_campaign_id, #invite_selected_place_id, #invite_selected_date', form).on('change', function() {
+      $.get('#{new_venue_invite_path(format: :js, container: '#resource-form-modal')}&' + form.serialize());
+    });
+    $('.invite-show-start-date', form).on('click', function(e) {
+      e.preventDefault();
+      form.find('input[name=venue_first]').val('');
+      form.find('#invite-venue').addClass('hide');
+      form.find('#invite-event-date').removeClass('hide');
+    });
+    $('.invite-show-venue', form).on('click', function(e) {
+      e.preventDefault();
+      form.find('input[name=venue_first]').val('1');
+      form.find('#invite-venue').removeClass('hide');
+      form.find('#invite-event-date').addClass('hide');
+    });
+  });

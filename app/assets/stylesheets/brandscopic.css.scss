@@ -7713,6 +7713,24 @@ form.button_to .button-with-icon {
   }
 }
 
+#venue-invite-form {
+  fieldset {
+    border-bottom: 1px solid $borders;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    legend {
+      border-bottom: 1px solid $borders;
+      height: 24px;
+      span {
+        background-color: white;
+        padding-right: 10px;
+        color: $brand;
+		    text-transform: uppercase;
+      }
+    }
+  }
+}
+
 #resource-invites-list {
   #attendance-group-by {
     .btn {
