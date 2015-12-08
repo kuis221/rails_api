@@ -100,6 +100,22 @@ javascript:
     }
   });
 
+  function add_team_icon(){
+    options = $('#event_team_members_chzn').find('.search-choice');
+    for (i=0; i < options.length; i++){
+      id = options[i].id.split('_').pop()
+      name = '#event_team_members_chzn_o_' + id
+      if ($(name).attr('class').indexOf('team') != -1){
+        $('#' + options[i].id).addClass('chosen_team');
+      }
+    }
+  }
+
+  $('#event_team_members').chosen().change(function(e){
+    add_team_icon();
+  });
+
+  add_team_icon();
 
 / var input = $('.modal .places-autocomplete')[0];
 / var locationAutocomplete = new google.maps.places.Autocomplete(input);

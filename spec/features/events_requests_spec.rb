@@ -1086,6 +1086,66 @@ feature 'Events section' do
         expect(page).to have_content('ABSOLUT Vodka FY2013')
       end
 
+      scenario 'allows to add or delete users or teams.' do
+        create(:campaign, company: company, name: 'ABSOLUT Vodka FY2013')
+        create(:company_user,
+               company: company,
+               user: create(:user, first_name: 'Other', last_name: 'User'))
+        create(:company_user,
+               company: company,
+               user: create(:user, first_name: 'Sara', last_name: 'Smith'))
+        team = create(:team, name: 'Good Team', description: 'Good Team', active: true, company_id: company.id)
+        user1 = create(:company_user, user: create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: company)
+        user2 = create(:company_user, user: create(:user, first_name: 'Mario', last_name: 'Moreno'), company: company)
+        team.users << [user1, user2]
+
+        event = create(:event,
+                       start_date: 3.days.from_now.to_s(:slashes),
+                       end_date: 3.days.from_now.to_s(:slashes),
+                       start_time: '8:00 PM', end_time: '11:00 PM',
+                       campaign: create(:campaign, name: 'ABSOLUT Vodka FY2012', company: company))
+        Sunspot.commit
+
+        visit events_path
+
+        within resource_item do
+          click_js_button 'Edit Event'
+        end
+
+        within visible_modal do
+          select_from_chosen('Other User', from: 'Event staff')
+          select_from_chosen('Good Team', from: 'Event staff')
+          select_from_chosen('Sara Smith', from: 'Event staff')
+          click_js_button 'Save'
+        end
+        ensure_modal_was_closed
+
+        visit event_path(event)
+
+        within '#event-team-members' do
+          expect(page).to have_content('Other User')
+          expect(page).to have_content('Good Team')
+          expect(page).to have_content('Sara Smith')
+        end
+
+        click_js_button 'Edit Event'
+
+        within visible_modal do
+          expect(page).to have_selector('.chosen_team', count: 1)
+          find('li.chosen_team .search-choice-close').click
+          expect(page).to have_selector('.chosen_team', count: 0)
+          click_js_button 'Save'
+        end
+        ensure_modal_was_closed
+        visit event_path(event)
+
+        within '#event-team-members' do
+          expect(page).to have_content('Other User')
+          expect(page).to_not have_content('Good Team')
+          expect(page).to have_content('Sara Smith')
+        end
+      end
+
       feature 'with timezone support turned ON' do
         before do
           company.update_column(:timezone_support, true)
