@@ -57,7 +57,7 @@ RSpec.describe InvitesController, type: :controller do
         expect { xhr :get, 'index', event_id: event.id, format: :csv }.to change(ListExport, :count).by(1)
 
         expect(ListExport.last).to have_rows([
-          ['VENUE' 'EVENT DATE', 'CAMPAIGN', 'INVITES', 'RSVPs', 'ATTENDEES']
+          ['VENUE', 'EVENT DATE', 'CAMPAIGN', 'INVITES', 'RSVPs', 'ATTENDEES']
         ])
       end
 
@@ -66,7 +66,7 @@ RSpec.describe InvitesController, type: :controller do
         expect { xhr :get, 'index', event_id: event.id, export_mode: 'individual', format: :csv }.to change(ListExport, :count).by(1)
 
         expect(ListExport.last).to have_rows([
-          ['VENUE' 'EVENT DATE', 'CAMPAIGN', 'INVITES', 'RSVPs', 'ATTENDEES'],
+          ['VENUE', 'EVENT DATE', 'CAMPAIGN', 'INVITES', 'RSVPs', 'ATTENDEES'],
           ['Place 1', '2015-01-01 10:00', 'Test Campaign FY01', "100", "99", "2"]
         ])
       end
@@ -77,7 +77,7 @@ RSpec.describe InvitesController, type: :controller do
         expect { xhr :get, 'index', venue_id: venue.id, format: :csv }.to change(ListExport, :count).by(1)
 
         expect(ListExport.last).to have_rows([
-          ['VENUE' 'EVENT DATE', 'CAMPAIGN', 'INVITES', 'RSVPs', 'ATTENDEES'],
+          ['VENUE', 'EVENT DATE', 'CAMPAIGN', 'INVITES', 'RSVPs', 'ATTENDEES'],
         ])
       end
 
@@ -86,7 +86,7 @@ RSpec.describe InvitesController, type: :controller do
         expect { xhr :get, 'index', venue_id: venue.id, format: :csv }.to change(ListExport, :count).by(1)
 
         expect(ListExport.last).to have_rows([
-          ['VENUE' 'EVENT DATE', 'CAMPAIGN', 'INVITES', 'RSVPs', 'ATTENDEES'],
+          ['VENUE', 'EVENT DATE', 'CAMPAIGN', 'INVITES', 'RSVPs', 'ATTENDEES'],
           ['My Super Place', '2015-01-01 10:00', 'Test Campaign FY01', "100", "99", "2"]
         ])
       end

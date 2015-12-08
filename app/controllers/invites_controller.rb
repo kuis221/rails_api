@@ -21,7 +21,7 @@ class InvitesController < InheritedResources::Base
 
   def collection_to_csv
     CSV.generate do |csv|
-      csv << ['VENUE' 'EVENT DATE', 'CAMPAIGN', 'INVITES', 'RSVPs', 'ATTENDEES']
+      csv << ['VENUE', 'EVENT DATE', 'CAMPAIGN', 'INVITES', 'RSVPs', 'ATTENDEES']
       each_collection_item do |item|
         csv << [item.place_name, item.event_date, item.campaign_name, item.invitees, item.rsvps_count, item.attendees]
       end

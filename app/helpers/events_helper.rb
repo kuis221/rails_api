@@ -16,7 +16,7 @@ module EventsHelper
   def editable_invite_checkbox(resource, invite, attribute)
     readonly = can?(:edit_invite, resource)
     simple_form_for([resource, invite], remote: true) do |f|
-      f.input attribute, label: false, as: :boolean
+      f.input attribute, label: false, as: :boolean, input_html: { title: I18n.t(attribute, scope: [:activerecord, :attributes, invite.class.name.underscore.to_sym]) }
     end
   end
 

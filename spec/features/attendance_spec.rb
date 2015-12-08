@@ -2,13 +2,24 @@ require 'rails_helper'
 
 feature 'Attendance', js: true, search: true do
   let(:company) { create(:company) }
-  let(:campaign) { create(:campaign, company: company, modules: { 'attendance' => { 'field_type' => 'module', 'name' => 'attendance', 'settings' => { 'attendance_display' => '1' } } }) }
+  let(:campaign) do
+    create(:campaign,
+           company: company, name: 'My Campaign',
+           modules: { 'attendance' => { 'field_type' => 'module', 'name' => 'attendance',
+                                        'settings' => { 'attendance_display' => '1' } } })
+  end
   let(:user) { create(:user, company: company, role_id: role.id) }
   let(:company_user) { user.company_users.first }
-  let(:place) { create(:place, name: 'Guillermitos Bar', country: 'CR', city: 'Curridabat', state: 'San Jose', is_custom_place: true, reference: nil) }
+  let(:place) do
+    create(:place, name: 'Guillermitos Bar', country: 'CR', city: 'Curridabat',
+                   state: 'San Jose', is_custom_place: true, reference: nil)
+  end
   let(:area) { create(:area, name: 'California', company: company) }
   let(:permissions) { [] }
-  let(:event) { create(:late_event, campaign: campaign, company: company, place: place) }
+  let(:event) do
+    create(:late_event, start_date: '11/01/2015', start_time: '04:30 pm',
+                        campaign: campaign, place: place)
+  end
 
   before do
     add_permissions permissions
@@ -16,92 +27,74 @@ feature 'Attendance', js: true, search: true do
   end
 
   shared_examples_for 'a user that can create invites' do
-    scenario 'user sees a blank state message if no invites have been created' do
+    scenario 'user see a blank state message if no invites have been created' do
       visit event_path(event)
       expect(page).to have_selector('h5', text: 'ATTENDANCE')
       expect(page).to have_content('No Invites have been added to this event.')
       expect(page).to have_button('Add Invites')
     end
 
-    scenario 'can view the attendance module if invites were created' do
-      invite = create(:invite, event: event, venue: event.venue)
-      create :invite_individual, invite: invite
-      visit event_path(event)
-      expect(page).to have_selector('h5', text: 'ATTENDANCE')
-      within event_attendance_module do
-        expect(page).to have_content event.venue.name
-      end
-      expect(page).to have_button('Add Activity')
-    end
-
-    scenario 'can create and edit an invite when attendance display is set as Venue' do
+    scenario 'can create and edit an invite' do
       visit event_path(event)
       create_invite account: 'Guillermitos Bar', invites: 12
 
-      within '#invites-list' do
+      change_attendance_display_by 'Venue'
+      within '#invites-list tbody' do
         expect(page).to have_content('Guillermitos Bar')
-        expect(page).to have_content('No Jameson Locals')
-        expect(page).to have_content('No Top 100')
-        expect(page).to have_content('12 Invites')
-        expect(page).to have_content('0 RSVPs')
-        expect(page).to have_content('0 Attendees')
+        expect(page).to have_content('12')
+        expect(page).to have_content('0')
       end
 
       # Edit the invite
-      hover_and_click resource_item(1, list: '#invites-list'), 'Edit'
+      hover_and_click resource_item(1, list: '#invites-list tbody'), 'Edit'
 
       within visible_modal do
-        fill_in '# Invites', with: '20'
-        fill_in '# RSVPs', with: '8'
-        fill_in '# Attendes', with: '14'
+        fill_in 'Invites', with: '20'
+        fill_in 'RSVPs', with: '8'
+        fill_in 'Attendees', with: '14'
 
         click_js_button 'Save'
       end
       ensure_modal_was_closed
 
-      within '#invites-list' do
+      within '#invites-list tbody' do
         expect(page).to have_content('Guillermitos Bar')
-        expect(page).to have_content('No Jameson Locals')
-        expect(page).to have_content('No Top 100')
-        expect(page).to have_content('20 Invites')
-        expect(page).to have_content('8 RSVPs')
-        expect(page).to have_content('14 Attendees')
+        expect(page).to have_content('20 8 14')
       end
     end
 
-    scenario 'can create and edit an invite when attendance display is set as Market' do
-      campaign.update_attributes(modules: { 'attendance' => { 'field_type' => 'module', 'name' => 'attendance', 'settings' => { 'attendance_display' => '2' } } })
-
+    scenario 'can create and edit an individual invite' do
       visit event_path(event)
-      create_invite account: 'California', invites: 10, type: 'market'
+      create_individual_invite account: 'Guillermitos Bar',
+                               first_name: 'Enrique',
+                               last_name: 'Bunbury',
+                               email: 'bunbury@heroes.com'
 
       within '#invites-list' do
-        expect(page).to have_content('California')
-        expect(page).to_not have_content('No Jameson Locals')
-        expect(page).to_not have_content('No Top 100')
-        expect(page).to have_content('10 Invites')
-        expect(page).to have_content('0 RSVPs')
-        expect(page).to have_content('0 Attendees')
+        expect(page).to have_content('Guillermitos Bar')
+        expect(page).to have_content('Enrique Bunbury')
+        expect(page).to have_content('bunbury@heroes.com')
+        expect(page).to_not have_checked_field 'invite_individual[rsvpd]'
+        expect(page).to_not have_checked_field 'invite_individual[attended]'
       end
 
       # Edit the invite
-      hover_and_click resource_item(1, list: '#invites-list'), 'Edit Invite'
+      hover_and_click resource_item(1, list: '#invites-list tbody'), 'Edit Invite'
       within visible_modal do
-        fill_in '# Invites', with: '15'
-        fill_in '# RSVPs', with: '6'
-        fill_in '# Attendes', with: '9'
+        unicheck "RSVP'd"
+        unicheck 'Attended'
+        fill_in 'Email', with: 'b@heroes.com'
 
         click_js_button 'Save'
       end
       ensure_modal_was_closed
 
       within '#invites-list' do
-        expect(page).to have_content('California')
-        expect(page).to_not have_content('No Jameson Locals')
-        expect(page).to_not have_content('No Top 100')
-        expect(page).to have_content('15 Invites')
-        expect(page).to have_content('6 RSVPs')
-        expect(page).to have_content('9 Attendees')
+        expect(page).to have_content('Guillermitos Bar')
+        expect(page).to have_content('Enrique Bunbury')
+        expect(page).to have_content('b@heroes.com')
+        expect(page).to have_checked_field 'invite_individual[rsvpd]'
+        expect(page).to have_checked_field 'invite_individual[attended]'
       end
     end
   end
@@ -117,11 +110,11 @@ feature 'Attendance', js: true, search: true do
         expect(page).to have_selector('#invites-list .resource-item')
       end
 
-      hover_and_click resource_item(1, list: '#invites-list'), 'Deactivate Invitation Record'
+      hover_and_click resource_item(1, list: '#invites-list tbody'), 'Deactivate Invitation Record'
 
       confirm_prompt 'Are you sure you want to deactivate this invitation record?'
 
-      expect(page).to have_no_selector('#invites-list .resource-item')
+      expect(page).to have_no_selector('#invites-list tbody .resource-item')
     end
 
     scenario 'can deactivate individual invites from the attendance table' do
@@ -133,7 +126,7 @@ feature 'Attendance', js: true, search: true do
         expect(page).to have_content 'Leonardo DiCaprio'
       end
 
-      hover_and_click resource_item(1, list: '#invites-list'), 'Deactivate Invitation Record'
+      hover_and_click resource_item(1, list: '#invites-list tbody'), 'Deactivate Invitation Record'
 
       confirm_prompt 'Are you sure you want to deactivate this invitation record?'
 
@@ -156,44 +149,31 @@ feature 'Attendance', js: true, search: true do
 
       ensure_modal_was_closed
       expect(ListExport.last).to have_rows([
-        ['VENUEEVENT DATE', 'CAMPAIGN', 'INVITES', 'RSVPs', 'ATTENDEES'],
-        ['Guillermitos Bar', '2015-11-11 10:00', 'Campaign 1', '12', '0', '0']
+        ['VENUE', 'EVENT DATE', 'CAMPAIGN', 'INVITES', 'RSVPs', 'ATTENDEES'],
+        ['Guillermitos Bar', '2015-11-01 16:30', 'My Campaign', '12', '0', '0']
       ])
     end
 
     scenario 'can export individual as csv' do
-      campaign.update_attributes(modules: { 'attendance' => { 'field_type' => 'module', 'name' => 'attendance', 'settings' => { 'attendance_display' => '2' } } })
+      campaign.update_attributes(
+        modules: { 'attendance' => { 'field_type' => 'module', 'name' => 'attendance',
+                                     'settings' => { 'attendance_display' => '2' } } })
 
       visit event_path(event)
-      create_invite account: 'California', invites: 12
+      create_individual_invite account: 'Guillermitos Bar',
+                               first_name: 'Joaquin', last_name: 'Sabina',
+                               email: 'jsabina@madrid.com'
 
       click_js_link 'Download'
-      click_js_link 'Download individual to CSV'
+      click_js_link 'Download as CSV'
 
       wait_for_export_to_complete
 
       ensure_modal_was_closed
       expect(ListExport.last).to have_rows([
-        ['MARKET', 'REGISTRANT ID', 'DATE ADDED', 'EMAIL', 'MOBILE PHONE', 'MOBILE SIGN UP',
-         'FIRST NAME', 'LAST NAME', 'ATTENDED PREVIOUS BARTENDER BALL', 'OPT IN TO FUTURE COMMUNICATION',
-         'PRIMARY REGISTRANT ID', 'BARTENDER HOW LONG', 'BARTENDER ROLE', 'DATE OF BIRTH', 'ZIP CODE']
-      ])
-    end
-
-    scenario 'can export aggregate as csv' do
-      campaign.update_attributes(modules: { 'attendance' => { 'field_type' => 'module', 'name' => 'attendance', 'settings' => { 'attendance_display' => '2' } } })
-
-      visit event_path(event)
-      create_invite account: 'California', invites: 12
-
-      click_js_link 'Download'
-      click_js_link 'Download aggregate to CSV'
-
-      wait_for_export_to_complete
-
-      expect(ListExport.last).to have_rows([
-        %w(MARKET INVITES RSVPs ATTENDEES),
-        %w(California 12 0 0)
+        ['VENUE', 'EVENT DATE', 'CAMPAIGN', 'NAME', 'EMAIL', "RSVP'd", 'ATTENDED'],
+        ['Guillermitos Bar', '2015-11-01 16:30', 'My Campaign', 'Joaquin Sabina',
+         'jsabina@madrid.com', 'NO', 'NO']
       ])
     end
   end
@@ -226,32 +206,50 @@ feature 'Attendance', js: true, search: true do
     end
   end
 
-
   def event_attendance_module
     find '#event-attendance'
   end
 
   def change_attendance_display_by(mode)
-      within event_attendance_module do
-        click_js_link "by #{mode}"
-        expect(page).to have_selector 'a.active', text: "by #{mode}"
-      end
+    within event_attendance_module do
+      click_js_link "by #{mode}"
+      expect(page).to have_selector 'a.active', text: "by #{mode}"
+    end
+  end
+
+  def create_individual_invite(account: nil, first_name: 'Victor',
+                               last_name: 'Manuel', email: 'victor@asturias.com')
+    Sunspot.commit
+    open_new_invite_modal
+    within visible_modal do
+      expect(page).to have_content 'New Invitation'
+      fill_in 'First Name', with: first_name
+      fill_in 'Last Name', with: last_name
+      fill_in 'Email', with: email
+      select_from_autocomplete 'Search for a venue...', account
+      click_js_button 'Send Invitation'
+    end
+    ensure_modal_was_closed
   end
 
   def create_invite(account: nil, invites: 12)
     Sunspot.commit
-    if page.has_button?('Add Invites')  # for the case of the blank state
+    open_new_invite_modal
+    within visible_modal do
+      expect(page).to have_content 'New Invitation'
+      click_js_link 'Venue Invitation'
+      fill_in 'Invites', with: invites
+      select_from_autocomplete 'Search for a venue...', account
+      click_js_button "Send #{invites} Invitations"
+    end
+    ensure_modal_was_closed
+  end
+
+  def open_new_invite_modal
+    if page.has_button?('Add Invites') # for the case of the blank state
       click_js_button 'Add Invites'
     else
       click_js_button 'Create Invites'
     end
-    within visible_modal do
-      expect(page).to have_content 'New Invitation'
-      click_js_link 'Venue Invitation'
-      fill_in '# Invites', with: invites
-      select_from_autocomplete 'Search for a place', account
-      click_js_button 'Create'
-    end
-    ensure_modal_was_closed
   end
 end
