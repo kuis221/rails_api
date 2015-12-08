@@ -1,30 +1,58 @@
-- venue_first = (params[:venue_first].present? || resource.selected_date.blank?)
+- venue_first = (params[:venue_first].present? || params[:date].blank?)
+- campaign_id = params[:campaign_id] || resource.event.try(:campaign_id)
+- place_id = params[:place_id] || resource.event.try(:place_id)
+- event_id = params[:event_id] || resource.event_id
+- event_date = params[:date] || resource.event.try(:start_date)
 = simple_form_for([parent, resource], remote: true, html: { id: 'venue-invite-form' }) do |f|
   = f.input_field :venue_id, value: parent.id, as: :hidden
   = hidden_field_tag :venue_first, 1 if venue_first
   fieldset 
     legend
       span Event
-    = f.input :selected_campaign_id, collection: allowed_campaigns(parent), required: true, input_html: { class: 'chosen-enabled' }
-    - if resource.selected_campaign_id
-      - venue_field = capture do
+    .control-group.select.required
+      label.required.control-label for="invite_selected_date" Campaign
+      .controls
+        = select_tag 'campaign_id', options_for_select(available_campaigns, campaign_id), include_blank: true, class: 'required chosen-enabled', 'data-placeholder' => 'Choose a Campaign', id: 'invite_selected_campaign_id'
+    - if campaign_id
+      - if venue_first
         #invite-venue
-          = f.input :selected_place_id, as: :location, required: true, label: 'Venue', input_html: { display_value: params[:place_reference_display_name] || resource.selected_place_reference, placeholder: 'Choose the event venue' , data: { 'search-params' => { campaign_id: resource.selected_campaign_id } } }
-          - unless resource.selected_place_id.present? || resource.selected_date.present?
-            a.invite-show-start-date href="#" Show the event start date instead
-      = venue_field if venue_first
-      #invite-event-date class="#{'hide' unless resource.selected_place_id.present? || resource.selected_date.present?}"
-        .row-fluid
-          .span5
-            = f.input :selected_date, required: true, as: :date_picker
-          .span2
-          .span5
-            = f.input :selected_time, required: true, as: :time_picker
-        - unless resource.selected_place_id.present? || resource.selected_date.present?
-          a.invite-show-venue href="#" Show the event venue instead
+          .control-group.required
+            label.required.control-label for="invite_selected_time" Venue
+            .controls
+              = hidden_field_tag :place_id, place_id, id: 'invite_selected_place_id'
+              = text_field_tag 'place_id_ac', place.try(:name_with_location), data: { hidden: "#invite_selected_place_id", placeholder: 'Choose the event venue', 'search-params' => { campaign_id: params[:campaign_id] } }, class: 'required places-autocomplete',  id: 'invite_selected_place_id_ac'
+        - unless place_id.present? || params[:date].present?
+          a.invite-show-start-date href="#" Show the event start date instead
 
-      = venue_field unless venue_first
-  = render partial: 'form_invite_counters', locals: { f: f }
+        #invite-event-date class="#{'hide' unless place_id.present? || event_date.present?}"
+          .row-fluid
+            .span5
+              .control-group.required
+                label.required.control-label for="invite_selected_date" Event date
+                .controls
+                  = text_field_tag :date, event_date, class: 'date_picker required datepicker', id: 'invite_selected_date'
+            .span2
+            .span5
+              = f.input :event_id, label: 'Event time', required: true, collection: available_events(place_id: place_id).map { |e| [e.start_time, e.id] }, input_html: { class: 'chosen-enabled' }
+      - else
+        #invite-event-date
+          .row-fluid
+            .span5
+              .control-group.required
+                label.required.control-label for="invite_selected_date" Event date
+                .controls
+                  = text_field_tag :date, params[:date], class: 'date_picker required datepicker', id: 'invite_selected_date'
+            .span2
+            .span5
+              .control-group.required
+                label.required.control-label for="invite_selected_time" Event time
+                .controls
+                  = select_tag 'time', options_for_select( available_events(place_id: params[:place_id]).sort_by(&:start_at).map(&:start_time).uniq, params['time']), include_blank: true, class: 'required chosen-enabled', 'data-placeholder' => '', id: 'invite_selected_time'
+          - unless params[:place_id].present? || params[:date].present?
+            a.invite-show-venue href="#" Show the event venue instead
+
+        = f.input :event_id, label: 'Venue', required: true, collection: available_events_at_time(params[:time]).map { |e| [e.place_name_with_location, e.id] }, input_html: { class: 'chosen-enabled' }
+    = render partial: 'form_invite_counters', locals: { f: f }
 
   .form-actions
     = f.button :submit, class: 'btn btn-primary', data: { disable_with: 'Please wait...' }
@@ -35,7 +63,7 @@
 javascript:
   jQuery(function(){
     var form = $('#venue-invite-form');
-    $('select#invite_selected_campaign_id, #invite_selected_place_id, #invite_selected_date', form).on('change', function() {
+    $('select#invite_selected_campaign_id, #invite_selected_place_id, #invite_selected_date, #invite_selected_time', form).on('change', function() {
       $.get('#{new_venue_invite_path(format: :js, container: '#resource-form-modal')}&' + form.serialize());
     });
     $('.invite-show-start-date', form).on('click', function(e) {

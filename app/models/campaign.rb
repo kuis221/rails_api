@@ -121,6 +121,10 @@ class Campaign < ActiveRecord::Base
 
   scope :with_brands, ->(brands) { joins(:brands).where(brands: { id: brands }) }
 
+
+  # TODO: do we need a more robust condition here?
+  scope :with_module, ->(m) { where('modules like ?', "%#{m}%") }
+
   # Campaigns-Places relationship
   has_many :placeables, as: :placeable
   has_many :places, through: :placeables, after_remove: :campaign_area_removed, after_add: :clear_locations_cache

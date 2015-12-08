@@ -10,6 +10,7 @@ class CombinedSearch
   # Performs the search and returns the results
   def results
     solr_results = solr_search.compact
+    return solr_results if local_search_only?
     google_place_ids = google_place_ids_from_places(solr_results.map { |p| p[:id] })
     google_results = filter_duplicated google_search, google_place_ids
     results = filter_merged solr_results, google_results
@@ -52,6 +53,10 @@ class CombinedSearch
         valid: true
       }
     end
+  end
+
+  def local_search_only?
+    params[:campaign_id].present?
   end
 
   def filter_duplicated(results, place_ids)

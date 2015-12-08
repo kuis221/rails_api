@@ -7,7 +7,7 @@ class KbmgSyncher
     # with a event in our application, if a event is found then
     # the RSVPs are synched.
     def synch
-      Campaign.where('modules like ?', '%attendance%').each do |campaign|
+      Campaign.with_module('attendance').each do |campaign|
         new(campaign).process
       end
     end

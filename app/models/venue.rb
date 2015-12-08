@@ -56,8 +56,7 @@ class Venue < ActiveRecord::Base
     end
   end
 
-  has_many :invites, through: :events, dependent: :destroy, inverse_of: :venue
-  has_many :invite_individuals, through: :invites, source: :individuals
+  has_many :invites, dependent: :destroy, inverse_of: :venue
   has_many :hours_fields, dependent: :destroy, inverse_of: :venue
 
   accepts_nested_attributes_for :hours_fields, reject_if: proc { |attributes| attributes['_destroy'].blank? }, allow_destroy: true

@@ -194,8 +194,9 @@ module EventsHelper
     ].compact.join(' ').strip.html_safe
   end
 
-  def allowed_campaigns(venue = nil)
+  def allowed_campaigns(venue = nil, conditions: nil)
     campaigns = company_campaigns.active.accessible_by_user(current_company_user)
+    campaigns = campaigns.where *conditions if conditions
     if venue.present? && !current_company_user.is_admin?
       campaigns.select { |c| c.place_allowed_for_event?(venue.place) }.map { |c| [c.name, c.id] }
     else

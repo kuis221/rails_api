@@ -5,7 +5,8 @@ class InvitesController < InheritedResources::Base
 
   actions :new, :create, :edit, :update
 
-  helper_method :parent_activities
+  helper_method :available_campaigns, :available_events, :available_events_at_time,
+                :place
 
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableController
@@ -34,12 +35,7 @@ class InvitesController < InheritedResources::Base
   def invite_params
     @invite_params ||= params.require(:invite).permit(
       :place_reference, :venue_id, :event_id, :invitees,
-      :selected_campaign_id, :selected_place_id, :selected_date, :selected_time,
-      :attendees, :rsvps_count).tap do |p|
-#       if p[:individuals_attributes] && p[:individuals_attributes].any?
-#         p[:invitees] ||= p[:invitees].to_i +  p[:individuals_attributes].count
-#       end
-    end
+      :attendees, :rsvps_count)
   end
 
   # Checks if there is already in invitation on this venue and use that
@@ -60,11 +56,40 @@ class InvitesController < InheritedResources::Base
     found_invite
   end
 
-  def build_resource
-    if parent.is_a?(Venue)
-      @invite = Invite.new(params.key?(:invite) ? invite_params : nil)
-    else
-      super
-    end
+  def available_campaigns
+    view_context.allowed_campaigns(parent, conditions: ['modules like ?', "%attendance%"])
+  end
+
+  def available_events(extra_conditions = {})
+    campaign_id = params[:campaign_id] || resource.event.try(:campaign_id)
+    event_date = params[:date] || resource.event.try(:start_date)
+    return [] unless campaign_id && event_date
+    zone = Company.current.timezone_support? ? 'UTC' : :current
+    start_date = Timeliness.parse("#{event_date} 00:00:00", zone: zone)
+    end_date = Timeliness.parse("#{event_date} 23:59:00", zone: zone)
+    prefix = Company.current.timezone_support? ? 'local_' : ''
+    conditions = {
+      campaign_id: campaign_id,
+      "#{prefix}start_at": start_date..end_date }
+    extra_conditions.each { |k, v| conditions[k] = v unless v.blank? }
+    current_company.events.accessible_by_user(current_company_user).includes(:place).where(conditions)
+  end
+
+  def available_events_at_time(time)
+    return available_events if time.blank?
+    prefix = Company.current.timezone_support? ? 'local_' : ''
+    available_events.where "#{prefix}start_at::time = ?", time
+  end
+
+  def place
+    id = params[:place_id]
+    return resource.event.try(:place) unless id.present?
+    @place ||=
+      if id.to_s =~ /^[0-9]+$/
+        Place.find(id)
+      else
+        reference, place_id = id.split('||')
+        Place.load_by_place_id(place_id, reference)
+      end
   end
 end
