@@ -182,7 +182,7 @@ describe TeamsController, type: :controller do
   describe "POST 'add_members" do
     it 'should assign the user to the team' do
       expect do
-        xhr :post, 'add_members', id: team.id, member_id: @company_user.to_param, format: :js
+        xhr :post, 'add_members', id: team.id, new_members: ["user_#{@company_user.to_param}"], format: :js
         expect(response).to be_success
         expect(assigns(:team)).to eq(team)
         team.reload
@@ -193,7 +193,7 @@ describe TeamsController, type: :controller do
     it 'should not assign users to the team if they are already part of the team' do
       team.users << @company_user
       expect do
-        xhr :post, 'add_members', id: team.id, member_id: @company_user.to_param, format: :js
+        xhr :post, 'add_members', id: team.id, new_members: ["user_#{@company_user.to_param}"], format: :js
         expect(response).to be_success
         expect(assigns(:team)).to eq(team)
         team.reload

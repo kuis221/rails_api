@@ -115,7 +115,7 @@
       $('.tab-content #kpis_tab').load('#{tab_campaign_path(resource, :kpis)}')
     });
 
-    $(document).on('members:change teams:change', function(){
+    $(document).on('staff:change', function(){
       $('.tab-content #staff_tab').load('#{tab_campaign_path(resource, :staff)}')
     });
 

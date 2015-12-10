@@ -313,11 +313,13 @@ module RequestsHelper
     item
   end
 
-  # Helpers for events section
-  def event_team_member(member)
-    div = find('#event-team-members #event-member-' + member.id.to_s)
-    div.hover
-    div
+  def staff_selected?(type, id, selected = false)
+    checkbox = find("#staff-member-#{type}-#{id} .resource-item-link input")
+    expect(checkbox['checked']).to selected == true ? be_truthy : be_falsey
+  end
+
+  def select_from_staff(type, id)
+    find("#staff-member-#{type}-#{id} .resource-item-link").trigger('click')
   end
 end
 
