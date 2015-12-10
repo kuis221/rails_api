@@ -7,8 +7,6 @@ module TdLinx
   class Processor
     attr_accessor :csv_path
 
-    COMPANY_ID = 2
-
     CONFIDENCE_LEVELS = {
       '10' => 'High',
       '7' => 'Manual',
@@ -16,7 +14,8 @@ module TdLinx
       '1' => 'Low'
     }
 
-    def self.download_and_process_file(file)
+    def self.download_and_process_file(file, company_id = 2)
+      @company_id = company_id
       path = file || 'tmp/td_linx_code.csv'
       download_file(path) unless file
       prepare_codes_table path   # creates a table from file
@@ -48,7 +47,7 @@ module TdLinx
       Place.joins(:venues).joins('LEFT JOIN events ON events.place_id=places.id')
         .select('places.*, venues.id venue_id, count(events.id) as events_count')
         .group('places.id, venues.id').order('places.id ASC')
-        .where('venues.company_id=? AND places.is_location=?', COMPANY_ID, false).each do |place|
+        .where('venues.company_id=? AND places.is_location=?', @company_id, false).each do |place|
         next if place.types.present? && place.types.include?('street_address')
 
         row = place.td_linx_match
