@@ -7666,6 +7666,51 @@ form.button_to .button-with-icon {
 	}
 }
 
+.chosen-choise-close {
+	li{
+		&.team {
+			font-size: 14px;
+			height: 24px;
+		}
+		&.search-choice {
+			padding-left: 0;
+			&:before {
+				content: "\e649";
+				background-color: $tags-gray;
+				color: white;
+				float: left;
+				font-size: 14px;
+				height: 24px;
+				@include border-radius(15px);
+				line-height: 25px;
+				position: relative;
+				text-align: center;
+				width:25px;
+				font-family: 'icons';
+				margin-right: 3px;
+			}
+		}
+		&.chosen_team {
+			&:before {
+				content: "\e648" !important;
+			}
+		}
+	}
+	.search-choice-close {
+		width: 12px;
+		height: 12px;
+		color: $gray-light;
+		font-size: 10px;
+		position: absolute;
+		top: 2px;
+		right: 6px;
+		&:after{
+			content: "\e616";
+			font-family: 'icons';
+		}
+	}
+}
+
 @import 'widgets/asset_upload_dialog';
 @import 'widgets/documents_list';
 @import 'widgets/resource_list';
