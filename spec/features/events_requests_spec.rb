@@ -84,7 +84,8 @@ feature 'Events section' do
     it_should_behave_like 'a user that can activate/deactivate events' do
       before { company_user.campaigns << campaign }
       before { company_user.places << create(:place, city: nil, state: 'San Jose', country: 'CR', types: ['locality']) }
-      let(:permissions) { [[:index, 'Event'], [:view_list, 'Event'], [:deactivate, 'Event'], [:show, 'Event']] }
+      let(:permissions) { [[:index, 'Event'], [:view_list, 'Event'], [:deactivate, 'Event'],
+                           [:show, 'Event'], [:view_members, 'Event'], [:add_members, 'Event']] }
     end
   end
 
@@ -1603,6 +1604,47 @@ feature 'Events section' do
         click_js_button 'Submit'
 
         expect(page).to have_content('Great job! Your PER has been submitted for approval.')
+      end
+
+      scenario 'allows to add staff to the event' do
+        user = create(:company_user, company: company, role: company_user.role,
+                                     user: create(:user, first_name: 'Alberto',
+                                                         last_name: 'Porras'))
+        team = create(:team, name: 'Super Friends', company: company)
+        team.users << company_user
+
+        visit event_path(event)
+
+        click_js_button 'Add Staff'
+        within visible_modal do
+          # Select an user
+          within resource_item 1 do
+            expect(page).to have_content('Alberto Porras')
+            staff_selected?('user', user.id, false)
+            select_from_staff('user', user.id)
+            staff_selected?('user', user.id, true)
+          end
+
+          # Select a team
+          within resource_item 2 do
+            expect(page).to have_content('Super Friends')
+            staff_selected?('team', team.id, false)
+            select_from_staff('team', team.id)
+            staff_selected?('team', team.id, true)
+          end
+          click_js_button 'Add 2 Users/Teams'
+        end
+
+        within '#event-team-members' do
+          expect(page).to have_content('Super Friends')
+          expect(page).to have_content('Alberto Porras')
+        end
+
+        click_js_button 'Add Staff'
+        within visible_modal do
+          expect(page).to_not have_content('Super Friends')
+          expect(page).to_not have_content('Alberto Porras')
+        end
       end
     end
   end
