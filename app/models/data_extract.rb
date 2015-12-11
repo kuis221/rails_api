@@ -47,17 +47,21 @@ class DataExtract < ActiveRecord::Base
     end
 
     def exportable_columns
-      @exportable_columns ||= columns_definitions.keys.map { |c| [c.to_s,  I18n.t("data_exports.fields.#{c}")] }
+      @exportable_columns ||= columns_definitions.keys.map { |c| [c.to_s,  I18n.t("data_exports.fields.#{model.name.underscore}.#{c}", default: [ :"data_exports.fields.#{c}", :"activerecord.attributes.#{model.name.underscore}.#{c}"] )] }
     end
 
     def columns_definitions
       @export_columns_definitions || {}
     end
+
+    def model
+      @model ||= "::#{name.split('::')[1]}".constantize
+    end
   end
 
   DATA_SOURCES = [
     ['Events', :event], ['Post Event Data (PERs)', :event_data],
-    ['Activities', :activity], ['Invites - Venue', :invite], ['Invites - Individual', :invite_individual],
+    ['Activities', :activity], ['Attendance', :invite],
     ['Comments', :comment], ['Contacts', :contact], ['Expenses', :event_expense],
     ['Tasks', :task], ['Venues', :place], ['Users', :company_user], ['Teams', :team],
     ['Roles', :role], ['Campaigns', :campaign], ['Brands', :brand], ['Activity Types', :activity_type],
@@ -91,7 +95,7 @@ class DataExtract < ActiveRecord::Base
   end
 
   def model
-    @model ||= "::#{self.class.name.split('::')[1]}".constantize
+    self.class.model
   end
 
   def add_joins_to_scope(s)

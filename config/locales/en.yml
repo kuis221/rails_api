@@ -37,6 +37,16 @@ en:
         rsvpd: "RSVP'd"
         first_name: 'First Name'
         last_name: 'Last Name'
+        rsvpd: "RSVP'd?"
+        attended: "Attended?"
+        attended_previous_bartender_ball: "Attended previous bartender ball?"
+        mobile_phone: "Mobile phone"
+        mobile_signup: "Mobile signup"
+        opt_in_to_future_communication: "Opt in to future communication?"
+        primary_registrant_id: "Primary registrant ID"
+        bartender_how_long: "Bartender how long?"
+        bartender_role: "Bartender role"
+        date_of_birth: "Date of Birth"
   time:
     formats:
       default: '%m/%d/%Y %H:%M:%S'
@@ -47,7 +57,7 @@ en:
       create: "Create"
       update: "Save"
       invite:
-        create: "Invite Attendees"
+        create: "Send Invitations"
         update: "Save"
       invite_individual:
         create: "Send Invitation"
@@ -416,6 +426,8 @@ en:
       data_extract/team: "Edit Report"
       data_extract/company_user: "Edit Report"
       data_extract/venue: "Edit Report"
+      data_extract/invite: "Edit Report"
+      data_extract/invite_individual: "Edit Report"
       place: "Edit Venue"
       venue: "Edit Venue"
     deactivate:
@@ -455,6 +467,8 @@ en:
       data_extract/team: "Deactivate Report"
       data_extract/company_user: "Deactivate Report"
       data_extract/venue: "Deactivate Report"
+      data_extract/invite: "Deactivate Report"
+      data_extract/invite_individual: "Deactivate Report"
     activate:
       event: "Activate Event"
       company_user: "Activate User"
@@ -470,6 +484,8 @@ en:
       report: "Activate Report"
       brand_ambassadors/visit: "Activate Visit"
       invite: "Activate Invitations Record"
+      data_extract/invite: "Activate Report"
+      data_extract/invite_individual: "Activate Report"
     invitations:
       resend: "Resend Invitation"
 
@@ -626,6 +642,8 @@ en:
         data_extract/team: "Save Report"
         data_extract/company_user: "Save Report"
         data_extract/venue: "Save Report"
+        data_extract/invite: "Save Report"
+        data_extract/invite_individual: "Save Report"
       edit:
         company_user: "Edit User"
         event: "Edit Event"
@@ -679,6 +697,8 @@ en:
         data_extract/team: "Edit Report"
         data_extract/company_user: "Edit Report"
         data_extract/venue: "Edit Report"
+        data_extract/invite: "Edit Report"
+        data_extract/invite_individual: "Edit Report"
 
   form_builder:
     modules:
@@ -1068,6 +1088,8 @@ en:
       data_extract/team: "Are you sure you want to deactivate this report?"
       data_extract/company_user: "Are you sure you want to deactivate this report?"
       data_extract/venue: "Are you sure you want to deactivate this report?"
+      data_extract/invite: "Are you sure you want to deactivate this report?"
+      data_extract/invite_individual: "Are you sure you want to deactivate this report?"
     invitations:
       resend: "Are you sure you want to resend the invitation to this user?"
 
@@ -1083,16 +1105,6 @@ en:
       attendees: "Attendees"
       invitees: "Invites"
       rsvps: "RSVPs"
-      rsvpd: "RSVP'd?"
-      attended: "Attended?"
-      attended_previous_bartender_ball: "Attended previous bartender ball?"
-      mobile_phone: "Mobile phone"
-      mobile_signup: "Mobile signup"
-      opt_in_to_future_communication: "Opt in to future communication?"
-      primary_registrant_id: "Primary registrant ID"
-      bartender_how_long: "Bartender how long"
-      bartender_role: "Bartender role"
-      date_of_birth: "Date of Birth"
       zip_code: "Zip Code"
       campaign_name: "Campaign"
       area_name: "Area"
@@ -1170,6 +1182,32 @@ en:
       merchant: "Merchant"
       employee: "Employee"
       visit_type: "Visit Type"
+      invite:
+        start_date: "Event Start Date"
+        start_date: 'Event Start Date'
+        start_time: 'Event Start Time'
+        end_date: 'Event End Date'
+        end_time: 'Event End Time'
+        end_time: 'Event End Time'
+        campaign_name: 'Event Campaign Name'
+        place_name: 'Event Venue Name'
+        place_street: 'Event Venue Street'
+        place_city: 'Event Venue City'
+        place_state: 'Event Venue State'
+        place_zipcode: 'Event Venue Zip Code'
+      invite_individual:
+        start_date: "Event Start Date"
+        start_date: 'Event Start Date'
+        start_time: 'Event Start Time'
+        end_date: 'Event End Date'
+        end_time: 'Event End Time'
+        end_time: 'Event End Time'
+        campaign_name: 'Event Campaign Name'
+        place_name: 'Event Venue Name'
+        place_street: 'Event Venue Street'
+        place_city: 'Event Venue City'
+        place_state: 'Event Venue State'
+        place_zipcode: 'Event Venue Zip Code'
     descriptions:
       event:
         campaign_name: "The assigned campaign of the event"
@@ -1412,3 +1450,50 @@ en:
         end_date: "The end date of the visit"
         created_at: "The date the visit was created"
         modified_at: "The date the visit was modified"
+      invite:
+        attendees: "The number of attendes of the invitation"
+        invitees: "The number of invitees of the invitation"
+        rsvps: "The number of RSVP's of the invitation"
+        campaign_name: "The name of the campaign associated with the event"
+        end_date: "The end date of the event"
+        end_time: "The end time of the event"
+        start_date: "The start date of the event"
+        start_time: "The start time of the event"
+        place_name: "The name of the venue where the event is taking place"
+        place_street: "The street address of the venue where the event is taking place"
+        place_city: "The city of the venue where the event is taking place"
+        place_state: "The state of the venue where the event is taking place"
+        place_zipcode: "The ZIP code of the venue where the event is taking place"
+        event_status: "The status of the event (ex., approved, due, late)"
+        created_by: "The person who created the invitation"
+        created_at: "The date the invitation was created"
+        modified_by: "The person who modified the invitation"
+        modified_at: "The date the invitation was modified"
+        active_state: "The active state of the invitation"
+      invite_individual:
+        first_name: "First Name of the person who was invited to, RSVP'd to and/or attended the event"
+        last_name: "Last Name of the person who was invited to, RSVP'd to and/or attended the event"
+        email: "Email address of the person who was invited to, RSVP'd to and/or attended the event"
+        date_of_birth: "Birthday of the person who was invited to, RSVP'd to and/or attended the event"
+        mobile_phone: "Mobile phone number of the person who was invited to, RSVP'd to and/or attended the event"
+        mobile_signup: "Mobile Signup"
+        attended_previous_bartender_ball: "Attended previous bartender ball?"
+        attended: "Did the person attend the event?"
+        rsvpd: "Did the person RSVP to the event?"
+        zip_code: "ZIP code where the person who was invited to, RSVP'd to and/or attended the event lives"
+        campaign_name: "The name of the campaign associated with the event"
+        end_date: "The end date of the event"
+        end_time: "The end time of the event"
+        start_date: "The start date of the event"
+        start_time: "The start time of the event"
+        place_name: "The name of the venue where the event is taking place"
+        place_street: "The street address of the venue where the event is taking place"
+        place_city: "The city of the venue where the event is taking place"
+        place_state: "The state of the venue where the event is taking place"
+        place_zipcode: "The ZIP code of the venue where the event is taking place"
+        event_status: "The status of the event (ex., approved, due, late)"
+        created_by: "The person who created the invitation"
+        created_at: "The date the invitation was created"
+        modified_by: "The person who modified the invitation"
+        modified_at: "The date the invitation was modified"
+        active_state: "The active state of the invitation"

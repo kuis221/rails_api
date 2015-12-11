@@ -7269,11 +7269,19 @@ body.dashboard.index {
 	}
 	.select-data-source{
 		padding: 30px 18px 0 18px;
+		display: table;
 	}
 	.data-source-dropdown{
-		display: inline-block;
-		margin-right: 40px;
+		display: table-cell;
 		width: 360px;
+		&.sources {
+			padding-right: 40px;
+			width: 300px;
+		}
+		label.radio {
+			padding-left: 0;
+			font-weight: normal;
+		}
 	}
 	.data-extract-box{
 		border: 1px solid $borders;
@@ -7406,9 +7414,6 @@ body.dashboard.index {
 		color: $brand;
 		font-weight: bold;
 		margin-bottom: 8px;
-	}
-	.chzn-container{
-		width: 360px !important;
 	}
 }
 .rounded-icon{
@@ -7740,6 +7745,9 @@ form.button_to .button-with-icon {
   table {
     th.text-center {
       text-align: center;
+    }
+    td a {
+      text-decoration: none;
     }
     .rsvpd {
       width: 60px;

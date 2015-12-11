@@ -1,22 +1,23 @@
 - invite_individual ||= resource.individuals.build
+- active_tab ||= (params[:tab] || :individual).to_sym
 - if resource.new_record?
   - if parent.is_a?(Venue)
     = render partial: "form_venue", locals: { parent: parent }
   - else
     #invite-form.form-inputs.edit-invite
       ul#invite-form-tabs.nav.nav-tabs
-        li.active
+        li class="#{'active' if active_tab == :individual}"
           a href="#individual" data-toggle="tab"
             i.icon.icon-user
             | Individual Invitation
-        li
+        li class="#{'active' if active_tab == :venue}"
           a href="#venue" data-toggle="tab" 
             i.icon.icon-venue
             | Venue Invitation
       #invite-forms.tab-content
-        #individual.tab-pane.active
+        #individual.tab-pane class="#{'active' if active_tab == :individual}"
           = render partial: 'invite_individuals/form_event', locals: { parent: parent, resource: invite_individual }
-        #venue.tab-pane
+        #venue.tab-pane class="#{'active' if active_tab == :venue}"
           = render partial: 'form_event', locals: { parent: parent }
 - else
   = render "form_#{parent.class.name.underscore}"

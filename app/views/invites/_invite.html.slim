@@ -1,10 +1,10 @@
 tr.resource-item.invite id="invite_#{invite.id}"
   - if parent.is_a?(Venue)
     td= invite.campaign_name
-    td= invite.event.start_at.strftime('%m/%d/%Y at %l:%M %p')
-    td= invite.event.place_name
+    td= link_to invite.event.start_at.strftime('%m/%d/%Y at %l:%M %p'), event_path(invite.event)
+    td= link_to invite.event.place_name, venue_path(invite.event.venue.id)
   - else 
-    td= invite.place_name
+    td= link_to invite.place_name, venue_path(invite.venue.id)
   td.invitees
     .text-center= editable_invite_attribute parent, invite, :invitees
   td.rsvps_count

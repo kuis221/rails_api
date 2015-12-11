@@ -15,7 +15,13 @@
   - unless resource.persisted?
     javascript:
       $('#new_invite input[name="invite[invitees]"]').on('keyup change', function(){
-        $('#new_invite .btn-primary').val('Send ' + parseInt($(this).val(), 10)  + ' Invitations');
+        var count = parseInt($(this).val(), 10);
+        if (count < 0 ) {
+          count = 0;
+          $(this).val(0);
+        }
+
+        $('#new_invite .btn-primary').val('Send ' + (isNaN(count) ? '' : count)  + ' Invitations');
       });
 
 

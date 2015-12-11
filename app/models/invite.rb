@@ -19,6 +19,8 @@
 #
 
 class Invite < ActiveRecord::Base
+  track_who_does_it
+
   belongs_to :event
   belongs_to :venue
   belongs_to :area

@@ -5,7 +5,7 @@
     .row-fluid
       .span4
         - if can?(:create_invite, resource)
-          = button_to 'Create Invites', new_event_invite_path(resource, phase: presenter.current_phase, return: return_path), method: :get, remote: true, class: 'btn btn-primary', data: { disable_with: 'Please wait...' }, title: 'Create Invites'
+          = button_to 'Create Invites', new_event_invite_path(resource, phase: presenter.current_phase, return: return_path, tab: group_by), method: :get, remote: true, class: 'btn btn-primary', data: { disable_with: 'Please wait...' }, title: 'Create Invites'
       .span4.text-center
         #attendance-group-by.btn-group data-toggle="buttons-radio"
           a.btn.by-individual href="#{event_invite_individuals_path(resource, format: :js)}" class="#{:active if group_by == 'individual'}" data-remote="remote" by Individual

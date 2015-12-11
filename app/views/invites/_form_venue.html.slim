@@ -17,12 +17,12 @@
       - if venue_first
         #invite-venue
           .control-group.required
-            label.required.control-label for="invite_selected_time" Venue
+            label.required.control-label for="invite_selected_time" Host Venue
             .controls
               = hidden_field_tag :place_id, place_id, id: 'invite_selected_place_id'
               = text_field_tag 'place_id_ac', place.try(:name_with_location), data: { hidden: "#invite_selected_place_id", placeholder: 'Choose the event venue', 'search-params' => { campaign_id: params[:campaign_id] } }, class: 'required places-autocomplete',  id: 'invite_selected_place_id_ac'
-        - unless place_id.present? || params[:date].present?
-          a.invite-show-start-date href="#" Show the event start date instead
+          - unless place_id.present? || params[:date].present?
+            a.invite-show-start-date href="#" Show the event start date instead
 
         #invite-event-date class="#{'hide' unless place_id.present? || event_date.present?}"
           .row-fluid
@@ -34,6 +34,8 @@
             .span2
             .span5
               = f.input :event_id, label: 'Event time', required: true, collection: available_events(place_id: place_id).map { |e| [e.start_time, e.id] }, input_html: { class: 'chosen-enabled' }
+          - unless params[:place_id].present? || params[:date].present?
+            a.invite-show-venue href="#" Show the event venue instead
       - else
         #invite-event-date
           .row-fluid
@@ -52,7 +54,7 @@
             a.invite-show-venue href="#" Show the event venue instead
 
         = f.input :event_id, label: 'Venue', required: true, collection: available_events_at_time(params[:time]).map { |e| [e.place_name_with_location, e.id] }, input_html: { class: 'chosen-enabled' }
-    = render partial: 'form_invite_counters', locals: { f: f }
+  = render partial: 'form_invite_counters', locals: { f: f }
 
   .form-actions
     = f.button :submit, class: 'btn btn-primary', data: { disable_with: 'Please wait...' }

@@ -1,12 +1,6 @@
 tr.resource-item.invite id="invite_individual_#{invite_individual.id}"
   td= invite_individual.name
-  - if parent.is_a?(Venue)
-    td
-      = format_date_range(invite_individual.invite.event.start_at, invite_individual.invite.event.end_at, date_only: true)
-      .crop-text
-        = invite_individual.invite.campaign_name
-  - else
-    td= invite_individual.invite.place_name
+  td= link_to invite_individual.invite.place_name, venue_path(invite_individual.invite.venue_id)
   td= invite_individual.email
   td data-sort-value="#{invite_individual.rsvpd ? 1 : 0}" = editable_invite_checkbox parent, invite_individual, :rsvpd
   td data-sort-value="#{invite_individual.attended ? 1 : 0}" = editable_invite_checkbox parent, invite_individual, :attended
