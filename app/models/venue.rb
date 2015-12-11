@@ -119,6 +119,7 @@ class Venue < ActiveRecord::Base
     join(:events_local_start_at, target: Event, type: :time, join: { from: :place_id, to: :place_id }, as: 'local_start_at_dts')
     join(:events_end_at, target: Event, type: :time, join: { from: :place_id, to: :place_id }, as: 'end_at_dts')
     join(:events_local_end_at, target: Event, type: :time, join: { from: :place_id, to: :place_id }, as: 'local_end_at_dts')
+    join(:events_campaign_id, target: Event, type: :integer, join: { from: :place_id, to: :place_id }, as: 'campaign_id_is')
 
     integer :events_count, stored: true
     double :promo_hours, stored: true
@@ -361,6 +362,10 @@ class Venue < ActiveRecord::Base
           with(:locations, locations.uniq.compact) if locations.any?
           with(:place_id, places.uniq.compact) if places.any?
         end
+      end
+
+      if params.key?(:campaign_events) && params[:campaign_events].present?
+        with :events_campaign_id, params[:campaign_events]
       end
 
       if params.key?(:brand) && params[:brand].present?

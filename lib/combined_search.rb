@@ -56,7 +56,7 @@ class CombinedSearch
   end
 
   def local_search_only?
-    params[:campaign_id].present?
+    params[:campaign_events].present?
   end
 
   def filter_duplicated(results, place_ids)

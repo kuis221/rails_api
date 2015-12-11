@@ -1,10 +1,11 @@
 require 'rails_helper'
 
 describe Venue, type: :model, search: true do
+  let(:company) { create(:company) }
+  let(:brand) { create(:brand) }
+
   it 'should search for venues' do
     # First populate the Database with some data
-    company = create(:company)
-    brand = create(:brand)
     brand2 = create(:brand)
     campaign = create(:campaign, company: company, brand_ids: [brand.id])
     campaign2 = create(:campaign, company: company, brand_ids: [brand.id, brand2.id])
@@ -113,7 +114,6 @@ describe Venue, type: :model, search: true do
 
   describe 'search by campaing' do
     it 'should include any venue that is part of the campaign scope' do
-      company = create(:company)
       sf = create(:city, name: 'San Francisco', state: 'CA', country: 'US')
       campaign = create(:campaign, company: company)
       campaign.places << sf
@@ -133,6 +133,32 @@ describe Venue, type: :model, search: true do
       # Should include the venues from sf but not the venue from L.A.
       expect(search(company_id: company.id, campaign: [campaign.id]))
           .to match_array([venue_sf1, venue_sf2])
+    end
+  end
+
+  describe 'search by venues for events in a campaign' do
+    it 'returns only venues that are associated to events on the given campaigns' do
+      campaign1 = create :campaign, company: company
+      campaign2 = create :campaign, company: company
+
+      venue1 = create :venue, company: company
+      venue2 = create :venue, company: company
+      venue3 = create :venue, company: company
+
+      create :event, place: venue1.place, campaign: campaign1
+      create :event, place: venue3.place, campaign: campaign1
+
+      create :event, place: venue2.place, campaign: campaign2
+      create :event, place: venue3.place, campaign: campaign2
+
+      expect(search(company_id: company.id, campaign_events: [campaign1.id]))
+          .to match_array([venue1, venue3])
+
+      expect(search(company_id: company.id, campaign_events: [campaign2.id]))
+          .to match_array([venue2, venue3])
+
+      expect(search(company_id: company.id, campaign_events: [campaign1.id, campaign2.id]))
+          .to match_array([venue1, venue2, venue3])
     end
   end
 
@@ -158,7 +184,6 @@ describe Venue, type: :model, search: true do
 
   describe 'user permissions' do
     it 'should include only venues that are between the user permissions' do
-      company = create(:company)
       sf = create(:city, name: 'San Francisco', state: 'CA', country: 'US')
 
       campaign = create(:campaign, company: company)
