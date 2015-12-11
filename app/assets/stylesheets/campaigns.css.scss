@@ -100,7 +100,7 @@
 		white-space: nowrap;
 		.goalable-name {
 			font-size: 16px;
-			margin-top: 35px;
+			margin-top: 67px;
 			width: 200px;
 		}
 		.goal-title {
@@ -148,8 +148,9 @@
 				input {
 					background-color:white !important;
 					box-shadow: none;
+					color: $brand;
 					font-size: 22px;
-					font-weight: 100;
+					font-weight: bold;
 					width: 60px;
 					display: block;
 					border: 1px solid white !important;
@@ -170,7 +171,7 @@
 				label{
 					.kpi-name, .activity-type-name {
 						font-size: 11px;
-						padding: 14px 0 0 6px;
+						padding: 14px 0 0 11px;
 					}
 				}
 			}
@@ -193,18 +194,19 @@
 			z-index: 3;
 			.pull-left {
 				height: 100px;
-				padding: 25px 0 0 0;
+				padding: 60px 0 0 0;
 				background-color: #fff;
 			}
 			.pull-right{
 				height: 100px;
-				padding: 25px 15px 0 0;
+				padding: 60px 15px 0 0;
 				background-color: #fff;
 			}
 			a {
 				color: $gray;
 				font-size: 22px;
 				&.arrow {
+					color: $gray-light;
 					margin: 0 20px;
 					font-size: 30px;
 				}
@@ -218,7 +220,7 @@
 					text-decoration: none;
 				}
 				&.icon-angle-right:before, &.icon-angle-left:before{
-					top:6px;
+					top:8px;
 				}
 			}
 		}
