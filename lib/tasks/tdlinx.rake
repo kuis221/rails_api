@@ -40,14 +40,14 @@ namespace :tdlinx do
 
   namespace :stdin do
     desc 'Download and process file from an STDIN'
-    task process: :environment do |t, _args|
+    task :process, [:company_id] => :environment do |t, args|
       t = Tempfile.new('tdlinx_stdin')
       $stdin.each_line do |line|
         t.write(line)
       end
       file = t.path
       t.close
-      TdLinx::Processor.download_and_process_file(file)
+      TdLinx::Processor.download_and_process_file(file, args[:company_id])
     end
   end
 end
