@@ -17,7 +17,7 @@ RSpec.describe InviteIndividualsController, type: :controller do
         expect do
           xhr :post, 'create', event_id: event.id, invite_individual: {
             first_name: 'Luis', last_name: 'Perez', email: 'lp@test.com',
-            invite_attributes: { place_reference: place.id.to_s },
+            invite_attributes: { place_reference: place.id.to_s }
           }, format: :js
         end.to change(Invite, :count).by(1)
       end.to change(InviteIndividual, :count).by(1)
@@ -32,7 +32,7 @@ RSpec.describe InviteIndividualsController, type: :controller do
         expect do
           xhr :post, 'create', event_id: event.id, invite_individual: {
             first_name: 'Luis', last_name: 'Perez', email: 'lp@test.com',
-            invite_attributes: { place_reference: place.id.to_s },
+            invite_attributes: { place_reference: place.id.to_s }
           }, format: :js
         end.to_not change(Invite, :count)
       end.to change(InviteIndividual, :count).by(1)
@@ -44,7 +44,7 @@ RSpec.describe InviteIndividualsController, type: :controller do
       expect do
         xhr :post, 'create', event_id: event.id, invite_individual: {
           first_name: 'Luis', last_name: 'Perez', email: 'lp@test.com',
-          invite_attributes: { place_reference: nil },
+          invite_attributes: { place_reference: nil }
         }, format: :js
       end.not_to change(Invite, :count)
       expect(response).to render_template(:create)
@@ -54,7 +54,11 @@ RSpec.describe InviteIndividualsController, type: :controller do
   end
 
   describe "GET 'list_export'", :search, :inline_jobs do
-    let(:campaign) { create(:campaign, name: 'Test Campaign FY01', company: company, modules: { 'attendance' => { 'field_type' => 'module', 'name' => 'attendance', 'settings' => { 'attendance_display' => '1' } } }) }
+    let(:campaign) do
+      create(:campaign, name: 'Test Campaign FY01', company: company,
+                        modules: { 'attendance' => { 'field_type' => 'module',
+                                                     'name' => 'attendance' } })
+    end
     let(:event) { create(:event, campaign: campaign, start_date: '01/01/2015', end_date: '01/01/2015') }
 
     describe 'for a event' do
@@ -79,30 +83,5 @@ RSpec.describe InviteIndividualsController, type: :controller do
         ])
       end
     end
-
-
-    describe 'for a venue' do
-      it 'generates empty csv with the correct headers when exporting invites for a venue' do
-        expect { xhr :get, 'index', venue_id: venue.id, format: :csv }.to change(ListExport, :count).by(1)
-
-        expect(ListExport.last).to have_rows([
-          ['VENUE', 'EVENT DATE', 'CAMPAIGN', 'NAME', 'EMAIL', 'RSVP\'d', 'ATTENDED']
-        ])
-      end
-
-      it 'includes the invites when exporting invites for a venue' do
-        invite = create(:invite, event: event, venue: venue, invitees: 100, attendees: 2, rsvps_count: 99)
-        create(:invite_individual, invite: invite)
-        create(:invite_individual, invite: invite)
-        expect { xhr :get, 'index', venue_id: venue.id, format: :csv }.to change(ListExport, :count).by(1)
-
-        expect(ListExport.last).to have_rows([
-          ['VENUE', 'EVENT DATE', 'CAMPAIGN', 'NAME', 'EMAIL', 'RSVP\'d', 'ATTENDED'],
-          ['My Super Place', '2015-01-01 10:00', 'Test Campaign FY01', 'Fulano de Tal', 'rsvp@email.com', 'NO', 'NO'],
-          ['My Super Place', '2015-01-01 10:00', 'Test Campaign FY01', 'Fulano de Tal', 'rsvp@email.com', 'NO', 'NO']
-        ])
-      end
-    end
-
   end
 end

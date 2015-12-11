@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151202183554) do
+ActiveRecord::Schema.define(version: 20151211231157) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
@@ -700,12 +700,10 @@ ActiveRecord::Schema.define(version: 20151202183554) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "active",                    default: true
-    t.integer  "area_id"
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
   end
 
-  add_index "invites", ["area_id"], name: "index_invites_on_area_id", using: :btree
   add_index "invites", ["event_id"], name: "index_invites_on_event_id", using: :btree
   add_index "invites", ["venue_id"], name: "index_invites_on_venue_id", using: :btree
 

@@ -22,7 +22,7 @@
 
 FactoryGirl.define do
   factory :invite do
-    event nil
+    association(:event)
     association(:venue)
     invitees 1
     rsvps_count 0
@@ -30,6 +30,5 @@ FactoryGirl.define do
     market nil
     final_date '2014-12-30'
     active true
-    area_id nil
   end
 end

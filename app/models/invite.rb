@@ -23,7 +23,6 @@ class Invite < ActiveRecord::Base
 
   belongs_to :event
   belongs_to :venue
-  belongs_to :area
   has_one :place, through: :venue
   has_many :individuals, class_name: 'InviteIndividual', inverse_of: :invite
 
@@ -32,8 +31,7 @@ class Invite < ActiveRecord::Base
   delegate :campaign_name, :campaign_id, to: :event, prefix: false, allow_nil: true
 
   validates :event, presence: true
-  validates :venue, presence: true, unless: :market_level?
-  validates :area, presence: true, if: :market_level?
+  validates :venue, presence: true
   validates :invitees, presence: true, numericality: true
 
   scope :active, -> { where active: true }
@@ -83,11 +81,5 @@ class Invite < ActiveRecord::Base
 
   def deactivate!
     update_attribute :active, false
-  end
-
-  private
-
-  def market_level?
-    area_id.present?
   end
 end
