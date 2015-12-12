@@ -19,7 +19,7 @@
         title: function(a, b) {
           return $(this).data('title');
         },
-        placement: function(tooltip, field) {        
+        placement: function(tooltip, field) {
           window.setTimeout(function() {
             return $(tooltip).css({
               top: (parseInt($(field).position().top - 22)) + 'px',
@@ -41,4 +41,8 @@
       #{create_scrollmultispy_js}
 
       #{presenter.initial_message_js}
+    });
+
+    $(document).on('staff:change', function(){
+      window.location = '#{url_for}'
     });

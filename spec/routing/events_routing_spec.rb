@@ -37,6 +37,19 @@ describe 'routes for events', type: :routing do
     expect(put: '/events/1').to route_to('events#update', id: '1')
   end
 
+  it 'routes to #delete_member' do
+    expect(delete: '/events/1/members/2').to route_to('events#delete_member', id: '1', member_id: '2')
+    expect(delete: '/events/1/teams/2').to route_to('events#delete_member', id: '1', team_id: '2')
+  end
+
+  it 'routes to #new_member' do
+    expect(get: '/events/1/members/new').to route_to('events#new_member', id: '1')
+  end
+
+  it 'routes to #add_members' do
+    expect(post: '/events/1/members').to route_to('events#add_members', id: '1')
+  end
+
   it "does't routes to #destroy" do
     expect(delete: '/events/1').not_to be_routable
   end

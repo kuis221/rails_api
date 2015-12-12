@@ -506,7 +506,7 @@ describe CampaignsController, type: :controller do
       expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{company_user.id}")
       expect(Rails.cache).to receive(:delete).with("user_notifications_#{company_user.id}").at_least(:once)
       expect do
-        xhr :post, 'add_members', id: campaign.id, member_id: company_user.to_param, format: :js
+        xhr :post, 'add_members', id: campaign.id, new_members: ["user_#{company_user.to_param}"], format: :js
         expect(response).to be_success
         expect(assigns(:campaign)).to eq(campaign)
         campaign.reload
@@ -519,10 +519,9 @@ describe CampaignsController, type: :controller do
     it 'should assign all the team\'s users to the campaign' do
       team = create(:team, company_id: company.id)
       expect do
-        xhr :post, 'add_members', id: campaign.id, team_id: team.to_param, format: :js
+        xhr :post, 'add_members', id: campaign.id, new_members: ["team_#{team.to_param}"], format: :js
         expect(response).to be_success
         expect(assigns(:campaign)).to eq(campaign)
-        expect(assigns(:team_id)).to eq(team.id.to_s)
         campaign.reload
       end.to change(campaign.teams, :count).by(1)
       expect(campaign.teams).to match_array([team])
@@ -531,7 +530,7 @@ describe CampaignsController, type: :controller do
     it 'should not assign users to the campaign if they are already part of the campaign' do
       campaign.users << company_user
       expect do
-        xhr :post, 'add_members', id: campaign.id, member_id: company_user.to_param, format: :js
+        xhr :post, 'add_members', id: campaign.id, new_members: ["user_#{company_user.to_param}"], format: :js
         expect(response).to be_success
         expect(assigns(:campaign)).to eq(campaign)
         campaign.reload
@@ -542,7 +541,7 @@ describe CampaignsController, type: :controller do
       team = create(:team, company_id: company.id)
       campaign.teams << team
       expect do
-        xhr :post, 'add_members', id: campaign.id, team_id: team.to_param, format: :js
+        xhr :post, 'add_members', id: campaign.id, new_members: ["team_#{team.to_param}"], format: :js
         expect(response).to be_success
         expect(assigns(:campaign)).to eq(campaign)
         campaign.reload

@@ -5,6 +5,7 @@ describe TdLinx do
   describe TdLinx::Processor do
     describe 'download_and_process_file' do
       let(:path) { 'tmp/test_sync.csv' }
+      let(:company) { create(:company) }
 
       after { File.delete(path) if File.exist?(path) }
 
@@ -19,7 +20,7 @@ describe TdLinx do
           city: 'Easthampton', state: 'Massachusetts', zipcode: '03027',
           street_number: '128', route: 'Northampton St', country: 'US')
 
-        [place1, place2].each { |p| create(:venue, company_id: described_class::COMPANY_ID, place: p) }
+        [place1, place2].each { |p| create(:venue, company_id: company.id, place: p) }
 
         File.open(path, 'w') do |file|
           file.write(
@@ -28,7 +29,7 @@ describe TdLinx do
           )
         end
 
-        files = described_class.download_and_process_file(path)
+        files = described_class.download_and_process_file(path, company.id)
 
         expect(place1.reload.td_linx_code).to eql '0000071'
         expect(place2.reload.td_linx_code).to eql '0000072'

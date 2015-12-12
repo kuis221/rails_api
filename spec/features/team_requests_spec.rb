@@ -151,27 +151,34 @@ feature 'Teams', js: true do
 
     scenario 'allows the user to add the users to the team' do
       team = create(:team, company_id: company.id)
-      user = create(:user, first_name: 'Fulanito', last_name: 'DeTal',
-        company_id: company.id,
-        role_id: create(:role, company: company, name: 'Brand Manager').id,
-        city: 'Miami', state: 'FL', country: 'US', email: 'user1@example.com')
-      company_user = user.company_users.first
+      user = create(:company_user, company: company, role: company_user.role,
+                                   user: create(:user, first_name: 'Fulanito',
+                                                       last_name: 'DeTal'))
       Sunspot.commit
+
       visit team_path(team)
 
-      expect(page).to_not have_content('Fulanito')
+      expect(page).to_not have_content('Fulanito DeTal')
 
-      click_js_button('Add Team Member')
-
+      click_js_button 'Add Team Member'
       within visible_modal do
-        find("#staff-member-user-#{company_user.id}").hover
-        click_js_link('Add')
+        # Select an user
+        within resource_item do
+          expect(page).to have_content('Fulanito DeTal')
+          staff_selected?('user', user.id, false)
+          select_from_staff('user', user.id)
+          staff_selected?('user', user.id, true)
+        end
+        click_js_button 'Add 1 Users/Teams'
       end
 
-      close_modal
-
       within('#team-members-list')  do
-        expect(page).to have_content('Fulanito')
+        expect(page).to have_content('Fulanito DeTal')
+      end
+
+      click_js_button 'Add Team Member'
+      within visible_modal do
+        expect(page).to_not have_content('Fulanito DeTal')
       end
     end
   end

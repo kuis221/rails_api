@@ -619,7 +619,8 @@ $.widget 'nmk.filteredList', {
 		for param in @_deparam(params)
 			paramValue = encodeURIComponent(param.name)+'='+encodeURIComponent(param.value)
 			paramValue = '' if param.value is '' or param.value is null
-			continue if qs.indexOf(paramValue) >= 0
+			matcher = new RegExp("(^|&)" + paramValue + "(&|$)", "g");
+			continue if matcher.test(qs)
 			if param.name.indexOf('[]') is -1 && qs.indexOf(encodeURIComponent(param.name)) >= 0
 				qs = qs.replace(new RegExp("(#{encodeURIComponent(param.name)}=[^&]*)"), paramValue)
 			else
