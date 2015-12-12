@@ -53,7 +53,7 @@ class DataExtract::BrandAmbassadorsVisit < DataExtract
     s
   end
 
-  def model
+  def self.model
     ::BrandAmbassadors::Visit
   end
 

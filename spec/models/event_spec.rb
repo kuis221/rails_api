@@ -1128,7 +1128,7 @@ describe Event, type: :model do
   end
 
   describe '#deactivate' do
-    let(:event) { create(:event, active: false) }
+    let(:event) { create(:event, active: true) }
 
     it 'should return the active value as false' do
       event.deactivate!

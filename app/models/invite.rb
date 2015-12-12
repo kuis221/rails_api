@@ -36,13 +36,6 @@ class Invite < ActiveRecord::Base
 
   scope :active, -> { where active: true }
 
-  # before_validation :set_event_from_selections
-
-  ATTENDANCE_DISPLAY_BY_TYPES = {
-    '1' => 'venue',
-    '2' => 'market'
-  }
-
   def place_reference=(value)
     @place_reference = value
     return unless value && value.present?

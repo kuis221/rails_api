@@ -27,13 +27,15 @@ RSpec.describe DataExtract::Invite, type: :model do
 
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql([
-        %w(campaign_name Campaign), ['end_date', 'End Date'],
-        ['end_time', 'End Time'], ['start_date', 'Start Date'], ['start_time', 'Start Time'],
-        ['event_status', 'Event Status'], ['place_name', 'Venue Name'], ['place_street', 'Venue Street'], ['place_city', 'Venue City'],
-        ['place_state', 'Venue State'], ['place_zipcode', 'Venue ZIP Code'],
-        %w(rsvps RSVPs), %w(attendees Attendees), %w(invitees Invites),
-        ['created_at', 'Created At'], ['created_by', 'Created By'], ['modified_at', 'Modified At'],
-        ['modified_by', 'Modified By'], ["active_state", "Active State"]])
+        ['campaign_name', 'Event Campaign Name'], ['end_date', 'Event End Date'],
+        ['end_time', 'Event End Time'], ['start_date', 'Event Start Date'],
+        ['start_time', 'Event Start Time'], ['event_status', 'Event Status'],
+        ['place_name', 'Event Venue Name'], ['place_street', 'Event Venue Street'],
+        ['place_city', 'Event Venue City'], ['place_state', 'Event Venue State'],
+        ['place_zipcode', 'Event Venue Zip Code'], %w(attendees Attendees),
+        %w(invitees Invites), %w(rsvps RSVPs), ['created_at', 'Created At'],
+        ['created_by', 'Created By'], ['modified_at', 'Modified At'],
+        ['modified_by', 'Modified By'], ['active_state', 'Active State']])
     end
   end
 

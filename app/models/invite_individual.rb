@@ -67,7 +67,7 @@ class InviteIndividual < ActiveRecord::Base
   end
 
   def self.without_locations
-    joins('LEFT JOIN zipcode_locations zl ON zl.zipcode=invite_rsvps.zip_code')
+    joins('LEFT JOIN zipcode_locations zl ON zl.zipcode=invite_individuals.zip_code')
       .where('zl.zipcode IS NULL')
   end
 

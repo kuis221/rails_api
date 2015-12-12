@@ -50,11 +50,11 @@ class Analysis::AttendanceController < ApplicationController
     @neighborhoods =
       Neighborhood.where(invites: { event_id:  event.id })
       .joins('INNER JOIN zipcode_locations zl ON zl.neighborhood_id=gid')
-      .joins('INNER JOIN invite_rsvps ON zl.zipcode=invite_rsvps.zip_code')
-      .joins('INNER JOIN invites ON invite_rsvps.invite_id=invites.id AND invites.event_id= ' + event.id.to_s)
+      .joins('INNER JOIN invite_individuals ON zl.zipcode=invite_individuals.zip_code')
+      .joins('INNER JOIN invites ON invite_individuals.invite_id=invites.id AND invites.event_id= ' + event.id.to_s)
       .group('neighborhoods.gid')
-      .select('neighborhoods.*, count(invite_rsvps.id) rsvps, '\
-              'sum(CASE WHEN invite_rsvps.attended = \'t\' THEN 1 ELSE 0 END) attendees'
+      .select('neighborhoods.*, count(invite_individuals.id) rsvps, '\
+              'sum(CASE WHEN invite_individuals.attended = \'t\' THEN 1 ELSE 0 END) attendees'
              ).to_a
   end
 
@@ -66,7 +66,7 @@ class Analysis::AttendanceController < ApplicationController
   def populate_zipcode_locations_for_event
     InviteIndividual.for_event(event).without_locations.where.not(zip_code: nil)
       .where.not(zip_code: '')
-      .pluck('DISTINCT invite_rsvps.zip_code').each do |zipcode|
+      .pluck('DISTINCT invite_individuals.zip_code').each do |zipcode|
       next unless zipcode.match(/\A[0-9]{5}(-[0-9]+)?\z/)
       InviteIndividual.update_zip_code_location(zipcode)
     end
