@@ -59,7 +59,9 @@ RSpec.describe InviteIndividualsController, type: :controller do
                         modules: { 'attendance' => { 'field_type' => 'module',
                                                      'name' => 'attendance' } })
     end
-    let(:event) { create(:event, campaign: campaign, start_date: '01/01/2015', end_date: '01/01/2015') }
+    let(:event) { create(:event, campaign: campaign,  start_date: '01/01/2015', end_date: '01/01/2015') }
+    let(:place) { create(:place, name: 'My Place') }
+    let(:venue) { create(:venue, place: place) }
 
     describe 'for a event' do
       it 'generates empty csv with the correct headers' do
@@ -71,15 +73,15 @@ RSpec.describe InviteIndividualsController, type: :controller do
       end
 
       it 'includes the invites individual information' do
-        invite = create(:invite, event: event, invitees: 100, attendees: 2, rsvps_count: 99)
+        invite = create(:invite, event: event, venue: venue, invitees: 100, attendees: 2, rsvps_count: 99)
         create(:invite_individual, invite: invite)
         create(:invite_individual, invite: invite)
         expect { xhr :get, 'index', event_id: event.id, export_mode: 'individual', format: :csv }.to change(ListExport, :count).by(1)
 
         expect(ListExport.last).to have_rows([
           ['VENUE', 'EVENT DATE', 'CAMPAIGN', 'NAME', 'EMAIL', 'RSVP\'d', 'ATTENDED'],
-          ['Place 1', '2015-01-01 10:00', 'Test Campaign FY01', 'Fulano de Tal', 'rsvp@email.com', 'NO', 'NO'],
-          ['Place 1', '2015-01-01 10:00', 'Test Campaign FY01', 'Fulano de Tal', 'rsvp@email.com', 'NO', 'NO']
+          ['My Place', '2015-01-01 10:00', 'Test Campaign FY01', 'Fulano de Tal', 'rsvp@email.com', 'NO', 'NO'],
+          ['My Place', '2015-01-01 10:00', 'Test Campaign FY01', 'Fulano de Tal', 'rsvp@email.com', 'NO', 'NO']
         ])
       end
     end

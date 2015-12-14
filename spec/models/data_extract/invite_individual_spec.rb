@@ -27,18 +27,19 @@ RSpec.describe DataExtract::InviteIndividual, type: :model do
 
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql([
-        %w(campaign_name Campaign), ['end_date', 'End Date'],
-        ['end_time', 'End Time'], ['start_date', 'Start Date'], ['start_time', 'Start Time'],
-        ['event_status', 'Event Status'], ['place_name', 'Venue Name'],
-        ['place_street', 'Venue Street'], ['place_city', 'Venue City'],
-        ['place_state', 'Venue State'], ['place_zipcode', 'Venue ZIP Code'],
-        ['rsvpd', "RSVP'd?"], ['attended', 'Attended?'], ['first_name', 'First Name'],
+        ['campaign_name', 'Event Campaign Name'], ['end_date', 'Event End Date'],
+        ['end_time', 'Event End Time'], ['start_date', 'Event Start Date'],
+        ['start_time', 'Event Start Time'], ['event_status', 'Event Status'],
+        ['place_name', 'Event Venue Name'], ['place_street', 'Event Venue Street'],
+        ['place_city', 'Event Venue City'], ['place_state', 'Event Venue State'],
+        ['place_zipcode', 'Event Venue Zip Code'], ['rsvpd', "RSVP'd?"],
+        ['attended', 'Attended?'], ['first_name', 'First Name'],
         ['last_name', 'Last Name'], ['email', 'Email'], ["mobile_phone", "Mobile phone"],
         ["mobile_signup", "Mobile signup"],
         ["attended_previous_bartender_ball", "Attended previous bartender ball?"],
         ["opt_in_to_future_communication", "Opt in to future communication?"],
         ["primary_registrant_id", "Primary registrant ID"],
-        ["bartender_how_long", "Bartender how long"], ["date_of_birth", "Date of Birth"],
+        ["bartender_how_long", "Bartender how long?"], ["date_of_birth", "Date of Birth"],
         ["zip_code", "ZIP code"], ['created_at', 'Created At'],
         ['created_by', 'Created By'], ['modified_at', 'Modified At'],
         ['modified_by', 'Modified By'], ["active_state", "Active State"]])

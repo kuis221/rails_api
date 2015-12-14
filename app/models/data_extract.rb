@@ -55,8 +55,6 @@ class DataExtract < ActiveRecord::Base
     end
 
     def model
-      p name.inspect
-      p name.split('::').inspect
       @model ||= "::#{name.split('::')[1]}".constantize
     end
   end
