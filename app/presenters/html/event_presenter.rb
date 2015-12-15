@@ -126,11 +126,20 @@ module Html
       return if teams.nil?
       team_list = ''
       teams.each do |team|
-        team_list = h.content_tag(:div, class: 'user-tag') do
-          h.content_tag(:div, class: 'user-type') do
-            h.content_tag(:i, '', class: 'icon-team')
-          end +
-          h.content_tag(:span, team.name)
+        team_list += h.content_tag(:div, id: "event-team-#{team.id}", class: 'user-tag') do
+          item =
+            h.content_tag(:div, class: 'user-type') do
+              h.content_tag(:i, '', class: 'icon-team')
+            end +
+            h.content_tag(:span, team.name)
+          item +=
+            h.link_to('',
+                      h.delete_team_event_path(@model, team_id: team.to_param),
+                      class: 'icon-close',
+                      remote: true,
+                      method: :delete,
+                      title: 'Remove Team') if can?(:edit)
+          item
         end.html_safe
       end
       team_list
@@ -139,11 +148,24 @@ module Html
     def users_tags
       return if users.nil?
       users.map do |team_member|
-        h.content_tag(:div, class: 'user-tag has-tooltip', data: { title: h.contact_info_tooltip(team_member).to_str, trigger: :click, container: 'body' }) do
-          h.content_tag(:div, class: 'user-type') do
-            h.content_tag(:i, '', class: 'icon-user')
-          end +
-          h.content_tag(:span, team_member.full_name)
+        h.content_tag(:div, id: "event-member-#{team_member.id}", class: 'user-tag') do
+          item =
+            h.content_tag(:div, class: 'user-type') do
+              h.content_tag(:i, '', class: 'icon-user')
+            end +
+            h.content_tag(:span, class: 'has-tooltip', data: { title: h.contact_info_tooltip(team_member).to_str,
+                                                               trigger: :click,
+                                                               container: 'body' }) do
+              team_member.full_name
+            end
+          item +=
+            h.link_to('',
+                      h.delete_member_event_path(@model, member_id: team_member.to_param),
+                      class: 'icon-close',
+                      remote: true,
+                      method: :delete,
+                      title: 'Remove User') if can?(:edit)
+          item
         end
       end.join.html_safe
     end

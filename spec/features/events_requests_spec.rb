@@ -84,7 +84,8 @@ feature 'Events section' do
     it_should_behave_like 'a user that can activate/deactivate events' do
       before { company_user.campaigns << campaign }
       before { company_user.places << create(:place, city: nil, state: 'San Jose', country: 'CR', types: ['locality']) }
-      let(:permissions) { [[:index, 'Event'], [:view_list, 'Event'], [:deactivate, 'Event'], [:show, 'Event']] }
+      let(:permissions) { [[:index, 'Event'], [:view_list, 'Event'], [:deactivate, 'Event'],
+                           [:show, 'Event'], [:view_members, 'Event'], [:add_members, 'Event']] }
     end
   end
 
@@ -1086,6 +1087,66 @@ feature 'Events section' do
         expect(page).to have_content('ABSOLUT Vodka FY2013')
       end
 
+      scenario 'allows to add or delete users or teams.' do
+        create(:campaign, company: company, name: 'ABSOLUT Vodka FY2013')
+        create(:company_user,
+               company: company,
+               user: create(:user, first_name: 'Other', last_name: 'User'))
+        create(:company_user,
+               company: company,
+               user: create(:user, first_name: 'Sara', last_name: 'Smith'))
+        team = create(:team, name: 'Good Team', description: 'Good Team', active: true, company_id: company.id)
+        user1 = create(:company_user, user: create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: company)
+        user2 = create(:company_user, user: create(:user, first_name: 'Mario', last_name: 'Moreno'), company: company)
+        team.users << [user1, user2]
+
+        event = create(:event,
+                       start_date: 3.days.from_now.to_s(:slashes),
+                       end_date: 3.days.from_now.to_s(:slashes),
+                       start_time: '8:00 PM', end_time: '11:00 PM',
+                       campaign: create(:campaign, name: 'ABSOLUT Vodka FY2012', company: company))
+        Sunspot.commit
+
+        visit events_path
+
+        within resource_item do
+          click_js_button 'Edit Event'
+        end
+
+        within visible_modal do
+          select_from_chosen('Other User', from: 'Event staff')
+          select_from_chosen('Good Team', from: 'Event staff')
+          select_from_chosen('Sara Smith', from: 'Event staff')
+          click_js_button 'Save'
+        end
+        ensure_modal_was_closed
+
+        visit event_path(event)
+
+        within '#event-team-members' do
+          expect(page).to have_content('Other User')
+          expect(page).to have_content('Good Team')
+          expect(page).to have_content('Sara Smith')
+        end
+
+        click_js_button 'Edit Event'
+
+        within visible_modal do
+          expect(page).to have_selector('.chosen_team', count: 1)
+          find('li.chosen_team .search-choice-close').click
+          expect(page).to have_selector('.chosen_team', count: 0)
+          click_js_button 'Save'
+        end
+        ensure_modal_was_closed
+        visit event_path(event)
+
+        within '#event-team-members' do
+          expect(page).to have_content('Other User')
+          expect(page).to_not have_content('Good Team')
+          expect(page).to have_content('Sara Smith')
+        end
+      end
+
       feature 'with timezone support turned ON' do
         before do
           company.update_column(:timezone_support, true)
@@ -1250,6 +1311,32 @@ feature 'Events section' do
             expect(page).to have_content('WED Aug 21, 2013 from 10:00 AM to 11:00 AM')
           end
         end
+      end
+
+      scenario 'allows to remove users and teams from the event staff', js: true do
+        user = create(:user, first_name: 'Pablo', last_name: 'Baltodano', company_id: company.id)
+        team = create(:team, name: 'Team 1', company: company)
+        create(:membership, company_user: user.company_users.first, memberable: event)
+        create(:teaming, team: team, teamable: event)
+        Sunspot.commit
+
+        visit event_path(event)
+
+        # Test the user and the team are present in the list of the event staff, remove them
+        within staff_list do
+          expect(page).to have_content('Pablo Baltodano')
+          expect(page).to have_content('Team 1')
+          click_js_link 'Remove User'
+          click_js_link 'Remove Team'
+          expect(page).to_not have_content('Pablo Baltodano')
+          expect(page).to_not have_content('Team 1')
+        end
+
+        # Refresh the page and make sure the user and the team are not there
+        visit event_path(event)
+
+        expect(page).to_not have_content('Pablo Baltodano')
+        expect(page).to_not have_content('Team 1')
       end
 
       scenario 'allows to add a user as contact to the event', js: true do
@@ -1518,6 +1605,47 @@ feature 'Events section' do
 
         expect(page).to have_content('Great job! Your PER has been submitted for approval.')
       end
+
+      scenario 'allows to add staff to the event' do
+        user = create(:company_user, company: company, role: company_user.role,
+                                     user: create(:user, first_name: 'Alberto',
+                                                         last_name: 'Porras'))
+        team = create(:team, name: 'Super Friends', company: company)
+        team.users << company_user
+
+        visit event_path(event)
+
+        click_js_button 'Add Staff'
+        within visible_modal do
+          # Select an user
+          within resource_item 1 do
+            expect(page).to have_content('Alberto Porras')
+            staff_selected?('user', user.id, false)
+            select_from_staff('user', user.id)
+            staff_selected?('user', user.id, true)
+          end
+
+          # Select a team
+          within resource_item 2 do
+            expect(page).to have_content('Super Friends')
+            staff_selected?('team', team.id, false)
+            select_from_staff('team', team.id)
+            staff_selected?('team', team.id, true)
+          end
+          click_js_button 'Add 2 Users/Teams'
+        end
+
+        within '#event-team-members' do
+          expect(page).to have_content('Super Friends')
+          expect(page).to have_content('Alberto Porras')
+        end
+
+        click_js_button 'Add Staff'
+        within visible_modal do
+          expect(page).to_not have_content('Super Friends')
+          expect(page).to_not have_content('Alberto Porras')
+        end
+      end
     end
   end
 
@@ -1531,6 +1659,10 @@ feature 'Events section' do
 
   def contact_list
     '#event-contacts-list'
+  end
+
+  def staff_list
+    '#event-team-members'
   end
 
   def tracker_bar

@@ -29,6 +29,9 @@
             i.icon-team.indicate-icon
             = presenter.team_members
 
+      - if can?(:add_members, resource)
+        = button_to_add 'Add Staff', new_member_event_path(resource)
+
     - if presenter.current_phase == :plan
       .span6.map_container
         - unless resource.place.nil? || resource.place.latitude.nil? || resource.place.latitude == 1.0
