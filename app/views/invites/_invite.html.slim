@@ -4,7 +4,7 @@ tr.resource-item.invite id="invite_#{invite.id}"
     td= link_to invite.event.start_at.strftime('%m/%d/%Y at %l:%M %p'), event_path(invite.event)
     td= link_to invite.event.place_name, venue_path(invite.event.venue.id)
   - else 
-    td= link_to invite.place_name, venue_path(invite.venue.id)
+    td= link_to invite.place_name, venue_path(invite.venue_id) if invite.venue.present?
   td.invitees
     .text-center= editable_invite_attribute parent, invite, :invitees
   td.rsvps_count
