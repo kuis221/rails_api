@@ -25,9 +25,8 @@ css:
   .text-large {
     font-size: 15px !important;
   }
-
 - if params[:mode] == 'calendar' && can?(:view_calendar, Event)
-  #calendar-canvas data-events-url="#{calendar_events_url(format: :json)}"
+  #calendar-canvas data-events-url="#{calendar_events_url(params.merge(format: :json))}"
   = content_for :pdf_scripts
     javascript:
       window.status='loading';

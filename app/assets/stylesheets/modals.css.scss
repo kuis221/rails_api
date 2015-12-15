@@ -982,13 +982,13 @@ div#spin{
 				height: 100%;
 				width: 300px;
 			}
-			.attachment-panel { 
+			.attachment-panel {
 				.attachment-select-file-view {
 					padding-top: 110px;
 				}
 				.drag-box {
 					line-height: 90px;
-					p { 
+					p {
 						font-size: 12px;
 						line-height: 17px;
 					}
@@ -1080,7 +1080,7 @@ div#spin{
 		}
 	}
 	.expenses-list > .fields {
-		&:nth-child(1), &:nth-child(2) { 
+		&:nth-child(1), &:nth-child(2) {
 			.remove_nested_fields {
 				display:none;
 			}
@@ -1209,5 +1209,49 @@ div#spin{
 		padding-right: 5px;
 		font-size: 14px;
 		vertical-align: middle;
+	}
+}
+
+// Add Staff Modal
+// --------------------------------------------------
+
+.members-form {
+	.resource-list {
+		.resource-item {
+			.resource-item-link {
+				display: flex;
+				font-size: 15px;
+				font-weight: bold;
+				position: relative;
+				.info {
+					width: 75%;
+				}
+				.input {
+					position: absolute;
+					top: 30%;
+					width: 25%;
+				}
+				.description {
+					font-size: 12px;
+					font-weight: normal;
+					margin: 0;
+					padding: 0;
+					width: 50%;
+				}
+				div.checker {
+					border-radius: 12px;
+					margin: 0px 15px 5px 0px;
+					span {
+						background-color: $white;
+						&.checked {
+							background-color: $green !important;
+							&:after {
+								top: 10px;
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 }

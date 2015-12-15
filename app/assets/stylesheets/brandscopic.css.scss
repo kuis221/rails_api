@@ -410,6 +410,15 @@ body{
 body.events.show{
 	#event-info.details_box {
 		padding-top: 90px;
+		.add-details-info {
+			display: inline-block;
+			margin-top: 0;
+		}
+		.button_to_add {
+			button {
+				margin-top: 5px;
+			}
+		}
 	}
 	.event-contact {
 		a.edit {
@@ -7663,6 +7672,51 @@ form.button_to .button-with-icon {
 		position: absolute;
 		left: 90%;
 		top: -71px;
+	}
+}
+
+.chosen-choise-close {
+	li{
+		&.team {
+			font-size: 14px;
+			height: 24px;
+		}
+		&.search-choice {
+			padding-left: 0;
+			&:before {
+				content: "\e649";
+				background-color: $tags-gray;
+				color: white;
+				float: left;
+				font-size: 14px;
+				height: 24px;
+				@include border-radius(15px);
+				line-height: 25px;
+				position: relative;
+				text-align: center;
+				width:25px;
+				font-family: 'icons';
+				margin-right: 3px;
+			}
+		}
+		&.chosen_team {
+			&:before {
+				content: "\e648" !important;
+			}
+		}
+	}
+	.search-choice-close {
+		width: 12px;
+		height: 12px;
+		color: $gray-light;
+		font-size: 10px;
+		position: absolute;
+		top: 2px;
+		right: 6px;
+		&:after{
+			content: "\e616";
+			font-family: 'icons';
+		}
 	}
 }
 

@@ -17,7 +17,7 @@ Styleguide 6.1
 }
 
 .user-tag{
-	padding: 0 10px 0 28px;
+	padding: 0 24px 0 28px;
 }
 
 .user-tag-option{
@@ -29,7 +29,7 @@ Styleguide 6.1
 	font-size: 13px;
 	position: relative;
 	margin: 1px 5px 3px 0;
-  height: 24px;
+	height: 24px;
 	border-radius: 12px;
 	background-color: $brand;
 	color: $white;
@@ -54,10 +54,10 @@ Styleguide 6.1
 		}
 	}
 	.icon-close {
-		color: $white;
-		display: block;
-		font-size: 9px;
-    line-height: 26px;
+		color: $gray-light;
+		display: inline-block;
+		font-size: 11px;
+		line-height: 27px;
 		position: absolute;
 		right: 7px;
 		&:hover {

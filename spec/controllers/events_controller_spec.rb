@@ -536,7 +536,7 @@ describe EventsController, type: :controller do
         other_user.places << place
         expect do
           expect do
-            xhr :post, 'add_members', id: event.id, member_id: other_user.to_param, format: :js
+            xhr :post, 'add_members', id: event.id, new_members: ["user_#{other_user.to_param}"], format: :js
             expect(response).to be_success
             expect(assigns(:event)).to eq(event)
             event.reload
@@ -557,7 +557,7 @@ describe EventsController, type: :controller do
         team.users << other_user
         expect do
           expect do
-            xhr :post, 'add_members', id: event.id, team_id: team.to_param, format: :js
+            xhr :post, 'add_members', id: event.id, new_members: ["team_#{team.to_param}"], format: :js
             expect(response).to be_success
             expect(assigns(:event)).to eq(event)
             event.reload
@@ -574,7 +574,7 @@ describe EventsController, type: :controller do
       it 'should not assign users to the event if they are already part of the event' do
         event.users << company_user
         expect do
-          xhr :post, 'add_members', id: event.id, member_id: company_user.to_param, format: :js
+          xhr :post, 'add_members', id: event.id, new_members: ["user_#{company_user.to_param}"], format: :js
           expect(response).to be_success
           expect(assigns(:event)).to eq(event)
           event.reload
@@ -585,7 +585,7 @@ describe EventsController, type: :controller do
         team = create(:team, company_id: company.id)
         event.teams << team
         expect do
-          xhr :post, 'add_members', id: event.id, team_id: team.to_param, format: :js
+          xhr :post, 'add_members', id: event.id, new_members: ["team_#{team.to_param}"], format: :js
           expect(response).to be_success
           expect(assigns(:event)).to eq(event)
           event.reload

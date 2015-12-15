@@ -1,10 +1,7 @@
-- if @member_id
+- if @staff_changed
   |
-    $(document).trigger('members:change');
-    $('#staff-list > #staff-member-user-#{@member_id}').slideUp();
-- if @team_id
-  |
-    $(document).trigger('teams:change');
-    $('#staff-list > #staff-member-team-#{@team_id}').slideUp();
+    $(document).trigger('staff:change');
+|
+  selectMemberDialog.modal('hide').remove();
 
 = render 'add_member'

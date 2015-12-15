@@ -21,21 +21,23 @@ module TeamMembersHelper
     end
 
     def add_members
-      @team_id = @member_id = nil
-      if params[:member_id]
-        @member_id = params[:member_id]
-        member =  company_users.find(params[:member_id])
-        unless resource.user_ids.include?(member.id)
-          resource.update_attributes(user_ids: resource.user_ids + [member.id])
+      @staff_changed = false
+      params[:new_members].each do |item|
+        type, id = item.split('_')
+        if type == 'user'
+          member =  company_users.find(id)
+          unless resource.user_ids.include?(member.id)
+            resource.update_attributes(user_ids: resource.user_ids + [member.id])
+            @staff_changed = true
+          end
+        elsif type == 'team'
+          unless resource.teams.where(id: id).first
+            team = company_teams.find(id)
+            resource.teams << team
+            resource.solr_index
+          end
         end
-      elsif params[:team_id]
-        @team_id = params[:team_id]
-        unless resource.teams.where(id: @team_id).first
-          team = company_teams.find(@team_id)
-          resource.teams << team
-          resource.solr_index
-        end
-      end
+      end if params[:new_members].present?
     end
 
     def members
@@ -75,11 +77,11 @@ module TeamMembersHelper
     def assignable_teams
       @assignable_teams ||= if resource.is_a?(Team)
                               company_teams.where('0=1')
-     else
-       company_teams.with_active_users(current_company).where('teams.id not in (?)', resource.team_ids + [0])
-       # @assignable_teams ||= company_teams.with_active_users(current_company).order('teams.name ASC').select do |team|
-       #   !resource.team_ids.include?(team.id)
-       # end
+      else
+        company_teams.with_active_users(current_company).where('teams.id not in (?)', resource.team_ids + [0])
+        # @assignable_teams ||= company_teams.with_active_users(current_company).order('teams.name ASC').select do |team|
+        #   !resource.team_ids.include?(team.id)
+        # end
      end
     end
 

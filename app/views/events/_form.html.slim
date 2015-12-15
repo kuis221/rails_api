@@ -35,7 +35,7 @@
 
     = f.input :description, input_html: { placeholder: 'Enter a short description of your event' }
 
-    = f.input :team_members, label: 'Event staff' do
+    = f.input :team_members, label: 'Event staff', wrapper_html: { class: 'chosen-choise-close' } do
       = f.select :team_members, current_company.team_member_options , {}, class: 'input-xlarge chosen-enabled', multiple: true, 'data-placeholder' => " "
 
   .form-actions
@@ -100,6 +100,22 @@ javascript:
     }
   });
 
+  function add_team_icon(){
+    options = $('#event_team_members_chzn').find('.search-choice');
+    for (i=0; i < options.length; i++){
+      id = options[i].id.split('_').pop()
+      name = '#event_team_members_chzn_o_' + id
+      if ($(name).attr('class').indexOf('team') != -1){
+        $('#' + options[i].id).addClass('chosen_team');
+      }
+    }
+  }
+
+  $('#event_team_members').chosen().change(function(e){
+    add_team_icon();
+  });
+
+  add_team_icon();
 
 / var input = $('.modal .places-autocomplete')[0];
 / var locationAutocomplete = new google.maps.places.Autocomplete(input);

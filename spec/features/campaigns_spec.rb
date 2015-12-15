@@ -22,23 +22,45 @@ feature 'Campaigns', js: true do
   shared_examples_for 'a user that can add staff to campaigns' do
     scenario 'can successfuly add a user to a campaign' do
       Kpi.create_global_kpis
-      create(:company_user, company: company, role: company_user.role,
-                            user: create(:user, first_name: 'Alberto',
-                                                last_name: 'Porras'))
+      user = create(:company_user, company: company, role: company_user.role,
+                                   user: create(:user, first_name: 'Alberto',
+                                                       last_name: 'Porras'))
+
+      team = create(:team, name: 'Super Friends', company: company)
+      team.users << company_user
+
       visit campaign_path(campaign)
+
       staff_tab = open_tab('Staff')
       click_js_button 'Add Staff'
       within visible_modal do
-        within resource_item do
+        # Select an user
+        within resource_item 1 do
           expect(page).to have_content('Alberto Porras')
-          click_js_link 'Add'
+          staff_selected?('user', user.id, false)
+          select_from_staff('user', user.id)
+          staff_selected?('user', user.id, true)
         end
-        expect(page).not_to have_content('Alberto Porras')
+
+        # Select a team
+        within resource_item 2 do
+          expect(page).to have_content('Super Friends')
+          staff_selected?('team', team.id, false)
+          select_from_staff('team', team.id)
+          staff_selected?('team', team.id, true)
+        end
+        click_js_button 'Add 2 Users/Teams'
       end
-      close_modal
 
       within staff_tab do
+        expect(page).to have_content('Super Friends')
         expect(page).to have_content('Alberto Porras')
+      end
+
+      click_js_button 'Add Staff'
+      within visible_modal do
+        expect(page).to_not have_content('Super Friends')
+        expect(page).to_not have_content('Alberto Porras')
       end
     end
   end
