@@ -13,7 +13,6 @@
 #  created_at    :datetime
 #  updated_at    :datetime
 #  active        :boolean          default("true")
-#  area_id       :integer
 #  created_by_id :integer
 #  updated_by_id :integer
 #

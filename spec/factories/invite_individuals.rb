@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: invite_invdividuals
+# Table name: invite_individuals
 #
 #  id                               :integer          not null, primary key
 #  invite_id                        :integer
@@ -23,6 +23,15 @@
 #  created_by_id                    :integer
 #  updated_by_id                    :integer
 #  attended                         :boolean
+#  rsvpd                            :boolean          default("false")
+#  active                           :boolean          default("true")
+#  age                              :integer
+#  address_line_1                   :string
+#  address_line_2                   :string
+#  city                             :string
+#  province_code                    :string
+#  country_code                     :string
+#  phone_number                     :string
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

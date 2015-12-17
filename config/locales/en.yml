@@ -1208,6 +1208,12 @@ en:
         place_city: 'Event Venue City'
         place_state: 'Event Venue State'
         place_zipcode: 'Event Venue Zip Code'
+        phone_number: 'Phone Number'
+        city: 'City'
+        province_code: 'State'
+        country_code: 'Country'
+        address_line_1: 'Address Line 1'
+        address_line_2: 'Address Line 2'
     descriptions:
       event:
         campaign_name: "The assigned campaign of the event"
@@ -1497,3 +1503,9 @@ en:
         modified_by: "The person who modified the invitation"
         modified_at: "The date the invitation was modified"
         active_state: "The active state of the invitation"
+        phone_number: "Primary phone number of the person who was invited to, RSVP'd to and/or attended the event"
+        city: "City where the person who was invited to, RSVP'd to and/or attended the event lives"
+        province_code: "State where the person who was invited to, RSVP'd to and/or attended the event lives"
+        country_code: "Country where the person who was invited to, RSVP'd to and/or attended the event lives"
+        address_line_1: "Address where the person who was invited to, RSVP'd to and/or attended the event lives"
+        address_line_2: "Address where the person who was invited to, RSVP'd to and/or attended the event lives"

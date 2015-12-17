@@ -101,6 +101,8 @@ class KbmgSyncher
       date_added: person['CreatedDate'],
       attended: registration['Attended'],
       rsvpd: registration['Rsvp'],
+      mobile_phone: registration['MobilePhone'],
+      phone_number: registration['PhoneNumber'],
       opt_in_to_future_communication: person['IsOptedOut']
     )
     individual.save(validate: false)
