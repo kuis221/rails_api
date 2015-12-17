@@ -62,22 +62,24 @@ class KbmgSyncher
     logger.info 'Failed to fetch event registrations' unless registrations && registrations['Success']
     return unless registrations && registrations['Success']
 
-    place =  place_match(kbmg_place)
-    unless place.persisted?
-      logger.info "Couldn't create #{place.errors.inspect}"
-      return
-    end
-    return unless place
-
-    venue = ::Venue.find_or_create_by(place: place, company: campaign.company)
-    store_event_registrations event, venue, registrations['Data']['Registrations']
+    store_event_registrations event, kbmg_place, registrations['Data']['Registrations']
   end
 
-  def store_event_registrations(event, venue, registrations)
-    invite = event.invites.find_or_create_by(venue: venue)
+  def store_event_registrations(event, kbmg_event_place, registrations)
     registrations.each do |registration|
       person = client.person(registration['PersonId'])
       next unless person
+      place = find_place_by_zip_code(person['AccountName'], kbmg_event_place['PostalCode'])
+      place ||= find_place_by_city(person['AccountName'], kbmg_event_place['City'])
+      place ||= find_place_by_state(person['AccountName'], kbmg_event_place['ProvinceName'])
+      invite =
+        if place.present?
+          venue = ::Venue.find_or_create_by(place: place, company: campaign.company)
+          event.invites.find_or_initialize_by(venue: venue)
+        else
+          event.invites.new
+        end
+      next unless invite.save(validate: false)
       individual = invite.individuals.find_or_initialize_by(email: person['Email'])
       update_individual_attributes individual, registration, person
     end
@@ -129,6 +131,24 @@ class KbmgSyncher
                                      kbmg_place['City'],
                                      kbmg_place['ProvinceCode'],
                                      kbmg_place['CountryName']].compact.join(', ')
+  end
+
+  def find_place_by_zip_code(name, zip_code)
+    return if zip_code.blank?
+    Place.where('similarity(normalize_place_name(places.name), normalize_place_name(?)) >= 0.6', name)
+      .where(zipcode: zip_code).take
+  end
+
+  def find_place_by_city(name, city)
+    return if city.blank?
+    Place.where('similarity(normalize_place_name(places.name), normalize_place_name(?)) >= 0.6', name)
+      .where('lower(places.city) = ?', city.downcase).take
+  end
+
+  def find_place_by_state(name, state)
+    return if state.blank?
+    Place.where('similarity(normalize_place_name(places.name), normalize_place_name(?)) >= 0.6', name)
+      .where('lower(places.state) = ?', state.downcase).take
   end
 
   # Search for a campaign event by looking for the start date. Returns

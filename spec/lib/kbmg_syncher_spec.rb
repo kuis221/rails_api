@@ -123,13 +123,15 @@ describe KbmgSyncher do
           stub_api_data :person, 'PER1' do
             { 'FirstName' => 'Miguel', 'LastName' => 'Angelo', 'PostalCode' => '11122',
               'DateOfBirth' => '1946-02-15T00:00:00', 'Email' => 'person1@email.net',
-              'CreatedDate' => '2015-04-06T17:03:34.8376182', 'IsOptedOut' => false }
+              'CreatedDate' => '2015-04-06T17:03:34.8376182', 'IsOptedOut' => false,
+              'AccountName' => '12th & Broad' }
           end
 
           stub_api_data :person, 'PER2' do
             { 'FirstName' => 'Raphael', 'LastName' => nil,  'PostalCode' => '33456',
               'DateOfBirth' => '1946-02-15T00:00:00', 'Email' => 'person2@email.net',
-              'CreatedDate' => '2015-04-06T17:03:34.8376182', 'IsOptedOut' => false }
+              'CreatedDate' => '2015-04-06T17:03:34.8376182', 'IsOptedOut' => false,
+              'AccountName' => 'Melanys Place' }
           end
         end
 
@@ -142,15 +144,14 @@ describe KbmgSyncher do
             expect do
               expect do
                 subject.process
-              end.to change(Invite, :count).by(2)
+              end.to change(Invite, :count).by(4)
             end.to change(InviteIndividual, :count).by(4) # Two per event
-          end.to change(Venue, :count).by(2)
+          end.to_not change(Venue, :count)
 
           expect(event1.reload.kbmg_event_id).to eql 'EVNT1'
           expect(Invite.pluck(:rsvps_count, :attendees, :invitees)).to match_array([
-            [0, 1, 2], [1, 1, 2]
+            [0, 0, 1], [0, 0, 1], [0, 1, 1], [1, 1, 1]
           ])
-          expect(Invite.all.map(&:venue).uniq).to match_array Venue.last(2)
         end
 
         it 'correctly finds the event based on the place\'s city' do
@@ -163,34 +164,72 @@ describe KbmgSyncher do
             expect do
               expect do
                 subject.process
-              end.to change(Invite, :count).by(1)
+              end.to change(Invite, :count).by(2)
             end.to change(InviteIndividual, :count).by(2) # Two per event
-          end.to change(Venue, :count).by(1)
+          end.to_not change(Venue, :count)
         end
 
-        pending 'creates the place if a good match cannot be found' do
-          # This should be implemented when making it to assign the correct
-          # venue to each individual invite
+        it "matches the account using the event's zip code" do
           event1 = create(:event, campaign: campaign, place: place1, start_date: '01/01/2015', end_date: '01/01/2015')
           event2 = create(:event, campaign: campaign, place: place2, start_date: '01/02/2015', end_date: '01/02/2015')
 
+          place1 = create :place, name: '12th & Broad', zipcode: '12233'
+          place2 = create :place, name: "Melany\'s Place", zipcode: '80424'
+
           expect do
-            subject.process
-          end.to change(Place, :count).by(2)
+            expect do
+              subject.process
+            end.to_not change(Place, :count)
+          end.to change(Venue, :count).by 2
 
           expect(event1.reload.kbmg_event_id).to eql 'EVNT1'
-          expect(Invite.pluck(:rsvps_count, :attendees, :invitees)).to match_array([
-            [0, 1, 2], [1, 1, 2]
-          ])
-          expect(Invite.all.map(&:venue).uniq).to match_array Venue.last(2)
-          place = Place.last
-          expect(place.name).to eql 'Bar None'
-          expect(place.formatted_address).to eql '1233 Union Street, Los Angeles, CA, United States'
-          expect(place.street_number).to eql '1233'
-          expect(place.route).to eql 'Union Street'
-          expect(place.city).to eql 'Los Angeles'
-          expect(place.country).to eql 'US'
-          expect(place.state).to eql 'California'
+          expect(event2.reload.kbmg_event_id).to eql 'EVNT2'
+          expect(Invite.count).to eql 4
+
+          expect(Invite.all.map(&:venue).compact.map(&:place_id)).to match_array(
+            [place1.id, place2.id])
+        end
+
+        it "matches the account using the event's state" do
+          event1 = create(:event, campaign: campaign, place: place1, start_date: '01/01/2015', end_date: '01/01/2015')
+          event2 = create(:event, campaign: campaign, place: place2, start_date: '01/02/2015', end_date: '01/02/2015')
+
+          place1 = create :place, name: '12th & Broad', state: 'California'
+          place2 = create :place, name: "Melany\'s Place", state: 'Colorado'
+
+          expect do
+            expect do
+              subject.process
+            end.to_not change(Place, :count)
+          end.to change(Venue, :count).by 2
+
+          expect(event1.reload.kbmg_event_id).to eql 'EVNT1'
+          expect(event2.reload.kbmg_event_id).to eql 'EVNT2'
+          expect(Invite.count).to eql 4
+
+          expect(Invite.all.map(&:venue).compact.map(&:place_id)).to match_array(
+            [place1.id, place2.id])
+        end
+
+        it "matches the account using the event's city" do
+          event1 = create(:event, campaign: campaign, place: place1, start_date: '01/01/2015', end_date: '01/01/2015')
+          event2 = create(:event, campaign: campaign, place: place2, start_date: '01/02/2015', end_date: '01/02/2015')
+
+          place1 = create :place, name: '12th & Broad', city: 'Los Angeles'
+          place2 = create :place, name: "Melany\'s Place", city: 'Breckenridge'
+
+          expect do
+            expect do
+              subject.process
+            end.to_not change(Place, :count)
+          end.to change(Venue, :count).by 2
+
+          expect(event1.reload.kbmg_event_id).to eql 'EVNT1'
+          expect(event2.reload.kbmg_event_id).to eql 'EVNT2'
+          expect(Invite.count).to eql 4
+
+          expect(Invite.all.map(&:venue).compact.map(&:place_id)).to match_array(
+            [place1.id, place2.id])
         end
       end
     end
