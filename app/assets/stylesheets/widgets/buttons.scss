@@ -321,4 +321,17 @@ Styleguide 3.1
 	padding: 2px 10px;
 }
 
+// BTN TO ADD
+// ----------------------------------------------------------------------
 
+.button_to_add {
+	button {
+		i.icon {
+			color: $gray-light;
+			font-size: 24px;
+			&:hover {
+				color: $brand;
+			}
+		}
+	}
+}

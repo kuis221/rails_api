@@ -269,6 +269,14 @@ Styleguide 4.1.5
 		&.max-items-5 {
 			@include max-resource-items-height($resource-item-height - 10px, 5);
 		}
+		&.hide {
+			border-width: 1px 1px;
+			color: $gray-light;
+			height: 257px;
+			line-height: 257px;
+			text-align: center;
+			vertical-align: middle;
+		}
 	}
 
 	&.without-actions {
