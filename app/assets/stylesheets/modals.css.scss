@@ -1219,8 +1219,9 @@ div#spin{
 	.resource-list {
 		.resource-item {
 			.resource-item-link {
+				color: $gray-dark;
 				display: flex;
-				font-size: 15px;
+				font-size: 16px;
 				font-weight: bold;
 				position: relative;
 				.info {
@@ -1232,6 +1233,7 @@ div#spin{
 					width: 25%;
 				}
 				.description {
+					color: $brand;
 					font-size: 12px;
 					font-weight: normal;
 					margin: 0;
