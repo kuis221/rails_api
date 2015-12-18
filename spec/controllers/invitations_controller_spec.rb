@@ -46,7 +46,9 @@ describe InvitationsController, type: :controller do
       it "should assign current_user's company_id to the new user" do
         expect do
           expect do
-            xhr :post, 'create', user: { first_name: 'Test', last_name: 'Test', email: 'test@testing.com', company_users_attributes: { '0' => { role_id: 123 } } }, format: :js
+            xhr :post, 'create', user: {
+              first_name: 'Test', last_name: 'Test', email: 'test@testing.com',
+              company_users_attributes: { '0' => { role_id: 123 } } }, format: :js
           end.to change(User, :count).by(1)
         end.to change(CompanyUser, :count).by(1)
         expect(assigns(:user).companies.count).to eq(1)

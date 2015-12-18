@@ -62,12 +62,13 @@ RSpec.describe InvitesController, type: :controller do
       end
 
       it 'includes the invites information' do
-        invite = create(:invite, event: event, invitees: 100, attendees: 2, rsvps_count: 99)
+        create(:invite, venue: venue, event: event, invitees: 100,
+                        attendees: 2, rsvps_count: 99)
         expect { xhr :get, 'index', event_id: event.id, format: :csv }.to change(ListExport, :count).by(1)
 
         expect(ListExport.last).to have_rows([
           ['VENUE', 'EVENT DATE', 'CAMPAIGN', 'INVITES', 'RSVPs', 'ATTENDEES'],
-          ['Place 1', '2015-01-01 10:00', 'Test Campaign FY01', "100", "99", "2"]
+          ['My Super Place', '2015-01-01 10:00', 'Test Campaign FY01', "100", "99", "2"]
         ])
       end
     end
