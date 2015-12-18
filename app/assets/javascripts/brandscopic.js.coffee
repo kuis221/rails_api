@@ -168,6 +168,17 @@ jQuery ->
 			showOtherMonths:true
 			selectOtherMonths:true
 			dateFormat:"mm/dd/yy"
+			beforeShowDay: (date) ->
+				validDays = $(@).data('valid-dates')
+				if validDays
+					day = "#{(1900 + date.getYear())}#{(date.getMonth() + 1)}#{date.getDate()}"
+					if $.inArray(day, validDays) >= 0
+						[true, 'datepick-event', '']
+					else
+						[false, '', '']
+				else
+					[true, '', '']
+
 			onClose: (selectedDate) ->
 				$(@).valid();
 		$('input.timepicker').timepicker()

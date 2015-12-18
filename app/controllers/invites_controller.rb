@@ -6,7 +6,7 @@ class InvitesController < InheritedResources::Base
   actions :new, :create, :edit, :update
 
   helper_method :available_campaigns, :available_events, :available_events_at_time,
-                :place
+                :place, :valid_event_dates
 
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableController
@@ -91,5 +91,13 @@ class InvitesController < InheritedResources::Base
         reference, place_id = id.split('||')
         Place.load_by_place_id(place_id, reference)
       end
+  end
+
+  def valid_event_dates
+    return [] unless params[:campaign_id]
+    prefix = Company.current.timezone_support? ? 'local_' : ''
+    scope = current_company.events.active.where(campaign: params[:campaign_id])
+    scope = scope.where(place_id: params[:place_id]) if params[:place_id]
+    scope.pluck("to_char(#{prefix}start_at, 'YYYYMMDD')")
   end
 end

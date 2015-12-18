@@ -292,6 +292,18 @@ body{
 
 // STYLES FOR ALL DATA SECTIONS
 // --------------------------------------------------
+%calendar-day-with-data {
+				font-weight: 600;
+				position: relative;
+				&:before{
+					color: $user_menu;
+					content:"\2022";
+					font-size: 7px;
+					position: absolute;
+					bottom: -9px;
+					right: 11px;
+				}
+}
 
 [class$='-data']{
 	display: block;
@@ -838,16 +850,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 				}
 			}
 			&.datepick-event{
-				font-weight: 600;
-				position: relative;
-				&:before{
-					color: $user_menu;
-					content:"\2022";
-					font-size: 7px;
-					position: absolute;
-					bottom: -9px;
-					right: 11px;
-				}
+        @extend %calendar-day-with-data;
 			}
 			&:focus{
 				outline:0;
@@ -942,6 +945,19 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		border-top-right-radius: 6px;
 		text-align: center;
 	}
+
+.ui-datepicker-calendar { 
+  .ui-state-disabled {
+    color: #666;
+    opacity: 1;
+    .ui-state-default {
+      font-weight: 400;
+    }
+  }
+  .datepick-event { 
+     @extend %calendar-day-with-data;
+  }
+}
 
 
 // Date Preferences Panel (sidebar)

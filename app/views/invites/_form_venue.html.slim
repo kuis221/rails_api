@@ -30,7 +30,7 @@
               .control-group.required
                 label.required.control-label for="invite_selected_date" Event date
                 .controls
-                  = text_field_tag :date, event_date, class: 'date_picker required datepicker', id: 'invite_selected_date'
+                  = text_field_tag :date, event_date, class: 'date_picker required datepicker', data: { 'valid-dates' => valid_event_dates },  id: 'invite_selected_date'
             .span2
             .span5
               = f.input :event_id, label: 'Event time', required: true, collection: available_events(place_id: place_id).map { |e| [e.start_time, e.id] }, input_html: { class: 'chosen-enabled' }
@@ -43,7 +43,7 @@
               .control-group.required
                 label.required.control-label for="invite_selected_date" Event date
                 .controls
-                  = text_field_tag :date, params[:date], class: 'date_picker required datepicker', id: 'invite_selected_date'
+                  = text_field_tag :date, params[:date], class: 'date_picker required datepicker', data: { 'valid-dates' => valid_event_dates }, id: 'invite_selected_date'
             .span2
             .span5
               .control-group.required
