@@ -426,6 +426,7 @@ class Event < ActiveRecord::Base
 
   def venue
     return if place_id.nil?
+    @venue = nil if @venue.present? && place_id != @venue.place_id
     @venue ||= Venue.find_or_create_by(company_id: company_id, place_id: place_id)
     @venue.place = place if association(:place).loaded?
     @venue
@@ -839,7 +840,7 @@ class Event < ActiveRecord::Base
 
     if @reindex_place
       if previous_changes.key?(:place_id) && previous_changes[:place_id].first
-        previous_venue = Venue.find_by(company_id: company_id, place_id: previous_changes[:place_id])
+        previous_venue = Venue.find_by(company_id: company_id, place_id: previous_changes[:place_id][0])
         VenueIndexer.perform_async(previous_venue.id) unless previous_venue.nil?
       end
     end
