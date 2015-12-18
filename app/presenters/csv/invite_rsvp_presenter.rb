@@ -1,5 +1,5 @@
 module Csv
-  class InviteRsvpPresenter < InvitePresenter
+  class InviteIndividualPresenter < InvitePresenter
     def opt_in_to_future_communication
       @model.opt_in_to_future_communication? ? 'YES' : 'NO'
     end

@@ -12,9 +12,9 @@
 #  updated_by_id       :integer
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
-#  active              :boolean          default(TRUE)
+#  active              :boolean          default("true")
 #  place_id            :integer
-#  promo_hours         :decimal(6, 2)    default(0.0)
+#  promo_hours         :decimal(6, 2)    default("0")
 #  reject_reason       :text
 #  timezone            :string(255)
 #  local_start_at      :datetime
@@ -24,8 +24,9 @@
 #  rejected_at         :datetime
 #  submitted_at        :datetime
 #  approved_at         :datetime
-#  active_photos_count :integer          default(0)
+#  active_photos_count :integer          default("0")
 #  visit_id            :integer
+#  results_version     :integer          default("0")
 #
 
 class Event < ActiveRecord::Base
@@ -34,6 +35,7 @@ class Event < ActiveRecord::Base
   # Defines the method do_search
   include SolrSearchable
   include EventBaseSolrSearchable
+  include EventAttendance
 
   has_many :form_fields, through: :campaign, autosave: false
 
@@ -70,7 +72,6 @@ class Event < ActiveRecord::Base
 
   has_many :comments, -> { order 'comments.created_at ASC' }, dependent: :destroy, as: :commentable,
                                                               inverse_of: :commentable
-
   has_many :surveys, -> { order 'surveys.created_at ASC' }, dependent: :destroy,  inverse_of: :event
 
   # Events-Users relationship
@@ -79,8 +80,6 @@ class Event < ActiveRecord::Base
                    after_remove: :after_remove_member
 
   has_many :contact_events, dependent: :destroy
-
-  has_many :invites, dependent: :destroy, inverse_of: :event
 
   accepts_nested_attributes_for :event_expenses, allow_destroy: true
   accepts_nested_attributes_for :surveys
@@ -427,6 +426,7 @@ class Event < ActiveRecord::Base
 
   def venue
     return if place_id.nil?
+    @venue = nil if @venue.present? && place_id != @venue.place_id
     @venue ||= Venue.find_or_create_by(company_id: company_id, place_id: place_id)
     @venue.place = place if association(:place).loaded?
     @venue
@@ -840,7 +840,7 @@ class Event < ActiveRecord::Base
 
     if @reindex_place
       if previous_changes.key?(:place_id) && previous_changes[:place_id].first
-        previous_venue = Venue.find_by(company_id: company_id, place_id: previous_changes[:place_id])
+        previous_venue = Venue.find_by(company_id: company_id, place_id: previous_changes[:place_id][0])
         VenueIndexer.perform_async(previous_venue.id) unless previous_venue.nil?
       end
     end

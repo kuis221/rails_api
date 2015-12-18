@@ -12,7 +12,7 @@ en:
       document_folder: "Folder"
       kpi: "KPI"
       activity_type: "Activity Type"
-      invite: "Attendance"
+      invite: "Invitation"
       event: "Event"
       event_data: "Event Data"
       task: "Task"
@@ -30,9 +30,23 @@ en:
       contact:
         company_name: 'Company'
       invite:
-        invitees: '# Invites'
-        rsvps_count: '# RSVPs'
-        attendees: '# Attendes'
+        invitees: 'Invites'
+        rsvps_count: 'RSVPs'
+        attendees: 'Attendees'
+      invite_individual:
+        rsvpd: "RSVP'd"
+        first_name: 'First Name'
+        last_name: 'Last Name'
+        rsvpd: "RSVP'd?"
+        attended: "Attended?"
+        attended_previous_bartender_ball: "Attended previous bartender ball?"
+        mobile_phone: "Mobile phone"
+        mobile_signup: "Mobile signup"
+        opt_in_to_future_communication: "Opt in to future communication?"
+        primary_registrant_id: "Primary registrant ID"
+        bartender_how_long: "Bartender how long?"
+        bartender_role: "Bartender role"
+        date_of_birth: "Date of Birth"
   time:
     formats:
       default: '%m/%d/%Y %H:%M:%S'
@@ -42,6 +56,13 @@ en:
     submit:
       create: "Create"
       update: "Save"
+      invite:
+        create: "Send Invitations"
+        update: "Save"
+      invite_individual:
+        create: "Send Invitation"
+        update: "Save"
+        
 
   flash_email_confirmation: 'A confirmation email was sent to %{email}. Your email will not be changed until you complete this step.'
 
@@ -282,6 +303,10 @@ en:
         contacts: 'No Contacts have been added to this event.'
         team_members: 'No Team Members have been added to this event.'
         activities: 'No Activities have been added to this event.'
+        invites: 
+          any: 'No Invites have been added to this event.'
+          individual: 'No Individual Invites have been added to this event.'
+          venue: 'No Venue Invites have been added to this event.'
         comments: 'No Consumer Comments have been added to this event.'
         expenses: 'No Expenses have been added to this event.'
         tasks: 'No Tasks have been added to this event.'
@@ -289,6 +314,10 @@ en:
       venue:
         activities: 'No Activities have been added to this venue.'
         events: 'No Events have been added to this venue.'
+        invites: 
+          any: 'No Invites have been added to this venue.'
+          individual: 'No Individual Invites have been added to this venue.'
+          venue: 'No Venue Invites have been added to this venue.'
       company_users:
         places: 'No Places have been assigned to this user.'
       areas:
@@ -334,7 +363,7 @@ en:
         roles: 'Roles'
         teams: 'Teams'
         company_users: 'Users'
-        invites: 'Attendance'
+        invites: 'Invitations'
 
   range_filters:
     events_count: 'Events'
@@ -376,6 +405,7 @@ en:
       report: "Edit Report"
       brand_ambassadors/visit: "Edit Visit"
       invite: "Edit Invite"
+      invite_individual: "Edit Invite"
       data_extract/activity: "Edit Report"
       data_extract/activity_type: "Edit Report"
       data_extract/area: "Edit Report"
@@ -396,6 +426,8 @@ en:
       data_extract/team: "Edit Report"
       data_extract/company_user: "Edit Report"
       data_extract/venue: "Edit Report"
+      data_extract/invite: "Edit Report"
+      data_extract/invite_individual: "Edit Report"
       place: "Edit Venue"
       venue: "Edit Venue"
     deactivate:
@@ -413,7 +445,8 @@ en:
       activity_type: "Deactivate Activity Type"
       report: "Deactivate Report"
       brand_ambassadors/visit: "Deactivate Visit"
-      invite: "Deactivate Attendance Record"
+      invite: "Deactivate Invitation Record"
+      invite_individual: "Deactivate Invitation Record"
       data_extract/activity: "Deactivate Report"
       data_extract/activity_type: "Deactivate Report"
       data_extract/area: "Deactivate Report"
@@ -434,6 +467,8 @@ en:
       data_extract/team: "Deactivate Report"
       data_extract/company_user: "Deactivate Report"
       data_extract/venue: "Deactivate Report"
+      data_extract/invite: "Deactivate Report"
+      data_extract/invite_individual: "Deactivate Report"
     activate:
       event: "Activate Event"
       company_user: "Activate User"
@@ -448,7 +483,9 @@ en:
       activity_type: "Activate Activity Type"
       report: "Activate Report"
       brand_ambassadors/visit: "Activate Visit"
-      invite: "Activate Attendance Record"
+      invite: "Activate Invitations Record"
+      data_extract/invite: "Activate Report"
+      data_extract/invite_individual: "Activate Report"
     invitations:
       resend: "Resend Invitation"
 
@@ -582,7 +619,8 @@ en:
         brand_ambassadors/document: "New Document"
         document_folder: "New Folder"
         filter_setting: "Filtering options"
-        invite: "New Attendance"
+        invite: "New Invitation"
+        invite_individual: "New Invitation"
         custom_filters_category: "New Custom Filters Category"
         data_extract/activity: "Save Report"
         data_extract/activity_type: "Save Report"
@@ -604,6 +642,8 @@ en:
         data_extract/team: "Save Report"
         data_extract/company_user: "Save Report"
         data_extract/venue: "Save Report"
+        data_extract/invite: "Save Report"
+        data_extract/invite_individual: "Save Report"
       edit:
         company_user: "Edit User"
         event: "Edit Event"
@@ -635,7 +675,8 @@ en:
         brand_ambassadors/document: "Edit Document"
         document_folder: "Edit Folder"
         filter_setting: "Filtering options"
-        invite: "Edit Attendance"
+        invite: "Edit Invitation"
+        invite_individual: "Edit Invitation"
         data_extract/activity: "Edit Report"
         data_extract/activity_type: "Edit Report"
         data_extract/area: "Edit Report"
@@ -656,6 +697,8 @@ en:
         data_extract/team: "Edit Report"
         data_extract/company_user: "Edit Report"
         data_extract/venue: "Edit Report"
+        data_extract/invite: "Edit Report"
+        data_extract/invite_individual: "Edit Report"
 
   form_builder:
     modules:
@@ -729,6 +772,9 @@ en:
     comments:
       edit: 'add consumer comments'
       read_only: 'view consumer comments'
+    attendance:
+      edit: 'add event invites'
+      read_only: 'view event invites'
 
   instructive_messages:
     plan:
@@ -1021,7 +1067,8 @@ en:
       activity_type: "Are you sure you want to deactivate this activity type?"
       report: "Are you sure you want to deactivate this report?"
       brand_ambassadors/visit: "Are you sure you want to deactivate this visit?"
-      invite: "Are you sure you want to deactivate this attendance record?"
+      invite: "Are you sure you want to deactivate this invitation record?"
+      invite_individual: "Are you sure you want to deactivate this invitation record?"
       data_extract/activity: "Are you sure you want to deactivate this report?"
       data_extract/activity_type: "Are you sure you want to deactivate this report?"
       data_extract/area: "Are you sure you want to deactivate this report?"
@@ -1041,6 +1088,8 @@ en:
       data_extract/team: "Are you sure you want to deactivate this report?"
       data_extract/company_user: "Are you sure you want to deactivate this report?"
       data_extract/venue: "Are you sure you want to deactivate this report?"
+      data_extract/invite: "Are you sure you want to deactivate this report?"
+      data_extract/invite_individual: "Are you sure you want to deactivate this report?"
     invitations:
       resend: "Are you sure you want to resend the invitation to this user?"
 
@@ -1053,6 +1102,10 @@ en:
 
   data_exports:
     fields:
+      attendees: "Attendees"
+      invitees: "Invites"
+      rsvps: "RSVPs"
+      zip_code: "Zip Code"
       campaign_name: "Campaign"
       area_name: "Area"
       end_date: "End Date"
@@ -1129,6 +1182,38 @@ en:
       merchant: "Merchant"
       employee: "Employee"
       visit_type: "Visit Type"
+      invite:
+        start_date: "Event Start Date"
+        start_date: 'Event Start Date'
+        start_time: 'Event Start Time'
+        end_date: 'Event End Date'
+        end_time: 'Event End Time'
+        end_time: 'Event End Time'
+        campaign_name: 'Event Campaign Name'
+        place_name: 'Event Venue Name'
+        place_street: 'Event Venue Street'
+        place_city: 'Event Venue City'
+        place_state: 'Event Venue State'
+        place_zipcode: 'Event Venue Zip Code'
+      invite_individual:
+        start_date: "Event Start Date"
+        start_date: 'Event Start Date'
+        start_time: 'Event Start Time'
+        end_date: 'Event End Date'
+        end_time: 'Event End Time'
+        end_time: 'Event End Time'
+        campaign_name: 'Event Campaign Name'
+        place_name: 'Event Venue Name'
+        place_street: 'Event Venue Street'
+        place_city: 'Event Venue City'
+        place_state: 'Event Venue State'
+        place_zipcode: 'Event Venue Zip Code'
+        phone_number: 'Phone Number'
+        city: 'City'
+        province_code: 'State'
+        country_code: 'Country'
+        address_line_1: 'Address Line 1'
+        address_line_2: 'Address Line 2'
     descriptions:
       event:
         campaign_name: "The assigned campaign of the event"
@@ -1371,3 +1456,56 @@ en:
         end_date: "The end date of the visit"
         created_at: "The date the visit was created"
         modified_at: "The date the visit was modified"
+      invite:
+        attendees: "The number of attendes of the invitation"
+        invitees: "The number of invitees of the invitation"
+        rsvps: "The number of RSVP's of the invitation"
+        campaign_name: "The name of the campaign associated with the event"
+        end_date: "The end date of the event"
+        end_time: "The end time of the event"
+        start_date: "The start date of the event"
+        start_time: "The start time of the event"
+        place_name: "The name of the venue where the event is taking place"
+        place_street: "The street address of the venue where the event is taking place"
+        place_city: "The city of the venue where the event is taking place"
+        place_state: "The state of the venue where the event is taking place"
+        place_zipcode: "The ZIP code of the venue where the event is taking place"
+        event_status: "The status of the event (ex., approved, due, late)"
+        created_by: "The person who created the invitation"
+        created_at: "The date the invitation was created"
+        modified_by: "The person who modified the invitation"
+        modified_at: "The date the invitation was modified"
+        active_state: "The active state of the invitation"
+      invite_individual:
+        first_name: "First Name of the person who was invited to, RSVP'd to and/or attended the event"
+        last_name: "Last Name of the person who was invited to, RSVP'd to and/or attended the event"
+        email: "Email address of the person who was invited to, RSVP'd to and/or attended the event"
+        date_of_birth: "Birthday of the person who was invited to, RSVP'd to and/or attended the event"
+        mobile_phone: "Mobile phone number of the person who was invited to, RSVP'd to and/or attended the event"
+        mobile_signup: "Mobile Signup"
+        attended_previous_bartender_ball: "Attended previous bartender ball?"
+        attended: "Did the person attend the event?"
+        rsvpd: "Did the person RSVP to the event?"
+        zip_code: "ZIP code where the person who was invited to, RSVP'd to and/or attended the event lives"
+        campaign_name: "The name of the campaign associated with the event"
+        end_date: "The end date of the event"
+        end_time: "The end time of the event"
+        start_date: "The start date of the event"
+        start_time: "The start time of the event"
+        place_name: "The name of the venue where the event is taking place"
+        place_street: "The street address of the venue where the event is taking place"
+        place_city: "The city of the venue where the event is taking place"
+        place_state: "The state of the venue where the event is taking place"
+        place_zipcode: "The ZIP code of the venue where the event is taking place"
+        event_status: "The status of the event (ex., approved, due, late)"
+        created_by: "The person who created the invitation"
+        created_at: "The date the invitation was created"
+        modified_by: "The person who modified the invitation"
+        modified_at: "The date the invitation was modified"
+        active_state: "The active state of the invitation"
+        phone_number: "Primary phone number of the person who was invited to, RSVP'd to and/or attended the event"
+        city: "City where the person who was invited to, RSVP'd to and/or attended the event lives"
+        province_code: "State where the person who was invited to, RSVP'd to and/or attended the event lives"
+        country_code: "Country where the person who was invited to, RSVP'd to and/or attended the event lives"
+        address_line_1: "Address where the person who was invited to, RSVP'd to and/or attended the event lives"
+        address_line_2: "Address where the person who was invited to, RSVP'd to and/or attended the event lives"

@@ -6,7 +6,7 @@
 #  date_range_id     :integer
 #  start_date        :date
 #  end_date          :date
-#  recurrence        :boolean          default(FALSE)
+#  recurrence        :boolean          default("false")
 #  recurrence_type   :string(255)
 #  recurrence_period :integer
 #  recurrence_days   :string(255)

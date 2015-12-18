@@ -281,7 +281,8 @@ Brandscopic::Application.routes.draw do
         match 'areas' => 'venues#areas', via: :get, as: :areas
       end
       resources :events, only: [:new, :create]
-      resources :invites, only: [:create, :edit, :update, :index], concerns: [:deactivatable]
+      resources :invites, only: [:create, :new, :edit, :update, :index], concerns: [:deactivatable]
+    resources :invite_individuals, only: [:index, :edit, :create, :update], concerns: [:deactivatable]
       resources :activities, only: [:new, :create] do
         get :thanks, on: :collection
         get :form, on: :collection
@@ -385,7 +386,9 @@ Brandscopic::Application.routes.draw do
     get :calendar_dates, on: :collection, action: :calendar_highlights
     resources :tasks, only: [:create, :new], concerns: [:deactivatable]
 
-    resources :invites, only: [:create, :edit, :update, :index], concerns: [:deactivatable]
+    resources :invites, except: [:destroy], concerns: [:deactivatable]
+    resources :invite_individuals, only: [:index, :edit, :destroy, :create, :update], concerns: [:deactivatable]
+
 
     resources :surveys, only: [:create, :new, :edit, :update], concerns: [:deactivatable]
 

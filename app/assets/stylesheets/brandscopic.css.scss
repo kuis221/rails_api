@@ -292,6 +292,18 @@ body{
 
 // STYLES FOR ALL DATA SECTIONS
 // --------------------------------------------------
+%calendar-day-with-data {
+				font-weight: 600;
+				position: relative;
+				&:before{
+					color: $user_menu;
+					content:"\2022";
+					font-size: 7px;
+					position: absolute;
+					bottom: -9px;
+					right: 11px;
+				}
+}
 
 [class$='-data']{
 	display: block;
@@ -838,16 +850,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 				}
 			}
 			&.datepick-event{
-				font-weight: 600;
-				position: relative;
-				&:before{
-					color: $user_menu;
-					content:"\2022";
-					font-size: 7px;
-					position: absolute;
-					bottom: -9px;
-					right: 11px;
-				}
+        @extend %calendar-day-with-data;
 			}
 			&:focus{
 				outline:0;
@@ -942,6 +945,19 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		border-top-right-radius: 6px;
 		text-align: center;
 	}
+
+.ui-datepicker-calendar { 
+  .ui-state-disabled {
+    color: #666;
+    opacity: 1;
+    .ui-state-default {
+      font-weight: 400;
+    }
+  }
+  .datepick-event { 
+     @extend %calendar-day-with-data;
+  }
+}
 
 
 // Date Preferences Panel (sidebar)
@@ -2836,6 +2852,11 @@ ul.ui-widget-content{
 					color: $gray-light;
 					font-weight: normal;
 				}
+        &.boolean {
+          span.optional {
+            display: none;
+          }
+        }
 			}
 			&.control-group-label{
 				&.control-label{
@@ -7273,11 +7294,19 @@ body.dashboard.index {
 	}
 	.select-data-source{
 		padding: 30px 18px 0 18px;
+		display: table;
 	}
 	.data-source-dropdown{
-		display: inline-block;
-		margin-right: 40px;
+		display: table-cell;
 		width: 360px;
+		&.sources {
+			padding-right: 40px;
+			width: 300px;
+		}
+		label.radio {
+			padding-left: 0;
+			font-weight: normal;
+		}
 	}
 	.data-extract-box{
 		border: 1px solid $borders;
@@ -7410,9 +7439,6 @@ body.dashboard.index {
 		color: $brand;
 		font-weight: bold;
 		margin-bottom: 8px;
-	}
-	.chzn-container{
-		width: 360px !important;
 	}
 }
 .rounded-icon{
@@ -7673,6 +7699,118 @@ form.button_to .button-with-icon {
 		left: 90%;
 		top: -71px;
 	}
+}
+
+#invite-form-tabs {
+  border-bottom: 1px solid $gray-light;
+  li {
+    margin-right: 50px;
+    a {
+      background-color: white;
+    }
+    &.active {
+      border-bottom: 3px solid $gray;
+      a {
+        color: $gray;
+      }
+    }
+    .icon {
+      margin-right: 8px;
+    }
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
+#invite-form {
+  .tab-content { padding-top: 30px; }
+}
+.individual_invite_form {
+  .individual-name {
+    .first-name {
+      width: 50%;
+      float: left;
+      padding-right: 5px;
+      box-sizing: border-box;
+    }
+    .last-name {
+      width: 50%;
+      padding-left: 5px;
+      display: inline-block;
+      box-sizing: border-box;
+    }
+  }
+}
+
+#venue-invite-form {
+  fieldset {
+    border-bottom: 1px solid $borders;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    legend {
+      border-bottom: 1px solid $borders;
+      height: 24px;
+      span {
+        background-color: white;
+        padding-right: 10px;
+        color: $brand;
+		    text-transform: uppercase;
+      }
+    }
+  }
+}
+
+#resource-invites-list {
+  #attendance-group-by {
+    .btn {
+      width: 140px;
+    }
+  }
+  table {
+    th.text-center {
+      text-align: center;
+    }
+    td a {
+      text-decoration: none;
+    }
+    .rsvpd {
+      width: 60px;
+    }
+    .attended {
+      width: 60px;
+    }
+    .invitees, .rsvps_count, .attendees {
+      width: 15%;
+    }
+  }
+  .invite-editable-attribute {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .popover-content {
+    width: 100px;
+    input {
+      &:hover {
+        margin: 0;
+        padding:0;
+      }
+      margin: 0;
+      padding:0;
+      text-align: center;
+    }
+    .icon-plus-sign, .icon-minus-rounded {
+      font-size: 22px;
+      margin-top: 8px;
+      display: inline-block;
+      color: $gray;
+    }
+    .icon-plus-sign {
+      float: left;
+    }
+    .icon-minus-rounded {
+      float: right;
+    }
+  }
 }
 
 .chosen-choise-close {

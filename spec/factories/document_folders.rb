@@ -5,7 +5,7 @@
 #  id              :integer          not null, primary key
 #  name            :string(255)
 #  parent_id       :integer
-#  active          :boolean          default(TRUE)
+#  active          :boolean          default("true")
 #  documents_count :integer
 #  company_id      :integer
 #  created_at      :datetime

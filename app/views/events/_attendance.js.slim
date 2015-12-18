@@ -1,0 +1,2 @@
+= update_event_details_bar(parent)
+| $('#event-attendance').html('#{j render(partial: 'events/attendance', formats: [ 'html' ], locals: { resource: resource, presenter: present(resource) })}');

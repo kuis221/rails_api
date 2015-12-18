@@ -1,0 +1,22 @@
+.js-sortable { 
+  thead th {
+    cursor: pointer;
+    position: relative;
+    &.sorting-asc, &.sorting-desc { 
+      &:after {
+        content:"\e607";
+        font-family: 'icons';
+        font-style: normal;
+        position: absolute;
+        top: 10px;
+        margin-left: 10px;
+      }
+      &.sorting-asc {
+        &:after {
+          content:"\e610";
+          top: 5px;
+        }
+      }
+    }
+  }
+}

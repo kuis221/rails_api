@@ -5,7 +5,7 @@
 #  id            :integer          not null, primary key
 #  name          :string(255)
 #  description   :text
-#  active        :boolean          default(TRUE)
+#  active        :boolean          default("true")
 #  company_id    :integer
 #  created_by_id :integer
 #  updated_by_id :integer

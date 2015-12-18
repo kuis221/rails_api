@@ -3,4 +3,5 @@
   = render 'form_dialog'
 - else
   | $('.bootbox.modal').modal('hide');
-  | $('#invites-list').html('#{j render(partial: 'invites/invite', collection: (parent.invites.active.joins(:place).select("invites.*, places.name") + parent.invites.active.joins(:area).select("invites.*, areas.name")).sort_by(&:name), locals: { parent: parent }) }');
+  = render template: "invite#{'_individual' if params[:group_by] == 'individual'}s/index"
+

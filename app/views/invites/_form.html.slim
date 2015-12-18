@@ -1,29 +1,31 @@
-= simple_form_for([parent, resource], remote: true) do |f|
-  .form-inputs.edit-invite
-    - if parent.is_a?(Event)
-      - if resource.area.present?
-        .row-fluid
-          = f.association :area, collection: parent.campaign.areas.accessible_by_user(current_company_user), required: true, label: 'Market', input_html: {class: 'chosen-enabled', data: { placeholder: "Choose an area" } }
-      - else
-        .row-fluid.google-places
-          = f.error :place
-          = f.input :place_reference, :as => :location, required: true, label: 'Venue', input_html: { display_value: params[:place_reference_display_name] || resource.place_name_with_location, placeholder: 'Search for venues' }
-    - elsif parent.is_a?(Venue)
-        .row-fluid = label_tag :venue_invite_campaign, 'Event', class: 'control-label required'
-        .row-fluid
-          .span7= select_tag 'venue_invite_campaign', options_for_select(allowed_campaigns(parent), @invite.campaign_id), include_blank: true, class: 'required chosen-enabled', 'data-placeholder' => 'Select a Campaign'
-          .span5= f.input :event_id, as: :select, collection: (resource.event.campaign.event_dates), input_html: { class: 'required chosen-enabled', 'data-placeholder' => 'Event Date' }, label: false
+- invite_individual ||= resource.individuals.build
+- active_tab ||= (params[:tab] || :individual).to_sym
+- if resource.new_record?
+  - if parent.is_a?(Venue)
+    = render partial: "form_venue", locals: { parent: parent }
+  - else
+    #invite-form.form-inputs.edit-invite
+      ul#invite-form-tabs.nav.nav-tabs
+        li class="#{'active' if active_tab == :individual}"
+          a href="#individual" data-toggle="tab"
+            i.icon.icon-user
+            | Individual Invitation
+        li class="#{'active' if active_tab == :venue}"
+          a href="#venue" data-toggle="tab" 
+            i.icon.icon-venue
+            | Venue Invitation
+      #invite-forms.tab-content
+        #individual.tab-pane class="#{'active' if active_tab == :individual}"
+          = render partial: 'invite_individuals/form_event', locals: { parent: parent, resource: invite_individual }
+        #venue.tab-pane class="#{'active' if active_tab == :venue}"
+          = render partial: 'form_event', locals: { parent: parent }
+- else
+  = render "form_#{parent.class.name.underscore}"
 
-    = f.input :invitees, input_html: { placeholder: 'Number of invitees' }
-    - if resource.persisted?
-      = f.input :rsvps_count, required: true,\
-                input_html: { placeholder: 'Number of RSVPs' },\
-                hint: '<b>Warning</b>: Editing this value will override the existing data.<br>This canot be undone'.html_safe
-      = f.input :attendees, required: true,\
-                input_html: { placeholder: 'Number of attendees' },\
-                hint: '<b>Warning</b>: Editing this value will override the existing data.<br>This canot be undone'.html_safe
-
-  .form-actions
-    = f.button :submit, class: 'btn btn-primary', data: { disable_with: 'Please wait...' }
-    = "&nbsp;".html_safe
-    = f.button :button, 'Cancel', class: 'btn btn-cancel'
+javascript:
+  $('#invite-form-tabs a').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
+    $('#invite-forms .tab-pane:not(.active) input').attr('disabled', true);
+    $('#invite-forms .tab-pane.active input').attr('disabled', false);
+  });

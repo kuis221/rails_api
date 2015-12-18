@@ -60,6 +60,7 @@ jQuery ->
 
 	$(document).on 'click', (e) ->
 		$('.has-popover').each () ->
+			return unless $(this).data('popover').tip().hasClass('in')
 			if !$(this).is(e.target) && $(this).has(e.target).length is 0 && $('.popover').has(e.target).length is 0
 				$(this).popover('hide')
 		return if $(e.target).closest('.tooltip').length > 0
@@ -167,6 +168,17 @@ jQuery ->
 			showOtherMonths:true
 			selectOtherMonths:true
 			dateFormat:"mm/dd/yy"
+			beforeShowDay: (date) ->
+				validDays = $(@).data('valid-dates')
+				if validDays
+					day = "#{(1900 + date.getYear())}#{(date.getMonth() + 1)}#{date.getDate()}"
+					if $.inArray(day, validDays) >= 0
+						[true, 'datepick-event', '']
+					else
+						[false, '', '']
+				else
+					[true, '', '']
+
 			onClose: (selectedDate) ->
 				$(@).valid();
 		$('input.timepicker').timepicker()
@@ -205,6 +217,12 @@ jQuery ->
 		$('.select-list-seach-box').selectListSearch()
 
 		$("abbr.timeago").timeago();
+
+		for table in $("table.js-sortable").get()
+			return if $(table).data('sortFns')
+			$(table).stupidtable()
+			$('th.default-sort', table).stupidsort('asc')
+
 
 		updateCalculationTotals()
 
@@ -371,6 +389,14 @@ jQuery ->
 	$(document).on 'submit', "form", validateForm
 	$(document).on 'ajax:before', "form", validateForm
 
+	$(document).on 'click', '.counter-input-grp button', (e) ->
+		e.preventDefault();
+		input = $(this).closest('.counter-input-grp').find('input')
+		if $(this).hasClass('increase')
+			input.val eval(input.val() + ' + ' + 1)
+		else
+			input.val eval(input.val() + ' - ' + 1)
+		input.change()
 
 	$(document).off('click.newFeature').on 'click.newFeature', '.new-feature .btn-dismiss-alert', () ->
 		alert = $(this).closest('.new-feature')

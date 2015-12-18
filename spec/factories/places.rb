@@ -24,7 +24,7 @@
 #  price_level            :integer
 #  phone_number           :string(255)
 #  neighborhoods          :string(255)      is an Array
-#  lonlat                 :spatial          point, 4326
+#  lonlat                 :geography({:srid point, 4326
 #  td_linx_confidence     :integer
 #  merged_with_place_id   :integer
 #  types                  :string(255)      is an Array

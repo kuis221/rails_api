@@ -5,7 +5,7 @@
 #  id               :integer          not null, primary key
 #  type             :string(255)
 #  company_id       :integer
-#  active           :boolean          default(TRUE)
+#  active           :boolean          default("true")
 #  sharing          :string(255)
 #  name             :string(255)
 #  description      :text
@@ -47,16 +47,21 @@ class DataExtract < ActiveRecord::Base
     end
 
     def exportable_columns
-      @exportable_columns ||= columns_definitions.keys.map { |c| [c.to_s,  I18n.t("data_exports.fields.#{c}")] }
+      @exportable_columns ||= columns_definitions.keys.map { |c| [c.to_s,  I18n.t("data_exports.fields.#{model.name.underscore}.#{c}", default: [ :"data_exports.fields.#{c}", :"activerecord.attributes.#{model.name.underscore}.#{c}"] )] }
     end
 
     def columns_definitions
       @export_columns_definitions || {}
     end
+
+    def model
+      @model ||= "::#{name.split('::')[1]}".constantize
+    end
   end
 
   DATA_SOURCES = [
-    ['Events', :event], ['Post Event Data (PERs)', :event_data], ['Activities', :activity],
+    ['Events', :event], ['Post Event Data (PERs)', :event_data],
+    ['Activities', :activity], ['Attendance', :invite],
     ['Comments', :comment], ['Contacts', :contact], ['Expenses', :event_expense],
     ['Tasks', :task], ['Venues', :place], ['Users', :company_user], ['Teams', :team],
     ['Roles', :role], ['Campaigns', :campaign], ['Brands', :brand], ['Activity Types', :activity_type],
@@ -66,8 +71,8 @@ class DataExtract < ActiveRecord::Base
 
   after_initialize  do
     self.columns ||= []
-    self.columns.delete_if { |c| 
-      c =~ /\Aff_([0-9]+)(_[0-9]+)?\z/ && form_fields.find_by(id: c.gsub(/ff_([0-9]+)(_[0-9]+)?/, '\1')).nil? 
+    self.columns.delete_if { |c|
+      c =~ /\Aff_([0-9]+)(_[0-9]+)?\z/ && form_fields.find_by(id: c.gsub(/ff_([0-9]+)(_[0-9]+)?/, '\1')).nil?
     }
   end
 
@@ -90,7 +95,7 @@ class DataExtract < ActiveRecord::Base
   end
 
   def model
-    @model ||= "::#{self.class.name.split('::')[1]}".constantize
+    self.class.model
   end
 
   def add_joins_to_scope(s)

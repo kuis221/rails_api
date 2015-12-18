@@ -10,12 +10,14 @@ $.widget 'brandscopic.placesAutocomplete', {
 		@element.places_autocomplete
 			source: ( request, response ) =>
 				@xhr.abort() if @xhr
+				data =
+					term: request.term
+					location: @location
+					'check-valid': @element.data('check-valid')
+				data = $.extend(data, @element.data('search-params')) if @element.data('search-params')
 				@xhr = $.ajax
 					url: @url
-					data:
-						term: request.term
-						location: @location
-						'check-valid': @element.data('check-valid')
+					data: data
 					dataType: 'json'
 					success: ( data ) -> response data
 					error: () -> response []
@@ -26,6 +28,7 @@ $.widget 'brandscopic.placesAutocomplete', {
 					return false
 
 				$(@element.data('hidden')).val ui.item.id
+				$(@element.data('hidden')).change();
 				@value = ui.item.label
 				if typeof @options.select is 'function'
 					@options.select()
