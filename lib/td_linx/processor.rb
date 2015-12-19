@@ -19,7 +19,7 @@ module TdLinx
       path = file || 'tmp/td_linx_code.csv'
       download_file(path) unless file
       prepare_codes_table path   # creates a table from file
-      process!
+      process!(path)
     rescue => e
       logger.error "Something wrong happened in the process: #{e.message}"
       TdlinxMailer.td_linx_process_failed(e).deliver
@@ -28,7 +28,7 @@ module TdLinx
       #   drop_tdlinx_codes_table
     end
 
-    def self.process!
+    def self.process!(file)
       paths = {
         master_only: 'tmp/td_master_only.csv',
         brandscopic_only: 'tmp/brandscopic_only.csv',
@@ -73,6 +73,8 @@ module TdLinx
         i += 1
         logger.info "#{i} rows processed" if (i % 500) == 0
       end
+
+      generate_td_master_file(files[:master_only], file)
 
       files.values.each(&:close)
 
@@ -185,6 +187,20 @@ module TdLinx
       end
     ensure
       ftp.close if ftp && !ftp.closed?
+    end
+
+    def self.generate_td_master_file(file, path)
+      td_linxs = ActiveRecord::Base.connection.execute(
+              'SELECT distinct t1.td_linx_code, t1.name, t1.street, t1.city, t1.state, t1.zipcode
+                FROM tdlinx_codes t1
+                LEFT JOIN places t2 ON t1.td_linx_code = t2.td_linx_code
+                WHERE t1.city IS NULL or t1.zipcode IS NULL or t2.td_linx_code is NULL').to_a
+      return if td_linxs.empty?
+      File.open(path, 'r').each do |line|
+        item = line.split(',')
+        rows = td_linxs.select { |d| d["td_linx_code"] == item[0] }
+        file << item if rows.present?
+      end
     end
   end
 end

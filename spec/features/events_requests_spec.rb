@@ -600,6 +600,7 @@ feature 'Events section' do
             create(:event, campaign: campaign2, start_date: "#{month_number}/20/#{year_number}", end_date: "#{month_number}/20/#{year_number}")
             create(:event, campaign: campaign3, start_date: "#{month_number}/23/#{year_number}", end_date: "#{month_number}/23/#{year_number}")
             create(:event, campaign: campaign3, start_date: "#{month_number}/25/#{year_number}", end_date: "#{month_number}/25/#{year_number}")
+            create(:event, campaign: campaign3, start_date: "#{month_number}/26/#{year_number}", end_date: "#{month_number}/26/#{year_number}")
             Sunspot.commit
 
             visit events_path
@@ -621,6 +622,25 @@ feature 'Events section' do
             within events_list do
               expect(page).to have_no_content('Campaign FY2012')
               expect(page).to have_content('Another Campaign April 03')
+              expect(page).to have_content('New Brand Campaign')
+            end
+
+            # Testing when the user selects a start date after currently selected end date
+            click_js_link 'Date ranges'
+
+            within 'ul.dropdown-menu' do
+              expect(page).to have_button('Apply', disabled: false)
+              find_field('Start date').click
+              select_and_fill_from_datepicker('custom_start_date', "#{month_number}/26/#{year_number}")
+              expect(find_field('End date').value).to eql "#{month_number}/26/#{year_number}"
+              click_js_button 'Apply'
+            end
+            ensure_date_ranges_was_closed
+
+            expect(page).to have_selector('#events-list .resource-item', count: 1)
+            within events_list do
+              expect(page).to have_no_content('Campaign FY2012')
+              expect(page).to have_no_content('Another Campaign April 03')
               expect(page).to have_content('New Brand Campaign')
             end
           end
