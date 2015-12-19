@@ -753,8 +753,6 @@ $.widget 'nmk.filteredList', {
 							applyButton.attr('disabled', true)
 
 						endDateInput.removeClass('disabled')
-					onClose: ( selectedDate ) =>
-						@customDatesFilter.find("[name=custom_start_date]").datepicker "option", "maxDate", selectedDate
 			)
 		)
 
