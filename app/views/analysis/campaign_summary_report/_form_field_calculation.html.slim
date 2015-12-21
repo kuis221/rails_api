@@ -1,11 +1,11 @@
 - total = 0
 span.form-result-label= form_field.name
 - form_field.options.each do |field_option|
-  - total += (result[field_option.id].to_f || 0)
+  - total += (result[field_option.id] || 0)
   .calculation-segment
-    label.pull-left= field_option.name
-    .segment-value= number_with_delimiter(result[field_option.id] || 0)
+    label.pull-left = field_option.name
+    .segment-value = number_with_precision(result[field_option.id] || 0, precision: 2, delimiter: ',', separator: '.')
 
 .calculation-segment.calculation-total
   label TOTAL:
-  .segment-value= number_with_delimiter(total || 0)
+  .segment-value = number_with_precision(total || 0, precision: 2, delimiter: ',', separator: '.')
