@@ -227,6 +227,40 @@ feature 'Brand Ambassadors Documents', js: true do
 
       expect(page).to have_content 'file'
     end
+
+    scenario 'A user can rename folders' do
+      visit brand_ambassadors_root_path
+
+      documents_section.click_js_link 'New Folder'
+
+      within documents_section do
+        fill_in 'Please name your folder', with: 'My Folder'
+        page.execute_script("$('form#new_document_folder').submit()")
+        wait_for_ajax
+        expect(page).to have_selector('#documents-list .resource-item', count: 1)
+        expect(page).to have_link('My Folder')
+      end
+
+      within documents_section do
+        hover_and_click '.resource-item', 'Edit'
+      end
+
+      folder = DocumentFolder.last
+
+      within documents_section do
+        fill_in 'Please rename your folder', with: 'Your Folder'
+        page.execute_script("$('form#edit_document_folder_#{folder.id}').submit()")
+        wait_for_ajax
+        expect(page).to have_selector('#documents-list .resource-item', count: 1)
+        expect(page).to have_link('Your Folder')
+      end
+
+      # Make sure the folder is still there after reloading
+      visit current_path
+      within documents_section do
+        expect(page).to have_link('Your Folder')
+      end
+    end
   end
 
   feature 'Brand Ambassador Visit documents', :inline_jobs do

@@ -7,6 +7,8 @@
     $('.bootbox.modal').modal('hide');
     $('##{resource_class}_#{resource.id}').replaceWith('#{escape_javascript(render(resource))}');
     $(document).trigger('#{resource_class.pluralize}:change');
+  - if resource_class == 'document_folder'
+    | $('.edit-folder-form').collapse('hide');
   - if resource_class == 'task'
     - if resource.event_id.present?
       | $('#event-tasks').html('#{j render(partial: 'events/tasks', locals: { resource: resource.event }) }');

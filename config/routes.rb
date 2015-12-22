@@ -519,7 +519,7 @@ Brandscopic::Application.routes.draw do
       resources :document_folders, path: 'folders', only: [:new, :create]
       resources :documents, only: [:create]
     end
-    resources :document_folders, path: 'folders', only: [:new, :create, :index], concerns: [:deactivatable]
+    resources :document_folders, path: 'folders', only: [:new, :create, :index, :edit, :update], concerns: [:deactivatable]
     resources :documents, only: [:edit, :create, :update, :destroy] do
       get :move, on: :member
     end
