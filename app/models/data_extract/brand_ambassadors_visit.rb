@@ -5,7 +5,7 @@
 #  id               :integer          not null, primary key
 #  type             :string(255)
 #  company_id       :integer
-#  active           :boolean          default(TRUE)
+#  active           :boolean          default("true")
 #  sharing          :string(255)
 #  name             :string(255)
 #  description      :text
@@ -53,7 +53,7 @@ class DataExtract::BrandAmbassadorsVisit < DataExtract
     s
   end
 
-  def model
+  def self.model
     ::BrandAmbassadors::Visit
   end
 

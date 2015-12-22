@@ -10,7 +10,7 @@
 #  updated_at   :datetime
 #  owner_id     :integer
 #  owner_type   :string(255)
-#  default_view :boolean          default(FALSE)
+#  default_view :boolean          default("false")
 #  category_id  :integer
 #
 

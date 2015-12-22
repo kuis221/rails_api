@@ -65,27 +65,6 @@ describe Analysis::AttendanceController, type: :controller do
 
       expect(assigns(:neighborhoods)).to match_array [neighborhood]
     end
-
-    describe 'for market level campaigns' do
-      before do
-        campaign.update_attribute :modules, 'attendance' => { 'settings' => { 'attendance_display' => '2' } }
-      end
-
-      it 'loads the zip codes from Google API and stores it in DB' do
-        expect(InviteRsvp).to receive(:open).and_return(double(
-          read: '{"results":[{"geometry":{"location":{"lat":"34.0187789203171","lng":"-118.259249420375"}}}]}'
-        ))
-        invite = create(:invite, area: area, event: event)
-        invite.rsvps.create(zip_code: '90011', attended: false)
-        invite.rsvps.create(zip_code: '90011', attended: true)
-        xhr :get, :map, campaign_id: campaign.id, event_id: event.id, format: :js
-
-        expect(assigns(:neighborhoods)).to match_array [neighborhood]
-        result = assigns(:neighborhoods).first
-        expect(result.attendees).to eql 1
-        expect(result.rsvps).to eql 2
-      end
-    end
   end
 
   describe "GET 'list_export'", :search, :inline_jobs do

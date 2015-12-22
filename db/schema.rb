@@ -11,6 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(version: 20151202183554) do
 
   # These are extensions that must be enabled in order to support this database
@@ -648,7 +649,15 @@ ActiveRecord::Schema.define(version: 20151202183554) do
 
   add_index "hours_fields", ["venue_id"], name: "index_hours_fields_on_venue_id", using: :btree
 
-  create_table "invite_rsvps", force: :cascade do |t|
+  create_table "invite_individual_invites", force: :cascade do |t|
+    t.integer "invite_individual_id"
+    t.integer "invite_id"
+  end
+
+  add_index "invite_individual_invites", ["invite_id"], name: "index_invite_individual_invites_on_invite_id", using: :btree
+  add_index "invite_individual_invites", ["invite_individual_id"], name: "index_invite_individual_invites_on_invite_individual_id", using: :btree
+
+  create_table "invite_individuals", force: :cascade do |t|
     t.integer  "invite_id"
     t.integer  "registrant_id"
     t.date     "date_added"
@@ -669,9 +678,18 @@ ActiveRecord::Schema.define(version: 20151202183554) do
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
     t.boolean  "attended"
+    t.boolean  "rsvpd",                                        default: false
+    t.boolean  "active",                                       default: true
+    t.integer  "age"
+    t.string   "address_line_1"
+    t.string   "address_line_2"
+    t.string   "city"
+    t.string   "province_code"
+    t.string   "country_code"
+    t.string   "phone_number"
   end
 
-  add_index "invite_rsvps", ["invite_id"], name: "index_invite_rsvps_on_invite_id", using: :btree
+  add_index "invite_individuals", ["invite_id"], name: "index_invite_individuals_on_invite_id", using: :btree
 
   create_table "invites", force: :cascade do |t|
     t.integer  "event_id"
@@ -684,12 +702,10 @@ ActiveRecord::Schema.define(version: 20151202183554) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "active",                    default: true
-    t.integer  "area_id"
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
   end
 
-  add_index "invites", ["area_id"], name: "index_invites_on_area_id", using: :btree
   add_index "invites", ["event_id"], name: "index_invites_on_event_id", using: :btree
   add_index "invites", ["venue_id"], name: "index_invites_on_venue_id", using: :btree
 
@@ -1123,4 +1139,6 @@ ActiveRecord::Schema.define(version: 20151202183554) do
     t.integer   "neighborhood_id"
   end
 
+  add_foreign_key "invite_individual_invites", "invite_individuals"
+  add_foreign_key "invite_individual_invites", "invites"
 end

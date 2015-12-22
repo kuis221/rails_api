@@ -9,7 +9,7 @@
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  company_id    :integer
-#  active        :boolean          default(TRUE)
+#  active        :boolean          default("true")
 #
 
 require 'rails_helper'

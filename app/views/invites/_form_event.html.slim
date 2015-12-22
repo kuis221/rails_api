@@ -1,0 +1,27 @@
+= simple_form_for([parent, resource], remote: true) do |f|
+  = hidden_field_tag :group_by, params[:group_by]
+  .row-fluid.google-places
+    = f.error :place
+    = f.input :place_reference, :as => :location, required: true, label: 'Venue', input_html: { display_value: params[:place_reference_display_name] || resource.place_name_with_location, placeholder: 'Search for a venue...' }
+
+  = render partial: 'form_invite_counters', locals: { f: f }
+
+  .form-actions
+    = f.button :submit, class: 'btn btn-primary', data: { disable_with: 'Please wait...' }
+    = "&nbsp;".html_safe
+    = f.button :button, 'Cancel', class: 'btn btn-cancel'
+
+
+  - unless resource.persisted?
+    javascript:
+      $('#new_invite input[name="invite[invitees]"]').on('keyup change', function(){
+        var count = parseInt($(this).val(), 10);
+        if (count < 0 ) {
+          count = 0;
+          $(this).val(0);
+        }
+
+        $('#new_invite .btn-primary').val('Send ' + (isNaN(count) ? '' : count)  + ' Invitations');
+      });
+
+

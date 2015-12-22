@@ -12,9 +12,9 @@
 #  updated_by_id       :integer
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
-#  active              :boolean          default(TRUE)
+#  active              :boolean          default("true")
 #  place_id            :integer
-#  promo_hours         :decimal(6, 2)    default(0.0)
+#  promo_hours         :decimal(6, 2)    default("0")
 #  reject_reason       :text
 #  timezone            :string(255)
 #  local_start_at      :datetime
@@ -24,8 +24,9 @@
 #  rejected_at         :datetime
 #  submitted_at        :datetime
 #  approved_at         :datetime
-#  active_photos_count :integer          default(0)
+#  active_photos_count :integer          default("0")
 #  visit_id            :integer
+#  results_version     :integer          default("0")
 #
 
 require 'rails_helper'
@@ -112,8 +113,8 @@ describe Event, type: :model do
     let(:company) { create(:company) }
     let(:visit) do
       create(:brand_ambassadors_visit, company: company,
-                      start_date: '02/01/2016', end_date: '02/02/2016',
-                      company_user: create(:company_user, company: company))
+                                       start_date: '02/01/2016', end_date: '02/02/2016',
+                                       company_user: create(:company_user, company: company))
     end
 
     subject do
@@ -122,10 +123,25 @@ describe Event, type: :model do
                           visit_id: visit.id)
     end
 
-    it { is_expected.not_to allow_value(Time.zone.local(2016, 1, 31, 12, 0, 0).to_s(:slashes)).for(:start_date).with_message('should be after 01/31/2016') }
-    it { is_expected.not_to allow_value(Time.zone.local(2016, 2, 3, 12, 5, 0).to_s(:slashes)).for(:end_date).with_message('should be before 02/03/2016') }
-    it { is_expected.to allow_value(Time.zone.local(2016, 2, 1, 12, 5, 0).to_s(:slashes)).for(:start_date) }
-    it { is_expected.to allow_value(Time.zone.local(2016, 2, 2, 12, 5, 0).to_s(:slashes)).for(:end_date) }
+    it do
+      is_expected.not_to allow_value(Time.zone.local(2016, 1, 31, 12, 0, 0).to_s(:slashes))
+        .for(:start_date).with_message('should be after 01/31/2016')
+    end
+
+    it do
+      is_expected.not_to allow_value(Time.zone.local(2016, 2, 3, 12, 5, 0).to_s(:slashes))
+        .for(:end_date).with_message('should be before 02/03/2016')
+    end
+
+    it do
+      is_expected.to allow_value(Time.zone.local(2016, 2, 1, 12, 5, 0).to_s(:slashes))
+        .for(:start_date)
+    end
+
+    it do
+      is_expected.to allow_value(Time.zone.local(2016, 2, 2, 12, 5, 0).to_s(:slashes))
+        .for(:end_date)
+    end
   end
 
   describe 'between_visit_date_range: visit no present' do
@@ -239,9 +255,7 @@ describe Event, type: :model do
   end
 
   describe '#accessible_by' do
-    before do
-      @event = create(:event, campaign: campaign, place: place)
-    end
+    let!(:event) { create(:event, campaign: campaign, place: place) }
 
     let(:company) { create(:company) }
     let(:campaign) { create(:campaign, company: company) }
@@ -261,20 +275,21 @@ describe Event, type: :model do
     it 'should return the event if the user have the place directly assigned to the user' do
       company_user.campaigns << campaign
       company_user.places << place
-      expect(described_class.accessible_by_user(company_user)).to match_array([@event])
+      expect(described_class.accessible_by_user(company_user)).to match_array([event])
     end
 
     it 'should return the event if the user have access to an area that includes the place' do
       company_user.campaigns << campaign
       area.places << place
       company_user.areas << area
-      expect(described_class.accessible_by_user(company_user)).to match_array([@event])
+      expect(described_class.accessible_by_user(company_user)).to match_array([event])
     end
 
     it 'should return the event if the user has access to the city' do
       company_user.campaigns << campaign
-      company_user.places << create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
-      expect(described_class.accessible_by_user(company_user)).to match_array([@event])
+      company_user.places << create(:place, country: 'US', state: 'California',
+                                            city: 'Los Angeles', types: ['locality'])
+      expect(described_class.accessible_by_user(company_user)).to match_array([event])
     end
   end
 
@@ -350,7 +365,7 @@ describe Event, type: :model do
 
     it 'should exclude events that are scheduled on places that were excluded from the campaign' do
       place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
-      event_la = create(:event, campaign: campaign, place: place_la)
+      create(:event, campaign: campaign, place: place_la)
 
       place_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco')
       event_sf = create(:event, campaign: campaign, place: place_sf)
@@ -421,8 +436,8 @@ describe Event, type: :model do
       area_la.places << create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
       area_sf.places << create(:place, country: 'US', state: 'California', city: 'San Francisco', types: ['locality'])
 
-      area_campaign_la = create(:areas_campaign, area: area_la, campaign: campaign)
-      area_campaign_sf = create(:areas_campaign, area: area_sf, campaign: campaign)
+      create(:areas_campaign, area: area_la, campaign: campaign)
+      create(:areas_campaign, area: area_sf, campaign: campaign)
 
       expect(described_class.in_campaign_areas(campaign, [area_la])).to match_array [event_la]
       expect(described_class.in_campaign_areas(campaign, [area_sf])).to match_array [event_sf]
@@ -513,7 +528,6 @@ describe Event, type: :model do
       expect(described_class.in_campaign_areas(campaign2, [area_la])).to be_empty
 
       expect(described_class.in_campaign_areas(campaign, [area_la, area_sf])).to match_array [event_la, event_sf]
-
     end
   end
 
@@ -563,7 +577,6 @@ describe Event, type: :model do
       expect(described_class.in_areas([area_sf])).to match_array [event_sf]
       expect(described_class.in_areas([area_la, area_sf])).to match_array [event_la, event_sf]
     end
-
   end
 
   describe '#in_places' do
@@ -642,7 +655,6 @@ describe Event, type: :model do
       event.valid?
       expect(event.end_at).to eq(Time.zone.local(2012, 1, 20, 0, 0, 0))
     end
-
   end
 
   describe 'campaign association' do
@@ -714,7 +726,7 @@ describe Event, type: :model do
       expect(event.reload.promo_hours).to eq(5)
     end
     it 'accepts promo_hours hours with decimals' do
-      event = build(:event,  start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/21/2020', end_time: '03:15pm')
+      event = build(:event, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/21/2020', end_time: '03:15pm')
       event.promo_hours = nil
       expect(event.save).to be_truthy
       expect(event.reload.promo_hours).to eq(3.25)
@@ -820,7 +832,6 @@ describe Event, type: :model do
 
         event = create(:event, start_date: '07/21/2013', end_date: '07/25/2013', start_time: '10:00 am', end_time: '2:00 pm')
         expect(event.was_yesterday?).to be_truthy
-
       end
     end
 
@@ -840,7 +851,7 @@ describe Event, type: :model do
 
   describe 'venue reindexing' do
     let(:campaign) { create(:campaign) }
-    let!(:event)    { create(:event, campaign: campaign, company: campaign.company) }
+    let!(:event) { create(:event, campaign: campaign, company: campaign.company) }
 
     it 'should queue a job to update venue details after a event have been updated if the event data have changed' do
       Kpi.create_global_kpis
@@ -857,16 +868,16 @@ describe Event, type: :model do
     it 'should queue a job to update venue details after a event have been updated if place_id changed' do
       new_venue = create(:venue, company: event.company)
       expect(VenueIndexer).to receive(:perform_async).with(new_venue.id)
-      event.place_id =  new_venue.place_id
+      event.place_id = new_venue.place_id
       expect(event.save).to be_truthy
     end
 
-    it 'should queue a job to update the previews and new event venues' do
+    it 'should queue a job to update the previous and new event venues' do
       event_with_place = create(:event, campaign: campaign, place: create(:place))
       new_venue = create(:venue, company: event_with_place.company)
       expect(VenueIndexer).to receive(:perform_async).with(event_with_place.venue.id).at_least(:once)
       expect(VenueIndexer).to receive(:perform_async).with(new_venue.id)
-      event_with_place.place_id =  new_venue.place_id
+      event_with_place.place_id = new_venue.place_id
       expect(event_with_place.save).to be_truthy
     end
   end
@@ -961,7 +972,7 @@ describe Event, type: :model do
                         age_45_54: 32,
                         age_55_64: 24,
                         age_65: 13
-      )
+                       )
 
       expect(event.demographics_graph_data[:gender]).to eq('Female' => 65, 'Male' => 35)
       expect(event.demographics_graph_data[:age]).to eq('< 12' => 1, '12 – 17' => 2, '18 – 24' => 4, '25 – 34' => 8, '35 – 44' => 16, '45 – 54' => 32, '55 – 64' => 24, '65+' => 13)
@@ -1092,7 +1103,7 @@ describe Event, type: :model do
                           impressions: 100,
                           interactions: 101,
                           samples: 102
-        )
+                         )
       end.to change(EventData, :count).by(1)
       data = EventData.last
       expect(data.impressions).to eq(100)
@@ -1127,7 +1138,7 @@ describe Event, type: :model do
   end
 
   describe '#deactivate' do
-    let(:event) { create(:event, active: false) }
+    let(:event) { create(:event, active: true) }
 
     it 'should return the active value as false' do
       event.deactivate!
@@ -1334,7 +1345,7 @@ describe Event, type: :model do
   describe 'after_validation #set_event_timezone' do
     it 'should set the current timezone for new events' do
       event = build(:event)
-      event.valid?  # this will trigger the after_validation call
+      event.valid? # this will trigger the after_validation call
       expect(event.timezone).to eq('America/Los_Angeles')
     end
 
@@ -1477,7 +1488,7 @@ describe Event, type: :model do
       it 'returns results for submitted events' do
         field = create(:form_field_number, fieldable: campaign, required: true)
         event = create(:submitted_event, start_date: Time.zone.now.to_s(:slashes),
-                               end_date: Time.zone.now.to_s(:slashes), campaign: campaign)
+                                         end_date: Time.zone.now.to_s(:slashes), campaign: campaign)
         expect(event.current_phase).to eql :results
       end
     end
@@ -1649,7 +1660,7 @@ describe Event, type: :model do
 
     context 'when event has at least one expense' do
       let!(:user2) { create :user }
-      let!(:event_expense1) { create :event_expense, event: event, created_at: Time.parse('01/01/2010 10:00'), created_by: user2  }
+      let!(:event_expense1) { create :event_expense, event: event, created_at: Time.parse('01/01/2010 10:00'), created_by: user2 }
       let!(:event_expense2) { create :event_expense, event: event, created_at: Time.parse('02/01/2010 10:00') }
 
       before { expect(event.event_expenses.count).to eq 2 }

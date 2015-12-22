@@ -8,9 +8,9 @@
 #  role_id                 :integer
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
-#  active                  :boolean          default(TRUE)
+#  active                  :boolean          default("true")
 #  last_activity_at        :datetime
-#  notifications_settings  :string(255)      default([]), is an Array
+#  notifications_settings  :string(255)      default("{}"), is an Array
 #  last_activity_mobile_at :datetime
 #  tableau_username        :string(255)
 #

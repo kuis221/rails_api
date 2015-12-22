@@ -1,0 +1,4 @@
+- if params[:container]
+  | $('#{params[:container]}').html('#{j render 'form' }');
+- else
+  = render template: 'inherited_resources/base/new'

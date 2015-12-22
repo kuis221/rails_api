@@ -1,0 +1,5 @@
+- if resource.new_record?
+  = render partial: 'invites/form', locals: { resource: resource.invite || resource.build_invite, invite_individual: resource }
+- else
+  - form_suffix = parent.class.name.underscore
+  = render "form_#{form_suffix}"

@@ -1,0 +1,12 @@
+- items = parent.invite_individuals.active.left_join_with_places.includes(invite: :place).order('places.name ASC')
+table.table.js-sortable
+  thead
+    tr.resource-item 
+      th.default-sort data-sort="string" Name
+      th data-sort="string" Venue
+      th data-sort="string" Email
+      th.rsvpd.text-center data-sort="int" RSVP'd
+      th.attended.text-center data-sort="int" Attended
+      th.actions
+  tbody
+    = render partial: "invite_individuals/invite_individual", collection: items, as: :invite_individual, locals: { parent: parent }

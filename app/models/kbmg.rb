@@ -16,7 +16,8 @@ class KBMG
     params.merge!(search_string: "EventId==#{event_id}")
     response = self.class.get('/Events/EventsGet', query_options(params))
     return unless response && response['Success'] == true
-    fail "expected response to return 1 event but returned #{response['Data']['Events'].count}" if response['Data']['Events'].count != 1
+    Rails.logger.info "expected response to return 1 event but returned #{response['Data']['Events'].count}" if response['Data']['Events'].count != 1
+    return unless response['Data']['Events'].any?
     response['Data']['Events'][0]
   end
 
@@ -29,7 +30,8 @@ class KBMG
     params = { search_string: "PersonId==#{person_id}" }
     response = self.class.get('/People/PeopleGet', query_options(params))
     return unless response && response['Success'] == true
-    fail "expected response to return 1 person but returned #{response['Data']['People'].count}" if response['Data']['People'].count != 1
+    Rails.logger.info "expected response to return 1 person but returned #{response['Data']['People'].count}" if response['Data']['People'].count != 1
+    return unless response['Data']['People'].any?
     response['Data']['People'][0]
   end
 
@@ -37,7 +39,8 @@ class KBMG
     params = { search_string: "PlaceId==#{place_id}" }
     response = self.class.get('/Places/PlacesGet', query_options(params))
     return unless response && response['Success'] == true
-    fail "expected response to return 1 place but returned #{response['Data']['Places'].count}" if response['Data']['Places'].count != 1
+    Rails.logger.info "expected response to return 1 place but returned #{response['Data']['Places'].count}" if response['Data']['Places'].count != 1
+    return unless response['Data']['Places'].any?
     response['Data']['Places'][0]
   end
 

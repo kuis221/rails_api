@@ -113,9 +113,7 @@ class Ability
       can :index, Marque
 
       can [:new, :form, :thanks], Activity do
-        can?(:create, Activity) ||
-        role.has_permission?(:create_invite, Event) ||
-        role.has_permission?(:create_invite, Venue)
+        can?(:create, Activity)
       end
 
       can :places, Campaign do |campaign|
@@ -130,12 +128,12 @@ class Ability
         can?(:edit, object)
       end
 
-      can :create, Invite do |_invite|
+      can :create, [Invite, InviteIndividual] do |_invite|
         role.has_permission?(:create_invite, Event) ||
         role.has_permission?(:create_invite, Venue)
       end
 
-      can :update, Invite do |_invite|
+      can :update, [Invite, InviteIndividual] do |_invite|
         role.has_permission?(:edit_invite, Event) ||
         role.has_permission?(:edit_invite, Venue)
       end

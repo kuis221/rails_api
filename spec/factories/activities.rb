@@ -7,7 +7,7 @@
 #  activitable_id   :integer
 #  activitable_type :string(255)
 #  campaign_id      :integer
-#  active           :boolean          default(TRUE)
+#  active           :boolean          default("true")
 #  company_user_id  :integer
 #  activity_date    :datetime
 #  created_at       :datetime         not null

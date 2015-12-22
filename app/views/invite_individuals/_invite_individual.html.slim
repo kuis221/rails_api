@@ -1,0 +1,11 @@
+tr.resource-item.invite id="invite_individual_#{invite_individual.id}"
+  td= invite_individual.name
+  td= link_to invite_individual.invite.place_name, venue_path(invite_individual.invite.venue_id) if invite_individual.invite.venue.present?
+  td= invite_individual.email
+  td data-sort-value="#{invite_individual.rsvpd ? 1 : 0}" = editable_invite_checkbox parent, invite_individual, :rsvpd
+  td data-sort-value="#{invite_individual.attended ? 1 : 0}" = editable_invite_checkbox parent, invite_individual, :attended
+
+  td
+    .resource-item-actions
+      = button_to_edit invite_individual, url: url_for([:edit, parent, invite_individual]) if can?(:edit_invite, parent.class)
+      = button_to_activate_or_deactivate(invite_individual, activate_url: url_for([:activate, parent, invite_individual]), deactivate_url: url_for([:deactivate, parent, invite_individual])) if can?(:deactivate_invite, parent.class)

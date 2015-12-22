@@ -6,7 +6,7 @@
 #  company_id    :integer
 #  name          :string(255)
 #  description   :text
-#  active        :boolean          default(TRUE)
+#  active        :boolean          default("true")
 #  created_by_id :integer
 #  updated_by_id :integer
 #  rows          :text
