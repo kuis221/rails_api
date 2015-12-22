@@ -51,6 +51,7 @@
 //= require jquery.jscrollpane
 //= require jquery.dragtable
 //= require jquery.timeago
+//= require stupidtable.js
 //= require scrollMultiSpy
 //= require markerclusterer
 //= require select2
@@ -58,6 +59,7 @@
 //= require fullcalendar
 //= require brandscopic
 //= require campaigns
+//= require attendance
 //= require events
 //= require spectrum.js
 //= require filesize.min.js

@@ -1,16 +1,26 @@
-- if jbb_feature_enabled? && can?(:index_invites, Venue)
-  - items = resource.invites.active.joins(:place).order('lower(places.name)')
-  - if items.any?
-    #resource-invites-list.details_box
-      .dropdown.btn-download.pull-right
-        a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
-          i.icon-download
-          i.icon-arrow-down-small
-        ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
-          li
-            = link_to 'Download as CSV', venue_invites_path(resource, format: :csv), role: :menuitem, class: 'xlsx-download-link', data: { url: venue_invites_path(resource, format: :csv) }
-          li
-            = link_to 'Download as PDF', venue_invites_path(resource, format: :pdf), role: :menuitem, class: 'xlsx-download-link', data: { url: venue_invites_path(resource, format: :pdf) }
-      h5.module-title ATTENDANCE
-      #invites-list.resource-list
-        = render partial: 'invites/invite', collection: items, locals: { parent: resource }
+#resource-invites-list.details_box
+  h5.module-title ATTENDANCE
+  - if resource.invites.active.any?
+    .row-fluid
+      .span8
+        - if can?(:create_invite, resource)
+          = button_to 'Create Invites', new_venue_invite_path(resource, return: return_path), method: :get, remote: true, class: 'btn btn-primary', data: { disable_with: 'Please wait...' }, title: 'Create Invites'
+      .span4
+        .dropdown.btn-download.pull-right
+          a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+            i.icon-download
+            i.icon-arrow-down-small
+          ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+            li
+              = link_to 'Download as CSV', venue_invites_path(resource, format: :csv), role: :menuitem, class: 'xlsx-download-link', data: { url: venue_invites_path(resource, format: :csv) }
+            li
+              = link_to 'Download as PDF', venue_invites_path(resource, format: :pdf), role: :menuitem, class: 'xlsx-download-link', data: { url: venue_invites_path(resource, format: :pdf) }
+      
+
+    #invites-list.resource-list
+      = render partial: "invites/table", locals: { parent: resource }
+
+  - else
+    = blank_state_module('venue.invites.any') do
+      = button_to 'Add Invites', new_venue_invite_path(resource, return: return_path), method: :get, remote: true, disable_with: 'Please wait...', class: 'btn btn-primary', data: { disable_with: 'Please wait...' }, title: 'Add Invites'
+

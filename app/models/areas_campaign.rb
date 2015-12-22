@@ -5,8 +5,8 @@
 #  id          :integer          not null, primary key
 #  area_id     :integer
 #  campaign_id :integer
-#  exclusions  :integer          default([]), is an Array
-#  inclusions  :integer          default([]), is an Array
+#  exclusions  :integer          default("{}"), is an Array
+#  inclusions  :integer          default("{}"), is an Array
 #
 
 class AreasCampaign < ActiveRecord::Base

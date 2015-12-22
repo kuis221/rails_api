@@ -24,7 +24,7 @@
 #  price_level            :integer
 #  phone_number           :string(255)
 #  neighborhoods          :string(255)      is an Array
-#  lonlat                 :spatial          point, 4326
+#  lonlat                 :geography({:srid point, 4326
 #  td_linx_confidence     :integer
 #  merged_with_place_id   :integer
 #  types                  :string(255)      is an Array
@@ -309,20 +309,21 @@ describe Place, type: :model do
   end
 
   describe '#find_place' do
-    let(:place) do
+    let!(:place) do
       create(:place, name: 'Benitos Bar', city: 'Los Angeles', state: 'California',
                      street_number: '123 st', route: 'Maria nw', zipcode: '11223')
     end
 
-    before { place }
-
     it 'returns the place that exactly match the search params' do
       expect(
         described_class.find_place(
-          name: 'Benitos Bar', city: 'Los Angeles', state: 'California',
+          name: 'Benitos Bar', state: 'California',
           street: '123 st Maria nw', zipcode: '11223'
         )
-      ).to match(place.id)
+      ).to eql([
+        ['10', '1', place.id.to_s],
+        ['5', '1', place.id.to_s],
+        ['1', '1', place.id.to_s]])
     end
 
     it 'returns the place that exactly match the search params without a zipcode' do
@@ -331,53 +332,53 @@ describe Place, type: :model do
           name: 'Benitos Bar', city: 'Los Angeles', state: 'California',
           street: '123 st Maria nw', zipcode: nil
         )
-      ).to match(place.id)
+      ).to eql [["1", "1", place.id.to_s]]
     end
 
     it 'returns the place that have a similar name with the same address' do
       expect(
         described_class.find_place(
-          name: 'Benito Bar', city: 'Los Angeles', state: 'California',
+          name: 'Benito Bar', state: 'California',
           street: '123 st Maria nw', zipcode: nil
         )
-      ).to match(place.id)
+      ).to eql([["1", "0.75", place.id.to_s]])
 
       expect(
         described_class.find_place(
-          name: 'BENITOSS Bar', city: 'Los Angeles', state: 'California',
+          name: 'BENITOSS Bar', state: 'California',
           street: '123 st Maria nw', zipcode: nil
         )
-      ).to match(place.id)
+      ).to eql([["1", "0.769231", place.id.to_s]])
     end
 
     it 'returns the place that have a similar name with the same address written in different ways' do
       expect(
         described_class.find_place(
-          name: 'Benito Bar', city: 'Los Angeles', state: 'California',
+          name: 'Benito Bar', state: 'California',
           street: '123 street Maria nw', zipcode: nil
         )
-      ).to match(place.id)
+      ).to eql([["1", "0.75", place.id.to_s]])
 
       expect(
         described_class.find_place(
-          name: 'BENITOSS Bar', city: 'Los Angeles', state: 'California',
+          name: 'BENITOSS Bar', state: 'California',
           street: '123 st Maria Northweast', zipcode: nil
         )
-      ).to match(place.id)
+      ).to eql([["1", "0.769231", place.id.to_s]])
 
       expect(
         described_class.find_place(
-          name: 'BENITOSS Bar', city: 'Los Angeles', state: 'California',
+          name: 'BENITOSS Bar', state: 'California',
           street: '123 street Maria Northweast', zipcode: nil
         )
-      ).to match(place.id)
+      ).to eql([["1", "0.769231", place.id.to_s]])
 
       expect(
         described_class.find_place(
-          name: 'BENITOSS Bar', city: 'Los Angeles', state: 'California',
+          name: 'BENITOSS Bar', state: 'California',
           street: '1234 street Maria Northweast', zipcode: nil
         )
-      ).to match(place.id)
+      ).to eql([["1", "0.769231", place.id.to_s]])
     end
 
     it 'does not returns the place that have a different name with the same address' do
@@ -386,7 +387,7 @@ describe Place, type: :model do
           name: 'Mercedes Bar', city: 'Los Angeles', state: 'California',
           street: '123 st Maria nw', zipcode: nil
         )
-      ).to be_nil
+      ).to be_empty
     end
   end
 

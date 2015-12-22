@@ -126,6 +126,14 @@ module Html
                                              actions: actions.to_sentence(last_word_connector: ' and '))
     end
 
+    def locked_attendance_message
+      if can?(:edit_data)
+        h.t('incomplete_execute_steps.attendance.edit')
+      else
+        h.t('incomplete_execute_steps.attendance.read_only')
+      end
+    end
+
     def locked_per_message
       if can?(:edit_data)
         h.t('incomplete_execute_steps.per.edit')

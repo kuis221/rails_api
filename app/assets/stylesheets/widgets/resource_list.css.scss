@@ -45,6 +45,23 @@ Styleguide 4.1.5
 	width: 100%;
 	margin-top: 20px;
 	overflow: hidden;
+	& .table {
+		width: calc(100% - 1px);
+    border: 1px solid #C0C0C0;
+		th {
+      font-size: 12px;
+      &.actions {
+        width: 50px;
+      }
+    }
+		td a {
+			text-decoration: underline;
+    }
+		.resource-item .resource-item-actions {
+			padding-top: 0;
+			width: 50px;
+		}
+	}
 	&.no-top-margin{ margin-top: 0; }
 	a, a:hover {
 		color: $text;
@@ -183,6 +200,9 @@ Styleguide 4.1.5
 			margin-bottom: 0;
 		}
 	}
+  thead .resource-item:hover {
+    background-color: transparent;
+  }
 	.special-icon {
 		margin-right: 10px;
 	}
@@ -191,7 +211,7 @@ Styleguide 4.1.5
 		display: none;
 	}
 	.empty-list-message:first-child:last-child {
-		display: table;
+		display:  table;
 		box-sizing: border-box;
 		width: 100%;
 		height: 85px;

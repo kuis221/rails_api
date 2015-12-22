@@ -1,5 +1,6 @@
 @import "variables";
 @import "mixins";
+@import "bootstrap/mixins";
 
 form.button_to {
 	display: inline-block;
@@ -23,6 +24,37 @@ form.button_to {
 		vertical-align: top;
 		color: $brand;
 	}
+}
+
+.counter-input-grp {
+  input.counter {
+    width: 50px !important;
+  }
+  .add-on {
+    padding: 0;
+    height: 39px;
+    border: 0;
+    .btn {
+      height: 50%;
+      display: block;
+      width: 40px;
+      min-width: 40px;
+      padding: 0;
+      &:first-child {
+        @include border-radius (0px);
+        @include border-top-right-radius (5px);
+      }
+      &:last-child {
+        @include border-radius (0px);
+        @include border-bottom-right-radius (5px);
+      }
+      &.decrease {
+        .icon:before {
+          top: -5px;
+        }
+      }
+    }
+  }
 }
 
 .form-actions{
@@ -77,6 +109,15 @@ form{
 			.optional {
 				display: none;
 			}
+		}
+	}
+
+  &.boolean { 
+		label.checkbox .checker span.checked:after {
+			top: 6px !important;
+		}
+		span.optional {
+			display: none;
 		}
 	}
 }

@@ -25,6 +25,8 @@ describe TdLinx do
         File.open(path, 'w') do |file|
           file.write(
             "0000071,Big Es Supermarket,11 Union St,Easthampton,MA,01027\n" \
+            "0000073,Big,11 Union St,Easthampton,,\n" \
+            "0000074,Bar Pacos,11 Union St,Easthampton,MA,02562\n" \
             '0000072,Bar Valley Farms,128 Northampton St,Easthampton,MA,03027'
           )
         end
@@ -41,6 +43,12 @@ describe TdLinx do
         expect(rows[0][6]).to eql 'High'
         expect(rows[1][0]).to eql '0000072'
         expect(rows[1][6]).to eql 'Medium'
+
+        # validate the master file was correctly generated
+        rows = CSV.read(files[:master_only])
+        expect(rows.count).to eql 2
+        expect(rows[0][0]).to eql '0000073'
+        expect(rows[1][0]).to eql '0000074'
       end
     end
   end

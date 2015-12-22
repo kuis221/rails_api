@@ -813,7 +813,7 @@ feature 'Brand Ambassadors Visits' do
         select_and_fill_from_datepicker('event_end_date', today.to_s(:slashes))
         select_from_chosen('ABSOLUT Vodka', from: 'Campaign')
         select_from_chosen('Other User', from: 'Event staff')
-        select_from_autocomplete 'Search for a place', place.name
+        select_from_autocomplete 'Search for places', place.name
 
         fill_in 'Description', with: 'some event description'
         click_button 'Create'
@@ -998,17 +998,5 @@ feature 'Brand Ambassadors Visits' do
       let(:permissions) { [[:list, 'BrandAmbassadors::Visit'], [:deactivate, 'BrandAmbassadors::Visit'], [:show, 'BrandAmbassadors::Visit']] }
     end
   end
-
-  feature 'Admin User', js: true, search: true do
-    let(:role) { create(:role, company: company) }
-
-    it_behaves_like 'a user that can view the list of visits'
-    it_behaves_like 'a user that can filter the list of visits'
-    it_behaves_like 'a user that can deactivate visits'
-    it_behaves_like 'a user that can edit visits'
-    it_behaves_like 'a user that can create visits'
-    it_behaves_like 'a user that can view visits details'
-    it_behaves_like 'a user that can view visits details without auto_match_events'
-    it_behaves_like 'a user that can view visits details and deactivate visits'
-  end
 end
+

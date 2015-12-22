@@ -15,7 +15,7 @@ feature 'Data Extract Report', js: true do
       click_js_button 'New Report'
 
       expect(page).to have_selector('#data_extract_source_chzn', count: 1)
-      select_from_chosen 'Events', from: 'What type of report do you want to create?'
+      select_from_chosen 'Events', from: 'Chose a data shource for your report'
 
       click_button 'Next'
 
@@ -28,7 +28,7 @@ feature 'Data Extract Report', js: true do
       click_js_button 'New Report'
 
       expect(page).to have_selector('#data_extract_source_chzn', count: 1)
-      select_from_chosen 'Events', from: 'What type of report do you want to create?'
+      select_from_chosen 'Events', from: 'Chose a data shource for your report'
 
       click_button 'Next'
 

@@ -17,7 +17,7 @@
 #  last_event_at    :datetime
 #  start_date       :date
 #  end_date         :date
-#  survey_brand_ids :integer          default([]), is an Array
+#  survey_brand_ids :integer          default("{}"), is an Array
 #  modules          :text
 #  color            :string(30)
 #
@@ -120,6 +120,10 @@ class Campaign < ActiveRecord::Base
   scope :active, -> { where(aasm_state: 'active') }
 
   scope :with_brands, ->(brands) { joins(:brands).where(brands: { id: brands }) }
+
+
+  # TODO: do we need a more robust condition here?
+  scope :with_module, ->(m) { where('modules like ?', "%#{m}%") }
 
   # Campaigns-Places relationship
   has_many :placeables, as: :placeable

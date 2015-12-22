@@ -7,22 +7,22 @@
 #  company_id           :integer
 #  place_id             :integer
 #  events_count         :integer
-#  promo_hours          :decimal(8, 2)    default(0.0)
+#  promo_hours          :decimal(8, 2)    default("0")
 #  impressions          :integer
 #  interactions         :integer
 #  sampled              :integer
-#  spent                :decimal(10, 2)   default(0.0)
+#  spent                :decimal(10, 2)   default("0")
 #  score                :integer
-#  avg_impressions      :decimal(8, 2)    default(0.0)
+#  avg_impressions      :decimal(8, 2)    default("0")
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
-#  avg_impressions_hour :decimal(6, 2)    default(0.0)
-#  avg_impressions_cost :decimal(8, 2)    default(0.0)
+#  avg_impressions_hour :decimal(6, 2)    default("0")
+#  avg_impressions_cost :decimal(8, 2)    default("0")
 #  score_impressions    :integer
 #  score_cost           :integer
-#  score_dirty          :boolean          default(FALSE)
-#  jameson_locals       :boolean          default(FALSE)
-#  top_venue            :boolean          default(FALSE)
+#  score_dirty          :boolean          default("false")
+#  jameson_locals       :boolean          default("false")
+#  top_venue            :boolean          default("false")
 #  created_by_id        :integer
 #  updated_by_id        :integer
 #  web_address          :string(255)

@@ -17,7 +17,7 @@ feature 'Reports', js: true do
       visit results_reports_path
 
       click_js_button 'New Report'
-      select_from_chosen 'Event Data', from: 'What type of report do you want to create?'
+      select_from_chosen 'Event Data', from: 'Chose a data shource for your report'
       select_from_chosen campaign.name, from: 'Choose a campaign'
       click_js_button 'Next'
 

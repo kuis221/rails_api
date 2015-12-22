@@ -14,7 +14,7 @@
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #  controller        :string(255)
-#  progress          :integer          default(0)
+#  progress          :integer          default("0")
 #  url_options       :text
 #
 

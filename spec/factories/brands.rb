@@ -9,7 +9,7 @@
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  company_id    :integer
-#  active        :boolean          default(TRUE)
+#  active        :boolean          default("true")
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

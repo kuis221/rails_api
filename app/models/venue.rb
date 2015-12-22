@@ -6,22 +6,22 @@
 #  company_id           :integer
 #  place_id             :integer
 #  events_count         :integer
-#  promo_hours          :decimal(8, 2)    default(0.0)
+#  promo_hours          :decimal(8, 2)    default("0")
 #  impressions          :integer
 #  interactions         :integer
 #  sampled              :integer
-#  spent                :decimal(10, 2)   default(0.0)
+#  spent                :decimal(10, 2)   default("0")
 #  score                :integer
-#  avg_impressions      :decimal(8, 2)    default(0.0)
+#  avg_impressions      :decimal(8, 2)    default("0")
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
-#  avg_impressions_hour :decimal(6, 2)    default(0.0)
-#  avg_impressions_cost :decimal(8, 2)    default(0.0)
+#  avg_impressions_hour :decimal(6, 2)    default("0")
+#  avg_impressions_cost :decimal(8, 2)    default("0")
 #  score_impressions    :integer
 #  score_cost           :integer
-#  score_dirty          :boolean          default(FALSE)
-#  jameson_locals       :boolean          default(FALSE)
-#  top_venue            :boolean          default(FALSE)
+#  score_dirty          :boolean          default("false")
+#  jameson_locals       :boolean          default("false")
+#  top_venue            :boolean          default("false")
 #  created_by_id        :integer
 #  updated_by_id        :integer
 #  web_address          :string(255)
@@ -119,6 +119,7 @@ class Venue < ActiveRecord::Base
     join(:events_local_start_at, target: Event, type: :time, join: { from: :place_id, to: :place_id }, as: 'local_start_at_dts')
     join(:events_end_at, target: Event, type: :time, join: { from: :place_id, to: :place_id }, as: 'end_at_dts')
     join(:events_local_end_at, target: Event, type: :time, join: { from: :place_id, to: :place_id }, as: 'local_end_at_dts')
+    join(:events_campaign_id, target: Event, type: :integer, join: { from: :place_id, to: :place_id }, as: 'campaign_id_is')
 
     integer :events_count, stored: true
     double :promo_hours, stored: true
@@ -361,6 +362,10 @@ class Venue < ActiveRecord::Base
           with(:locations, locations.uniq.compact) if locations.any?
           with(:place_id, places.uniq.compact) if places.any?
         end
+      end
+
+      if params.key?(:campaign_events) && params[:campaign_events].present?
+        with :events_campaign_id, params[:campaign_events]
       end
 
       if params.key?(:brand) && params[:brand].present?
