@@ -10,6 +10,11 @@
           - @staff.each do |member|
             .resource-item id="staff-member-#{member['type']}-#{member['id']}"
               = label_tag nil, nil, class: 'radio resource-item-link'
+                .user-type
+                  - if member['type'] == 'user'
+                    i.icon-user
+                  - else
+                    i.icon-team
                 .info
                   = member['name']
                   .description= member['description']
@@ -34,6 +39,7 @@ javascript:
     });
     $('#staff-list').show();
     if ($("#staff-list .resource-item:visible").length > 0) {
+      $("#staff-list .resource-item:visible").first().css('border-top', 0);
       $('#empty-list').hide();
     } else {
       $('#staff-list').hide();
