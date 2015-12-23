@@ -1,0 +1,9 @@
+|
+  var container = $("#edit_document_folder_#{resource.id}");
+  $('.edit-folder-form').collapse('hide');
+  if (!container.length) {
+    $('<div class="edit-folder-form collapse in" id="edit_document_folder_#{resource.id}">').html('#{escape_javascript(render(partial: 'edit'))}').insertAfter($('#document_folder_#{resource.id}'));
+  } else {
+    container.collapse('show');
+  }
+  $("#document_folder_#{resource.id}").hide();
