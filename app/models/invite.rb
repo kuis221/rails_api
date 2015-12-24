@@ -23,7 +23,8 @@ class Invite < ActiveRecord::Base
   belongs_to :event
   belongs_to :venue
   has_one :place, through: :venue
-  has_many :individuals, class_name: 'InviteIndividual', inverse_of: :invite
+  has_many :individuals, class_name: 'InviteIndividual',
+                         inverse_of: :invite, dependent: :destroy
 
   delegate :name_with_location, :id, :name, to: :place, prefix: true, allow_nil: true
   delegate :jameson_locals?, :top_venue?, to: :venue, allow_nil: true
