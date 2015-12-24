@@ -30,6 +30,9 @@ RSpec.describe DataExtract::Invite, type: :model do
         ['campaign_name', 'Event Campaign Name'], ['end_date', 'Event End Date'],
         ['end_time', 'Event End Time'], ['start_date', 'Event Start Date'],
         ['start_time', 'Event Start Time'], ['event_status', 'Event Status'],
+        ['venue_name', 'Venue Name'], ['venue_street', 'Venue Street'],
+        ['venue_city', 'Venue City'], ['venue_state', 'Venue State'],
+        ['venue_zipcode', 'Venue Zip Code'], ['venue_phone_number', 'Venue Phone Number'],
         ['place_name', 'Event Venue Name'], ['place_street', 'Event Venue Street'],
         ['place_city', 'Event Venue City'], ['place_state', 'Event Venue State'],
         ['place_zipcode', 'Event Venue Zip Code'], %w(attendees Attendees),
@@ -112,6 +115,24 @@ RSpec.describe DataExtract::Invite, type: :model do
           [10, '08/23/2013', 'Campaign FY15'],
           [5, '08/22/2013', 'Test Campaign FY01'],
           [1,  '08/21/2013', 'Test Campaign FY01']
+        ]
+      end
+
+      it "exports the invited venue's information" do
+        Invite.delete_all
+        venue1 = create(:venue, place: create(:place, name: "Popeye's Bar" , city: 'Chepe'))
+        venue2 = create(:venue, place: create(:place, name: "Olivia's Place", city: 'Alajuela'))
+        create :invite, invitees: 1, event: event, venue: venue2,
+                        created_at: Time.zone.local(2013, 8, 21, 11, 59)
+        create :invite, invitees: 10, event: event, venue: venue1,
+                        created_at: Time.zone.local(2013, 8, 23, 11, 59)
+
+        subject.columns = %w(invitees venue_name venue_city)
+        subject.default_sort_by = 'venue_name'
+        subject.default_sort_dir = 'ASC'
+        expect(subject.rows).to eql [
+          [1, "Olivia's Place" , 'Alajuela'],
+          [10, "Popeye's Bar", 'Chepe']
         ]
       end
     end

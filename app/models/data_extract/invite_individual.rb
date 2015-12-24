@@ -33,6 +33,7 @@ class DataExtract::InviteIndividual < DataExtract
                  place_city: 'places.city',
                  place_state: 'places.state',
                  place_zipcode: 'places.zipcode',
+                 venue: 'invited_places.name',
                  rsvpd: "CASE invite_individuals.rsvpd WHEN 't' THEN 'Yes' ELSE 'No' END",
                  attended: "CASE invite_individuals.attended WHEN 't' THEN 'Yes' ELSE 'No' END",
                  first_name: 'invite_individuals.first_name',
@@ -59,6 +60,11 @@ class DataExtract::InviteIndividual < DataExtract
 
   def add_joins_to_scope(s)
     s = super.joins(:invite_individuals)
+    if join_with_venues_required?
+      s = s.joins('LEFT JOIN venues invited_venues ON invited_venues.id=invites.venue_id')
+          .joins('LEFT JOIN places invited_places ON invited_places.id=invited_venues.place_id')
+    end
+    s
   end
 
   def total_results
@@ -74,6 +80,13 @@ class DataExtract::InviteIndividual < DataExtract
     else
       super
     end
+  end
+
+  # Only join with venues->place if a column from those tables have been seleted
+  # or the list is being filtered by any of them
+  def join_with_venues_required?
+    columns.include?('venue') ||
+      ( filters.present?  && filters['venue'].present? )
   end
 end
 

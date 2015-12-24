@@ -28,6 +28,12 @@ class DataExtract::Invite < DataExtract
                  start_date: proc { "to_char(#{date_field_prefix}start_at, 'MM/DD/YYYY')" },
                  start_time: proc { "to_char(#{date_field_prefix}start_at, 'HH12:MI AM')" },
                  event_status: 'initcap(events.aasm_state)',
+                 venue_name: 'invited_places.name',
+                 venue_street: 'trim(both \' \' from invited_places.street_number || \' \' || invited_places.route)',
+                 venue_city: 'invited_places.city',
+                 venue_state: 'invited_places.state',
+                 venue_zipcode: 'invited_places.zipcode',
+                 venue_phone_number: 'invited_places.phone_number',
                  place_name: 'places.name',
                  place_street: 'trim(both \' \' from places.street_number || \' \' || places.route)',
                  place_city: 'places.city',
@@ -44,6 +50,11 @@ class DataExtract::Invite < DataExtract
 
   def add_joins_to_scope(s)
     s = super.joins(:invites)
+    if join_with_venues_required?
+      s = s.joins('LEFT JOIN venues invited_venues ON invited_venues.id=invites.venue_id')
+          .joins('LEFT JOIN places invited_places ON invited_places.id=invited_venues.place_id')
+    end
+    s
   end
 
   def total_results
@@ -58,5 +69,13 @@ class DataExtract::Invite < DataExtract
       super
     end
   end
-end
 
+  private
+
+  # Only join with venues->place if a column from those tables have been seleted
+  # or the list is being filtered by any of them
+  def join_with_venues_required?
+    columns.any? { |c| c =~ /\Avenue_/  } ||
+      ( filters.present?  && filters.any? { |k,_| k =~ /\Avenue_/  } )
+  end
+end

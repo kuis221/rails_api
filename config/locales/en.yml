@@ -1195,6 +1195,12 @@ en:
         place_city: 'Event Venue City'
         place_state: 'Event Venue State'
         place_zipcode: 'Event Venue Zip Code'
+        venue_name: 'Venue Name'
+        venue_street: 'Venue Street'
+        venue_city: 'Venue City'
+        venue_state: 'Venue State'
+        venue_zipcode: 'Venue Zip Code'
+        venue_phone_number: 'Venue Phone Number'
       invite_individual:
         start_date: "Event Start Date"
         start_date: 'Event Start Date'
@@ -1209,6 +1215,7 @@ en:
         place_state: 'Event Venue State'
         place_zipcode: 'Event Venue Zip Code'
         phone_number: 'Phone Number'
+        venue: 'Venue'
         city: 'City'
         province_code: 'State'
         country_code: 'Country'
@@ -1470,6 +1477,12 @@ en:
         place_city: "The city of the venue where the event is taking place"
         place_state: "The state of the venue where the event is taking place"
         place_zipcode: "The ZIP code of the venue where the event is taking place"
+        venue_name: "Name of the venue that was invited to, RSVP'd to and/or attended the event"
+        venue_phone_number: "Primary phone number of the venue that was invited to, RSVP'd to and/or attended the event"
+        venue_street: "Address of the venue that was invited to, RSVP'd to and/or attended the event"
+        venue_city: "City where the venue that was invited to, RSVP'd to and/or attended the event is located"
+        venue_state: "State where the venue that was invited to, RSVP'd to and/or attended the event is located"
+        venue_zipcode: "ZIP code for where the venue that was invited to, RSVP'd to and/or attended the event is located"
         event_status: "The status of the event (ex., approved, due, late)"
         created_by: "The person who created the invitation"
         created_at: "The date the invitation was created"
@@ -1497,6 +1510,7 @@ en:
         place_city: "The city of the venue where the event is taking place"
         place_state: "The state of the venue where the event is taking place"
         place_zipcode: "The ZIP code of the venue where the event is taking place"
+        venue: "Venue/account where the person who was invited to, RSVP'd to and/or attended the event works"
         event_status: "The status of the event (ex., approved, due, late)"
         created_by: "The person who created the invitation"
         created_at: "The date the invitation was created"
