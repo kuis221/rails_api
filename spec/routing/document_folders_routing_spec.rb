@@ -14,16 +14,16 @@ describe 'routes for document folders', type: :routing do
       expect(get: '/brand_ambassadors/folders/1').not_to be_routable
     end
 
-    it "doesn't routes to #edit" do
-      expect(get: '/brand_ambassadors/folders/1/edit').not_to be_routable
+    it 'routes to #edit' do
+      expect(get: '/brand_ambassadors/folders/1/edit').to route_to('brand_ambassadors/document_folders#edit', id: '1')
     end
 
     it 'routes to #create' do
       expect(post: '/brand_ambassadors/folders').to route_to('brand_ambassadors/document_folders#create')
     end
 
-    it "doesn't routes to #update" do
-      expect(put: '/brand_ambassadors/folders/1').not_to be_routable
+    it 'routes to #update' do
+      expect(put: '/brand_ambassadors/folders/1').to route_to('brand_ambassadors/document_folders#update', id: '1')
     end
 
     it "doesn't routes to #destroy" do

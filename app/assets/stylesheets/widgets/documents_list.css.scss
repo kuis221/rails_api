@@ -81,7 +81,7 @@
 	line-height:34px;
 }
 
-#new-folder-form { /*Create a new folder grey zone*/
+#new-folder-form, .edit-folder-form { /*Create a new folder grey zone*/
 
 	background-color: $gray-lighter;
 	max-height: 70px;
@@ -94,6 +94,8 @@
 		display: inline-block;
 		font-size: 25px;
 		margin-right: 15px;
+		position: relative;
+		top: 7px;
 		&+.control-group{
 			display: inline-block;
 			margin-bottom:0;
@@ -106,7 +108,7 @@
 		width: 21px;
 		position: absolute;
 		right: 16px;
-		top: 25px;
+		top: 30px;
 	}
 	input[type=text] {
 		border: 1px solid $user_menu;

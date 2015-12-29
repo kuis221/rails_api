@@ -1,5 +1,5 @@
 class BrandAmbassadors::DocumentFoldersController < InheritedResources::Base
-  respond_to :js, only: [:new, :create]
+  respond_to :js, only: [:new, :create, :edit, :update]
 
   belongs_to :brand_ambassadors_visit, param: :visit_id, optional: true
 
