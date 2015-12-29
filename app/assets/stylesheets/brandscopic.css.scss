@@ -7599,6 +7599,10 @@ form.button_to .button-with-icon {
 
 .campaign-summary-box{
 	width: auto!important;
+
+	.segment-value{
+		float: left;
+	}
 }
 
 .details-venues-custom-fields{
