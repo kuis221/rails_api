@@ -100,7 +100,7 @@ module ApplicationHelper
   end
 
   def button_to_add(title, url, options = {})
-    icon_button_to 'icon-plus-sign', url, options.merge(
+    icon_button_to 'icon-plus-sign-clear', url, options.merge(
       remote: true, method: :get,
       title: title, return: return_path,
       form_class: 'button_to button_to_add')

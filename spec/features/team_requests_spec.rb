@@ -169,7 +169,7 @@ feature 'Teams', js: true do
           select_from_staff('user', user.id)
           staff_selected?('user', user.id, true)
         end
-        click_js_button 'Add 1 Users/Teams'
+        click_js_button 'Add 1 User/Team'
       end
 
       within('#team-members-list')  do
