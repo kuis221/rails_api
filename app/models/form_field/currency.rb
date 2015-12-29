@@ -71,7 +71,6 @@ class FormField::Currency < FormField
     events = form_field_results.for_event_campaign(campaign).merge(event_scope)
     result = events.map(&:value)
     total = result.compact.reduce { |sum, x| sum.to_f + x.to_f } || 0
-    "$#{total}"
   end
 
   def csv_results(campaign, event_scope, hash_result)

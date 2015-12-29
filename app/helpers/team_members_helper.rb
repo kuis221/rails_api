@@ -86,7 +86,9 @@ module TeamMembersHelper
     end
 
     def assignable_staff_members
-      users = company_users.where(['company_users.id not in (?)', resource.user_ids + [0]])
+      # When resource is a Campaign, user_ids should include memmberships from brand and brand portfolios
+      ids =  resource.is_a?(Campaign) ? resource.staff_users.map(&:id) : resource.user_ids
+      users = company_users.where(['company_users.id not in (?)', ids + [0]])
       ActiveRecord::Base.connection.unprepared_statement do
         ActiveRecord::Base.connection.select_all("
           #{users.select('company_users.id, users.first_name || \' \' || users.last_name AS name, roles.name as description, \'user\' as type').reorder(nil).to_sql}

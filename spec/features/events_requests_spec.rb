@@ -1666,6 +1666,23 @@ feature 'Events section' do
           expect(page).to_not have_content('Alberto Porras')
         end
       end
+
+      scenario 'display the correct message when no users/teams match the search string' do
+        user = create(:company_user, company: company, role: company_user.role,
+                                     user: create(:user, first_name: 'Fulanito',
+                                                         last_name: 'DeTal'))
+        Sunspot.commit
+
+        visit event_path(event)
+
+        click_js_button 'Add Staff'
+        within visible_modal do
+          fill_in 'Search for users and teams', with: 'Fulanito'
+          expect(page).to have_content('Fulanito DeTal')
+          fill_in 'Search for users and teams', with: 'Pepito'
+          expect(page).to have_content('No results found for "Pepito"')
+        end
+      end
     end
   end
 

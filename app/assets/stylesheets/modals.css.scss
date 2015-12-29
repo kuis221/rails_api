@@ -1218,20 +1218,40 @@ div#spin{
 .members-form {
 	.resource-list {
 		.resource-item {
+			padding: 13px 10px;
 			.resource-item-link {
+				color: $gray-dark;
 				display: flex;
-				font-size: 15px;
+				font-size: 16px;
 				font-weight: bold;
 				position: relative;
+				.user-type {
+					background-color: $silver;
+					color: $white;
+					display: inline-block;
+					@include border-radius(22px);
+					height: 44px;
+					left: 0;
+					line-height: 52px;
+					margin-right: 15px;
+					overflow: hidden;
+					position: relative;
+					text-align: center;
+					width: 44px;
+					i:before {
+						font-size: 25px;
+					}
+				}
 				.info {
-					width: 75%;
+					width: 67%;
 				}
 				.input {
 					position: absolute;
 					top: 30%;
-					width: 25%;
+					width: 20%;
 				}
 				.description {
+					color: $brand;
 					font-size: 12px;
 					font-weight: normal;
 					margin: 0;
@@ -1251,6 +1271,14 @@ div#spin{
 						}
 					}
 				}
+			}
+		}
+		&.select-list {
+			height: 257px;
+			border-width: 1px;
+			.resource-item {
+				border-left: 0px;
+				border-right: 0px;
 			}
 		}
 	}

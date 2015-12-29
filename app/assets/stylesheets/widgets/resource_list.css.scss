@@ -47,16 +47,16 @@ Styleguide 4.1.5
 	overflow: hidden;
 	& .table {
 		width: calc(100% - 1px);
-    border: 1px solid #C0C0C0;
+		border: 1px solid #C0C0C0;
 		th {
-      font-size: 12px;
-      &.actions {
-        width: 50px;
-      }
-    }
+			font-size: 12px;
+			&.actions {
+				width: 50px;
+			}
+		}
 		td a {
 			text-decoration: underline;
-    }
+		}
 		.resource-item .resource-item-actions {
 			padding-top: 0;
 			width: 50px;
@@ -66,6 +66,25 @@ Styleguide 4.1.5
 	a, a:hover {
 		color: $text;
 		font-weight: normal;
+	}
+	.edit-folder-form {
+		&.collapse {
+			border: 0;
+			margin-bottom: 0;
+			transition: height 0.01s;
+			&.in {
+				border: 1px solid $borders;
+				height: 87px !important;
+				margin-bottom: -1px;
+				max-height: 87px;
+			}
+			.icon-close {
+				top: 36px;
+			}
+			.edit_document_folder {
+				padding: 21px 15px;
+			}
+		}
 	}
 	.resource-item {
 		padding: $resource-item-padding;
@@ -200,9 +219,10 @@ Styleguide 4.1.5
 			margin-bottom: 0;
 		}
 	}
-  thead .resource-item:hover {
-    background-color: transparent;
-  }
+
+	thead .resource-item:hover {
+		background-color: transparent;
+	}
 	.special-icon {
 		margin-right: 10px;
 	}
@@ -288,6 +308,14 @@ Styleguide 4.1.5
 		}
 		&.max-items-5 {
 			@include max-resource-items-height($resource-item-height - 10px, 5);
+		}
+		&.hide {
+			border-width: 1px 1px;
+			color: $gray-light;
+			height: 257px;
+			line-height: 257px;
+			text-align: center;
+			vertical-align: middle;
 		}
 	}
 

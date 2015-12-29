@@ -20,4 +20,4 @@
     - elsif total_field_types.include?(form_field.type)
       div.form-result.pdf-keeptogether class="result_#{partial_name}"
         span.form-result-label = form_field.name
-        span.form-result-value = result
+        span.form-result-value = form_field.type == 'FormField::Number' ?  number_with_precision(result, precision: 0, delimiter: ',', separator: '.') : number_to_currency(result, precision: 2, delimiter: ',', separator: '.')

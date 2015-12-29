@@ -428,7 +428,7 @@ body.events.show{
 		}
 		.button_to_add {
 			button {
-				margin-top: 5px;
+				margin-top: 2px;
 			}
 		}
 	}
@@ -7599,6 +7599,10 @@ form.button_to .button-with-icon {
 
 .campaign-summary-box{
 	width: auto!important;
+
+	.segment-value{
+		float: left;
+	}
 }
 
 .details-venues-custom-fields{

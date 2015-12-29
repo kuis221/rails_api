@@ -1,0 +1,9 @@
+a.icon-close.pull-right href="#edit_document_folder_#{resource.id}" data-toggle="collapse"
+= simple_form_for(resource, url: brand_ambassadors_document_folder_path, remote: true) do |f|
+  span.icon-folder
+  = f.input :name, value: resource.name, label: false, :input_html => { placeholder: 'Please rename your folder' }
+
+javascript:
+  $('#edit_document_folder_#{resource.id}').on('hidden.bs.collapse', function () {
+    $("#document_folder_#{resource.id}").show();
+  })
