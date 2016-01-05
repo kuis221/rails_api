@@ -147,6 +147,32 @@ feature 'Photos', js: true do
       end
     end
 
+    scenario 'a user can see photos from Events Galleries, PERs and Activities in the photos report', search: true do
+      activity_type = create(:activity_type, name: 'Activity Type #1', company: company)
+      campaign.activity_types << activity_type
+      activity = create(:activity, activity_type: activity_type, activitable: event, campaign: campaign, company_user_id: 1)
+
+      ff_photo = FormField.find(create(:form_field, fieldable: activity_type, type: 'FormField::Photo').id)
+      activity_result = FormFieldResult.new(form_field: ff_photo, resultable: activity)
+
+      ff_photo = FormField.find(create(:form_field, fieldable: campaign, type: 'FormField::Photo').id)
+      event_result = FormFieldResult.new(form_field: ff_photo, resultable: event)
+
+      create(:photo, attachable: activity_result, file_file_name: 'activity_photo.jpg', active: true)
+      create(:photo, attachable: event_result, file_file_name: 'per_photo.jpg', active: true)
+      create(:photo, attachable: event, file_file_name: 'event_photo.jpg', active: true)
+      Sunspot.commit
+
+      visit results_photos_path
+
+      expect(page).to have_selector('#photos-list .photo-item', count: 3)
+      within '#photos-list' do
+        expect(page).to have_css("img[alt='Activity photo']")
+        expect(page).to have_css("img[alt='Per photo']")
+        expect(page).to have_css("img[alt='Event photo']")
+      end
+    end
+
     scenario 'a user can tag photos' do
       create(:photo, attachable: event)
       visit event_path(event)

@@ -32,9 +32,11 @@ $.widget 'nmk.photoGallery', {
 
 	fillPhotoData: (info) ->
 		if @options.showSidebar
-			@setTitle info.title, info.urls.event
-			@setDate info.date
-			@setAddress info.address
+			@setTitle info.title
+			date = if @image.data('info').source.title == 'Activity' then null else info.date
+			@setDate date, info.urls.event
+			@setAddress info.address, info.urls.venue
+			@setSource info.source.title, info.source.url
 			@setRating info.rating, info.id
 			@setTagList info.tags
 		@_createPhotoToolbar()
@@ -87,8 +89,8 @@ $.widget 'nmk.photoGallery', {
 				return null
 
 
-	setTitle: (title, url) ->
-		@title.html $('<a>').attr('href', url).text(title)
+	setTitle: (title) ->
+		@title.html(title)
 
 	setRating: (rating, asset_id) ->
 		if 'view_rate' in @image.data('info').permissions
@@ -108,14 +110,23 @@ $.widget 'nmk.photoGallery', {
 		else
 			@rating.hide()
 
-	setDate: (date) ->
+	setDate: (date, url) ->
 		if date
-			@date.show().find('span').html(date)
+			@date.show().find('span').html($('<a>').attr('href', url).html(date))
 		else
 			@date.hide().find('span').html('')
 
-	setAddress: (address) ->
-		@address.find('span').html address
+	setAddress: (address, url) ->
+		if url
+			@address.find('span').html($('<a>').attr('href', url).html(address))
+		else
+			@address.find('span').html address
+
+	setSource: (title, url) ->
+		if url
+			@source.find('span').html($('<a>').attr('href', url).html(title))
+		else
+			@source.find('span').html title
 
 	setTag: (tag) ->
 		if tag.added
@@ -218,8 +229,9 @@ $.widget 'nmk.photoGallery', {
 
 	_createGalleryModal: () ->
 		@title = $('<h3>')
-		@address = $('<div class="place-data"><i class="icon-wired-venue"></i><span></span></div>')
 		@date = $('<div class="calendar-data"><i class="icon-calendar"></i><span></span></div>')
+		@address = $('<div class="place-data"><i class="icon-wired-venue"></i><span></span></div>')
+		@source = $('<div class="source-data"><i class="icon-source"></i><span></span></div>')
 		@rating = $('<div class="rating">')
 			.mouseleave (e) =>
 				@rating.find('span').removeClass('full').addClass('empty')
@@ -242,7 +254,7 @@ $.widget 'nmk.photoGallery', {
 					$('<div class="panel">').
 						append('<a href="#" class="icon-close close-gallery" data-dismiss="modal" aria-hidden="true" title="Close"></a>').
 						append(
-							$('<div class="description">').append( @title ).append( @date ).append( @address ),
+							$('<div class="description">').append( @title ).append( @date ).append( @address ).append( @source ),
 							$('<div class="mini-slider">').append( @miniCarousel = @_createCarousel('small') ),
 							@rating,
 							$('<div class="photo-tags">').append(
