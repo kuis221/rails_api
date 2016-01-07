@@ -89,9 +89,11 @@ class AttachedAsset < ActiveRecord::Base
 
   delegate :company_id, :update_active_photos_count, to: :attachable
 
-  searchable if: proc { |asset| asset.attachable_type == 'Event' }  do
+  searchable do
     string :status
-    string :asset_type
+    string :asset_type do
+      asset_type || (attachable_type == 'FormFieldResult' ? attachable.form_field.type.demodulize.underscore : nil)
+    end
     string :attachable_type
 
     string :file_file_name
@@ -101,7 +103,17 @@ class AttachedAsset < ActiveRecord::Base
     end
 
     integer :event_id do
-      attachable_id
+      e_id = nil
+      if attachable_type == 'Event'
+        e_id = attachable_id
+      elsif attachable_type == 'FormFieldResult'
+        if attachable.resultable_type == 'Activity'
+          e_id = attachable.resultable.activitable_id
+        elsif attachable.resultable_type == 'Event'
+          e_id = attachable.resultable_id
+        end
+      end
+      e_id
     end
 
     boolean :active
