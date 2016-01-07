@@ -1,7 +1,7 @@
 if Rails.env.production?
   require 'rake'
   require 'airbrake/rake_handler'
-  
+
   Airbrake.configure do |config|
     config.api_key = 'ab711b3a909036274cbd1ea24809ec9f'
     config.host        = 'errors.jaskotmedia.com'
@@ -20,6 +20,7 @@ if Rails.env.production?
     end
   end
 
+  # http://dev.mensfeld.pl/2014/07/tracking-sidekiq-workers-exceptions-with-errbitairbrake/
   Sidekiq.configure_server do |config|
     config.error_handlers << Proc.new { |ex,context| Airbrake.notify_or_ignore(ex,parameters: context) }
   end
