@@ -33,7 +33,7 @@ $.widget 'nmk.photoGallery', {
 	fillPhotoData: (info) ->
 		if @options.showSidebar
 			@setTitle info.title
-			date = if @image.data('info').source.title == 'Activity' then null else info.date
+			date = if @image.data('info').source.type == 'activity_venue' then null else info.date
 			@setDate date, info.urls.event
 			@setAddress info.address, info.urls.venue
 			@setSource info.source.title, info.source.url
