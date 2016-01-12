@@ -22,7 +22,7 @@ class AttachedAssetInput < SimpleForm::Inputs::Base
   protected
 
   def max_file_size
-    10 * 1024 * 1024
+    100 * 1024 * 1024
   end
 
   def attached_asset
