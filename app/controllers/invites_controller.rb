@@ -21,9 +21,17 @@ class InvitesController < InheritedResources::Base
 
   def collection_to_csv
     CSV.generate do |csv|
-      csv << ['VENUE', 'EVENT DATE', 'CAMPAIGN', 'INVITES', 'RSVPs', 'ATTENDEES']
-      each_collection_item do |item|
-        csv << [item.place_name, item.event_date, item.campaign_name, item.invitees, item.rsvps_count, item.attendees]
+      if current_company.kbmg_enabled?
+        csv << ['VENUE', 'EVENT DATE', 'CAMPAIGN', 'TOP 100', 'JAMESON LOCALS', 'INVITES', 'RSVPs', 'ATTENDEES']
+        each_collection_item do |item|
+          csv << [item.place_name, item.event_date, item.campaign_name, item.top_venue,
+                  item.jameson_locals, item.invitees, item.rsvps_count, item.attendees]
+        end
+      else
+        csv << ['VENUE', 'EVENT DATE', 'CAMPAIGN', 'INVITES', 'RSVPs', 'ATTENDEES']
+        each_collection_item do |item|
+          csv << [item.place_name, item.event_date, item.campaign_name, item.invitees, item.rsvps_count, item.attendees]
+        end
       end
     end
   end
