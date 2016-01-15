@@ -6287,7 +6287,7 @@ table td.sub-level-1 {
 			&.close-gallery {
 				color: $brand;
 				position: absolute;
-				right: 10px;
+				right: 15px;
 				top: 15px;
 			}
 			&.remove-tag{
@@ -6310,6 +6310,10 @@ table td.sub-level-1 {
 		.rating {
 			margin-left: 0;
 			text-align: center;
+		}
+
+		.panel {
+			overflow-y: scroll;
 		}
 	}
 	.slider {
