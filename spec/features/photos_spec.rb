@@ -91,9 +91,9 @@ feature 'Photos', js: true do
         click_js_link 'View Photo'
       end
       within gallery_modal do
-        find('.rating span.full', match: :first)
-        expect(page.all('.rating span.full').count).to eql(3)
-        expect(page.all('.rating span.empty').count).to eql(2)
+        find('.rating span.icon-star', match: :first)
+        expect(page.all('.rating span.icon-star').count).to eql(3)
+        expect(page.all('.rating span.icon-wired-star').count).to eql(2)
       end
     end
 
