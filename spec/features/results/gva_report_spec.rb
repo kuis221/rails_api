@@ -44,9 +44,12 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         company_user.role.permissions.create(action: :gva_report_campaigns, subject_class: 'Campaign', mode: 'campaigns')
         company_user.role.permissions.create(action: :gva_report_places, subject_class: 'Campaign', mode: 'campaigns')
         company_user.role.permissions.create(action: :gva_report_users, subject_class: 'Campaign', mode: 'campaigns')
-        campaign = create(:campaign, name: 'Test Campaign FY01', start_date: '07/21/2013', end_date: '03/30/2014', company: company)
+        campaign = create(:campaign, name: 'Test Campaign FY01', start_date: '07/21/2013', end_date: '03/30/2014',
+                                     company: company, modules: { 'photos' => {} })
         kpi = Kpi.samples
+        kpi2 = Kpi.photos
         campaign.add_kpi kpi
+        campaign.add_kpi kpi2
 
         place = create(:place, name: 'The Place')
         another_place = create(:place, name: 'Place 3')
@@ -55,6 +58,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         company_user.places << [place, another_place]
 
         create(:goal, goalable: campaign, kpi: kpi, value: '100')
+        create(:goal, goalable: campaign, kpi: kpi2, value: '10')
         create(:goal, parent: campaign, goalable: company_user, kpi: kpi, value: 100)
         create(:goal, parent: campaign, goalable: company_user, kpi: Kpi.events, value: 3)
         create(:goal, parent: campaign, goalable: place, kpi: kpi, value: 150)
@@ -63,6 +67,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         create(:goal, parent: campaign, goalable: place, kpi: Kpi.expenses, value: 50)
 
         event1 = create(:approved_event, company: company, campaign: campaign, place: place)
+        create_list(:attached_asset, 2, attachable: event1, asset_type: 'photo')
         event1.result_for_kpi(kpi).value = '25'
         event1.save
         event1.users << company_user
@@ -129,7 +134,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         choose_campaign('Test Campaign FY01')
 
         ### Testing group by Campaign
-        within('.container-kpi-trend') do
+        within('.kpi-trend:nth-child(1)') do
           expect(page).to have_content('Samples')
           find('.progress').trigger('mouseover')
           expect(page).to have_selector('.executed-label', text: '25')
@@ -140,6 +145,20 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
           within('.progress-label') do
             expect(page).to have_content('78%')
             expect(page).to have_content('78 OF 100 GOAL')
+          end
+        end
+
+        within('.kpi-trend:nth-child(2)') do
+          expect(page).to have_content('Photos')
+          find('.progress').trigger('mouseover')
+          expect(page).to have_selector('.executed-label', text: '2')
+          expect(page).to have_selector('.submitted-label', text: '0')
+          expect(page).to have_selector('.rejected-label', text: '0')
+          expect(page).to have_content('10 GOAL')
+          expect(page).to have_css('.today-line-indicator')
+          within('.progress-label') do
+            expect(page).to have_content('20%')
+            expect(page).to have_content('2 OF 10 GOAL')
           end
         end
 
