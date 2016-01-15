@@ -264,10 +264,13 @@ body{
 		font-size: 18px;
 		margin-right: 10px;
 	}
-	.full {
-		color: #CBBB26;
+	.temp-full {
+		color: #7A7A7A;
 	}
-	.empty {
+	.full {
+		color: #C1C1C1;
+	}
+	.icon-wired-star {
 		color: #5C5C5C;
 	}
 }
@@ -6282,7 +6285,7 @@ table td.sub-level-1 {
 		a{
 			color: $white;
 			&.close-gallery {
-				color: $white;
+				color: $brand;
 				position: absolute;
 				right: 10px;
 				top: 15px;
@@ -6296,9 +6299,17 @@ table td.sub-level-1 {
 			}
 		}
 		.mini-slider{
+			margin-bottom: 40px;
+			padding-bottom: 10px;
+			border-bottom: 1px solid #4f4f4f;
 			.carousel-control{
 				font-size: 25px;
 			}
+		}
+
+		.rating {
+			margin-left: 0;
+			text-align: center;
 		}
 	}
 	.slider {
@@ -6325,6 +6336,14 @@ table td.sub-level-1 {
 		}
 		.photo-toolbar {
 			display: none;
+
+			.icon-remove-circle, .icon-download {
+				color: #ececec;
+
+				&:hover {
+					color: #fff;
+				}
+			}
 		}
 		&:hover{
 			.photo-toolbar {
@@ -6410,16 +6429,39 @@ table td.sub-level-1 {
 		.description{
 			height: 228px;
 			width: 320px;
-			.calendar-data, .place-data, .source-data{
+			color: #7a7a7a;
+			font-size: 14px;
+
+			a {
+				color: inherit;
+
+				&:hover {
+					text-decoration: underline;
+					color: #ececec;
+				}
+			}
+
+			.calendar-data, .place-data, .source-data, .campaign-data {
 				float: left;
 				position: relative;
 				width: 290px;
+				margin-bottom: 20px;
+
 				i{
 					margin-right: 15px;
 				}
 				span{
 					width: 255px;
 				}
+			}
+			.place-data {
+				margin-bottom: 0;
+				padding-bottom: 40px;
+				border-bottom: 1px solid #4f4f4f;
+				width: 100%;
+			}
+			.campaign-data {
+				margin-top: 30px;
 			}
 			p{
 				display: inline-block;
@@ -6467,7 +6509,7 @@ table td.sub-level-1 {
 				}
 			}
 			.typeahead{
-				background-color: rgb(54,54,54);
+				background-color: #4f4f4f;
 				border: 1px solid $app_bg;
 				box-sizing: border-box;
 				color: $app_bg;
@@ -6484,11 +6526,12 @@ table td.sub-level-1 {
 				}
 			}
 			.select2-container {
-				background: rgb(54, 54, 54);
+				background: #4f4f4f;
+				border: 0 !important;
 			}
 			.select2-choices{
 				border-radius: 6px;
-				background-color: rgb(54, 54, 54) !important;
+				background-color: #4f4f4f !important;
 				background-image: none !important;
 				border: 0px !important;
 				box-shadow: none;
@@ -6508,16 +6551,16 @@ table td.sub-level-1 {
 						font-size: 12px;
 						height: 20px;
 						&::-webkit-input-placeholder { /* WebKit browsers */
-						  color: $user_menu;
+						  color: #999;
 						}
 						&:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-							color: $user_menu;
+							color: #999;
 						}
 						&::-moz-placeholder { /* Mozilla Firefox 19+ */
-						  color: $user_menu;
+						  color: #999;
 						}
 						&:-ms-input-placeholder { /* Internet Explorer 10+ */
-						  color: $user_menu;
+						  color: #999;
 						}
 					}
 				}

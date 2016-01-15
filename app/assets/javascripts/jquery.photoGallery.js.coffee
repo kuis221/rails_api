@@ -36,7 +36,6 @@ $.widget 'nmk.photoGallery', {
 			date = if @image.data('info').source.type == 'activity_venue' then null else info.date
 			@setDate date, info.urls.event
 			@setAddress info.address, info.urls.venue
-			@setSource info.source.title, info.source.url
 			@setRating info.rating, info.id
 			@setTagList info.tags
 		@_createPhotoToolbar()
@@ -90,7 +89,7 @@ $.widget 'nmk.photoGallery', {
 
 
 	setTitle: (title) ->
-		@title.html(title)
+		@title.find('span').html(title)
 
 	setRating: (rating, asset_id) ->
 		if 'view_rate' in @image.data('info').permissions
@@ -121,12 +120,6 @@ $.widget 'nmk.photoGallery', {
 			@address.find('span').html($('<a>').attr('href', url).html(address))
 		else
 			@address.find('span').html address
-
-	setSource: (title, url) ->
-		if url
-			@source.find('span').html($('<a>').attr('href', url).html(title))
-		else
-			@source.find('span').html title
 
 	setTag: (tag) ->
 		if tag.added
@@ -211,31 +204,31 @@ $.widget 'nmk.photoGallery', {
 		if $is_full
 			$klass = "icon-star full"
 		else
-			$klass = "icon-star empty"
+			$klass = "icon-wired-star"
 		star = $('<span class="'+$klass+'" value="'+$i+'"/>')
 		if can_rate
 			star.click (e) =>
 				@image.data('info').rating = $i
+				@rating.find('span').slice(0,$i).removeClass('temp-full')
 				$.ajax "/attached_assets/"+$asset_id+'/rate', {
 					method: 'PUT',
 					data: { rating: $i},
 					dataType: 'json'
 				}
 			.mouseover (e) =>
-				@rating.find('span').removeClass('empty').addClass('empty').css('cursor','pointer')
-				@rating.find('span').slice(0,$i).addClass('full').removeClass('empty')
+				@rating.find('span').removeClass('icon-star full temp-full').addClass('icon-wired-star').css('cursor','pointer')
+				@rating.find('span').slice(0,$i).removeClass('icon-wired-star').addClass('icon-star temp-full')
 
 		star
 
 	_createGalleryModal: () ->
-		@title = $('<h3>')
+		@title = $('<div class="campaign-data"><i class="icon-campaign"></i><span></span></div>')
 		@date = $('<div class="calendar-data"><i class="icon-calendar"></i><span></span></div>')
 		@address = $('<div class="place-data"><i class="icon-wired-venue"></i><span></span></div>')
-		@source = $('<div class="source-data"><i class="icon-source"></i><span></span></div>')
 		@rating = $('<div class="rating">')
 			.mouseleave (e) =>
-				@rating.find('span').removeClass('full').addClass('empty')
-				@rating.find('span').slice(0,@image.data('info').rating).addClass('full').removeClass('empty')
+				@rating.find('span').removeClass('icon-star full temp-full').addClass('icon-wired-star')
+				@rating.find('span').slice(0,@image.data('info').rating).addClass('icon-star').removeClass('icon-wired-star')
 
 		@tags_list = $('<input id="tag_input" multiple="true" class="select2-field typeahead">')
 			.on "change", (e) =>
@@ -254,7 +247,7 @@ $.widget 'nmk.photoGallery', {
 					$('<div class="panel">').
 						append('<a href="#" class="icon-close close-gallery" data-dismiss="modal" aria-hidden="true" title="Close"></a>').
 						append(
-							$('<div class="description">').append( @title ).append( @date ).append( @address ).append( @source ),
+							$('<div class="description">').append( @title ).append( @date ).append( @address ),
 							$('<div class="mini-slider">').append( @miniCarousel = @_createCarousel('small') ),
 							@rating,
 							$('<div class="photo-tags">').append(

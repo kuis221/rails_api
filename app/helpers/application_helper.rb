@@ -265,11 +265,19 @@ module ApplicationHelper
     the_date.strftime('%l:%M %P') unless the_date.nil?
   end
 
-  def format_date_with_time(date)
-    if date.strftime('%Y') == Time.zone.now.year.to_s
-      date.strftime('%^a <b>%b %e</b> at %l:%M %p').html_safe unless date.nil?
+  def format_date_with_time(date, plain = false)
+    if plain
+      if date.strftime('%Y') == Time.zone.now.year.to_s
+        date.strftime('%^a %b %e at %l:%M %p').html_safe unless date.nil?
+      else
+        date.strftime('%^a %b %e, %Y at %l:%M %p').html_safe unless date.nil?
+      end
     else
-      date.strftime('%^a <b>%b %e, %Y</b> at %l:%M %p').html_safe unless date.nil?
+      if date.strftime('%Y') == Time.zone.now.year.to_s
+        date.strftime('%^a <b>%b %e</b> at %l:%M %p').html_safe unless date.nil?
+      else
+        date.strftime('%^a <b>%b %e, %Y</b> at %l:%M %p').html_safe unless date.nil?
+      end
     end
   end
 
