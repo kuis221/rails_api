@@ -75,9 +75,9 @@ feature 'Photos', js: true do
       end
 
       within gallery_modal do
-        find('.rating span.full', match: :first)
-        expect(page.all('.rating span.full').count).to eql(2)
-        expect(page.all('.rating span.empty').count).to eql(3)
+        find('.rating span.icon-star', match: :first)
+        expect(page.all('.rating span.icon-star').count).to eql(2)
+        expect(page.all('.rating span.icon-wired-star').count).to eql(3)
         find('.rating span:nth-child(3)').trigger('click')
         wait_for_ajax
         expect(photo.reload.rating).to eql 3
