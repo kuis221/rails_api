@@ -946,7 +946,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		text-align: center;
 	}
 
-.ui-datepicker-calendar { 
+.ui-datepicker-calendar {
   .ui-state-disabled {
     color: #666;
     opacity: 1;
@@ -954,7 +954,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
       font-weight: 400;
     }
   }
-  .datepick-event { 
+  .datepick-event {
      @extend %calendar-day-with-data;
   }
 }
@@ -6408,14 +6408,14 @@ table td.sub-level-1 {
 			}
 		}
 		.description{
-			height: 200px;
+			height: 228px;
 			width: 320px;
-			.place-data, .calendar-data{
+			.calendar-data, .place-data, .source-data{
 				float: left;
 				position: relative;
 				width: 290px;
 				i{
-					margin-right:15px;
+					margin-right: 15px;
 				}
 				span{
 					width: 255px;

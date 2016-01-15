@@ -35,9 +35,9 @@ class EventExpense < ActiveRecord::Base
   validate :valid_receipt?, if: :receipt_required?
   validate :max_event_expenses, on: :create
 
-  after_save :update_event_data
-
-  after_destroy :update_event_data
+  after_commit :update_event_data
+  #after_save :update_event_data
+  #after_destroy :update_event_data
 
   delegate :company_id, :campaign_id, to: :event
 

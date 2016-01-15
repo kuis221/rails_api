@@ -1,7 +1,8 @@
 require 'rails_helper'
 
 describe EventExpensesController, type: :controller do
-  let(:event) { create(:event, company: @company) }
+  let(:campaign) { create(:campaign, company: @company) }
+  let(:event) { create(:event, company: @company, campaign: campaign) }
   let(:event_expense) { create(:event_expense, event: event) }
 
   before(:each) do
@@ -25,8 +26,12 @@ describe EventExpensesController, type: :controller do
     end
   end
 
-  describe "POST 'create'" do
+  describe "POST 'create'", :inline_jobs do
     it 'should not render form_dialog if no errors' do
+      Kpi.create_global_kpis
+      campaign.assign_all_global_kpis
+      set_event_results(event, impressions: 50) # Creates the event data for the event
+
       expect do
         xhr :post, 'create', event_id: event.to_param, event_expense: {
           amount: '100', category: 'Entertainment', brand_id: 12, expense_date: '01/03/2015'
@@ -42,6 +47,7 @@ describe EventExpensesController, type: :controller do
       expect(expense.category).to eq('Entertainment')
       expect(expense.expense_date.to_s(:slashes)).to eql '01/03/2015'
       expect(expense.brand_id).to eq(12)
+      expect(expense.event.event_data.spent).to eq(100)
     end
 
     it 'should not render the template events/expenses if errors' do
@@ -63,24 +69,53 @@ describe EventExpensesController, type: :controller do
     end
   end
 
-  describe "DELETE 'destroy'" do
+  describe "DELETE 'destroy'", :inline_jobs do
     it 'should delete the expense' do
-      event_expense   # Make sure record is created before the expect block
+      Kpi.create_global_kpis
+      campaign.assign_all_global_kpis
+      set_event_results(event, impressions: 50) # Creates the event data for the event
+
+      xhr :post, 'create', event_id: event.to_param, event_expense: {
+        amount: '159.15', category: 'Entertainment', brand_id: 12, expense_date: '01/03/2015'
+      }, format: :js
+
+      event.reload
+      expect(event.event_data.spent).to eq(159.15)
+
+      expense = EventExpense.last
       expect do
-        delete 'destroy', event_id: event.to_param, id: event_expense.to_param, format: :js
+        delete 'destroy', event_id: event.to_param, id: expense.to_param, format: :js
         expect(response).to be_success
         expect(response).to render_template(:destroy)
       end.to change(EventExpense, :count).by(-1)
+
+      event.reload
+      expect(event.event_data.spent).to eq(0)
     end
   end
 
-  describe 'POST split' do
+  describe 'POST split', :inline_jobs do
     it 'updates the existing expense' do
-      xhr :post, 'split', event_id: event.id, id: event_expense.id, event: { event_expenses_attributes: [
-        { id: event_expense.id, amount: '100' }
+      Kpi.create_global_kpis
+      campaign.assign_all_global_kpis
+      set_event_results(event, impressions: 50) # Creates the event data for the event
+
+      xhr :post, 'create', event_id: event.to_param, event_expense: {
+        amount: '100', category: 'Entertainment', brand_id: 12, expense_date: '01/03/2015'
+      }, format: :js
+
+      event.reload
+      expect(event.event_data.spent).to eq(100)
+
+      expense = EventExpense.last
+      xhr :post, 'split', event_id: event.id, id: expense.id, event: { event_expenses_attributes: [
+        { id: expense.id, amount: '100' }
       ] }, format: :js
       expect(response).to be_success
-      expect(assigns(:event_expense)).to eql event_expense
+      expect(assigns(:event_expense)).to eql expense
+
+      event.reload
+      expect(event.event_data.spent).to eq(100)
     end
 
     it 'creates new expenses' do
