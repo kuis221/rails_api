@@ -222,7 +222,7 @@ $.widget 'nmk.photoGallery', {
 		star
 
 	_createGalleryModal: () ->
-		@title = $('<div class="campaign-data"><i class="icon-campaign"></i><span></span></div>')
+		@title = $('<div class="campaign-data"><i class="icon-campaign-flag"></i><span></span></div>')
 		@date = $('<div class="calendar-data"><i class="icon-calendar"></i><span></span></div>')
 		@address = $('<div class="place-data"><i class="icon-wired-venue"></i><span></span></div>')
 		@rating = $('<div class="rating">')
