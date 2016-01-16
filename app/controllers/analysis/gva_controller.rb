@@ -103,8 +103,8 @@ class Analysis::GvaController < InheritedResources::Base
     scope = Event.active.accessible_by_user(current_company_user).by_campaigns(campaign.id)
     scope = scope.in_campaign_area(campaign.areas_campaigns.find_by(area: area.id)) unless area.nil?
     scope = scope.in_places([place]) unless place.nil?
-    scope = scope.with_user_in_team(company_user) unless company_user.nil?
-    scope = scope.with_team(team) unless team.nil?
+    scope = scope.with_user_in_team(company_user).uniq unless company_user.nil?
+    scope = scope.with_user_in_team(team.users.active.ids).uniq unless team.nil?
     scope
   end
 
@@ -211,7 +211,7 @@ class Analysis::GvaController < InheritedResources::Base
           if kpi == 'promo_hours'
             goaleables_ids['promo_hours'].any? ? query.to_sql.gsub('{KPI_NAME}', 'PROMO HOURS').gsub('{KPI_AGGR}', 'SUM(events.promo_hours)') : nil
           elsif kpi == 'events'
-            goaleables_ids['events'].any? ? query.to_sql.gsub('{KPI_NAME}', 'EVENTS').gsub('{KPI_AGGR}', 'COUNT(events.id)') : nil
+            goaleables_ids['events'].any? ? query.to_sql.gsub('{KPI_NAME}', 'EVENTS').gsub('{KPI_AGGR}', 'COUNT(DISTINCT events.id)') : nil
           elsif kpi == 'samples'
             goaleables_ids['samples'].any? ? query.joins(results: :form_field).where(form_fields: { kpi_id: Kpi.samples.id }).to_sql.gsub('{KPI_NAME}', 'SAMPLES').gsub('{KPI_AGGR}', 'SUM(form_field_results.scalar_value)') : nil
           elsif kpi == 'expenses'
