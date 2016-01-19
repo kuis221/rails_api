@@ -65,7 +65,10 @@ class Task < ActiveRecord::Base
     end
 
     integer :team_members, multiple: true do
-      event.memberships.map(&:company_user_id) + event.teams.map { |t| t.memberships.map(&:company_user_id) }.flatten.uniq if event.present?
+      team_members = []
+      team_members.push event.memberships.map(&:company_user_id) + event.teams.map { |t| t.memberships.map(&:company_user_id) } if event.present?
+      team_members.push created_by_id
+      team_members.flatten.uniq
     end
 
     integer :campaign_id do
