@@ -200,20 +200,22 @@ feature 'Tasks', js: true, search: true do
       assigned = create(:user, first_name: 'Juanito', last_name: 'Bazooka',
                                company: company, role_id: create(:role).id)
 
-      create(:task,
-             title: 'Assigned user task', due_at: nil,
-             company_user: assigned.company_users.first, active: true,
-             event: create(:event,
-                           company: company,
-                           campaign: create(:campaign,
-                                            name: 'Cacique FY14', company: company)))
+      task = create(:task,
+                    title: 'Assigned user task', due_at: nil,
+                    company_user: assigned.company_users.first, active: true,
+                    event: create(:event,
+                                  company: company,
+                                  campaign: create(:campaign,
+                                                   name: 'Cacique FY14', company: company)))
+
+      task.update_attributes(created_by_id: company_user.id)
 
       Sunspot.commit
       visit my_teams_tasks_path
 
       within resource_item do
         expect(page).to have_content('Assigned user task')
-        expect(page).to have_content('Cacique')
+        expect(page).to have_content('Cacique FY14')
         expect(page).to have_content('Juanito Bazooka')
       end
     end
