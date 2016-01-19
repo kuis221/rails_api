@@ -27,7 +27,5 @@
 
 javascript:
   $(document).on('tasks:change', function(){
-    if ('#{params[:scope]}' == 'user') {
-      $('#collection-list-filters').filteredList('reloadData');
-    }
+    $('#collection-list-filters').filteredList('reloadData');
   });
