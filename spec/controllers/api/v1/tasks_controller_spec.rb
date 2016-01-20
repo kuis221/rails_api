@@ -59,7 +59,12 @@ describe Api::V1::TasksController, type: :controller do
       another_event = create(:event, company: company, user_ids: [])
       another_event.users = []
       # Create some more tasks that should not be returned by the response
-      create_list(:task, 2, event: another_event)
+      # Updating the "company id" user to avoid include them in the results
+      task = create(:task, event: another_event)
+      task.update_attributes(company_user_id: company_user.id)
+      task = create(:task, event: another_event)
+      task.update_attributes(company_user_id: company_user.id)
+
       Sunspot.commit
 
       get :index, scope: 'teams', format: :json

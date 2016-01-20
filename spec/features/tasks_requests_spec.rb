@@ -40,7 +40,7 @@ feature 'Tasks', js: true, search: true do
   end
 
   feature '/tasks/mine' do
-    scenario 'GET index should display a table with the events' do
+    scenario 'GET index should display a table with the tasks' do
       create(:task, title: 'Pick up kidz at school',
                     company_user: company_user, due_at: '2013-09-01', active: true,
                     event: create(:event, campaign: create(:campaign, name: 'Cacique FY14',
@@ -159,7 +159,7 @@ feature 'Tasks', js: true, search: true do
   end
 
   feature '/tasks/my_teams'  do
-    scenario 'GET index should display a table with the events' do
+    scenario 'GET index should display a table with the tasks' do
       team1 = create(:team, company: company)
       team2 = create(:team, company: company)
       company_user.update_attributes(team_ids: [team1.id, team2.id])
@@ -193,6 +193,28 @@ feature 'Tasks', js: true, search: true do
           expect(page).to have_content(task.title)
           expect(page).to have_content(task.event.campaign_name)
         end
+      end
+    end
+
+    scenario 'GET index should display a table with the tasks I created' do
+      assigned = create(:user, first_name: 'Juanito', last_name: 'Bazooka',
+                               company: company, role_id: create(:role).id)
+
+      create(:task,
+             title: 'Assigned user task', due_at: nil,
+             company_user: assigned.company_users.first, created_by: user, active: true,
+             event: create(:event,
+                           company: company,
+                           campaign: create(:campaign,
+                                            name: 'Cacique FY14', company: company)))
+
+      Sunspot.commit
+      visit my_teams_tasks_path
+
+      within resource_item do
+        expect(page).to have_content('Assigned user task')
+        expect(page).to have_content('Cacique FY14')
+        expect(page).to have_content('Juanito Bazooka')
       end
     end
 
