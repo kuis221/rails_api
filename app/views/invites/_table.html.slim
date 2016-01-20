@@ -6,6 +6,9 @@ table.table.js-sortable
         th.default-sort data-sort="string" Campaign
         th data-sort="string"  Event date
       th data-sort="string" Venue
+      - if current_company.kbmg_enabled?
+        th.text-center data-sort="int" Top 100
+        th.text-center data-sort="int" Jameson Locals
       th.text-center data-sort="int" Invites
       th.text-center data-sort="int" RSVPs
       th.text-center data-sort="int" Attendees

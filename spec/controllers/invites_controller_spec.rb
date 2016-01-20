@@ -68,30 +68,52 @@ RSpec.describe InvitesController, type: :controller do
 
         expect(ListExport.last).to have_rows([
           ['VENUE', 'EVENT DATE', 'CAMPAIGN', 'INVITES', 'RSVPs', 'ATTENDEES'],
-          ['My Super Place', '2015-01-01 10:00', 'Test Campaign FY01', "100", "99", "2"]
+          ['My Super Place', '2015-01-01 10:00', 'Test Campaign FY01', '100', '99', '2']
         ])
       end
     end
 
-    describe 'for a venue' do
+    describe 'for a venue in a company with KBMG setting disabled' do
       it 'generates empty csv with the correct headers when exporting invites for a venue' do
         expect { xhr :get, 'index', venue_id: venue.id, format: :csv }.to change(ListExport, :count).by(1)
 
         expect(ListExport.last).to have_rows([
-          ['VENUE', 'EVENT DATE', 'CAMPAIGN', 'INVITES', 'RSVPs', 'ATTENDEES'],
+          ['VENUE', 'EVENT DATE', 'CAMPAIGN', 'INVITES', 'RSVPs', 'ATTENDEES']
         ])
       end
 
       it 'includes the invites when exporting invites for a venue' do
-        invite = create(:invite, event: event, venue: venue, invitees: 100, attendees: 2, rsvps_count: 99)
+        create(:invite, event: event, venue: venue, invitees: 100, attendees: 2, rsvps_count: 99)
         expect { xhr :get, 'index', venue_id: venue.id, format: :csv }.to change(ListExport, :count).by(1)
 
         expect(ListExport.last).to have_rows([
           ['VENUE', 'EVENT DATE', 'CAMPAIGN', 'INVITES', 'RSVPs', 'ATTENDEES'],
-          ['My Super Place', '2015-01-01 10:00', 'Test Campaign FY01', "100", "99", "2"]
+          ['My Super Place', '2015-01-01 10:00', 'Test Campaign FY01', '100', '99', '2']
         ])
       end
     end
 
+    describe 'for a venue in a company with KBMG setting enabled' do
+      it 'generates empty csv with the correct headers when exporting invites for a venue' do
+        company.update_attribute(:kbmg_enabled, 'true')
+        expect { xhr :get, 'index', venue_id: venue.id, format: :csv }.to change(ListExport, :count).by(1)
+
+        expect(ListExport.last).to have_rows([
+          ['VENUE', 'EVENT DATE', 'CAMPAIGN', 'TOP 100', 'JAMESON LOCALS', 'INVITES', 'RSVPs', 'ATTENDEES']
+        ])
+      end
+
+      it 'includes the invites when exporting invites for a venue' do
+        company.update_attribute(:kbmg_enabled, 'true')
+        venue.update_attribute(:top_venue, 'true')
+        create(:invite, event: event, venue: venue, invitees: 100, attendees: 2, rsvps_count: 99)
+        expect { xhr :get, 'index', venue_id: venue.id, format: :csv }.to change(ListExport, :count).by(1)
+
+        expect(ListExport.last).to have_rows([
+          ['VENUE', 'EVENT DATE', 'CAMPAIGN', 'TOP 100', 'JAMESON LOCALS', 'INVITES', 'RSVPs', 'ATTENDEES'],
+          ['My Super Place', '2015-01-01 10:00', 'Test Campaign FY01', 'YES', 'NO', '100', '99', '2']
+        ])
+      end
+    end
   end
 end

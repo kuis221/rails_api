@@ -41,6 +41,7 @@ feature 'Attendance', js: true, search: true do
       change_attendance_display_by 'Venue'
       within '#invites-list tbody' do
         expect(page).to have_content('Guillermitos Bar')
+        expect(page).to have_no_content('No')
         expect(page).to have_content('12')
         expect(page).to have_content('0')
       end
@@ -60,6 +61,18 @@ feature 'Attendance', js: true, search: true do
       within '#invites-list tbody' do
         expect(page).to have_content('Guillermitos Bar')
         expect(page).to have_content('20 8 14')
+      end
+
+      # With KBMG setting enabled for the company
+      company.update_attribute(:kbmg_enabled, 'true')
+      event.venue.update_attribute(:top_venue, 'true')
+
+      visit event_path(event)
+
+      change_attendance_display_by 'Venue'
+      within '#invites-list tbody' do
+        expect(page).to have_content('Guillermitos Bar')
+        expect(page).to have_content('Yes No 20 8 14')
       end
     end
 
@@ -137,7 +150,7 @@ feature 'Attendance', js: true, search: true do
   end
 
   shared_examples_for 'a user that can download invites' do
-    scenario 'can export as csv' do
+    scenario 'can export as csv with KBMG setting disabled for the company' do
       visit event_path(event)
       create_invite account: 'Guillermitos Bar', invites: 12
       change_attendance_display_by 'Venue'
@@ -151,6 +164,26 @@ feature 'Attendance', js: true, search: true do
       expect(ListExport.last).to have_rows([
         ['VENUE', 'EVENT DATE', 'CAMPAIGN', 'INVITES', 'RSVPs', 'ATTENDEES'],
         ['Guillermitos Bar', '2015-11-01 16:30', 'My Campaign', '12', '0', '0']
+      ])
+    end
+
+    scenario 'can export as csv with KBMG setting enabled for the company' do
+      company.update_attribute(:kbmg_enabled, 'true')
+      event.venue.update_attribute(:top_venue, 'true')
+
+      visit event_path(event)
+      create_invite account: 'Guillermitos Bar', invites: 12
+      change_attendance_display_by 'Venue'
+
+      click_js_link 'Download'
+      click_js_link 'Download as CSV'
+
+      wait_for_export_to_complete
+
+      ensure_modal_was_closed
+      expect(ListExport.last).to have_rows([
+        ['VENUE', 'EVENT DATE', 'CAMPAIGN', 'TOP 100', 'JAMESON LOCALS', 'INVITES', 'RSVPs', 'ATTENDEES'],
+        ['Guillermitos Bar', '2015-11-01 16:30', 'My Campaign', 'YES', 'NO', '12', '0', '0']
       ])
     end
 
