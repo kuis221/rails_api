@@ -103,6 +103,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         team1 = create(:team, name: 'Team 1', company: company)
         team1.users << another_user
         event1.teams << team1
+        event1.users << another_user
         campaign.teams << team1
 
         # Activities goals for Place
@@ -111,6 +112,8 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         create(:goal, parent: campaign, goalable: another_place, activity_type_id: activity_type.id, value: 7)
         # Activities goals for Staff
         create(:goal, parent: campaign, goalable: team1, activity_type_id: activity_type.id, value: 8)
+        # Other goals for Staff
+        create(:goal, parent: campaign, goalable: team1, kpi: Kpi.events, value: 3)
 
         # Activities for Place
         create(:activity, activity_type: activity_type, activitable: venue1, campaign: campaign,
@@ -280,19 +283,38 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         end
 
         # Checking that activities for Venues are in the corresponding Team only
+        within('#gva-result-Team' + team1.id.to_s + ' .item-summary') do
+          expect(page).to have_content('Team 1')
+          within('.goals-summary') do
+            expect(page).to have_content('33% EVENTS')
+          end
+        end
+
         within('#gva-result-Team' + team1.id.to_s + ' .accordion-heading') do
           click_js_link('Team 1')
         end
         within('#gva-result-Team' + team1.id.to_s + ' .kpi-trend:nth-child(1)') do
-          expect(page).to have_content('Activity Type')
+          expect(page).to have_content('Events')
           find('.progress').trigger('mouseover')
-          expect(page).to have_selector('.executed-label', text: '2')
+          expect(page).to have_selector('.executed-label', text: '1')
           expect(page).to have_selector('.submitted-label', text: '0')
           expect(page).to have_selector('.rejected-label', text: '0')
           expect(page).to have_css('.today-line-indicator')
           within('.progress-label') do
-            expect(page).to have_content('25%')
-            expect(page).to have_content('2 OF 8 GOAL')
+            expect(page).to have_content('33%')
+            expect(page).to have_content('1 OF 3 GOAL')
+          end
+        end
+        within('#gva-result-Team' + team1.id.to_s + ' .kpi-trend:nth-child(2)') do
+          expect(page).to have_content('Activity Type')
+          find('.progress').trigger('mouseover')
+          expect(page).to have_selector('.executed-label', text: '3')
+          expect(page).to have_selector('.submitted-label', text: '0')
+          expect(page).to have_selector('.rejected-label', text: '0')
+          expect(page).to have_css('.today-line-indicator')
+          within('.progress-label') do
+            expect(page).to have_content('37%')
+            expect(page).to have_content('3 OF 8 GOAL')
           end
         end
       end

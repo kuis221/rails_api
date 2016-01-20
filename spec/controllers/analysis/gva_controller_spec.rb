@@ -193,6 +193,7 @@ describe Analysis::GvaController, type: :controller do
       create_list(:event, 2, campaign: create(:campaign, company: campaign.company))
 
       team = create(:team, company: campaign.company)
+      team.users << create(:company_user, company: campaign.company)
 
       events.each { |e| e.teams << team }
 
