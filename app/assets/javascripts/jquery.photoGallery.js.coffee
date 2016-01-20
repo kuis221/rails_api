@@ -36,6 +36,7 @@ $.widget 'nmk.photoGallery', {
 			date = if @image.data('info').source.type == 'activity_venue' then null else info.date
 			@setDate date, info.urls.event
 			@setAddress info.address, info.urls.venue
+			@setSource info.source.title, info.source.url
 			@setRating info.rating, info.id
 			@setTagList info.tags
 		@_createPhotoToolbar()
@@ -108,6 +109,12 @@ $.widget 'nmk.photoGallery', {
 			@rating.show()
 		else
 			@rating.hide()
+
+	setSource: (title, url) ->
+		if url
+			@source.find('span').html($('<a>').attr('href', url).html(title))
+		else
+			@source.find('span').html title
 
 	setDate: (date, url) ->
 		if date
@@ -225,6 +232,7 @@ $.widget 'nmk.photoGallery', {
 		@title = $('<div class="campaign-data"><i class="icon-campaign-flag"></i><span></span></div>')
 		@date = $('<div class="calendar-data"><i class="icon-calendar"></i><span></span></div>')
 		@address = $('<div class="place-data"><i class="icon-wired-venue"></i><span></span></div>')
+		@source = $('<div class="source-data"><i class="icon-source"></i><span></span></div>')
 		@rating = $('<div class="rating">')
 			.mouseleave (e) =>
 				@rating.find('span').removeClass('icon-star full temp-full').addClass('icon-wired-star')
@@ -247,7 +255,7 @@ $.widget 'nmk.photoGallery', {
 					$('<div class="panel">').
 						append('<a href="#" class="icon-close close-gallery" data-dismiss="modal" aria-hidden="true" title="Close"></a>').
 						append(
-							$('<div class="description">').append( @title ).append( @date ).append( @address ),
+							$('<div class="description">').append( @title ).append( @date ).append( @address ).append( @source ),
 							$('<div class="mini-slider">').append( @miniCarousel = @_createCarousel('small') ),
 							@rating,
 							$('<div class="photo-tags">').append(
