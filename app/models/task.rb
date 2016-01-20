@@ -67,7 +67,7 @@ class Task < ActiveRecord::Base
     integer :team_members, multiple: true do
       team_members = []
       team_members.push event.memberships.map(&:company_user_id) + event.teams.map { |t| t.memberships.map(&:company_user_id) } if event.present?
-      team_members.push User.current.current_company_user.id if User.current.present? && User.current.current_company_user.id != company_user_id
+      team_members.push task_company_user.id if task_company_user.present? && task_company_user.id != company_user_id
       team_members.flatten.uniq
     end
 
@@ -102,6 +102,10 @@ class Task < ActiveRecord::Base
 
   def due_today?
     due_at.to_date <= Date.today && due_at.to_date >= Date.today unless due_at.nil?
+  end
+
+  def task_company_user
+    CompanyUser.find_by(company_id: created_by.current_company.id, user_id: created_by_id) if created_by.present? && created_by.current_company.present?
   end
 
   def late?
