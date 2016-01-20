@@ -29,7 +29,7 @@
                 a#export-csv href="#" role="menuitem" data-url="#{analysis_campaign_summary_report_path(format: :csv)}"
                   | Download as CSV
               li
-                a#export-pdf href="#" role="menuitem" data-url="#{analysis_campaign_summary_report_export_path(format: :pdf)}" 
+                a#export-pdf href="#" role="menuitem" data-url="#{analysis_campaign_summary_report_export_path(format: :pdf)}"
                   | Download as PDF
     #report-container
       #analysis-campaign.details_box.content
@@ -52,7 +52,7 @@ javascript:
       $('#analysis-campaign').empty().addClass('loading-spinner');
       submitForm();
     } else {
-      $('#download-status-btns').attr('disabled', true);
+      $('#download-status-btn').attr('disabled', true);
       $('#analysis-campaign').empty().addClass("details_box content empty-state main").prepend('<p class="text-center empty-state">Select a campaign from the list above');
     }
   });

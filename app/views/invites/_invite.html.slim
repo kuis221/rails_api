@@ -3,8 +3,13 @@ tr.resource-item.invite id="invite_#{invite.id}"
     td= invite.campaign_name
     td= link_to invite.event.start_at.strftime('%m/%d/%Y at %l:%M %p'), event_path(invite.event)
     td= link_to invite.event.place_name, venue_path(invite.event.venue.id)
-  - else 
+  - else
     td= link_to invite.place_name, venue_path(invite.venue_id) if invite.venue.present?
+  - if current_company.kbmg_enabled? && invite.venue.present?
+    td.top_100
+      .text-center= invite.venue.top_venue ? 'Yes' : 'No'
+    td.jameson_locals
+      .text-center= invite.venue.jameson_locals ? 'Yes' : 'No'
   td.invitees
     .text-center= editable_invite_attribute parent, invite, :invitees
   td.rsvps_count

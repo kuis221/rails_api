@@ -284,7 +284,7 @@ module Analysis
         goal_scope.where(aasm_state: status).joins(:event_data).sum('event_data.spent').to_i
       when 'promo_hours' then goal_scope.where(aasm_state: status).sum('promo_hours')
       when 'events_count' then goal_scope.where(aasm_state: status).count
-      when 'photos' then AttachedAsset.photos.for_events(goal_scope).count
+      when 'photos' then AttachedAsset.photos.for_events(goal_scope.where(aasm_state: status)).count
       else get_kpi_total_by_status goal_scope, goal, totals, status
       end
     end

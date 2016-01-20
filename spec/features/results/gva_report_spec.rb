@@ -44,9 +44,12 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         company_user.role.permissions.create(action: :gva_report_campaigns, subject_class: 'Campaign', mode: 'campaigns')
         company_user.role.permissions.create(action: :gva_report_places, subject_class: 'Campaign', mode: 'campaigns')
         company_user.role.permissions.create(action: :gva_report_users, subject_class: 'Campaign', mode: 'campaigns')
-        campaign = create(:campaign, name: 'Test Campaign FY01', start_date: '07/21/2013', end_date: '03/30/2014', company: company)
+        campaign = create(:campaign, name: 'Test Campaign FY01', start_date: '07/21/2013', end_date: '03/30/2014',
+                                     company: company, modules: { 'photos' => {} })
         kpi = Kpi.samples
+        kpi2 = Kpi.photos
         campaign.add_kpi kpi
+        campaign.add_kpi kpi2
 
         place = create(:place, name: 'The Place')
         another_place = create(:place, name: 'Place 3')
@@ -55,6 +58,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         company_user.places << [place, another_place]
 
         create(:goal, goalable: campaign, kpi: kpi, value: '100')
+        create(:goal, goalable: campaign, kpi: kpi2, value: '10')
         create(:goal, parent: campaign, goalable: company_user, kpi: kpi, value: 100)
         create(:goal, parent: campaign, goalable: company_user, kpi: Kpi.events, value: 3)
         create(:goal, parent: campaign, goalable: place, kpi: kpi, value: 150)
@@ -63,6 +67,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         create(:goal, parent: campaign, goalable: place, kpi: Kpi.expenses, value: 50)
 
         event1 = create(:approved_event, company: company, campaign: campaign, place: place)
+        create_list(:attached_asset, 2, attachable: event1, asset_type: 'photo')
         event1.result_for_kpi(kpi).value = '25'
         event1.save
         event1.users << company_user
@@ -98,6 +103,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         team1 = create(:team, name: 'Team 1', company: company)
         team1.users << another_user
         event1.teams << team1
+        event1.users << another_user
         campaign.teams << team1
 
         # Activities goals for Place
@@ -106,6 +112,8 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         create(:goal, parent: campaign, goalable: another_place, activity_type_id: activity_type.id, value: 7)
         # Activities goals for Staff
         create(:goal, parent: campaign, goalable: team1, activity_type_id: activity_type.id, value: 8)
+        # Other goals for Staff
+        create(:goal, parent: campaign, goalable: team1, kpi: Kpi.events, value: 3)
 
         # Activities for Place
         create(:activity, activity_type: activity_type, activitable: venue1, campaign: campaign,
@@ -129,7 +137,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         choose_campaign('Test Campaign FY01')
 
         ### Testing group by Campaign
-        within('.container-kpi-trend') do
+        within('.kpi-trend:nth-child(1)') do
           expect(page).to have_content('Samples')
           find('.progress').trigger('mouseover')
           expect(page).to have_selector('.executed-label', text: '25')
@@ -140,6 +148,20 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
           within('.progress-label') do
             expect(page).to have_content('78%')
             expect(page).to have_content('78 OF 100 GOAL')
+          end
+        end
+
+        within('.kpi-trend:nth-child(2)') do
+          expect(page).to have_content('Photos')
+          find('.progress').trigger('mouseover')
+          expect(page).to have_selector('.executed-label', text: '2')
+          expect(page).to have_selector('.submitted-label', text: '0')
+          expect(page).to have_selector('.rejected-label', text: '0')
+          expect(page).to have_content('10 GOAL')
+          expect(page).to have_css('.today-line-indicator')
+          within('.progress-label') do
+            expect(page).to have_content('20%')
+            expect(page).to have_content('2 OF 10 GOAL')
           end
         end
 
@@ -261,19 +283,38 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         end
 
         # Checking that activities for Venues are in the corresponding Team only
+        within('#gva-result-Team' + team1.id.to_s + ' .item-summary') do
+          expect(page).to have_content('Team 1')
+          within('.goals-summary') do
+            expect(page).to have_content('33% EVENTS')
+          end
+        end
+
         within('#gva-result-Team' + team1.id.to_s + ' .accordion-heading') do
           click_js_link('Team 1')
         end
         within('#gva-result-Team' + team1.id.to_s + ' .kpi-trend:nth-child(1)') do
-          expect(page).to have_content('Activity Type')
+          expect(page).to have_content('Events')
           find('.progress').trigger('mouseover')
-          expect(page).to have_selector('.executed-label', text: '2')
+          expect(page).to have_selector('.executed-label', text: '1')
           expect(page).to have_selector('.submitted-label', text: '0')
           expect(page).to have_selector('.rejected-label', text: '0')
           expect(page).to have_css('.today-line-indicator')
           within('.progress-label') do
-            expect(page).to have_content('25%')
-            expect(page).to have_content('2 OF 8 GOAL')
+            expect(page).to have_content('33%')
+            expect(page).to have_content('1 OF 3 GOAL')
+          end
+        end
+        within('#gva-result-Team' + team1.id.to_s + ' .kpi-trend:nth-child(2)') do
+          expect(page).to have_content('Activity Type')
+          find('.progress').trigger('mouseover')
+          expect(page).to have_selector('.executed-label', text: '3')
+          expect(page).to have_selector('.submitted-label', text: '0')
+          expect(page).to have_selector('.rejected-label', text: '0')
+          expect(page).to have_css('.today-line-indicator')
+          within('.progress-label') do
+            expect(page).to have_content('37%')
+            expect(page).to have_content('3 OF 8 GOAL')
           end
         end
       end
