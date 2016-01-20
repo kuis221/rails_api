@@ -105,7 +105,7 @@ class Task < ActiveRecord::Base
   end
 
   def task_company_user
-    CompanyUser.find_by(company_id: created_by.current_company.id, user_id: created_by_id) if created_by.current_company.present?
+    CompanyUser.find_by(company_id: created_by.current_company.id, user_id: created_by_id) if created_by.present? && created_by.current_company.present?
   end
 
   def late?
