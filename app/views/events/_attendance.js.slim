@@ -1,2 +1,3 @@
 = update_event_details_bar(parent)
+= valid_to_submit_message(parent)
 | $('#event-attendance').html('#{j render(partial: 'events/attendance', formats: [ 'html' ], locals: { resource: resource, presenter: present(resource) })}');

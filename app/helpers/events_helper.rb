@@ -13,6 +13,10 @@ module EventsHelper
     \n".html_safe
   end
 
+  def valid_to_submit_message(event)
+    "window.EventDetails.showMessage('#{I18n.t('instructive_messages.results.completed')}', 'blue', false, true);".html_safe if event.valid_to_submit?
+  end
+
   def editable_invite_checkbox(resource, invite, attribute)
     readonly = can?(:edit_invite, resource)
     simple_form_for([resource, invite], remote: true) do |f|
