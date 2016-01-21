@@ -166,6 +166,7 @@ class Task < ActiveRecord::Base
           unless company_user.role.is_admin?
             any_of do
               with(:campaign_id, company_user.accessible_campaign_ids + [0])
+              with(:team_members, [company_user.id] + [0])
               all_of do
                 with(:campaign_id, nil)
                 with(:company_user_id, company_user.id)

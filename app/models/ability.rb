@@ -399,13 +399,15 @@ class Ability
       can :update, Task do |task|
         (user.role.has_permission?(:edit_task, Event) && can?(:show, task.event)) ||
         (user.role.has_permission?(:edit_my, Task) && task.company_user_id == company_user.id) ||
-        (user.role.has_permission?(:edit_team, Task) && task.company_user_id != company_user.id && task.event.user_in_team?(company_user))
+        (user.role.has_permission?(:edit_team, Task) && task.company_user_id != company_user.id && task.created_by_id == company_user.user.id) ||
+        (user.role.has_permission?(:edit_team, Task) && task.company_user_id != company_user.id && task.event.present? && task.event.user_in_team?(company_user))
       end
 
       can [:deactivate, :activate], Task do |task|
         (user.role.has_permission?(:deactivate_task, Event) && can?(:show, task.event)) ||
         (user.role.has_permission?(:deactivate_my, Task) && task.company_user_id == company_user.id) ||
-        (user.role.has_permission?(:deactivate_team, Task) && task.company_user_id != company_user.id && task.event.user_in_team?(company_user))
+        (user.role.has_permission?(:deactivate_team, Task) && task.company_user_id != company_user.id && task.created_by_id == company_user.user.id) ||
+        (user.role.has_permission?(:deactivate_team, Task) && task.company_user_id != company_user.id && task.event.present? && task.event.user_in_team?(company_user))
       end
 
       can :create, Task do |task|
@@ -531,7 +533,8 @@ class Ability
       end
       can :comments, Task do |task|
         (user.role.has_permission?(:index_my_comments, Task) && task.company_user_id == company_user.id) ||
-        (user.role.has_permission?(:index_team_comments, Task) && task.company_user_id != company_user.id && task.event.user_in_team?(company_user))
+        (user.role.has_permission?(:index_team_comments, Task) && task.company_user_id != company_user.id && task.created_by_id == company_user.user.id) ||
+        (user.role.has_permission?(:index_team_comments, Task) && task.company_user_id != company_user.id && task.event.present? && task.event.user_in_team?(company_user))
       end
 
       can :update, Comment do |comment|
@@ -545,7 +548,8 @@ class Ability
       can :create, Comment do |comment|
         (comment.commentable.is_a?(Event) && user.role.has_permission?(:create_comment, Event) && can?(:show, comment.commentable)) ||
         (comment.commentable.is_a?(Task) && user.role.has_permission?(:create_my_comment, Task) && comment.commentable.company_user_id == company_user.id) ||
-        (comment.commentable.is_a?(Task) && user.role.has_permission?(:create_team_comment, Task) && comment.commentable.event.user_in_team?(company_user))
+        (comment.commentable.is_a?(Task) && user.role.has_permission?(:create_team_comment, Task) && comment.commentable.created_by_id == company_user.user.id) ||
+        (comment.commentable.is_a?(Task) && user.role.has_permission?(:create_team_comment, Task) && comment.commentable.event.present? && comment.commentable.event.user_in_team?(company_user))
       end
 
       can :view_promo_hours_data, Campaign do |campaign|
