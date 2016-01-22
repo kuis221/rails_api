@@ -5,6 +5,7 @@
   | $('.bootbox.modal').modal('hide');
   - if params[:event_id]
     = update_event_details_bar(parent) if parent.present?
+    = valid_to_submit_message(parent) if parent.present?
     |
       $('#event-tasks').html('#{j render(partial: 'events/tasks', locals: { resource: parent }) }')
       window.EventDetails.showMessage("#{j I18n.translate('instructive_messages.plan.task.added')}", 'green');

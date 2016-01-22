@@ -10,6 +10,7 @@
     $('##{parent.class.name.underscore}-#{resource_class}-#{resource.id}').remove();
   - if parent.is_a?(Event)
     = update_event_details_bar(parent)
+    = valid_to_submit_message(parent)
     | window.EventDetails.showMessage("#{j I18n.translate('instructive_messages.execute.comment.deactivated')}", 'green');
 |
   $(document).trigger('#{resource.class.name.pluralize.underscore.gsub('/','_')}:deleted');

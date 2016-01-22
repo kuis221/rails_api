@@ -1,5 +1,6 @@
 - unless resource.errors.any?
   = update_event_details_bar(parent)
+  = valid_to_submit_message(parent)
   |
     $('.bootbox.modal').modal('hide');
     $('#event-expenses-container').replaceWith('#{j render(partial: 'events/expenses', locals: {resource: parent})}');

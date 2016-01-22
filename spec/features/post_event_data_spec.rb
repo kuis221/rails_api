@@ -327,6 +327,10 @@ feature 'Post Event Data' do
                      start_date: Date.yesterday.to_s(:slashes), end_date: Date.yesterday.to_s(:slashes),
                      campaign: campaign, place: place)
 
+      # Adding this to avoid the "event successfully completed" message
+      event.campaign.update_attribute(:modules, 'comments' => { 'name' => 'comments', 'field_type' => 'module',
+                                                                'settings' => { 'range_min' => '2', 'range_max' => '3' } })
+
       visit event_path(event)
 
       click_js_button 'Save'

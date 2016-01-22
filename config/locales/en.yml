@@ -62,7 +62,7 @@ en:
       invite_individual:
         create: "Send Invitation"
         update: "Save"
-        
+
 
   flash_email_confirmation: 'A confirmation email was sent to %{email}. Your email will not be changed until you complete this step.'
 
@@ -303,7 +303,7 @@ en:
         contacts: 'No Contacts have been added to this event.'
         team_members: 'No Team Members have been added to this event.'
         activities: 'No Activities have been added to this event.'
-        invites: 
+        invites:
           any: 'No Invites have been added to this event.'
           individual: 'No Individual Invites have been added to this event.'
           venue: 'No Venue Invites have been added to this event.'
@@ -314,7 +314,7 @@ en:
       venue:
         activities: 'No Activities have been added to this venue.'
         events: 'No Events have been added to this venue.'
-        invites: 
+        invites:
           any: 'No Invites have been added to this venue.'
           individual: 'No Individual Invites have been added to this venue.'
           venue: 'No Venue Invites have been added to this venue.'
@@ -891,6 +891,7 @@ en:
       approve: 'The Execute phase of your event is not complete. You can approve your event once it has been submitted for review.'
       reject: 'The Execute phase of your event is not complete. You can reject your event once it has been submitted for review.'
     results:
+      completed: 'Great job! You have successfully completed your event. Do not forget to submit for approval.'
       approved: 'Nice! Your event has been Approved.'
       rejected: 'Thanks. The event has been Rejected and the event team has been notified.'
       rejected_info: 'Your event has been rejected %{rejected_at} for the following reason(s): <span class="reject-reason">"%{reject_reason}"</span>'
