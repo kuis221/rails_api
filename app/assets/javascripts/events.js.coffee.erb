@@ -11,7 +11,7 @@ jQuery ->
 		$(document).on 'click', '.event-alert', (e) ->
 			e.stopPropagation()
 
-		this.showMessage = (message, color, close = false) ->
+		this.showMessage = (message, color, close = false, important = false) ->
 			return if this.permanentMessageOpen
 			$('.event-alert').find('.close').hide()
 			clearTimeout this.closeAlertTimeout if this.closeAlertTimeout
@@ -22,6 +22,10 @@ jQuery ->
 				this.showPermanentMessage()
 			else
 				this.showMessageWithAutoClose()
+				if important
+					this.permanentMessageOpen = true
+			true
+
 		this.showPermanentMessage = () ->
 			this.permanentMessageOpen = true
 			$('.event-alert').slideDown('fast').find('.close').show()
@@ -29,8 +33,10 @@ jQuery ->
 		this.showMessageWithAutoClose = (time = 3000, duration='fast') ->
 			$('.event-alert').slideDown(duration)
 			this.closeAlertTimeout = setTimeout ->
+				window.EventDetails.permanentMessageOpen = false
 				$('.event-alert').slideUp(duration)
 			, time
+
 		this.closeMessage= (duration = 'fast') ->
 			$('.event-alert').slideUp(duration)
 		@

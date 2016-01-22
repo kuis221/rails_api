@@ -1,6 +1,7 @@
 - if resource.errors.empty?
   - if parent.is_a?(Event)
     = update_event_details_bar(parent)
+    = valid_to_submit_message(parent)
     |
       $('#consumer-comments-container').html('#{ j render(partial: 'events/comments', locals: { resource: parent }) }');
       $('.bootbox.modal').modal('hide');

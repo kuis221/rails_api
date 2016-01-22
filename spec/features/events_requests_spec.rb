@@ -1363,6 +1363,9 @@ feature 'Events section' do
         create(:user, first_name: 'Pablo', last_name: 'Baltodano',
                       email: 'palinair@gmail.com', company_id: company.id,
                       role_id: company_user.role_id)
+        # Adding this to avoid the "event successfully completed" message
+        event.campaign.update_attribute(:modules, 'comments' => { 'name' => 'comments', 'field_type' => 'module',
+                                                                  'settings' => { 'range_min' => '2', 'range_max' => '3' } })
         Sunspot.commit
 
         visit event_path(event)
@@ -1398,6 +1401,9 @@ feature 'Events section' do
                          company_id: company.id)
         create(:contact, first_name: 'Pedro', last_name: 'Guerra',
                          company_id: company.id)
+        # Adding this to avoid the "event successfully completed" message
+        event.campaign.update_attribute(:modules, 'comments' => { 'name' => 'comments', 'field_type' => 'module',
+                                                                  'settings' => { 'range_min' => '2', 'range_max' => '3' } })
         Sunspot.commit
 
         visit event_path(event)
@@ -1479,7 +1485,7 @@ feature 'Events section' do
         expect(page).to have_selector('.tooltip.in')
 
         # Click outside the tooltip and make sure it's closed
-        find('.trackers-bar').click
+        find('.details-title').click
         expect(page).to_not have_selector('.tooltip.in')
 
         # Test removal of the contact
@@ -1598,7 +1604,7 @@ feature 'Events section' do
         expect(page).to have_content('Your event have been Unapproved.')
       end
 
-      scenario "display errors when an event don't meet a campaign module range" do
+      scenario "succesfully complete and submit an event" do
         event = create(:late_event,
                        campaign: create(:campaign,
                                         company: company, name: 'Campaign FY2012',
@@ -1606,8 +1612,8 @@ feature 'Events section' do
                                         modules: {
                                           'comments' => {
                                             'name' => 'comments', 'field_type' => 'module',
-                                            'settings' => { 'range_min' => '1',
-                                                            'range_max' => '2' } } }))
+                                            'settings' => { 'range_min' => '2',
+                                                            'range_max' => '3' } } }))
 
         visit event_path(event)
 
@@ -1619,6 +1625,15 @@ feature 'Events section' do
           click_js_button 'Create'
         end
         expect(page).to have_content 'Looks good. Your comment has been saved.'
+        expect(page).to have_content 'This is a test comment'
+
+        click_js_button 'Add Comment'
+        within visible_modal do
+          fill_in 'comment[content]', with: 'This is another test comment'
+          click_js_button 'Create'
+        end
+
+        expect(page).to have_content 'Great job! You have successfully completed your event. Do not forget to submit for approval.'
         expect(page).to have_content 'This is a test comment'
 
         click_js_button 'Submit'
