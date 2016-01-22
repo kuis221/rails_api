@@ -6302,8 +6302,13 @@ table td.sub-level-1 {
 			margin-bottom: 40px;
 			padding-bottom: 10px;
 			border-bottom: 1px solid #4f4f4f;
+			min-width: 320px;
 			.carousel-control{
 				font-size: 25px;
+
+				&.right {
+					right: -10px;
+				}
 			}
 		}
 
@@ -6431,7 +6436,7 @@ table td.sub-level-1 {
 			}
 		}
 		.description{
-			height: 228px;
+			height: 290px;
 			width: 320px;
 			color: #7a7a7a;
 			font-size: 14px;
@@ -6458,7 +6463,7 @@ table td.sub-level-1 {
 					width: 255px;
 				}
 			}
-			.place-data {
+			.source-data {
 				margin-bottom: 0;
 				padding-bottom: 40px;
 				border-bottom: 1px solid #4f4f4f;
