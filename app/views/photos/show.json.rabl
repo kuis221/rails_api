@@ -27,7 +27,7 @@ end
 attributes :id
 
 node(:title) { event.campaign_name }
-node(:date) { format_date_range(event.start_at, event.end_at, { date_separator: '<br>' }) }
+node(:date) { format_date_with_time(event.start_at, true) }
 node(:address) { event.place_name_with_location('<br>') }
 node(:status) { @photo.active? }
 node(:rating) { @photo.rating }

@@ -62,6 +62,16 @@ describe ApplicationHelper, type: :helper do
                             zipcode: '90210', city: 'Beverly Hills', formatted_address: nil)
       assert_dom_equal '<address>Beverly Hills, CA, 90210</address>', helper.place_address(place)
     end
+
+    it 'should format date with time correctly with HTML' do
+      time = Time.zone.local(2013, 07, 26, 12, 24)
+      assert_dom_equal 'FRI <b>Jul 26, 2013</b> at 12:24 PM', helper.format_date_with_time(time)
+    end
+
+    it 'should format date with time correctly without HTML' do
+      time = Time.zone.local(2013, 07, 26, 12, 24)
+      expect(helper.format_date_with_time(time, true)).to eq('FRI Jul 26, 2013 at 12:24 PM')
+    end
   end
 
   describe '#comment_date' do
