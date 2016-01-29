@@ -73,10 +73,16 @@ class FormField::LikertScale < FormField::Hashed
     return [] if result.blank?
 
     totals = initialize_totals_likert_scale
-
     result.each do |value|
       value.map do |(k, v)|
-        totals[k.to_i][:totals][v.to_i][:total] += 1
+        v = eval(v)
+        if v.is_a?(Array)
+          v.each do |r|
+            totals[k.to_i][:totals][r.to_i][:total] += 1
+          end
+        else
+          totals[k.to_i][:totals][v.to_i][:total] += 1
+        end
       end
     end
     totals.map do |(key, statement)|
