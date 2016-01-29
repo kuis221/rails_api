@@ -234,7 +234,6 @@ feature 'Events section' do
 
           expect(collection_description).to have_filter_tag('Scheduled')
           expect(page).to have_content('2 events found for: Active Rejected Scheduled')
-          screenshot_and_open_image
         end
 
         scenario 'event should not be removed from the list when deactivated' do
