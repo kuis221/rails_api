@@ -48,11 +48,24 @@ class AttachedAsset < ActiveRecord::Base
                             thumbnail: '-quality 85 -strip -gravity north -thumbnail 300x400^ -extent 300x400'
                           }
                           { thumbnail: ['300x400>', :jpg] }
+                        elsif a.instance.video?
+                          {
+                            :medium => { :geometry => "640x480", :format => 'flv' },
+                            :thumb => { :geometry => "100x100#", :format => 'jpg', :time => 10 }
+                          }
                         else
                           { small: '', thumbnail: '', medium: '800x800>' }
                         end
                       end,
-                      processors: ->(instance) { instance.pdf? ? [:ghostscript, :thumbnail] : [:thumbnail] },
+                      processors: ->(instance) { 
+                        if instance.pdf?
+                          [:ghostscript, :thumbnail]
+                        elsif instance.video?
+                          [:transcoder]
+                        else
+                          [:thumbnail]
+                        end
+                      },
                       convert_options: {
                         small: '-quality 85 -strip -gravity north -thumbnail 180x180^ -extent 180x120',
                         thumbnail: '-quality 85 -strip -gravity north -thumbnail 400x400^ -extent 400x267',
@@ -190,6 +203,10 @@ class AttachedAsset < ActiveRecord::Base
     %r{^(x-)?application/pdf$}.match(file_content_type).present?
   end
 
+  def video?
+    %r{^(video)/(mp4)$}.match(file_content_type).present?
+  end
+
   class << self
     def compress(ids)
       assets_ids = ids.sort.map(&:to_i)
@@ -254,8 +271,9 @@ class AttachedAsset < ActiveRecord::Base
   protected
 
   def valid_file_format?
-    return unless asset_type.to_s == 'photo'
-    if /\A(image|(x-)?application)\/(bmp|gif|jpeg|jpg|pjpeg|png|x-png)\z/.match(file_content_type).nil?
+    return unless asset_type.to_s == 'photo' || asset_type.to_s == 'video'
+    if /\A(image|(x-)?application)\/(bmp|gif|jpeg|jpg|pjpeg|png|x-png)\z/.match(file_content_type).nil? && 
+      /\A(video)\/(mp4)\z/.match(file_content_type).nil?
       errors.add(:file, 'is not valid format')
     end
   end
