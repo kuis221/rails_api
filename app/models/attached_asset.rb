@@ -49,15 +49,24 @@ class AttachedAsset < ActiveRecord::Base
                           }
                           { thumbnail: ['300x400>', :jpg] }
                         elsif a.instance.video?
+                          # libx264 Video Codec for better browser support and quality
+                          # 44100 Audio Sample Rate to avoid issues with Quicktime (mov) files
                           {
-                            :medium => { :geometry => "640x480", :format => 'flv' },
-                            :thumb => { :geometry => "100x100#", :format => 'jpg', :time => 10 }
+                            :small => { :geometry => '180x120#', :format => 'jpg' },
+                            :thumbnail => { :geometry => '400x267#', :format => 'jpg' },
+                            :medium => { :format => 'jpg' },
+                            :video => { :format => 'mp4', :convert_options => { :output => { :vcodec => 'libx264', :ar => '44100' } } }
                           }
                         else
+                          a.options[:convert_options] = {
+                            small: '-quality 85 -strip -gravity north -thumbnail 180x180^ -extent 180x120',
+                            thumbnail: '-quality 85 -strip -gravity north -thumbnail 400x400^ -extent 400x267',
+                            medium: '-quality 85 -strip'
+                          }
                           { small: '', thumbnail: '', medium: '800x800>' }
                         end
                       end,
-                      processors: ->(instance) { 
+                      processors: ->(instance) {
                         if instance.pdf?
                           [:ghostscript, :thumbnail]
                         elsif instance.video?
@@ -65,11 +74,6 @@ class AttachedAsset < ActiveRecord::Base
                         else
                           [:thumbnail]
                         end
-                      },
-                      convert_options: {
-                        small: '-quality 85 -strip -gravity north -thumbnail 180x180^ -extent 180x120',
-                        thumbnail: '-quality 85 -strip -gravity north -thumbnail 400x400^ -extent 400x267',
-                        medium: '-quality 85 -strip'
                       }
                     )
 
@@ -192,7 +196,7 @@ class AttachedAsset < ActiveRecord::Base
   end
 
   def is_thumbnable?
-    %r{^(image|(x-)?application)/(bmp|gif|jpeg|jpg|pjpeg|png|x-png|pdf)$}.match(file_content_type).present?
+    %r{^(image|(x-)?application|video)/(bmp|gif|jpeg|jpg|pjpeg|png|x-png|pdf|mp4|x-ms-wmv|quicktime|x-flv|x-msvideo)$}.match(file_content_type).present?
   end
 
   def image?
@@ -204,7 +208,7 @@ class AttachedAsset < ActiveRecord::Base
   end
 
   def video?
-    %r{^(video)/(mp4)$}.match(file_content_type).present?
+    %r{^(video)/(mp4|x-ms-wmv|quicktime|x-flv|x-msvideo)$}.match(file_content_type).present?
   end
 
   class << self
@@ -272,8 +276,8 @@ class AttachedAsset < ActiveRecord::Base
 
   def valid_file_format?
     return unless asset_type.to_s == 'photo' || asset_type.to_s == 'video'
-    if /\A(image|(x-)?application)\/(bmp|gif|jpeg|jpg|pjpeg|png|x-png)\z/.match(file_content_type).nil? && 
-      /\A(video)\/(mp4)\z/.match(file_content_type).nil?
+    if /\A(image|(x-)?application)\/(bmp|gif|jpeg|jpg|pjpeg|png|x-png)\z/.match(file_content_type).nil? &&
+      /\A(video)\/(mp4|x-ms-wmv|quicktime|x-flv|x-msvideo)\z/.match(file_content_type).nil?
       errors.add(:file, 'is not valid format')
     end
   end

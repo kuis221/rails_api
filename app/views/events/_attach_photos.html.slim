@@ -54,7 +54,7 @@
           cancel_upload_target: '#upload-file-cancel',
           before_add: function(file) {
             var file, file_types;
-            file_types = /(\.|\/)(gif|jpe?g|png|mp4)$/i;
+            file_types = /(\.|\/)(gif|jpe?g|png|mp4|wmv|mov|flv|avi)$/i;
 
             if (file.size > #{max_file_size}){
               alert('File is larger than maximum file size supported (#{max_file_size.to_s(:human_size)})');
