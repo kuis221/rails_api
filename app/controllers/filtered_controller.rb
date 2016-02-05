@@ -65,7 +65,7 @@ class FilteredController < InheritedResources::Base
   def collection
     get_collection_ivar || begin
       return unless action_name != 'index' || request.format.json?
-      if resource_class.respond_to?(:do_search) # User Sunspot Solr for searching the collection
+      if resource_class.respond_to?(:do_search) # User Sunspot Solr for searching the collection        
         @collection_count = collection_search.total
         @total_pages = collection_search.results.total_pages
         set_collection_ivar(collection_search.results)
@@ -96,7 +96,7 @@ class FilteredController < InheritedResources::Base
       if params[:team]
         user_ids = CompanyUser.by_teams(params[:team]).pluck(:id)
         p[:user] ||= []
-        p[:user] << user_ids
+        p[:user] = user_ids
         p[:user].flatten!
       end
       p.merge!(base_search_params)
@@ -130,7 +130,7 @@ class FilteredController < InheritedResources::Base
   end
 
   def collection_search
-    @solr_search ||= resource_class.do_search(search_params)
+    @solr_search ||= resource_class.do_search(search_params)    
   end
 
   def total_pages
