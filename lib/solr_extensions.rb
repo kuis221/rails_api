@@ -184,27 +184,27 @@ module Sunspot
         with :role_id, ids if field?(:role_id)
       end
 
-      def with_user_teams(params)        
+      def with_user_teams(params)
         return unless (params.key?(:user) && params[:user].present?) ||
                       (params.key?(:team) && params[:team].present?)
         team_ids = []
         team_ids.concat Array(params[:team]) if params.key?(:team) && Array(params[:team]).any?
         team_ids.concat Array(params[:user]) if params.key?(:user) && Array(params[:user]).any?
-        
-        if join_field?(:user_ids) && join_field?(:team_ids)          
+
+        if join_field?(:user_ids) && join_field?(:team_ids)
           query = []
           query << ["user_ids_im:(#{(params[:user]).join(' OR ')})"] if field?(:user_ids) && params.key?(:user) && params[:user].present?
           query << ["team_ids_im:(#{(team_ids).join(' OR ')})"] if field?(:team_ids) && team_ids.any?
 
           adjust_solr_params do |solr_params|
             solr_params[:fq] << "_query_:\"{!join from=id_is to=event_id_i}#{query.join(' OR ')}\""
-          end if query.present?          
-        else          
+          end if query.present?
+        else
           any_of do
             with(:user_ids, params[:user]) if field?(:user_ids) && params.key?(:user) && params[:user].present?
             with(:team_ids, team_ids) if field?(:team_ids) && team_ids.any?
-          end       
-        end        
+          end
+        end
       end
 
       def between_date_range(clazz, start_date, end_date)

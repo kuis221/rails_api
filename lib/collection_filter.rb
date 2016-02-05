@@ -17,13 +17,13 @@ class CollectionFilter
     end
   end
 
-  def initialize(scope, user, params)    
+  def initialize(scope, user, params)
     @scope = scope
     @user = user
     @params = params
   end
 
-  def filters    
+  def filters
     company_filters = company_custom_filters
     return company_filters if scope_filters.nil?
     [].concat(
@@ -34,7 +34,7 @@ class CollectionFilter
           build_filter_bucket bucket_config
         end
       end.flatten.compact
-    ).concat(company_filters).append(user_saved_filters)    
+    ).concat(company_filters).append(user_saved_filters)
   end
 
   def items_to_show(format: :boolean)

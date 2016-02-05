@@ -75,7 +75,7 @@ class EventsController < FilteredController
     redirect_to resource_path(status: 'approved')
   end
 
-  def unapprove    
+  def unapprove
     resource.unapprove! if resource.approved?
     flash[:event_message_success] = I18n.translate('instructive_messages.results.unapprove') if resource.errors.empty?
     redirect_to resource_path(status: 'unapproved')
@@ -84,7 +84,7 @@ class EventsController < FilteredController
   def results
   end
 
-  def reject    
+  def reject
     reject_reason = params[:reason]
     return unless resource.submitted? && reject_reason.present?
 

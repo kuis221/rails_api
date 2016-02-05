@@ -257,7 +257,7 @@ $.widget 'nmk.filteredList', {
 			),
 			$('<div id="toogle-'+filter.label.replace(/\s+/g, '-').toLowerCase()+'" class="accordion-body">').addClass(if expanded then 'in' else ' collapse').append(
 				$('<div class="accordion-inner">').append($list)
-			).on 'show', () =>				
+			).on 'show', () =>
 				@_setFilterSectionState(filter.label.replace(/\s+/g, '-'), true)
 				true
 			.on 'hide',  () =>
@@ -422,10 +422,10 @@ $.widget 'nmk.filteredList', {
 					.text(filter.label).addClass(if expanded then '' else 'collapsed').append(
 						$('<span class="icon pull-left" title="Expand">').addClass(if expanded then 'icon-arrow-down' else 'icon-arrow-right')
 					)
-			),			
+			),
 			$('<div id="toogle-'+filter.label.replace(/\s+/g, '-').toLowerCase()+'" class="accordion-body">').addClass(if expanded then 'in' else ' collapse').append(
 				$('<div class="accordion-inner">').append($list)
-			).on 'show', () =>				
+			).on 'show', () =>
 				@_setFilterSectionState(filter.label.replace(/\s+/g, '-'), true)
 				true
 			.on 'hide', () =>

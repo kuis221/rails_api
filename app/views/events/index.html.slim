@@ -61,7 +61,7 @@
 = render partial: 'help_tutorial'
 
 - if can?(:view_list, Event)
-  javascript:    
+  javascript:
     $('#collection-list-filters').filteredList({
       'source': '#{url_for(controller: :events, action: :items)}',
       'filtersUrl': '#{filter_url(:events)}',
