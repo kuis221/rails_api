@@ -121,6 +121,7 @@ feature 'Events section' do
       end
 
       feature 'GET index' do
+        let(:today) { Time.zone.local(Time.now.year, Time.now.month, Time.now.day, 12, 00) }
         let(:events) do
           [
             create(:event,
@@ -200,6 +201,39 @@ feature 'Events section' do
           within resource_item do
             expect(page).to have_content(campaign.name)
           end
+        end
+
+        scenario 'user can filter events by several statuses' do
+          place = create(:place, name: 'Place 1', city: 'Los Angeles', state: 'CA', country: 'US')
+          create(:rejected_event,
+                 start_date: (today - 4.days).to_s(:slashes), end_date: (today - 4.days).to_s(:slashes),
+                 campaign: campaign, active: true,
+                 place: place)
+          create(:event,
+                 start_date: (today + 4.days).to_s(:slashes), end_date: (today + 4.days).to_s(:slashes),
+                 campaign: campaign, active: true,
+                 place: place)
+          Sunspot.commit
+
+          visit events_path
+
+          expect(page).to have_content('1 event found for: Active Today To The Future')
+
+          expect(collection_description).to have_filter_tag('Today To The Future')
+          remove_filter 'Today To The Future'
+
+          expect(page).to have_content('2 events found for: Active')
+          expect(collection_description).not_to have_filter_tag('Today To The Future')
+
+          add_filter 'EVENT STATUS', 'Scheduled'
+
+          expect(collection_description).to have_filter_tag('Scheduled')
+          expect(page).to have_content('1 event found for: Active Scheduled')
+
+          add_filter 'EVENT STATUS', 'Rejected'
+
+          expect(collection_description).to have_filter_tag('Scheduled')
+          expect(page).to have_content('2 events found for: Active Rejected Scheduled')
         end
 
         scenario 'event should not be removed from the list when deactivated' do

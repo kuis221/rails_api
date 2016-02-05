@@ -18,7 +18,7 @@
 
 class FormField::Hashed < FormField
   def results_for_hash_values(result)
-    return [] if result.blank?
+    return [] if result.reject(&:empty?).blank?
 
     keys = options_for_input.map { |_, v| v.to_s }
     result = result.reject { |v| v.blank? }
@@ -33,7 +33,7 @@ class FormField::Hashed < FormField
     totals = results_for_hash_values(result)
     values = totals.reject { |_k, v| v.nil? || v == '' || v.to_f == 0.0 }
     options_map = Hash[options_for_input.map { |o| [o[1], o[0]] }]
-    values.map { |k, v| [options_map[k], v] }
+    values.map { |k, v| [options_map[k], v.to_f] }
   end
 
   def results_for_percentage_chart_for_value(result)

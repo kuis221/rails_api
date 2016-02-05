@@ -5,7 +5,7 @@ filters:
     areas: [Area]
     people: [CompanyUser, Team]
     event_status:
-      items: [Submitted, Late, Due, Approved, Rejected]
+      items: [Submitted, Late, Due, Approved, Rejected, Scheduled]
       name: 'event_status'
     status:
       items: [Active, Inactive]
@@ -15,7 +15,7 @@ filters:
     areas: [Area]
     people: [CompanyUser, Team]
     event_status:
-      items: [Submitted, Late, Due, Approved, Rejected]
+      items: [Submitted, Late, Due, Approved, Rejected, Scheduled]
       name: 'event_status'
     status:
       items: [Active, Inactive]
@@ -39,7 +39,7 @@ filters:
       items: [Active, Inactive]
       name: 'status'
   venues:
-    sliders: 
+    sliders:
       method: venues_sliders
     price:
       items: [[1, '$'], [2, '$$'], [3, '$$$'], [4, '$$$$']]
@@ -101,7 +101,7 @@ filters:
       method: brand_ambassadors_bucket
     campaigns: [Campaign]
     areas: [Area]
-    cities: 
+    cities:
       method: cities_bucket
   activities:
     activity_types: [ActivityType]
@@ -133,11 +133,11 @@ filters:
       items: [Active, Inactive]
       name: 'status'
   trends:
-    source: 
+    source:
       method: trend_sources
-    questions: 
+    questions:
       method: trend_questions
-    campaigns: 
+    campaigns:
       method: trend_campaigns
     brands: [Brand]
     areas: [Area]
@@ -146,5 +146,5 @@ filters:
     areas: [Area]
     people: [CompanyUser]
     event_status:
-      items: [Submitted, Late, Due, Approved, Rejected]
+      items: [Submitted, Late, Due, Approved, Rejected, Scheduled]
       name: 'event_status'
