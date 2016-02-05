@@ -96,7 +96,7 @@ class FilteredController < InheritedResources::Base
       if params[:team]
         user_ids = CompanyUser.by_teams(params[:team]).pluck(:id)
         p[:user] ||= []
-        p[:user] = user_ids
+        p[:user] << user_ids
         p[:user].flatten!
       end
       p.merge!(base_search_params)
