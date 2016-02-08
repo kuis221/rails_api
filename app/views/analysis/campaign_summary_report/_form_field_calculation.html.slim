@@ -1,7 +1,7 @@
 - total = 0
 span.form-result-label= form_field.name
 - form_field.options.each do |field_option|
-  - total += (result[field_option.id] || 0)
+  - total += (result[field_option.id].to_i || 0)
   .calculation-segment
     label.pull-left = field_option.name
     .segment-value = number_with_precision(result[field_option.id] || 0, precision: 2, delimiter: ',', separator: '.')
