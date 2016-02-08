@@ -27,6 +27,7 @@ end
 attributes :id
 
 node(:title) { event.campaign_name }
+node(:type) { @photo.video? ? 'video' : 'photo'}
 node(:date) { format_date_with_time(event.start_at, true) }
 node(:address) { event.place_name_with_location('<br>') }
 node(:status) { @photo.active? }

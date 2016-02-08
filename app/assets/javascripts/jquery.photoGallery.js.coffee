@@ -45,11 +45,15 @@ $.widget 'nmk.photoGallery', {
 		if image.data('info')
 			@fillPhotoData image.data('info')
 		else
-			$.get "/photos/#{@image.data('image-id')}.json", (info) =>
-				if info.id is _this.image.data('image-id')
-					image.data('info', info)
-					@fillPhotoData(info)
-
+			$.ajax "/photos/#{@image.data('image-id')}", {
+				method: 'GET',
+				dataType: 'json',
+				async: false,
+				success: (info) =>
+					if info.id is _this.image.data('image-id')
+						image.data('info', info)
+						@fillPhotoData(info)
+			}
 
 	setTagList: (tags) ->
 		if 'view_tag' in @image.data('info').permissions
@@ -187,7 +191,7 @@ $.widget 'nmk.photoGallery', {
 
 			carousel.append $('<div class="item">').
 				attr('data-photo-id', $(image).data('id')).
-				append($('<div class="row">').append($('<img>').attr('src', '').data('src',link.href))).
+				append($('<div class="row">').append($('<img class="img-carousel">').attr('src', '').data('src',link.href))).
 				data('image',image).
 				data('index', i).
 				addClass(activeClass)
@@ -342,7 +346,12 @@ $.widget 'nmk.photoGallery', {
 
 	_showImage: () ->
 		item = $('.item.active', @slider)
-		image = item.find('img')
+		image = item.find('img.img-carousel')
+		if @image.data('info').type == 'video'
+			image.parent().append(
+				$('<div class="enlarged-circle">').append($('<img class="enlarged-overlay">').attr('src', '/assets/play-32.svg'))
+			)
+
 		if typeof image.attr('src') == 'undefined' || image.attr('src') == ''
 			image.css({opacity: 0}).attr('src', image.data('src')).on 'load', (e) =>
 				$(e.target).css({opacity: 1})
