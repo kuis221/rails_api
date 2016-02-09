@@ -6041,6 +6041,14 @@ table td.sub-level-1 {
 				position: absolute;
 				top: 37%;
 				width: 48px;
+				text-align: center;
+				line-height: 48px;
+
+				.icon-video-play {
+					display: inline-block;
+					font-size: 48px;
+					color: #fff;
+				}
 			}
 			.thumbnail-inner:hover .thumbnail-circle {
 				background: rgba(0, 0, 0, 0.5);
@@ -6139,6 +6147,11 @@ table td.sub-level-1 {
 			position: absolute;
 			top: 44%;
 			width: 64px;
+
+			.icon-video-play {
+				font-size: 65px;
+				color: #fff;
+			}
 		}
 	}
 	.row:hover .enlarged-circle {

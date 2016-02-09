@@ -349,7 +349,7 @@ $.widget 'nmk.photoGallery', {
 		image = item.find('img.img-carousel')
 		if typeof @image != 'undefined' && @image.data('info').type == 'video'
 			image.parent().append(
-				$('<div class="enlarged-circle">').append($('<img class="enlarged-overlay">').attr('src', '/assets/play-32.svg'))
+				$('<div class="enlarged-circle">').append($('<span class="icon-video-play"></span>'))
 			)
 
 		if typeof image.attr('src') == 'undefined' || image.attr('src') == ''
