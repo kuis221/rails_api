@@ -347,7 +347,7 @@ $.widget 'nmk.photoGallery', {
 	_showImage: () ->
 		item = $('.item.active', @slider)
 		image = item.find('img.img-carousel')
-		if @image.data('info').type == 'video'
+		if typeof @image != 'undefined' && @image.data('info').type == 'video'
 			image.parent().append(
 				$('<div class="enlarged-circle">').append($('<span class="icon-video-play"></span>'))
 			)
