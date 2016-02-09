@@ -15,7 +15,7 @@
             = image_tag photo.file.url(:thumbnail), id: 'thumbnail_'+photo.id.to_s, class: 'thumbnail-image', data: { image_id: photo.id }
             - if photo.video?
               .thumbnail-circle
-                = image_tag 'play-32.svg', class: 'thumbnail-overlay'
+                span.icon-video-play
       - else
         .image-loading-container
 
