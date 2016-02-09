@@ -51,10 +51,10 @@
 
         - if can?(:index_photo_results, AttachedAsset)
           .resource-item id="report_photos"
-            = link_to results_photos_path, title: 'Photos' do
+            = link_to results_photos_path, title: 'Media Gallery' do
               .span10.report-item
-                .text-large Photos
-                p View photos by event
+                .text-large Media Gallery
+                p View photos and videos by event
 
         - if can?(:index_results, Survey)
           .resource-item id="report_surveys"

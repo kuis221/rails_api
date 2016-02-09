@@ -1,7 +1,7 @@
 object @photo
 
 event = @photo.attachable
-source_title = 'Event Photo Gallery'
+source_title = 'Event Media Gallery'
 source_type = 'gallery'
 source_url = @photo.attachable_type == 'Event' ? event_path(@photo.attachable) + '#event-photos' : ''
 if @photo.attachable_type == 'FormFieldResult'
