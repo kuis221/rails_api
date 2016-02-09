@@ -43,5 +43,11 @@ FactoryGirl.define do
     factory :photo do
       asset_type 'photo'
     end
+
+    factory :video do
+      asset_type 'photo'
+      file_file_name 'filetest.flv'
+      file_content_type 'video/x-flv'
+    end
   end
 end

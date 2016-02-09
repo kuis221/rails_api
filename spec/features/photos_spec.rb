@@ -64,6 +64,25 @@ feature 'Photos', js: true do
       end
     end
 
+    scenario 'create correctly each item in the media gallery' do
+      create(:video, attachable: event)
+      create(:photo, attachable: event)
+
+      visit event_path(event)
+
+      find('.photo-item:nth-child(1)').hover
+      within '.photo-item:nth-child(1)' do
+        expect(page).to have_link('Download Photo')
+        expect(page).to have_no_selector('.thumbnail-overlay')
+      end
+
+      find('.photo-item:nth-child(2)').hover
+      within '.photo-item:nth-child(2)' do
+        expect(page).to have_link('Download Video')
+        expect(page).to have_selector('.thumbnail-overlay')
+      end
+    end
+
     scenario 'can rate a photo' do
       photo = create(:photo, attachable: event, rating: 2)
       visit event_path(event)
