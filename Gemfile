@@ -60,6 +60,7 @@ gem 'rgeo-geojson'
 gem 'paper_trail', '~> 4.0.0'
 gem 'simple_form', '~> 3.2.0'
 gem 'country_select', '2.0.0.rc1'
+gem 'paperclip-av-transcoder'
 
 # For memory debugging
 # gem "allocation_stats"

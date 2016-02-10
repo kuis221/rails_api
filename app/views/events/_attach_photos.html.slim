@@ -53,15 +53,15 @@
           sequential_uploads: false,
           cancel_upload_target: '#upload-file-cancel',
           before_add: function(file) {
-            var file, image_types;
-            image_types = /(\.|\/)(gif|jpe?g|png)$/i;
+            var file, file_types;
+            file_types = /(\.|\/)(gif|jpe?g|png|mp4|wmv|mov|flv|avi)$/i;
 
             if (file.size > #{max_file_size}){
               alert('File is larger than maximum file size supported (#{max_file_size.to_s(:human_size)})');
               return false;
             }
 
-            if (image_types.test(file.type) || image_types.test(file.name)) {
+            if (file_types.test(file.type) || file_types.test(file.name)) {
               return true;
             } else {
               alert('File is not in a supported image format. ('+file.name+')');

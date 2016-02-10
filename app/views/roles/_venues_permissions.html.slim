@@ -37,7 +37,7 @@
           = permission_checkbox(f, :view_kpis, Venue)
 
       .span12
-        .span2 Trends by day of week
+        .span2 Trends by Day of Week
         .span1
           = permission_checkbox(f, :view_trends_day_week, Venue)
 
@@ -55,7 +55,7 @@
           .span1 = permission_checkbox(f, :deactivate_invite, Venue)
 
       .span12
-        .span2 Photos
+        .span2 Photos & Videos
         .span1
           = permission_checkbox(f, :view_photos, Venue)
 
@@ -65,4 +65,3 @@
           = permission_checkbox(f, :view_comments, Venue)
 
   = hidden_field_tag :partial, :venues_permissions
-  /*= f.button :submit, 'Save', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}

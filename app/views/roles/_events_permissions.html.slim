@@ -20,21 +20,21 @@
         .span1 = permission_checkbox(f, :deactivate, Event)
 
       .span12
-        .span2 Events list
+        .span2 Events List
         .span1 = permission_checkbox(f, :view_list, Event, allow_all: true)
         .span1
         .span1
         .span1
 
       .span12
-        .span2 Events calendar
+        .span2 Events Calendar
         .span1 = permission_checkbox(f, :view_calendar, Event, allow_all: true)
         .span1
         .span1
         .span1
 
       .span12
-        .span2 Events map
+        .span2 Events Map
         .span1 = permission_checkbox(f, :view_map, Event, allow_all: true)
         .span1
         .span1
@@ -85,21 +85,21 @@
         .span1 = permission_checkbox(f, :deactivate_document, Event)
 
       .span12
-        .span2 Photos
+        .span2 Media Gallery
         .span1 = permission_checkbox(f, :index_photos, Event, allow_all: true)
         .span1 = permission_checkbox(f, :create_photo, Event, allow_all: true)
         .span1
         .span1 = permission_checkbox(f, :deactivate_photo, Event, allow_all: true)
 
       .span12
-        .span2 Rate photos
+        .span2 Rate Photos & Videos
         .span1 = permission_checkbox(f, :view_rate, AttachedAsset, allow_all: true)
         .span1
         .span1 = permission_checkbox(f, :edit_rate, AttachedAsset, allow_all: true)
         .span1
 
       .span12
-        .span2 Tag photos
+        .span2 Tag Photos & Videos
         .span1 = permission_checkbox(f, :index_tag, AttachedAsset, allow_all: true)
         .span1 = permission_checkbox(f, :create_tag, AttachedAsset, allow_all: true)
         .span1 = permission_checkbox(f, :activate_tag, AttachedAsset, allow_all: true)
@@ -143,33 +143,33 @@
         .span1 = permission_checkbox(f, :unapprove, Event)
 
       .span12.separate_small
-        .span2 View unsubmitted data
+        .span2 View Unsubmitted Data
         .span1 = permission_checkbox(f, :view_unsubmitted_data, Event)
 
       .span12
-        .span2 View submitted data
+        .span2 View Submitted Data
         .span1 = permission_checkbox(f, :view_submitted_data, Event)
 
       .span12
-        .span2 View rejected data
+        .span2 View Rejected Data
         .span1 = permission_checkbox(f, :view_rejected_data, Event)
 
       .span12
-        .span2 View approved data
+        .span2 View Approved Data
         .span1 = permission_checkbox(f, :view_approved_data, Event, allow_all: true)
 
       .span12.separate_small
-        .span2 Edit unsubmitted data
+        .span2 Edit Unsubmitted Data
         .span1 = permission_checkbox(f, :edit_unsubmitted_data, Event)
 
       .span12
-        .span2 Edit submitted data
+        .span2 Edit Submitted Data
         .span1 = permission_checkbox(f, :edit_submitted_data, Event)
 
       .span12
-        .span2 Edit rejected data
+        .span2 Edit Rejected Data
         .span1 = permission_checkbox(f, :edit_rejected_data, Event)
 
       .span12
-        .span2 Edit approved data
+        .span2 Edit Approved Data
         .span1 = permission_checkbox(f, :edit_approved_data, Event)

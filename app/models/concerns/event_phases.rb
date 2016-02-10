@@ -82,7 +82,7 @@ module EventPhases
   def results_phases
     @results_phases ||= [].tap do |phases|
       phases.push(id: :approve_per, title: 'Approve PER', complete: approved?, required: true,
-                  if: proc { |event| can?(:approve, event) })
+                  if: proc { |event| can?(:view_data, event) })
     end
   end
 

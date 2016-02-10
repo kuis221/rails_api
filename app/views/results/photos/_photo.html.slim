@@ -1,7 +1,7 @@
 - @_photo_permissions = {}
 - show_date_details ||= true
 - if photo.processed?
-  li.photo-item id="attached_asset_#{photo.id}" data-photo-id="#{photo.id}" data-processed="#{photo.processed?.to_s}"
+  li.photo-item id="attached_asset_#{photo.id}" data-photo-id="#{photo.id}" data-photo-type="#{photo.video? ? 'video' : 'photo'}" data-processed="#{photo.processed?.to_s}"
     div.thumbnail-inner
       .thumbnail-toolbar
         - if can? :deactivate_photo, photo.attachable
@@ -9,10 +9,13 @@
             = link_to '', deactivate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-rounded-disable photo-deactivate-link', data: { :confirm=> I18n.t('confirmation.deactivate_confirm_message', model: 'photo') }, title: 'Deactivate'
           - else
             = link_to '', activate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-rounded-ok icon-rounded-disable', title: 'Activate'
-        = link_to '', photo.download_url, class: 'icon-download', title: "Select Photo", id: 'photo-download-add' if can?(:index_photo_results, AttachedAsset)
+        = link_to '', photo.download_url, class: "#{controller_name == 'events' || photo.video? ? 'icon-download' : 'icon-plus'}", title: "#{controller_name == 'events' || photo.video? ? 'Download' : 'Select'} #{photo.video? ? 'Video' : 'Photo'}", id: 'photo-download-add' if can?(:index_photo_results, AttachedAsset)
       - if photo.processed?
-        = link_to photo.file.url(:medium), 'data-toggle' => 'gallery', title: 'View Photo' do
-            = image_tag photo.file.url(:thumbnail), id: 'thumbnail_'+photo.id.to_s, data: { image_id: photo.id }
+        = link_to photo.file.url(:medium), 'data-toggle' => 'gallery', title: "View #{photo.video? ? 'Video' : 'Photo'}" do
+            = image_tag photo.file.url(:thumbnail), id: 'thumbnail_'+photo.id.to_s, class: 'thumbnail-image', data: { image_id: photo.id }
+            - if photo.video?
+              .thumbnail-circle
+                span.icon-video-play
       - else
         .image-loading-container
 

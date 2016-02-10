@@ -3,13 +3,13 @@
     .filter-label
 
 = user_new_feature('results_photos') do
-  h5 Getting Started: Photos Report
+  h5 Getting Started: Media Gallery
   a.close.btn-dismiss-alert.icon.icon-close href="#" title="Dismiss"
   a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/JJSy2PDxY5U?rel=0" data-width="640" data-height="360"
     img src="#{image_path('video_arrow.png')}" width="70" height="70" /
   .feature-description
     p
-      'Want to see what happened at your event? Scroll though the pictures below or use the right sidebar filter to target specific campaigns and events. Click on the video to the left for a quick overview or check out our
+      'Want to see what happened at your event? Scroll though the pictures and videos below or use the right sidebar filter to target specific campaigns and events. Click on the video to the left for a quick overview or check out our
       a> href="http://support.brandscopic.com" target="_blank" support site
       | for more in depth info.
 
@@ -17,12 +17,12 @@
   #collection-list-filters
 
 .main.with-details-close-bar
-  = resource_details_bar("You are viewing Photos report. Click to close.")
+  = resource_details_bar("You are viewing the Media Gallery. Click to close.")
   .tab-content
   #list-view.tab-pane.active
     #list-tools.text-right
-      a.btn.download.icon id="download-photos-button" href="" title="Download"
-        i.icon-plus
+      button.btn.download.icon id="download-photos-button" href="" title="Download"
+        i.icon-download
         #download-photos-counter-container
     .gallery.select-for-download.photo-results
       ul id="#{controller_name}-list"
@@ -54,24 +54,25 @@ javascript:
   });
 
   $(document).delegate('#photo-download-add', 'click', function(e) {
-    e.preventDefault();
     target = $(this).closest('li.photo-item');
-    target.toggleClass('selected-for-download');
-    target_id = target.data('photo-id');
+    if (target.data('photo-type') != 'video') {
+      e.preventDefault();
+      target.toggleClass('selected-for-download');
+      target_id = target.data('photo-id');
+      if (target.is('.selected-for-download')) {
+        $(this).removeClass('icon-plus').addClass('icon-minus');
+      } else {
+        $(this).removeClass('icon-minus').addClass('icon-plus');
+      }
+      selected_elements = $('.selected-for-download').length;
+      counter_html = ''
+      if (selected_elements > 0) {
+        counter_html = '<span class="badge download-photos-counter">' + selected_elements + '</span>';
+      }
+      $('#download-photos-counter-container').html(counter_html);
 
-    if (target.is('.selected-for-download')) {
-      $(this).removeClass('icon-plus').addClass('icon-minus');
-    } else {
-      $(this).removeClass('icon-minus').addClass('icon-plus');
+      return false;
     }
-    selected_elements = $('.selected-for-download').length;
-    counter_html = ''
-    if (selected_elements > 0) {
-      counter_html = '<span class="badge download-photos-counter">' + selected_elements + '</span>';
-    }
-    $('#download-photos-counter-container').html(counter_html);
-
-    return false;
   });
 
   $(document).delegate('#download-photos-button', 'click', function(e) {

@@ -1,7 +1,7 @@
 object @photo
 
 event = @photo.attachable
-source_title = 'Event Photo Gallery'
+source_title = 'Event Media Gallery'
 source_type = 'gallery'
 source_url = @photo.attachable_type == 'Event' ? event_path(@photo.attachable) + '#event-photos' : ''
 if @photo.attachable_type == 'FormFieldResult'
@@ -27,7 +27,8 @@ end
 attributes :id
 
 node(:title) { event.campaign_name }
-node(:date) { format_date_range(event.start_at, event.end_at, { date_separator: '<br>' }) }
+node(:type) { @photo.video? ? 'video' : 'photo'}
+node(:date) { format_date_with_time(event.start_at, true) }
 node(:address) { event.place_name_with_location('<br>') }
 node(:status) { @photo.active? }
 node(:rating) { @photo.rating }

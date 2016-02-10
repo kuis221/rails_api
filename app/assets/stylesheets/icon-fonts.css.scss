@@ -448,12 +448,17 @@
 	content: "\e803";
 }
 .icon-repeat:before{
-	content: "\e900";
+	content: "\e904";
 }
 .icon-source:before{
 	content: "\e902";
 }
-
+.icon-campaign-flag:before {
+	content: "\e903";
+}
+.icon-video-play:before {
+	content: "\e900";
+}
 
 /* To create icons with grey circle background */
 .special-icon {

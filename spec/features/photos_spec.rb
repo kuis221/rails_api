@@ -64,6 +64,25 @@ feature 'Photos', js: true do
       end
     end
 
+    scenario 'create correctly each item in the media gallery' do
+      create(:video, attachable: event)
+      create(:photo, attachable: event)
+
+      visit event_path(event)
+
+      find('.photo-item:nth-child(1)').hover
+      within '.photo-item:nth-child(1)' do
+        expect(page).to have_link('Download Photo')
+        expect(page).to have_no_selector('.thumbnail-circle')
+      end
+
+      find('.photo-item:nth-child(2)').hover
+      within '.photo-item:nth-child(2)' do
+        expect(page).to have_link('Download Video')
+        expect(page).to have_selector('.thumbnail-circle')
+      end
+    end
+
     scenario 'can rate a photo' do
       photo = create(:photo, attachable: event, rating: 2)
       visit event_path(event)
@@ -75,9 +94,9 @@ feature 'Photos', js: true do
       end
 
       within gallery_modal do
-        find('.rating span.full', match: :first)
-        expect(page.all('.rating span.full').count).to eql(2)
-        expect(page.all('.rating span.empty').count).to eql(3)
+        find('.rating span.icon-star', match: :first)
+        expect(page.all('.rating span.icon-star').count).to eql(2)
+        expect(page.all('.rating span.icon-wired-star').count).to eql(3)
         find('.rating span:nth-child(3)').trigger('click')
         wait_for_ajax
         expect(photo.reload.rating).to eql 3
@@ -91,9 +110,9 @@ feature 'Photos', js: true do
         click_js_link 'View Photo'
       end
       within gallery_modal do
-        find('.rating span.full', match: :first)
-        expect(page.all('.rating span.full').count).to eql(3)
-        expect(page.all('.rating span.empty').count).to eql(2)
+        find('.rating span.icon-star', match: :first)
+        expect(page.all('.rating span.icon-star').count).to eql(3)
+        expect(page.all('.rating span.icon-wired-star').count).to eql(2)
       end
     end
 
