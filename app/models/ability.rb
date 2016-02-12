@@ -227,7 +227,9 @@ class Ability
       end
 
       can :show, AttachedAsset do |asset|
-        asset.attachable.is_a?(Event) && can?(:show, asset.attachable)
+        asset.attachable.is_a?(Event) && can?(:show, asset.attachable) ||
+        asset.attachable.is_a?(FormFieldResult) && asset.attachable.resultable.is_a?(Activity) && can?(:show, asset.attachable.resultable.activitable) ||
+        asset.attachable.is_a?(FormFieldResult) && asset.attachable.resultable.is_a?(Event) && can?(:show, asset.attachable.resultable)
       end
 
       can [:build, :preview, :update], Report do |report|
