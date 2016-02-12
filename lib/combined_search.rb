@@ -127,7 +127,7 @@ class CombinedSearch
 
   def build_place_from_result(result)
     if result['formatted_address'] &&
-       (m = result['formatted_address'].match(/\A(.*?,?\s*(?<city>[^,]+)\s*,\s*)?(?<state>[^,]+)\s*,\s*(?<country>[^,]+)\s*\z/))
+       (m = result['formatted_address'].match(/\A(.*?,?\s*(?<city>[^,]+)(\s*,\s*|\s+-\s+))*(?<state>[^,]+)(\s*,\s*|\s+-\s+)(?<country>[^,]+)\s*\z/))
       country = m[:country]
       country = Country.all.find(-> { [country, country] }) { |c| b = Country.new(c[1]); b.alpha3 == country }[1] if country.match(/\A[A-Z]{3}\z/)
       country = Country.all.find(-> { [country, country] }) { |c| c[0].downcase == country.downcase }[1] unless country.match(/\A[A-Z]{2}\z/)
