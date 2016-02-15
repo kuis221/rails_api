@@ -189,7 +189,7 @@ module Sunspot
                       (params.key?(:team) && params[:team].present?)
         team_ids = []
         team_ids.concat Array(params[:team]) if params.key?(:team) && Array(params[:team]).any?
-        team_ids.concat Team.with_user(params[:user]).pluck(:id) if params.key?(:user) && Array(params[:user]).any?
+        team_ids.concat Array(params[:user]) if params.key?(:user) && Array(params[:user]).any?
 
         if join_field?(:user_ids) && join_field?(:team_ids)
           query = []

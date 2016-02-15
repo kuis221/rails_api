@@ -428,7 +428,7 @@ $.widget 'nmk.filteredList', {
 			).on 'show', () =>
 				@_setFilterSectionState(filter.label.replace(/\s+/g, '-'), true)
 				true
-			.on 'hide',  () =>
+			.on 'hide', () =>
 				@_setFilterSectionState(filter.label.replace(/\s+/g, '-'), false)
 				true
 		)
