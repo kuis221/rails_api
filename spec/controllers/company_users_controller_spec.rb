@@ -62,14 +62,39 @@ describe CompanyUsersController, type: :controller do
     end
 
     describe "GET 'deactivate'" do
-      let(:user) { create(:company_user, company_id: @company.id, active: true) }
+      let(:user) { create(:user, current_company_id: @company.id) }
+      let(:company_user) { create(:company_user, user: user, company_id: @company.id, active: true) }
 
-      it 'deactivates an active user' do
-        expect(user.active).to be_truthy
-        xhr :get, 'deactivate', id: user.to_param, format: :js
+      it 'deactivates an active user with one associated company user and sets the current_company_id to nil' do
+        expect(company_user.active).to be_truthy
+        expect(company_user.user.current_company_id).to eq(@company.id)
+        xhr :get, 'deactivate', id: company_user.to_param, format: :js
         expect(response).to be_success
-        expect(user.reload.active?).to be_falsey
-        expect(user.active).to be_falsey
+        expect(company_user.reload.active?).to be_falsey
+        expect(company_user.active).to be_falsey
+        expect(company_user.user.current_company_id).to eq(nil)
+      end
+
+      it 'deactivates an active user with more than one associated company users and sets the current_company_id with company id from the first active company user' do
+        create(:company_user, user: user, company_id: 999, active: true)
+        expect(company_user.active).to be_truthy
+        expect(company_user.user.current_company_id).to eq(@company.id)
+        xhr :get, 'deactivate', id: company_user.to_param, format: :js
+        expect(response).to be_success
+        expect(company_user.reload.active?).to be_falsey
+        expect(company_user.active).to be_falsey
+        expect(company_user.user.current_company_id).to eq(999)
+      end
+
+      it 'deactivates an active user and keeps the same value for current_company_id when the deactivated company user has a company id different than current_company_id' do
+        company_user.user.update_column(:current_company_id, 999)
+        expect(company_user.active).to be_truthy
+        expect(company_user.user.current_company_id).to eq(999)
+        xhr :get, 'deactivate', id: company_user.to_param, format: :js
+        expect(response).to be_success
+        expect(company_user.reload.active?).to be_falsey
+        expect(company_user.active).to be_falsey
+        expect(company_user.user.current_company_id).to eq(999)
       end
     end
 
