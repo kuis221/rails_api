@@ -82,6 +82,14 @@ describe CombinedSearch, type: :model do
                 'reference' => 'REFERENCE4',
                 'types' => %w(locality political),
                 'geometry' => { 'location' => { 'lat' => 33.33, 'lng' => 55.55 }  }
+              }, {
+                'formatted_address' => 'Fairmont Hotel, Sheikh Zayed Road - Dubai - United Arab Emirates',
+                'place_id' => 'PLACEID5',
+                'name' => 'Sheikh Zayed Road',
+                'city' => 'Sheikh Zayed Road',
+                'reference' => 'REFERENCE5',
+                'types' => %w(locality political),
+                'geometry' => { 'location' => { 'lat' => 66.66, 'lng' => 77.77 }  }
               }
             ]
           }
@@ -117,6 +125,13 @@ describe CombinedSearch, type: :model do
               id: 'REFERENCE4||PLACEID4',
               location: { latitude: 33.33, longitude: 55.55 },
               valid: false
+            },
+            {
+              value: 'Sheikh Zayed Road, Fairmont Hotel, Sheikh Zayed Road - Dubai - United Arab Emirates',
+              label: 'Sheikh Zayed Road, Fairmont Hotel, Sheikh Zayed Road - Dubai - United Arab Emirates',
+              id: 'REFERENCE5||PLACEID5',
+              location: { latitude: 66.66, longitude: 77.77 },
+              valid: false
             }
           ]
         end
@@ -124,6 +139,7 @@ describe CombinedSearch, type: :model do
         it "should set the 'valid' flag to true for places the user is allowed to access" do
           company_user.places << create(:city, name: 'Los Angeles', state: 'California', country: 'US')
           company_user.places << create(:city, name: 'St Petersburg', state: 'Florida', country: 'US')
+          company_user.places << create(:place, name: 'United Arab Emirates', city: nil, state: nil, country: 'AE', types: %w(political country))
           params = { q: 'qw', current_company_user: company_user }
           expect(described_class.new(params).results).to eql [
             {
@@ -145,6 +161,13 @@ describe CombinedSearch, type: :model do
               label: 'St Petersburg, Florida, United States',
               id: 'REFERENCE4||PLACEID4',
               location: { latitude: 33.33, longitude: 55.55 },
+              valid: true
+            },
+            {
+              value: 'Sheikh Zayed Road, Fairmont Hotel, Sheikh Zayed Road - Dubai - United Arab Emirates',
+              label: 'Sheikh Zayed Road, Fairmont Hotel, Sheikh Zayed Road - Dubai - United Arab Emirates',
+              id: 'REFERENCE5||PLACEID5',
+              location: { latitude: 66.66, longitude: 77.77 },
               valid: true
             },
             {
@@ -207,6 +230,13 @@ describe CombinedSearch, type: :model do
               id: 'REFERENCE4||PLACEID4',
               location: { latitude: 33.33, longitude: 55.55 },
               valid: false
+            },
+            {
+              value: 'Sheikh Zayed Road, Fairmont Hotel, Sheikh Zayed Road - Dubai - United Arab Emirates',
+              label: 'Sheikh Zayed Road, Fairmont Hotel, Sheikh Zayed Road - Dubai - United Arab Emirates',
+              id: 'REFERENCE5||PLACEID5',
+              location: { latitude: 66.66, longitude: 77.77 },
+              valid: false
             }
           ]
         end
@@ -253,6 +283,13 @@ describe CombinedSearch, type: :model do
               label: 'St Petersburg, Florida, United States',
               id: 'REFERENCE4||PLACEID4',
               location: { latitude: 33.33, longitude: 55.55 },
+              valid: false
+            },
+            {
+              value: 'Sheikh Zayed Road, Fairmont Hotel, Sheikh Zayed Road - Dubai - United Arab Emirates',
+              label: 'Sheikh Zayed Road, Fairmont Hotel, Sheikh Zayed Road - Dubai - United Arab Emirates',
+              id: 'REFERENCE5||PLACEID5',
+              location: { latitude: 66.66, longitude: 77.77 },
               valid: false
             }
           ]
@@ -303,6 +340,13 @@ describe CombinedSearch, type: :model do
               label: 'Los Angeles, ON, Canada',
               id: 'REFERENCE2||PLACEID2',
               location: { latitude: 11.22, longitude: 22.33 },
+              valid: false
+            },
+            {
+              value: 'Sheikh Zayed Road, Fairmont Hotel, Sheikh Zayed Road - Dubai - United Arab Emirates',
+              label: 'Sheikh Zayed Road, Fairmont Hotel, Sheikh Zayed Road - Dubai - United Arab Emirates',
+              id: 'REFERENCE5||PLACEID5',
+              location: { latitude: 66.66, longitude: 77.77 },
               valid: false
             }
           ]
